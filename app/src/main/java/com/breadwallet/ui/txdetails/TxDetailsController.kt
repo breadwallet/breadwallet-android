@@ -63,6 +63,7 @@ import java.util.Date
  *     - Expose formatted currencies in Model
  *     - Improve gas price handling
  *     - Validate state displays (handle deleted state?)
+ *     - For received transactions, retrieve historical exchange rate at time of first confirmation
  */
 class TxDetailsController(
     args: Bundle? = null
@@ -291,18 +292,17 @@ class TxDetailsController(
             M::exchangeRate,
             M::isReceived
         ) {
-            exchange_rate_label.setText(
-                when {
-                    isReceived -> R.string.Transaction_exchangeOnDayReceived
-                    else -> R.string.Transaction_exchangeOnDaySent
-                }
-            )
-            exchange_rate.text = exchangeRate.formatFiatForUi(
-                when {
-                    exchangeCurrencyCode.isNotBlank() -> exchangeCurrencyCode
-                    else -> preferredFiatIso
-                }
-            )
+            if (isReceived) {
+                groupExchangeRateSection.isVisible = false
+            } else {
+                exchange_rate_label.setText(R.string.Transaction_exchangeOnDaySent)
+                exchange_rate.text = exchangeRate.formatFiatForUi(
+                    when {
+                        exchangeCurrencyCode.isNotBlank() -> exchangeCurrencyCode
+                        else -> preferredFiatIso
+                    }
+                )
+            }
         }
 
         ifChanged(M::confirmationDate) {

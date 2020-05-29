@@ -195,7 +195,8 @@
                     android:layout_below="@id/memo_input"
                     android:layout_marginTop="14dp"
                     android:orientation="vertical"
-                    android:visibility="gone" tools:visibility="visible">
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/layoutDestinationTag"
@@ -214,7 +215,7 @@
                             android:textColor="@color/settings_chevron_right"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.breadwallet.legacy.presenter.customviews.BaseTextView
                             android:id="@+id/destination_tag_value"
@@ -232,7 +233,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="1.0"
                             app:layout_constraintStart_toEndOf="@+id/destination_tag_label"
-                            app:layout_constraintTop_toTopOf="@+id/destination_tag_label"/>
+                            app:layout_constraintTop_toTopOf="@+id/destination_tag_label" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
@@ -240,7 +241,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1px"
                         android:background="@color/light_gray"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/layoutHederaMemo"
@@ -259,7 +260,7 @@
                             android:textColor="@color/settings_chevron_right"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.breadwallet.legacy.presenter.customviews.BaseTextView
                             android:id="@+id/hedera_memo_value"
@@ -277,7 +278,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="1.0"
                             app:layout_constraintStart_toEndOf="@+id/hedera_memo_label"
-                            app:layout_constraintTop_toTopOf="@+id/hedera_memo_label"/>
+                            app:layout_constraintTop_toTopOf="@+id/hedera_memo_label" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
@@ -285,7 +286,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1px"
                         android:background="@color/light_gray"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/gas_price_container"
@@ -303,7 +304,7 @@
                             android:textColor="@color/settings_chevron_right"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.breadwallet.legacy.presenter.customviews.BaseTextView
                             android:id="@+id/gas_price"
@@ -315,14 +316,14 @@
                             android:textColor="?attr/secondary_text_color"
                             app:layout_constraintBottom_toBottomOf="@+id/gas_price_label"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/gas_price_label"/>
+                            app:layout_constraintTop_toTopOf="@+id/gas_price_label" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
                         android:id="@+id/gas_price_divider"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
-                        android:background="@color/light_gray"/>
+                        android:background="@color/light_gray" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/gas_limit_container"
@@ -340,7 +341,7 @@
                             android:textColor="@color/settings_chevron_right"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.breadwallet.legacy.presenter.customviews.BaseTextView
                             android:id="@+id/gas_limit"
@@ -352,14 +353,14 @@
                             android:textColor="?attr/secondary_text_color"
                             app:layout_constraintBottom_toBottomOf="@+id/gas_limit_label"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/gas_limit_label"/>
+                            app:layout_constraintTop_toTopOf="@+id/gas_limit_label" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
                         android:id="@+id/gas_limit_divider"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
-                        android:background="@color/light_gray"/>
+                        android:background="@color/light_gray" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/fee_primary_container"
@@ -377,7 +378,7 @@
                             android:textColor="@color/settings_chevron_right"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.breadwallet.legacy.presenter.customviews.BaseTextView
                             android:id="@+id/fee_primary"
@@ -389,14 +390,14 @@
                             android:textColor="?attr/secondary_text_color"
                             app:layout_constraintBottom_toBottomOf="@+id/fee_primary_label"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/fee_primary_label"/>
+                            app:layout_constraintTop_toTopOf="@+id/fee_primary_label" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
                         android:id="@+id/fee_primary_divider"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
-                        android:background="@color/light_gray"/>
+                        android:background="@color/light_gray" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/fee_secondary_container"
@@ -414,7 +415,7 @@
                             android:textColor="@color/settings_chevron_right"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.breadwallet.legacy.presenter.customviews.BaseTextView
                             android:id="@+id/fee_secondary"
@@ -425,14 +426,14 @@
                             android:textColor="?attr/secondary_text_color"
                             app:layout_constraintBottom_toBottomOf="@+id/fee_secondary_label"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/fee_secondary_label"/>
+                            app:layout_constraintTop_toTopOf="@+id/fee_secondary_label" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
                         android:id="@+id/fee_secondary_divider"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
-                        android:background="@color/light_gray"/>
+                        android:background="@color/light_gray" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -449,7 +450,7 @@
                             android:textColor="@color/settings_chevron_right"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.breadwallet.legacy.presenter.customviews.BaseTextView
                             android:id="@+id/exchange_rate"
@@ -460,14 +461,21 @@
                             android:textColor="?attr/secondary_text_color"
                             app:layout_constraintBottom_toBottomOf="@+id/exchange_rate_label"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/exchange_rate_label"/>
+                            app:layout_constraintTop_toTopOf="@+id/exchange_rate_label" />
+
+
+                        <androidx.constraintlayout.widget.Group
+                            android:id="@+id/groupExchangeRateSection"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:constraint_referenced_ids="exchange_rate_label,exchange_rate" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
                         android:id="@+id/divider6"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
-                        android:background="@color/light_gray"/>
+                        android:background="@color/light_gray" />
 
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -486,7 +494,7 @@
                             android:textColor="@color/settings_chevron_right"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.breadwallet.legacy.presenter.customviews.BaseTextView
                             android:id="@+id/confirmed_in_block_number"
@@ -498,7 +506,7 @@
                             app:layout_constraintBottom_toBottomOf="@+id/confirmed_in_block_label"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/confirmed_in_block_label"
-                            tools:text="549293"/>
+                            tools:text="549293" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -507,7 +515,7 @@
                         android:id="@+id/confirmed_divider"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
-                        android:background="@color/light_gray"/>
+                        android:background="@color/light_gray" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/confirmations_container"
@@ -562,7 +570,7 @@
                             android:textColor="@color/settings_chevron_right"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.breadwallet.legacy.presenter.customviews.BaseTextView
                             android:id="@+id/transaction_id"
@@ -580,14 +588,14 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="1.0"
                             app:layout_constraintStart_toEndOf="@+id/transaction_id_label"
-                            app:layout_constraintTop_toTopOf="@+id/transaction_id_label"/>
+                            app:layout_constraintTop_toTopOf="@+id/transaction_id_label" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
                         android:id="@+id/divider8"
                         android:layout_width="match_parent"
                         android:layout_height="1px"
-                        android:background="@color/light_gray"/>
+                        android:background="@color/light_gray" />
                 </LinearLayout>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
