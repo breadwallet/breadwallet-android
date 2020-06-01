@@ -198,11 +198,12 @@ class PageThreeController(args: Bundle? = null) : BaseController(args) {
         val onBoardingController = (parentController as OnBoardingController)
 
         last_screen_title.isVisible = true
-        button_buy.isVisible = true
+        button_buy.isVisible = false
         button_browse.isVisible = true
         primary_text.isVisible = false
         secondary_text.isVisible = false
         image_view.isVisible = false
+
         button_buy.setOnClickListener {
             onBoardingController.eventConsumer.accept(E.OnBuyClicked)
         }

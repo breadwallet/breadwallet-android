@@ -157,14 +157,10 @@ class BreadApp : Application(), KodeinAware {
         // TODO: Find better place/means for this
         fun getDefaultEnabledWallets() = when {
             BuildConfig.BITCOIN_TESTNET -> listOf(
-                "bitcoin-testnet:__native__",
-                "ethereum-ropsten:__native__",
-                "ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6"
+                "bitcoin-testnet:__native__"
             )
             else -> listOf(
-                "bitcoin-mainnet:__native__",
-                "ethereum-mainnet:__native__",
-                "ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6"
+                "bitcoin-mainnet:__native__"
             )
         }
 

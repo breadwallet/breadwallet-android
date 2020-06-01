@@ -155,7 +155,6 @@ class HomeController(
 
         walletAdapter = ModelAdapter(::WalletListItem)
         addWalletAdapter = ItemAdapter()
-        Log.d("df", walletAdapter!!.itemList.toString())
         fastAdapter = FastAdapter.with(listOf(walletAdapter!!, addWalletAdapter!!))
 
         val dragCallback = SimpleDragCallback(DragEventHandler(fastAdapter!!, eventConsumer))
@@ -177,13 +176,13 @@ class HomeController(
     override fun M.render() {
         ifChanged(M::wallets) {
             //Adding only BTC
-            wallets["btc"]?.let {
-                val list = Collections.unmodifiableList(
-                    ArrayList(Collections.singleton(it))).toImmutableList()
-                    as List<Wallet>
-                walletAdapter?.setNewList(list)
-            }
-            // walletAdapter?.setNewList(wallets.values.toList())
+            // wallets["btc"]?.let {
+            //     val list = Collections.unmodifiableList(
+            //         ArrayList(Collections.singleton(it))).toImmutableList()
+            //         as List<Wallet>
+            //     walletAdapter?.setNewList(list)
+            // }
+            walletAdapter?.setNewList(wallets.values.toList())
             if (addWalletAdapter?.itemList?.size() == 0 && wallets.isNotEmpty()) {
                 addWalletAdapter?.add(AddWalletItem())
             }

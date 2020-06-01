@@ -38,11 +38,9 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
-import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.LatLngBounds.Builder
+import com.google.android.gms.maps.model.LatLng
 import com.platform.PlatformTransactionBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -149,18 +147,14 @@ class MapController(
     }
 
     private fun addAtmMarkers(map:GoogleMap, list:List<AtmMachine>) {
-        val builder = Builder()
         list.forEach { atm ->
             val markerOpt = WacMarker.getMarker(applicationContext!!, atm)
 
             val marker = map.addMarker(markerOpt)
             marker.tag = atm
-            builder.include(markerOpt.position)
-            val bounds: LatLngBounds = builder.build()
-
-            val padding = 0 // offset from edges of the map in pixels
-            val cameraUpdate: CameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
-            map.animateCamera(cameraUpdate)
+            val position = LatLng(31.000000, -100.000000)
+            map.moveCamera(CameraUpdateFactory.newLatLng(position))
+            map.animateCamera(CameraUpdateFactory.zoomTo(5f))
         }
     }
 
