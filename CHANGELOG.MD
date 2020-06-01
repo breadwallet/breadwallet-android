@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - change the wording paper key to recovery phrase
 - update play store images
 - recover the ability to add tokens while the default tokens is only BTC
+- improved navigation flow removing some ui controllers from the back stack.
 
 ## [4.2.8 (4028001)]
 ### Fixed - Kal feedback
