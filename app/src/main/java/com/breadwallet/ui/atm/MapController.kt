@@ -58,7 +58,7 @@ class MapController(
 
     private var map:GoogleMap? = null
     private var atmList: List<AtmMachine> = ArrayList()
-
+    private var TEXAS = LatLng(31.000000, -100.000000)
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
         super.onCreateView(view)
@@ -152,8 +152,7 @@ class MapController(
 
             val marker = map.addMarker(markerOpt)
             marker.tag = atm
-            val position = LatLng(31.000000, -100.000000)
-            map.moveCamera(CameraUpdateFactory.newLatLng(position))
+            map.moveCamera(CameraUpdateFactory.newLatLng(TEXAS))
             map.animateCamera(CameraUpdateFactory.zoomTo(5f))
         }
     }
