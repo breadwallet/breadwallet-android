@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [4.3.0 (4028001)]
+### Fixed - Victor feedback
+- change third page of onboarding to "Buy bitcoin at thousands of ATMs" and let only one button to be continue
+- zoom on the map Texas by default
+- change the wording paper key to recovery phrase
+- update play store images
+- recover the ability to add tokens while the default tokens is only BTC
+
 ## [4.2.8 (4028001)]
 ### Fixed - Kal feedback
 - change onboarding title to Sell your Bitcoin and Receive Cash at an ATM!

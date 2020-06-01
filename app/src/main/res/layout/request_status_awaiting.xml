@@ -11,7 +11,7 @@
     <TextView
         android:drawableEnd="@drawable/ic_send"
         android:drawableStart="@drawable/ic_timer_sand"
-        android:id="@+id/atmTitle"
+        android:id="@+id/awaitingFundsTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

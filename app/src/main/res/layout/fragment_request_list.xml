@@ -29,22 +29,42 @@
                 android:id="@+id/atmTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textColor="@color/black"
                 android:layout_marginBottom="15dp"
-                android:textSize="25dp"
-                android:text="ATM Cash Out Requests" />
+                android:gravity="center"
+                android:text="ATM Cash Out Requests"
+                android:textColor="@color/black"
+                android:textSize="25dp" />
 
-
+    <LinearLayout
+        android:id="@+id/emptyStateGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
             <TextView
-                android:id="@+id/no_requests"
-                android:paddingTop="40dp"
-                android:paddingBottom="40dp"
-                android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="You have no requests"
-                android:textColor="@color/black" />
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center_horizontal"
+                android:paddingTop="40dp"
+                android:paddingBottom="40dp"
+                android:text="You have no requests, start your first ATM cash out sending some BTC."
+                android:textColor="@color/black"
+                android:textSize="17dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/requestAction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/rounded_background"
+                android:padding="10dp"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
+                android:text="Request Now"
+                android:textColor="@color/white" />
+    </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </FrameLayout>

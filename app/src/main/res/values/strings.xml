@@ -191,9 +191,9 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">Total Cost:</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">The words entered do not match your paper key. Please try again.</string>
+    <string name="ConfirmPaperPhrase.error">The words entered do not match your recovery phrase. Please try again.</string>
     <!-- Confirm paper phrase view label. -->
-    <string name="ConfirmPaperPhrase.label">To make sure everything was written down correctly, please enter the following words from your paper key.</string>
+    <string name="ConfirmPaperPhrase.label">To make sure everything was written down correctly, please enter the following words from your recovery phrase.</string>
     <!-- Word label eg. Word #1, Word #2 -->
     <string name="ConfirmPaperPhrase.word">Word #%1$s</string>
     <!-- Agree to legal terms button -->
@@ -434,6 +434,7 @@
     <string name="NodeSelector.title">Bitcoin Nodes</string>
     <!-- Onboarding screen 'I'll browse first' button -->
     <string name="Onboarding.browseFirst">I\'ll browse first</string>
+    <string name="Onboarding.finalAction">Continue</string>
     <!-- Onboarding screen 'Buy some coin' button -->
     <string name="Onboarding.buyCoin">Buy some coin</string>
     <!-- Onboarding screen 'Get started' (create new wallet) button -->
@@ -446,6 +447,7 @@
     <string name="Onboarding.skip">Skip</string>
     <!-- Onboarding screen Page 4 title -->
     <string name="OnboardingPageFour.title">Start investing today with as little as $50!</string>
+    <string name="OnboardingFinalPage.title">Buy bitcoin at thousands of ATMs!</string>
     <!-- Onboarding screen Page 1 title -->
     <string name="OnboardingPageOne.title">Welcome to your ATM enabled virtual currency wallet!</string>
     <!-- Onboarding screen Page 3 subtitle -->
@@ -505,7 +507,7 @@
     <!-- Warning about recovery key (formerly paper key). -->
     <string name="Prompts.PaperKey.body">Your recovery key must be saved in case you lose or change your phone.</string>
     <!-- Warning about paper key (Android-version) -->
-    <string name="Prompts.PaperKey.Body.Android">Set up your paper key in case you ever lose or replace your phone. Your key is also required if you change your phone\'s security settings.</string>
+    <string name="Prompts.PaperKey.Body.Android">Set up your recovery phrase in case you ever lose or replace your phone. Your key is also required if you change your phone\'s security settings.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Action Required</string>
     <!-- Transaction rejected prompt body -->
@@ -577,11 +579,11 @@
     <!-- Reset PIN with paper key: header -->
     <string name="RecoverWallet.header_reset_pin">Reset PIN</string>
     <!-- Enter paper key instruction -->
-    <string name="RecoverWallet.instruction">Enter Paper Key</string>
+    <string name="RecoverWallet.instruction">Enter Recovery Phrase</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Recover your Coinsquare wallet with your paper key.</string>
+    <string name="RecoverWallet.intro">Recover your Coinsquare wallet with your recovery phrase.</string>
     <!-- Invalid paper key message -->
-    <string name="RecoverWallet.invalid">The paper key you entered is invalid. Please double-check each word and try again.</string>
+    <string name="RecoverWallet.invalid">The recovery phrase you entered is invalid. Please double-check each word and try again.</string>
     <!-- Previous button accessibility label -->
     <string name="RecoverWallet.leftArrow">Left Arrow</string>
     <!-- Next button label -->
@@ -591,25 +593,25 @@
     <!-- Next button accessibility label -->
     <string name="RecoverWallet.rightArrow">Right Arrow</string>
     <!-- Recover wallet sub-header -->
-    <string name="RecoverWallet.subheader">Enter the paper key for the wallet you want to recover.</string>
+    <string name="RecoverWallet.subheader">Enter the recovery phrase for the wallet you want to recover.</string>
     <!-- Reset PIN with paper key: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">To reset your PIN, enter the words from your paper key into the boxes below.</string>
+    <string name="RecoverWallet.subheader_reset_pin">To reset your PIN, enter the words from your recovery phrase into the boxes below.</string>
     <!-- Instructs the user to enter words from the set of recovery key words. -->
     <string name="RecoveryKeyFlow.confirmRecoveryInputError">The word you entered is incorrect. Please try again.</string>
     <!-- Instructs the user to enter words from the set of recovery key words. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Almost done! Enter the following words from your recovery key.</string>
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Almost done! Enter the following words from your recovery phrase.</string>
     <!-- Title for the confirmation step of the recovery key flow. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Confirm Recovery Key</string>
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Confirm Recovery Phrase</string>
     <!-- Title displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKey">Enter Recovery Key</string>
+    <string name="RecoveryKeyFlow.enterRecoveryKey">Enter Recovery Phrase</string>
     <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Please enter your recovery key to unlink this wallet from your device.</string>
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Please enter your recovery phrase to unlink this wallet from your device.</string>
     <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
-    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Are you sure you want to set up your recovery key later?</string>
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Are you sure you want to set up your recovery phrase later?</string>
     <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
     <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">Set Up Later</string>
     <!-- Button text for the 'Generate Recovery Key' button -->
-    <string name="RecoveryKeyFlow.generateKeyButton">Generate Recovery Key</string>
+    <string name="RecoveryKeyFlow.generateKeyButton">Generate Recovery Phrase</string>
     <!-- Subtext for the recovery key landing page. -->
     <string name="RecoveryKeyFlow.generateKeyExplanation">This key is required to recover your money if you upgrade or lose your phone.</string>
     <!-- Default title for the recovery key landing page -->
@@ -631,19 +633,19 @@
     <!-- Title displayed when the user starts the process of recovering a wallet -->
     <string name="RecoveryKeyFlow.recoveryYourWallet">Recover Your Wallet</string>
     <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
-    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Please enter the recovery key of the wallet you want to recover.</string>
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Please enter the recovery phrase of the wallet you want to recover.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.relaxBuyTrade">Relax, buy, and trade</string>
     <!-- Reminds the user to write down the recovery key words. -->
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">Remember to write these words down. Swipe back if you forgot.</string>
     <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
-    <string name="RecoveryKeyFlow.resetPINInstruction">Please enter your recovery key to reset your PIN.</string>
+    <string name="RecoveryKeyFlow.resetPINInstruction">Please enter your recovery phrase to reset your PIN.</string>
     <!-- Assures the user that Coinsquare will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">Buy and trade knowing that your funds are protected by the best security and privacy in the business.</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
-    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Store your key in a secure location. This is the only way to recover your wallet. Coinsquare does not keep a copy.</string>
+    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Store your recovery phrase in a secure location. This is the only way to recover your wallet. Coinsquare does not keep a copy.</string>
     <!-- Title for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successHeading">Congratulations! You completed your recovery key setup.</string>
+    <string name="RecoveryKeyFlow.successHeading">Congratulations! You completed your recovery phrase setup.</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successSubheading">You\'re all set to deposit, trade, and buy crypto from your Coinsquare wallet.</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
@@ -663,7 +665,7 @@
     <!-- Subtitle for the write recovery key screen -->
     <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Write down the following words in order.</string>
     <!-- Title for the write recovery key screen -->
-    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Your Recovery Key</string>
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Your Recovery Phrase</string>
     <!-- Title for the step number when the user pages through the recovery words -->
     <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@ of %2$@</string>
     <!-- No amount entered error message. -->
@@ -716,9 +718,9 @@
     <string name="SecurityCenter.paperKeyDescription">The only way to access your assets if you lose or upgrade your phone.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
  * to not break existing client code. -->
-    <string name="SecurityCenter.paperKeyTitle">Recovery Key</string>
+    <string name="SecurityCenter.paperKeyTitle">Recovery Phrase</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle.android">Paper Key</string>
+    <string name="SecurityCenter.paperKeyTitle.android">Recovery Phrase</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Protects your Coinsquare from unauthorized users.</string>
     <!-- PIN button title -->

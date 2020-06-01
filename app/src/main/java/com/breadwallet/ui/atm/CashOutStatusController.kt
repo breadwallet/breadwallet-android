@@ -1,11 +1,14 @@
 package com.breadwallet.ui.atm
 
 import android.annotation.SuppressLint
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import cash.just.wac.WacSDK
@@ -15,9 +18,11 @@ import cash.just.wac.model.CodeStatus
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.tools.qrcode.QRUtils
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
+import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.util.CryptoUriParser
 import com.platform.PlatformTransactionBus
 import kotlinx.android.synthetic.main.controller_receive.qr_image
@@ -47,10 +52,12 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
     companion object {
         private const val cashStatus = "CashOutStatusController.Status"
         private const val secureCode = "CashOutStatusController.SecureCode"
+        private const val clipboardLabel = "coinsquare_wallet"
     }
 
     override val layoutId = R.layout.fragment_request_cash_out_status
     private val cryptoUriParser by instance<CryptoUriParser>()
+    private lateinit var clipboard: android.content.ClipboardManager
 
     enum class ViewState {
         LOADING,
@@ -63,16 +70,19 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
         super.onCreateView(view)
         changeUiState(ViewState.LOADING)
 
+        clipboard = view.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+
         handlePlatformMessages().launchIn(viewCreatedScope)
 
+        val context = view.context
         val status:CashStatus? = argOptional(cashStatus)
         val code:String? = argOptional(secureCode)
 
         status?.let {
             if (CodeStatus.resolve(it.status) == CodeStatus.NEW_CODE) {
-                populateAwaitingView(it.address, it.description, it.usdAmount, it.btc_amount)
+                populateAwaitingView(context, it.address, it.description, it.usdAmount, it.btc_amount)
             } else if (CodeStatus.resolve(it.status) == CodeStatus.FUNDED) {
-                populateFundedView(view.context, it.code!!, it.usdAmount, it.description)
+                populateFundedView(context, it.code!!, it.usdAmount, it.description)
             }
         } ?: run {
             val safeCode = code ?: throw IllegalArgumentException("Missing arguments $cashStatus and $secureCode")
@@ -85,10 +95,10 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
                             val cashStatus = it.data!!.items[0]
 
                             if (CodeStatus.resolve(cashStatus.status) == CodeStatus.NEW_CODE) {
-                                populateAwaitingView(cashStatus.address, cashStatus.description,
+                                populateAwaitingView(context, cashStatus.address, cashStatus.description,
                                     cashStatus.usdAmount, cashStatus.btc_amount)
                             } else if (CodeStatus.resolve(cashStatus.status) == CodeStatus.FUNDED) {
-                                populateFundedView(view.context, cashStatus.code!!,
+                                populateFundedView(context, cashStatus.code!!,
                                     cashStatus.usdAmount, cashStatus.description)
                             }
                         }
@@ -96,7 +106,8 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
                 }
 
                 override fun onFailure(call: Call<CashCodeStatusResponse>, t: Throwable) {
-                    Toast.makeText(applicationContext, "Failed to load $safeCode status", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context.applicationContext, 
+                        "Failed to load $safeCode status", Toast.LENGTH_SHORT).show()
                 }
             })
         }
@@ -128,14 +139,44 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
         }
     }
 
-    private fun populateAwaitingView(address:String, details:String, usdAmount:String, btcAmount:String) {
+    private fun populateAwaitingView(context:Context, address:String,
+        details:String, usdAmount:String, btcAmount:String) {
+
         changeUiState(ViewState.AWAITING)
+
+        awaitingFundsTitle.setOnTouchListener(OnTouchListener { _, event ->
+            val drawableRight = 2
+            if (event.action == MotionEvent.ACTION_UP) {
+                if (event.rawX >= awaitingFundsTitle.right
+                    - awaitingFundsTitle.compoundDrawables[drawableRight].bounds.width()) {
+                    goToSend(address, btcAmount)
+                    return@OnTouchListener true
+                }
+            }
+            false
+        })
+
         awaitingAddress.text = address
         awaitingAddress.isSelected = true
-
+        awaitingAddress.setOnClickListener {
+            copyToClipboard(context, address)
+        }
         awaitingBTCAmount.text = "Amount: $btcAmount BTC"
+        awaitingBTCAmount.setOnClickListener {
+            copyToClipboard(context, btcAmount)
+        }
+
         awaitingLocationAddress.text = "Location: $details"
+
+        awaitingLocationAddress.setOnClickListener {
+            openMaps(context, details)
+        }
+
         awaitingUSDAmount.text = "Amount (USD): $$usdAmount"
+
+        qr_image.setOnClickListener {
+            copyToClipboard(context, address)
+        }
 
         val request = CryptoRequest.Builder()
             .setAddress(address)
@@ -149,16 +190,42 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
         }
     }
 
+    private fun goToSend(btc:String, address:String) {
+        val builder = CryptoRequest.Builder()
+        builder.address = address
+        builder.amount = btc.toFloat().toBigDecimal()
+        builder.currencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE
+        val request = builder.build()
+        router.pushController(RouterTransaction.with(
+            SendSheetController(
+            request //make it default
+        )
+        ))
+    }
+
     private fun populateFundedView(context: Context, code:String, usdAmount:String, address:String){
         changeUiState(ViewState.FUNDED)
 
         cashCode.text = code
+        cashCode.setOnClickListener {
+            copyToClipboard(context, code)
+        }
         amountFunded.text = "Amount (USD):  \$$usdAmount"
         locationFunded.text = "Location: $address"
         locationFunded.setOnClickListener {
-            val geoUri = "http://maps.google.com/maps?q=loc:$address"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(geoUri))
-            context.startActivity(intent)
+            openMaps(context, address)
         }
+    }
+
+    private fun copyToClipboard(context:Context, data: String){
+        val clip = ClipData.newPlainText(clipboardLabel, data)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(context, "Copied to the clipboard!", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun openMaps(context:Context, address:String) {
+        val geoUri = "http://maps.google.com/maps?q=loc:$address"
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(geoUri))
+        context.startActivity(intent)
     }
 }

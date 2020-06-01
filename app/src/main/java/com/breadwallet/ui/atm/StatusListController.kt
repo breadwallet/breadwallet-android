@@ -13,6 +13,7 @@ import cash.just.wac.model.CashCodeStatusResponse
 import cash.just.wac.model.CashStatus
 import cash.just.wac.model.CodeStatus
 import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.formatTo
@@ -41,7 +42,8 @@ class StatusListController(args: Bundle) : BaseController(args) {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        no_requests.visibility = View.GONE
+        prepareEmptyView()
+
         size = 0
         val context = view.context
         if (!WacSDK.isSessionCreated()) {
@@ -61,6 +63,17 @@ class StatusListController(args: Bundle) : BaseController(args) {
         handlePlatformMessages().launchIn(viewCreatedScope)
     }
 
+    private fun prepareEmptyView() {
+        emptyStateGroup.visibility = View.GONE
+        requestAction.setOnClickListener {
+            router.pushController(
+                RouterTransaction.with(MapController(Bundle.EMPTY))
+                    .pushChangeHandler(HorizontalChangeHandler())
+                    .popChangeHandler(HorizontalChangeHandler())
+            )
+        }
+    }
+
     private fun proceed(context: Context) {
         statusList = ArrayList()
         val requests = AtmSharedPreferencesManager.getWithdrawalRequests(context)
@@ -72,7 +85,7 @@ class StatusListController(args: Bundle) : BaseController(args) {
         }
 
         if (requests == null || requests.isEmpty()) {
-            no_requests.visibility = View.VISIBLE
+            emptyStateGroup.visibility = View.VISIBLE
         }
     }
 
