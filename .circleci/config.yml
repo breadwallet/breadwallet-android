@@ -159,7 +159,7 @@ jobs:
           paths:
             - ~/.gradle
 
-          - v2-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}
+          key: - v2-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}
 
 
 
