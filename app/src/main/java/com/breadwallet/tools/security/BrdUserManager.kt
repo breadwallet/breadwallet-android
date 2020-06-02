@@ -28,6 +28,8 @@ import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
+import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.UserNotAuthenticatedException
 import android.text.format.DateUtils
 import androidx.core.content.edit
@@ -37,7 +39,9 @@ import com.breadwallet.app.ApplicationLifecycleObserver
 import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
+import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
+import com.breadwallet.logger.logWarning
 import com.breadwallet.tools.crypto.CryptoHelper.hexDecode
 import com.breadwallet.tools.crypto.CryptoHelper.hexEncode
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -63,16 +67,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.security.GeneralSecurityException
+import java.security.KeyStore
+import java.security.UnrecoverableKeyException
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicReference
+import javax.crypto.Cipher
 import kotlin.math.pow
 
 const val PIN_LENGTH = 6
 const val LEGACY_PIN_LENGTH = 4
 private const val MAX_UNLOCK_ATTEMPTS = 3
 private const val JWT_EXP_PADDING_MS = 10_000L
+private const val ANDROID_KEY_STORE = "AndroidKeyStore"
+private const val NEW_CIPHER_ALGORITHM = "AES/GCM/NoPadding"
 
 /** Manages creation, recovery, and access to an [Account]. */
 @Suppress("TooManyFunctions")
@@ -129,6 +139,8 @@ private const val KEY_FAIL_COUNT = "failCount"
 private const val KEY_FAIL_TIMESTAMP = "failTimestamp"
 private const val KEY_ETH_PUB_KEY = "ethPublicKey"
 
+private const val MANUFACTURER_GOOGLE = "Google"
+
 @Suppress("TooManyFunctions")
 class CryptoUserManager(
     private val createStore: () -> SharedPreferences?,
@@ -146,8 +158,7 @@ class CryptoUserManager(
     private val resultChannel = Channel<Int>()
     private val stateChangeChannel = BroadcastChannel<Unit>(CONFLATED)
 
-    private val invalidated = AtomicBoolean()
-    private val keyStoreStatus = AtomicReference<KeyStoreStatus>()
+    private val accountInvalidated = AtomicBoolean()
     private val locked = AtomicBoolean(false)
     private val disabledSeconds = AtomicInteger(0)
     private var token: String? = null
@@ -155,29 +166,15 @@ class CryptoUserManager(
     private var jwtExp: Long? = null
 
     init {
-        val newStore = createStore()
-        val currentStatus = BRKeyStore.getValidityStatus()
-        keyStoreStatus.set(currentStatus)
-
-        if (newStore != null && currentStatus == KeyStoreStatus.VALID) {
-            store = newStore
+        store = createStore()
+        if (store != null && isPhraseKeyValid()) {
             startDisabledTimer(getFailTimestamp())
         }
         stateChangeChannel.offer(Unit)
 
         ApplicationLifecycleObserver.addApplicationLifecycleListener { event ->
             if (event == Lifecycle.Event.ON_START) {
-                val newStatus = BRKeyStore.getValidityStatus()
-                if (keyStoreStatus.get() != newStatus) {
-                    if (BRKeyStore.getValidityStatus() == KeyStoreStatus.VALID) {
-                        val nextStore = createStore()
-                        if (nextStore != null) {
-                            store = nextStore
-                        }
-                    } else {
-                        store = null
-                    }
-                    keyStoreStatus.set(newStatus)
+                if (getState() is BrdUserState.KeyStoreInvalid) {
                     stateChangeChannel.offer(Unit)
                 }
             }
@@ -233,8 +230,6 @@ class CryptoUserManager(
 
         // Migrate other fields
         BRKeyStore.getToken(context)?.let { putToken(String(it)) }
-        BRKeyStore.getBdbJwt(context)
-            ?.let { putBdbJwt(String(it), BRKeyStore.getBdbJwtExp(context)) }
         BRKeyStore.getEthPublicKey(context)?.let { putEthPublicKey(it) }
         putPinCode(BRKeyStore.getPinCode(context))
         putFailCount(BRKeyStore.getFailCount(context))
@@ -256,7 +251,7 @@ class CryptoUserManager(
         if (!invalidated) return
         val phrase = getPhrase()
         if (phrase == null) {
-            this.invalidated.set(true)
+            accountInvalidated.set(true)
             stateChangeChannel.offer(Unit)
             return
         }
@@ -270,7 +265,7 @@ class CryptoUserManager(
         ).orNull()
 
         if (account == null) {
-            this.invalidated.set(true)
+            accountInvalidated.set(true)
             stateChangeChannel.offer(Unit)
         } else {
             logInfo("Account re-created.")
@@ -286,36 +281,23 @@ class CryptoUserManager(
         !isInitialized() &&
             (BRKeyStore.getMasterPublicKey(context) != null || BRKeyStore.hasAccountBytes(context))
 
-    override fun getState(): BrdUserState {
-        if (invalidated.get()) {
-            return BrdUserState.KeyStoreInvalid.Uninstall
+    override fun getState(): BrdUserState = when {
+        // Cannot create/use phrase key, device lock must be enabled
+        !keyguard.isKeyguardSecure -> BrdUserState.KeyStoreInvalid.Lock
+        // Account invalidated and phrase not provided or phrase Key invalidated, recovery required
+        accountInvalidated.get() || !isPhraseKeyValid() -> if (requiresUninstall()) {
+            BrdUserState.KeyStoreInvalid.Uninstall
+        } else {
+            BrdUserState.KeyStoreInvalid.Wipe
         }
-        if (!keyguard.isKeyguardSecure) {
-            return BrdUserState.KeyStoreInvalid.Lock
-        }
-        when (keyStoreStatus.get()) {
-            KeyStoreStatus.VALID -> Unit // Ignore
-            KeyStoreStatus.INVALID_UNINSTALL ->
-                return BrdUserState.KeyStoreInvalid.Uninstall
-            KeyStoreStatus.INVALID_WIPE ->
-                return BrdUserState.KeyStoreInvalid.Wipe
-            else -> if (store == null) {
-                return if (BRKeyStore.requiresUninstall()) {
-                    BrdUserState.KeyStoreInvalid.Uninstall
-                } else {
-                    BrdUserState.KeyStoreInvalid.Wipe
-                }
-            }
-        }
-
-        if (getAccount() == null) return BrdUserState.Uninitialized
-        return when {
-            disabledSeconds.get() > 0 -> {
-                BrdUserState.Disabled(disabledSeconds.get())
-            }
-            locked.get() -> BrdUserState.Locked
-            else -> BrdUserState.Enabled
-        }
+        // User must create/restore a wallet
+        getAccount() == null -> BrdUserState.Uninitialized
+        // Too many failed unauthorized access attempts, user must wait
+        disabledSeconds.get() > 0 -> BrdUserState.Disabled(disabledSeconds.get())
+        // State is valid, request authentication
+        locked.get() -> BrdUserState.Locked
+        // State is valid
+        else -> BrdUserState.Enabled
     }
 
     override fun stateChanges(disabledUpdates: Boolean): Flow<BrdUserState> =
@@ -338,7 +320,7 @@ class CryptoUserManager(
         executeWithAuth { BRKeyStore.getPhrase(it, GET_PHRASE_RC) }
 
     override fun getAccount(): Account? =
-        checkNotNull(store).getBytes(KEY_ACCOUNT, null)?.run {
+        store?.getBytes(KEY_ACCOUNT, null)?.run {
             Account.createFromSerialization(
                 this,
                 BRSharedPrefs.getDeviceId()
@@ -651,6 +633,47 @@ class CryptoUserManager(
     private suspend fun getActivity(): Activity {
         while (context !is Activity) delay(1_000)
         return context as Activity
+    }
+
+    private fun isPhraseKeyValid(): Boolean = try {
+        // Attempt to retrieve the key that protects the paper key and initialize an encryption cipher.
+        val key = KeyStore.getInstance(ANDROID_KEY_STORE)
+            .apply { load(null) }
+            .getKey(BRKeyStore.PHRASE_ALIAS, null)
+
+        // If there is no key, then it has not been initialized yet. The key store is still considered valid.
+        if (key != null) {
+            val cipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM)
+            cipher.init(Cipher.ENCRYPT_MODE, key)
+        }
+        true
+    } catch (e: KeyPermanentlyInvalidatedException) {
+        // If KeyPermanentlyInvalidatedException
+        //  -> with no cause happens, then the password was disabled. See DROID-1019.
+        // If UnrecoverableKeyException
+        //  -> with cause "Key blob corrupted" happens then the password was disabled & re-enabled. See DROID-1207.
+        //  -> with cause "Key blob corrupted" happens then after DROID-1019 the app was opened again while password is on.
+        //  -> with cause "Key not found" happens then after DROID-1019 the app was opened again while password is off.
+        //  -> with cause "System error" (KeyStoreException) after app wipe on devices that need uninstall to recover.
+        // Note: These exceptions would happen before a UserNotAuthenticatedException, so we don't need to handle that.
+        logError("Phrase key permanently invalidated", e)
+        false
+    } catch (e: UnrecoverableKeyException) {
+        logError("Phrase key is unrecoverable", e)
+        false
+    } catch (e: GeneralSecurityException) {
+        logWarning("Phrase key may still be valid.", e)
+        true
+    } catch (e: IOException) {
+        logWarning("Phrase key may still be valid.", e)
+        true
+    }
+
+    private fun requiresUninstall(): Boolean {
+        val isGoogleDevice = MANUFACTURER_GOOGLE == Build.MANUFACTURER
+        val isOmr1 = Build.VERSION.SDK_INT == Build.VERSION_CODES.O_MR1
+        val isOorAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        return isGoogleDevice && isOmr1 || !isGoogleDevice && isOorAbove
     }
 }
 

@@ -102,9 +102,7 @@ import org.kodein.di.erased.bind
 import org.kodein.di.erased.instance
 import org.kodein.di.erased.singleton
 import java.io.File
-import java.io.IOException
 import java.io.UnsupportedEncodingException
-import java.security.GeneralSecurityException
 import java.util.Locale
 import java.util.regex.Pattern
 
@@ -516,17 +514,13 @@ class BreadApp : Application(), KodeinAware {
     }
 
     private fun createEncryptedPrefs(): SharedPreferences? {
-        val masterKeys = try {
+        val masterKeys = runCatching {
             MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-        } catch (e: GeneralSecurityException) {
+        }.onFailure { e ->
             BRReportsManager.error("Failed to create Master Keys", e)
-            return null
-        } catch (e: IOException) {
-            BRReportsManager.error("Failed to create Master Keys", e)
-            return null
-        }
+        }.getOrNull() ?: return null
 
-        return try {
+        return runCatching {
             EncryptedSharedPreferences.create(
                 ENCRYPTED_PREFS_FILE,
                 masterKeys,
@@ -534,12 +528,8 @@ class BreadApp : Application(), KodeinAware {
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
-        } catch (e: GeneralSecurityException) {
+        }.onFailure { e ->
             BRReportsManager.error("Failed to create Encrypted Shared Preferences", e)
-            null
-        } catch (e: IOException) {
-            BRReportsManager.error("Failed to create Encrypted Shared Preferences", e)
-            null
-        }
+        }.getOrNull()
     }
 }

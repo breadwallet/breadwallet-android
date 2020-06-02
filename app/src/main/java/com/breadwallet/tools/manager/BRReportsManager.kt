@@ -48,32 +48,32 @@ object BRReportsManager : Logger {
     }
 
     override fun debug(message: String, vararg data: Any?) {
-        logDebug(message, data)
+        logDebug(message, *data)
         log("D: $message", data)
     }
 
     override fun info(message: String, vararg data: Any?) {
-        logInfo(message, data)
+        logInfo(message, *data)
         log("I: $message", data)
     }
 
     override fun verbose(message: String, vararg data: Any?) {
-        logVerbose(message, data)
+        logVerbose(message, *data)
         log("V: $message", data)
     }
 
     override fun warning(message: String, vararg data: Any?) {
-        logWarning(message, data)
+        logWarning(message, *data)
         log("W: $message", data)
     }
 
     override fun wtf(message: String, vararg data: Any?) {
-        logWtf(message, data)
+        logWtf(message, *data)
         log("WTF: $message", data)
     }
 
     override fun error(message: String, vararg data: Any?) {
-        logError(message, data)
+        logError(message, *data)
         log("E: $message", data)
     }
 
