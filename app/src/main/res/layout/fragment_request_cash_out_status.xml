@@ -20,10 +20,10 @@
 
         <ProgressBar
             android:id="@+id/loadingView"
-            android:padding="20dp"
+            android:padding="110dp"
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
-            android:layout_height="100dp"/>
+            android:layout_height="300dp"/>
 
         <include android:id="@+id/fundedCard" layout="@layout/request_status_funded"/>
 

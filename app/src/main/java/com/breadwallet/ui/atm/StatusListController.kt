@@ -34,17 +34,22 @@ class StatusListController(args: Bundle) : BaseController(args) {
     override val layoutId = R.layout.fragment_request_list
     var statusList = ArrayList<CashStatus>()
     var size = 0
+
     companion object {
         const val SEVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         const val DISPLAY_TIME_FORMAT = "dd MMM, hh:mm"
         const val HTTP_OK = 200
     }
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         prepareEmptyView()
 
         size = 0
+        loadingView.visibility = View.VISIBLE
+        text_no_request.visibility = View.GONE
+
         val context = view.context
         if (!WacSDK.isSessionCreated()) {
             WacSDK.createSession(BitcoinServer.getServer(), object: Wac.SessionCallback {
@@ -75,6 +80,23 @@ class StatusListController(args: Bundle) : BaseController(args) {
     }
 
     private fun proceed(context: Context) {
+        refreshListAction.visibility = View.VISIBLE
+
+        refreshListAction.setOnClickListener {
+            loadingView.visibility = View.VISIBLE
+            requestGroup.removeAllViews()
+            refreshListAction.postDelayed(Runnable {
+                if (refreshListAction != null) {
+                    refresh(context)
+                }
+            }, 400)
+        }
+
+        refresh(context)
+    }
+
+    private fun refresh(context:Context) {
+        loadingView.visibility = View.VISIBLE
         statusList = ArrayList()
         val requests = AtmSharedPreferencesManager.getWithdrawalRequests(context)
         requests?.let {
@@ -86,17 +108,25 @@ class StatusListController(args: Bundle) : BaseController(args) {
 
         if (requests == null || requests.isEmpty()) {
             emptyStateGroup.visibility = View.VISIBLE
+            refreshListAction.visibility = View.GONE
+            text_no_request.visibility = View.VISIBLE
+            loadingView.visibility = View.GONE
         }
     }
 
     private fun loadRequest(context: Context, secureCode:String) {
         WacSDK.checkCashCodeStatus(secureCode).enqueue(object: Callback<CashCodeStatusResponse> {
             override fun onResponse(call: Call<CashCodeStatusResponse>, response: Response<CashCodeStatusResponse>) {
-                if (response.isSuccessful && response.code() == HTTP_OK) {
-                    statusList.add(response.body()?.data!!.items[0])
-                }
-                if (statusList.size == size) {
-                    createStatusRows(context)
+                if (loadingView != null) {
+                    loadingView.visibility = View.GONE
+
+                    if (response.isSuccessful && response.code() == HTTP_OK) {
+                        statusList.add(response.body()?.data!!.items[0])
+                    }
+
+                    if (statusList.size == size) {
+                        createStatusRows(secureCode, context)
+                    }
                 }
             }
 
@@ -106,20 +136,21 @@ class StatusListController(args: Bundle) : BaseController(args) {
         })
     }
 
-    private fun createStatusRows(context:Context){
+    private fun createStatusRows(secureCode: String, context:Context){
         statusList.sortBy {
             it.expiration
         }
+
         statusList.forEach { status ->
             if (requestGroup != null) {
                 val view = View.inflate(context, R.layout.item_list_cash_out_request, null)
-                populateCashCodeStatus(view, status)
+                populateCashCodeStatus(view, secureCode, status)
                 requestGroup.addView(view)
             }
         }
     }
 
-    private fun populateCashCodeStatus(view:View, response: CashStatus) {
+    private fun populateCashCodeStatus(view:View, secureCode:String, response: CashStatus) {
         view.findViewById<TextView>(R.id.date).text =
             response.expiration.toDate(SEVER_TIME_FORMAT).formatTo(DISPLAY_TIME_FORMAT)
         view.findViewById<TextView>(R.id.addressLocation).text = response.description
@@ -129,7 +160,8 @@ class StatusListController(args: Bundle) : BaseController(args) {
             CodeStatus.NEW_CODE -> {
                 stateView.text = "Awaiting funds"
                 stateView.setOnClickListener {
-                    router.pushController(RouterTransaction.with(CashOutStatusController(response)))
+                    val retryableCashStatus = RetryableCashStatus(secureCode, response)
+                    router.pushController(RouterTransaction.with(CashOutStatusController(retryableCashStatus)))
                 }
                 val drawable = ContextCompat.getDrawable(view.context, R.drawable.ic_eye)
                 stateView.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
