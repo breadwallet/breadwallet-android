@@ -176,7 +176,7 @@ class RequestCashCodeController(
                         code.helperText = "Check your email for the confirmation code we sent you. It may take a couple of minutes."
                     } else {
                         confirmationMessage.text = "We've sent a confirmation code to your phone by SMS."
-                        code.helperText = "Check your SMS inbox for the confirmation code we sent you. It may take a couple of minutes.
+                        code.helperText = "Check your SMS inbox for the confirmation code we sent you. It may take a couple of minutes."
                     }
                     verificationGroup.visibility = View.GONE
                     confirmGroup.visibility = View.VISIBLE
