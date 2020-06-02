@@ -1,4 +1,4 @@
-package com.breadwallet.ui.atm
+package com.breadwallet.ui.atm.model
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -17,12 +17,20 @@ class WacMarker {
     companion object {
         fun getMarker(context:Context, atm : AtmMachine): MarkerOptions {
             val marker = LatLng(atm.latitude.toDouble(), atm.longitude.toDouble())
-            val bitmapDesc = bitmapDescriptorFromVector(context, R.drawable.ic_icon_cs_square_padding)
+            val bitmapDesc =
+                bitmapDescriptorFromVector(
+                    context,
+                    R.drawable.ic_icon_cs_square_padding
+                )
 
             return MarkerOptions()
                 .position(marker)
                 .title("ATM")
-                .snippet(getDetails(atm))
+                .snippet(
+                    getDetails(
+                        atm
+                    )
+                )
                 .icon(bitmapDesc)
         }
 

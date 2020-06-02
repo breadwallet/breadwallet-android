@@ -37,11 +37,14 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
+import com.breadwallet.ui.atm.model.WacMarker
+import com.breadwallet.ui.atm.model.getAtmMachineMock
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.platform.PlatformTransactionBus
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -87,11 +90,11 @@ class MapController(
 
         handlePlatformMessages().launchIn(viewCreatedScope)
 
-        // searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-        //     if (hasFocus) {
-        //        showDialog()
-        //     }
-        // }
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                moveToVerification(getAtmMachineMock())
+            }
+        }
     }
 
     // private fun showDialog() {

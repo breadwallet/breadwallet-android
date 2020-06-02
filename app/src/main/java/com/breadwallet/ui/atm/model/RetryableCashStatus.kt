@@ -1,4 +1,4 @@
-package com.breadwallet.ui.atm
+package com.breadwallet.ui.atm.model
 
 import cash.just.wac.model.CashStatus
 import java.io.Serializable

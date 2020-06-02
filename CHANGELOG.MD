@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - retry action in awaitingFundsStatus and in the statusListController.
 - added a loading state to the awaitingFundsStatus
 - added a loading state to the status ListController
+- better experience for lastName form field and enter code.
 
 ## [4.2.8 (4028001)]
 ### Fixed - Kal feedback

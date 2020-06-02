@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import cash.just.wac.WacSDK
 import cash.just.wac.model.CashCodeStatusResponse
-import cash.just.wac.model.CashStatus
 import cash.just.wac.model.CodeStatus
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
@@ -19,6 +18,7 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.tools.qrcode.QRUtils
 import com.breadwallet.ui.BaseController
+import com.breadwallet.ui.atm.model.RetryableCashStatus
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.util.CryptoUriParser
@@ -26,7 +26,6 @@ import com.platform.PlatformTransactionBus
 import kotlinx.android.synthetic.main.controller_receive.qr_image
 import kotlinx.android.synthetic.main.fragment_request_cash_out_status.*
 import kotlinx.android.synthetic.main.fragment_request_cash_out_status.loadingView
-import kotlinx.android.synthetic.main.fragment_request_list.*
 import kotlinx.android.synthetic.main.request_status_awaiting.*
 import kotlinx.android.synthetic.main.request_status_funded.*
 import kotlinx.coroutines.Dispatchers
@@ -78,7 +77,7 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
 
         handlePlatformMessages().launchIn(viewCreatedScope)
 
-        val retryableCashStatus:RetryableCashStatus? = argOptional(cashStatus)
+        val retryableCashStatus: RetryableCashStatus? = argOptional(cashStatus)
         val code:String? = argOptional(secureCode)
 
         retryableCashStatus?.let {

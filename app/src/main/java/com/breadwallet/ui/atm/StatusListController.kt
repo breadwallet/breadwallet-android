@@ -16,6 +16,7 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
+import com.breadwallet.ui.atm.model.RetryableCashStatus
 import com.breadwallet.ui.formatTo
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.breadwallet.ui.toDate
@@ -160,7 +161,11 @@ class StatusListController(args: Bundle) : BaseController(args) {
             CodeStatus.NEW_CODE -> {
                 stateView.text = "Awaiting funds"
                 stateView.setOnClickListener {
-                    val retryableCashStatus = RetryableCashStatus(secureCode, response)
+                    val retryableCashStatus =
+                        RetryableCashStatus(
+                            secureCode,
+                            response
+                        )
                     router.pushController(RouterTransaction.with(CashOutStatusController(retryableCashStatus)))
                 }
                 val drawable = ContextCompat.getDrawable(view.context, R.drawable.ic_eye)
