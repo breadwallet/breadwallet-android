@@ -14,10 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 - improved navigation flow removing some ui controllers from the back stack.
-- retry action in awaitingFundsStatus and in the statusListController.
+- retry action in awaitingFundsStatus and in the statusListController
 - added a loading state to the awaitingFundsStatus
 - added a loading state to the status ListController
-- better experience for lastName form field and enter code.
+- better experience for lastName form field and enter code
+## Changed
+- Added code instead of token
+- Provided a different helper text for code when is sms
 
 ## [4.2.8 (4028001)]
 ### Fixed - Kal feedback
