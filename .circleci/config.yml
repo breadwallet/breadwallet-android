@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       - image: circleci/android:api-29-ndk
-
+    resource_class: medium+
     working_directory: ~/repo
 
     environment:
@@ -29,7 +29,7 @@ jobs:
       # Download and cache dependencies gradle
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+            - v3-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}
 
 
       #Check init
@@ -77,8 +77,7 @@ jobs:
           paths:
             - ~/.gradle
 
-          key: v2-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
-
+          key: v3-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}
 
 
       # save tests!
@@ -98,7 +97,7 @@ jobs:
   release:
     docker:
       - image: circleci/android:api-29-ndk
-
+    resource_class: medium+
     working_directory: ~/repo
 
     environment:
@@ -120,7 +119,7 @@ jobs:
       # Download and cache dependencies gradle
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+            - v3-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}
 
 
       #Check init
@@ -160,7 +159,7 @@ jobs:
           paths:
             - ~/.gradle
 
-          key: v2-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: v3-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}-{{ checksum "wacapp/build.gradle" }}
 
 
 
