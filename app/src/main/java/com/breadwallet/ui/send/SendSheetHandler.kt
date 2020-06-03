@@ -264,7 +264,6 @@ object SendSheetHandler {
             PayIdResult.NoAddress -> E.OnAddressValidated.PayId.NoAddress
             PayIdResult.InvalidPayId -> E.OnAddressValidated.PayId.InvalidPayId
             PayIdResult.ExternalError -> E.OnAddressValidated.PayId.RetrievalError
-            PayIdResult.CurrencyNotSupported -> E.OnAddressValidated.PayId.CurrencyNotSupported
             is Success -> when (val validateResult =
                 validateTargetString(breadBox, effect.currencyCode, result.address)) {
                 is E.OnAddressValidated.Address.ValidAddress -> E.OnAddressValidated.PayId.ValidAddress(
