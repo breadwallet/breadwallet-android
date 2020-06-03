@@ -35,6 +35,16 @@ import java.io.IOException
 private const val MAX_PAY_ID_RETRIES = 2
 private const val PAY_ID_DELIMITER = "$"
 
+private const val PAY_ID_VERSION = "1.0"
+private const val PAY_ID_ACCEPT_TYPE = "application/payId+json"
+
+private const val PAY_ID_HEADER_VERSION = "PayID-Version"
+private const val PAY_ID_FIELD_ADDRESSES = "addresses"
+private const val PAY_ID_FIELD_ENVIRONMENT = "environment"
+private const val PAY_ID_FIELD_CURRENCY = "paymentNetwork"
+private const val PAY_ID_FIELD_ADDRESS_DETAILS = "addressDetails"
+private const val PAY_ID_FIELD_ADDRESS = "address"
+
 fun String?.isPayId() =
     this?.let {
         val parts = split(PAY_ID_DELIMITER)
@@ -44,13 +54,12 @@ fun String?.isPayId() =
 class PayIdService(private val httpClient: OkHttpClient) {
 
     suspend fun getAddress(payId: String, currencyCode: CurrencyCode): PayIdResult {
-        val currencyId = currencyCode.toPayIdCurrency() ?: return PayIdResult.CurrencyNotSupported
         if (!payId.isPayId()) return PayIdResult.InvalidPayId
         val parts = payId.split(PAY_ID_DELIMITER)
         val url = "https://${parts[1]}/${parts[0]}"
 
         return try {
-            requestAddress(url, currencyId)?.let {
+            requestAddress(url, currencyCode)?.let {
                 if (it.isBlank()) PayIdResult.NoAddress
                 PayIdResult.Success(it)
             } ?: PayIdResult.NoAddress
@@ -60,9 +69,14 @@ class PayIdService(private val httpClient: OkHttpClient) {
         }
     }
 
-    private suspend fun requestAddress(url: String, currencyId: String, attempt: Int = 0): String? {
+    private suspend fun requestAddress(
+        url: String,
+        currencyCode: String,
+        attempt: Int = 0
+    ): String? {
         val request = Request.Builder()
-            .addHeader("Accept", "application/$currencyId+json")
+            .addHeader("Accept", PAY_ID_ACCEPT_TYPE)
+            .addHeader(PAY_ID_HEADER_VERSION, PAY_ID_VERSION)
             .url(url)
             .get()
             .build()
@@ -74,33 +88,50 @@ class PayIdService(private val httpClient: OkHttpClient) {
                 logError("Failed to retrieve address from PayId endpoint: $url.", e)
                 throw e
             } else {
-                requestAddress(url, currencyId, attempt + 1)
+                requestAddress(url, currencyCode, attempt + 1)
             }
         }
 
-        val body = if (response.isSuccessful) {
+        if (response.isSuccessful) {
             val bodyString = checkNotNull(response.body).string()
 
             try {
-                JSONObject(bodyString)
+                val addressesArray = JSONObject(bodyString).getJSONArray(PAY_ID_FIELD_ADDRESSES)
+                for (i in 0 until addressesArray.length()) {
+                    val addressObject = addressesArray.getJSONObject(i)
+                    val environment = addressObject.getString(PAY_ID_FIELD_ENVIRONMENT)
+                    val payIdCurrency = addressObject.getString(PAY_ID_FIELD_CURRENCY)
+                    
+                    if (isTargetEnvironment(environment) && isTargetCurrency(
+                            payIdCurrency,
+                            currencyCode
+                        )
+                    ) {
+                        return addressObject
+                            .getJSONObject(PAY_ID_FIELD_ADDRESS_DETAILS)
+                            .getString(PAY_ID_FIELD_ADDRESS)
+                    }
+                }
             } catch (e: JSONException) {
                 logError("Failed to parse PayId address from response body", e)
-                null
             }
         } else {
             logError("PayId request failed with status '${response.code}'")
-            null
         }
 
-        return body?.getJSONObject("addressDetails")?.getString("address")
+        return null
     }
-}
 
-private fun CurrencyCode.toPayIdCurrency() = when {
-    isBitcoin() -> if (BuildConfig.BITCOIN_TESTNET) "btc-testnet" else "btc-mainnet"
-    isEthereum() -> if (BuildConfig.BITCOIN_TESTNET) "eth-testnet" else "eth-mainnet"
-    isRipple() -> if (BuildConfig.BITCOIN_TESTNET) "xrpl-testnet" else "xrpl-mainnet"
-    else -> null
+    private fun isTargetEnvironment(environment: String) = when {
+        environment.equals("TESTNET", true) -> BuildConfig.BITCOIN_TESTNET
+        else -> !BuildConfig.BITCOIN_TESTNET
+    }
+
+    private fun isTargetCurrency(payIdCurrency: String, currencyCode: CurrencyCode) =
+        payIdCurrency.equals(
+            currencyCode,
+            true
+        )
 }
 
 sealed class PayIdResult {
@@ -108,7 +139,6 @@ sealed class PayIdResult {
     object InvalidPayId : PayIdResult()
     object ExternalError : PayIdResult()
     object NoAddress : PayIdResult()
-    object CurrencyNotSupported : PayIdResult()
 }
 
 

@@ -162,7 +162,6 @@ object SendSheet {
 
             object PayIdInvalid : InputError()
             object PayIdNoAddress : InputError()
-            object PayIdCurrencyNotSupported : InputError()
             object PayIdRetrievalError : InputError()
 
             object FailedToEstimateFee : InputError()
@@ -376,7 +375,6 @@ object SendSheet {
                 object InvalidPayId : PayId()
                 object RetrievalError : PayId()
                 object NoAddress : PayId()
-                object CurrencyNotSupported : PayId()
             }
         }
 

@@ -486,13 +486,6 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                         targetInputError = M.InputError.PayIdNoAddress
                     )
                 )
-                PayId.CurrencyNotSupported -> next(
-                    model.copy(
-                        isPayId = true,
-                        isResolvingAddress = false,
-                        targetInputError = M.InputError.PayIdCurrencyNotSupported
-                    )
-                )
                 PayId.RetrievalError -> next(
                     model.copy(
                         isPayId = true,

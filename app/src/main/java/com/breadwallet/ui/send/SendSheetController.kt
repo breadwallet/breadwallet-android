@@ -282,10 +282,6 @@ class SendSheetController(args: Bundle? = null) :
                     R.string.Send_payId_noAddress,
                     currencyCode.toUpperCase(Locale.ROOT)
                 )
-                is M.InputError.PayIdCurrencyNotSupported -> res.getString(
-                    R.string.Send_payId_currencyNotSupported,
-                    currencyCode.toUpperCase(Locale.ROOT)
-                )
                 is M.InputError.PayIdRetrievalError -> res.getString(R.string.Send_payId_retrievalError)
                 else -> null
             }
