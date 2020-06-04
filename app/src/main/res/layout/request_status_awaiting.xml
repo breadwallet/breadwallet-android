@@ -8,16 +8,33 @@
     android:orientation="vertical"
     android:padding="15dp">
 
-    <TextView
-        android:drawableEnd="@drawable/ic_send"
-        android:drawableStart="@drawable/ic_timer_sand"
-        android:id="@+id/awaitingFundsTitle"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/black"
-        android:textSize="25dp"
-        android:text="Awaiting funds" />
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:src="@drawable/ic_refresh"
+            android:id="@+id/refreshAction"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/awaitingFundsTitle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="25dp"
+            android:text="Awaiting funds" />
+
+        <ImageView
+            android:src="@drawable/ic_send"
+            android:id="@+id/sendAction"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
 
     <TextView
         android:layout_marginTop="10dp"

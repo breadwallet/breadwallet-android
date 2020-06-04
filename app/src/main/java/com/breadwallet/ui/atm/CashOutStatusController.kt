@@ -6,14 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import cash.just.wac.WacSDK
 import cash.just.wac.model.CashCodeStatusResponse
-import cash.just.wac.model.CashStatus
 import cash.just.wac.model.CodeStatus
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
@@ -21,12 +18,14 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.tools.qrcode.QRUtils
 import com.breadwallet.ui.BaseController
+import com.breadwallet.ui.atm.model.RetryableCashStatus
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.util.CryptoUriParser
 import com.platform.PlatformTransactionBus
 import kotlinx.android.synthetic.main.controller_receive.qr_image
 import kotlinx.android.synthetic.main.fragment_request_cash_out_status.*
+import kotlinx.android.synthetic.main.fragment_request_cash_out_status.loadingView
 import kotlinx.android.synthetic.main.request_status_awaiting.*
 import kotlinx.android.synthetic.main.request_status_funded.*
 import kotlinx.coroutines.Dispatchers
@@ -41,12 +40,12 @@ import java.net.HttpURLConnection.HTTP_OK
 
 class CashOutStatusController(args: Bundle) : BaseController(args) {
 
-    constructor(status: CashStatus) : this(
+    constructor(status: RetryableCashStatus) : this(
         bundleOf(cashStatus to status)
     )
 
-    constructor(code: String) : this(
-        bundleOf(secureCode to code)
+    constructor(secureCode: String) : this(
+        bundleOf(secureCode to secureCode)
     )
 
     companion object {
@@ -56,8 +55,10 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
     }
 
     override val layoutId = R.layout.fragment_request_cash_out_status
+
     private val cryptoUriParser by instance<CryptoUriParser>()
     private lateinit var clipboard: android.content.ClipboardManager
+    private lateinit var safeCode: String
 
     enum class ViewState {
         LOADING,
@@ -70,47 +71,55 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
         super.onCreateView(view)
         changeUiState(ViewState.LOADING)
 
-        clipboard = view.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+        val context = view.context
+
+        clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
 
         handlePlatformMessages().launchIn(viewCreatedScope)
 
-        val context = view.context
-        val status:CashStatus? = argOptional(cashStatus)
+        val retryableCashStatus: RetryableCashStatus? = argOptional(cashStatus)
         val code:String? = argOptional(secureCode)
 
-        status?.let {
-            if (CodeStatus.resolve(it.status) == CodeStatus.NEW_CODE) {
-                populateAwaitingView(context, it.address, it.description, it.usdAmount, it.btc_amount)
-            } else if (CodeStatus.resolve(it.status) == CodeStatus.FUNDED) {
-                populateFundedView(context, it.code!!, it.usdAmount, it.description)
+        retryableCashStatus?.let {
+            safeCode = it.secureCode
+            val cashStatus = it.cashStatus
+            if (CodeStatus.resolve(cashStatus.status) == CodeStatus.NEW_CODE) {
+                populateAwaitingView(context, cashStatus.address, cashStatus.description,
+                    cashStatus.usdAmount, cashStatus.btc_amount)
+            } else if (CodeStatus.resolve(it.cashStatus.status) == CodeStatus.FUNDED) {
+                populateFundedView(context, safeCode, cashStatus.usdAmount, cashStatus.description)
             }
         } ?: run {
-            val safeCode = code ?: throw IllegalArgumentException("Missing arguments $cashStatus and $secureCode")
-            WacSDK.checkCashCodeStatus(safeCode).enqueue(object: Callback<CashCodeStatusResponse> {
-                override fun onResponse(call: Call<CashCodeStatusResponse>,
-                    response: Response<CashCodeStatusResponse>) {
-                    if (response.isSuccessful && response.code() == HTTP_OK) {
+            safeCode = code ?: throw IllegalArgumentException("Missing arguments $cashStatus and $secureCode")
+            refreshCodeStatus(safeCode, context)
+        }
+    }
 
-                        response.body()?.let { it ->
-                            val cashStatus = it.data!!.items[0]
+    private fun refreshCodeStatus(code:String, context:Context) {
+        WacSDK.checkCashCodeStatus(code).enqueue(object: Callback<CashCodeStatusResponse> {
+            override fun onResponse(call: Call<CashCodeStatusResponse>,
+                response: Response<CashCodeStatusResponse>) {
+                if (response.isSuccessful && response.code() == HTTP_OK) {
 
-                            if (CodeStatus.resolve(cashStatus.status) == CodeStatus.NEW_CODE) {
-                                populateAwaitingView(context, cashStatus.address, cashStatus.description,
-                                    cashStatus.usdAmount, cashStatus.btc_amount)
-                            } else if (CodeStatus.resolve(cashStatus.status) == CodeStatus.FUNDED) {
-                                populateFundedView(context, cashStatus.code!!,
-                                    cashStatus.usdAmount, cashStatus.description)
-                            }
+                    response.body()?.let { it ->
+                        val cashStatus = it.data!!.items[0]
+
+                        if (CodeStatus.resolve(cashStatus.status) == CodeStatus.NEW_CODE) {
+                            populateAwaitingView(context, cashStatus.address, cashStatus.description,
+                                cashStatus.usdAmount, cashStatus.btc_amount)
+                        } else if (CodeStatus.resolve(cashStatus.status) == CodeStatus.FUNDED) {
+                            populateFundedView(context, cashStatus.code!!,
+                                cashStatus.usdAmount, cashStatus.description)
                         }
                     }
                 }
+            }
 
-                override fun onFailure(call: Call<CashCodeStatusResponse>, t: Throwable) {
-                    Toast.makeText(context.applicationContext, 
-                        "Failed to load $safeCode status", Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
+            override fun onFailure(call: Call<CashCodeStatusResponse>, t: Throwable) {
+                Toast.makeText(context.applicationContext,
+                    "Failed to load $safeCode status", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun changeUiState(state: ViewState){
@@ -144,17 +153,14 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
 
         changeUiState(ViewState.AWAITING)
 
-        awaitingFundsTitle.setOnTouchListener(OnTouchListener { _, event ->
-            val drawableRight = 2
-            if (event.action == MotionEvent.ACTION_UP) {
-                if (event.rawX >= awaitingFundsTitle.right
-                    - awaitingFundsTitle.compoundDrawables[drawableRight].bounds.width()) {
-                    goToSend(address, btcAmount)
-                    return@OnTouchListener true
-                }
-            }
-            false
-        })
+        sendAction.setOnClickListener {
+            goToSend(btcAmount, address)
+        }
+
+        refreshAction.setOnClickListener {
+            changeUiState(ViewState.LOADING)
+            refreshCodeStatus(safeCode, it.context)
+        }
 
         awaitingAddress.text = address
         awaitingAddress.isSelected = true
@@ -196,11 +202,7 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
         builder.amount = btc.toFloat().toBigDecimal()
         builder.currencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE
         val request = builder.build()
-        router.pushController(RouterTransaction.with(
-            SendSheetController(
-            request //make it default
-        )
-        ))
+        router.pushController(RouterTransaction.with(SendSheetController(request)))
     }
 
     private fun populateFundedView(context: Context, code:String, usdAmount:String, address:String){

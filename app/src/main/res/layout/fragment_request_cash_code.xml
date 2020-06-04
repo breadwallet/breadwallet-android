@@ -142,6 +142,7 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:imeOptions="actionNext"
                             android:maxLines="1"
+                            android:inputType="textCapSentences"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -155,8 +156,8 @@
                         android:hint="Last name">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:imeOptions="actionNext"
-                            android:inputType="text"
+                            android:imeOptions="actionDone"
+                            android:inputType="textCapSentences"
                             android:maxLines="1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
@@ -191,16 +192,17 @@
                     tools:text="We've sent a confirmation number..."/>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/token"
+                    android:id="@+id/code"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="10dp"
-                    android:hint="Enter token"
-                    app:helperText="Check your email for the confirmation token we sent you. It may take a couple of minutes.">
+                    android:hint="Enter Code"
+                    app:helperText="Check your email for the confirmation code we sent you. It may take a couple of minutes.">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:imeOptions="actionNext"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
                         android:maxLines="1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />

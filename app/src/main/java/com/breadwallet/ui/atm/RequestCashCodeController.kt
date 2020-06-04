@@ -23,6 +23,7 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.ui.BaseController
+import com.breadwallet.ui.atm.model.WacMarker
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.breadwallet.ui.send.SendSheetController
 import com.google.android.gms.maps.CameraUpdate
@@ -131,12 +132,12 @@ class RequestCashCodeController(
                 return@setOnClickListener
             }
 
-            if (getToken().isNullOrEmpty()) {
+            if (getCode().isNullOrEmpty()) {
                 Toast.makeText(view.context, "Token is empty", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            hideKeyboard(view.context, token.editText!!)
+            hideKeyboard(view.context, code.editText!!)
             createCashCode(view.context, atm)
         }
 
@@ -171,9 +172,11 @@ class RequestCashCodeController(
                 if (response.code() == HTTP_OK_CODE) {
                     Toast.makeText(context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
                     if (getEmail() != null && getEmail()!!.isNotEmpty()) {
-                        confirmationMessage.text = "We've sent a confirmation token to your email."
+                        confirmationMessage.text = "We've sent a confirmation code to your email."
+                        code.helperText = "Check your email for the confirmation code we sent you. It may take a couple of minutes."
                     } else {
-                        confirmationMessage.text = "We've sent a confirmation token to your phone by SMS."
+                        confirmationMessage.text = "We've sent a confirmation code to your phone by SMS."
+                        code.helperText = "Check your SMS inbox for the confirmation code we sent you. It may take a couple of minutes."
                     }
                     verificationGroup.visibility = View.GONE
                     confirmGroup.visibility = View.VISIBLE
@@ -197,7 +200,7 @@ class RequestCashCodeController(
 
     private fun createCashCode(context: Context, atm: AtmMachine){
 
-        WacSDK.createCashCode(atm.atmId, getAmount()!!, getToken()!!)
+        WacSDK.createCashCode(atm.atmId, getAmount()!!, getCode()!!)
             .enqueue(object: Callback<CashCodeResponse> {
                 override fun onResponse(
                     call: Call<CashCodeResponse>,
@@ -344,8 +347,8 @@ class RequestCashCodeController(
         return amount.editText?.text.toString()
     }
 
-    private fun getToken(): String? {
-        return token.editText?.text.toString()
+    private fun getCode(): String? {
+        return code.editText?.text.toString()
     }
 
     private fun getName(): String? {

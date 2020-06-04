@@ -34,6 +34,7 @@ data class CashStatus(
     }
 }
 
+
 enum class CodeStatus(private val statusCode:String){
     NEW_CODE("A"),
     FUNDED_NOT_CONFIRMED("W"),
