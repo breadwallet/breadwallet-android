@@ -40,6 +40,7 @@ class StatusListController(args: Bundle) : BaseController(args) {
         const val SEVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         const val DISPLAY_TIME_FORMAT = "dd MMM, hh:mm"
         const val HTTP_OK = 200
+        const val REFRESH_UI_DELAY_MS = 400L
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -90,7 +91,7 @@ class StatusListController(args: Bundle) : BaseController(args) {
                 if (refreshListAction != null) {
                     refresh(context)
                 }
-            }, 400)
+            }, REFRESH_UI_DELAY_MS)
         }
 
         refresh(context)

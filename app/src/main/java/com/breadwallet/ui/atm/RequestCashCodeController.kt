@@ -173,10 +173,12 @@ class RequestCashCodeController(
                     Toast.makeText(context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
                     if (getEmail() != null && getEmail()!!.isNotEmpty()) {
                         confirmationMessage.text = "We've sent a confirmation code to your email."
-                        code.helperText = "Check your email for the confirmation code we sent you. It may take a couple of minutes."
+                        code.helperText = "Check your email for the confirmation code we sent you." +
+                            " It may take a couple of minutes."
                     } else {
                         confirmationMessage.text = "We've sent a confirmation code to your phone by SMS."
-                        code.helperText = "Check your SMS inbox for the confirmation code we sent you. It may take a couple of minutes."
+                        code.helperText = "Check your SMS inbox for the confirmation code we sent you." +
+                            " It may take a couple of minutes."
                     }
                     verificationGroup.visibility = View.GONE
                     confirmGroup.visibility = View.VISIBLE
