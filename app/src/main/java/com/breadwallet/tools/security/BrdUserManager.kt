@@ -143,14 +143,13 @@ private const val MANUFACTURER_GOOGLE = "Google"
 
 @Suppress("TooManyFunctions")
 class CryptoUserManager(
+    context: Context,
     private val createStore: () -> SharedPreferences?,
     private val metaDataProvider: AccountMetaDataProvider
 ) : BrdUserManager {
 
     private var store: SharedPreferences? = null
 
-    // TODO: Remove this once BRKeyStore auth screen logic is refactored
-    private val context get() = BreadApp.getBreadContext()
     private val keyguard = checkNotNull(context.getSystemService<KeyguardManager>())
 
     private val mutex = Mutex()
@@ -212,7 +211,7 @@ class CryptoUserManager(
         // Migrate fields required for Account
         val phrase = getPhrase() ?: return@withLock false
         try {
-            val creationDate = Date(BRKeyStore.getWalletCreationTime(context))
+            val creationDate = Date(BRKeyStore.getWalletCreationTime())
             val account =
                 Account.createFromPhrase(phrase, creationDate, BRSharedPrefs.getDeviceId()).get()
             val apiKey = Key.createForBIP32ApiAuth(
@@ -229,14 +228,14 @@ class CryptoUserManager(
         }
 
         // Migrate other fields
-        BRKeyStore.getToken(context)?.let { putToken(String(it)) }
-        BRKeyStore.getEthPublicKey(context)?.let { putEthPublicKey(it) }
-        putPinCode(BRKeyStore.getPinCode(context))
-        putFailCount(BRKeyStore.getFailCount(context))
-        putFailTimestamp(BRKeyStore.getFailTimeStamp(context))
+        BRKeyStore.getToken()?.let { putToken(String(it)) }
+        BRKeyStore.getEthPublicKey()?.let { putEthPublicKey(it) }
+        putPinCode(BRKeyStore.getPinCode())
+        putFailCount(BRKeyStore.getFailCount())
+        putFailTimestamp(BRKeyStore.getFailTimeStamp())
 
         BreadApp.applicationScope.launch(Dispatchers.IO) {
-            BRKeyStore.wipeAfterMigration(context)
+            BRKeyStore.wipeAfterMigration()
         }
 
         true
@@ -279,7 +278,7 @@ class CryptoUserManager(
 
     override fun isMigrationRequired() =
         !isInitialized() &&
-            (BRKeyStore.getMasterPublicKey(context) != null || BRKeyStore.hasAccountBytes(context))
+            (BRKeyStore.getMasterPublicKey() != null || BRKeyStore.hasAccountBytes())
 
     override fun getState(): BrdUserState = when {
         // Cannot create/use phrase key, device lock must be enabled
@@ -449,8 +448,8 @@ class CryptoUserManager(
 
             try {
                 val storedPhrase = executeWithAuth {
-                    BRKeyStore.putPhrase(phrase, context, PUT_PHRASE_RC)
-                    BRKeyStore.getPhrase(context, GET_PHRASE_RC)
+                    BRKeyStore.putPhrase(phrase, it, PUT_PHRASE_RC)
+                    BRKeyStore.getPhrase(it, GET_PHRASE_RC)
                 } ?: return@withLock SetupResult.FailedToPersistPhrase
 
                 val account = Account.createFromPhrase(
@@ -547,7 +546,7 @@ class CryptoUserManager(
      * success will invoke [action] again. If authentication fails,
      * null is returned.
      */
-    private suspend fun <T> executeWithAuth(action: (context: Context) -> T): T {
+    private suspend fun <T> executeWithAuth(action: (context: Activity) -> T): T {
         val activity = getActivity()
         return try {
             Main {
@@ -621,8 +620,8 @@ class CryptoUserManager(
             getWalletCreationTime() == creationTime
     }
 
-    private fun wipeAccount() {
-        BRKeyStore.deletePhrase(context)
+    private suspend fun wipeAccount() {
+        BRKeyStore.deletePhrase(getActivity())
         checkNotNull(store).edit {
             putString(KEY_ACCOUNT, null)
             putString(KEY_AUTH_KEY, null)
@@ -631,8 +630,12 @@ class CryptoUserManager(
     }
 
     private suspend fun getActivity(): Activity {
-        while (context !is Activity) delay(1_000)
-        return context as Activity
+        var context = BreadApp.getBreadContext()
+        while (context !is Activity) {
+            context = BreadApp.getBreadContext()
+            delay(1_000)
+        }
+        return context
     }
 
     private fun isPhraseKeyValid(): Boolean = try {

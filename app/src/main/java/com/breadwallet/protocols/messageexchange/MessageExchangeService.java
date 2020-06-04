@@ -419,7 +419,7 @@ public final class MessageExchangeService extends JobIntentService {
      * @return The remote entity's pairing key.
      */
     private Key getPairingKey() {
-        byte[] authKey = BRKeyStore.getAuthKey(this);
+        byte[] authKey = BRKeyStore.getAuthKey();
         if (Utils.isNullOrEmpty(authKey) || Utils.isNullOrEmpty(mPairingMetaData.getId())) {
             Log.e(TAG, "getPairingKey: Auth key or sender id is null.");
             return null;

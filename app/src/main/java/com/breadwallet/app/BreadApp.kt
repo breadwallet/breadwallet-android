@@ -58,6 +58,7 @@ import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.InternetManager
 import com.breadwallet.tools.manager.updateRatesForCurrencies
+import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.security.CryptoUserManager
@@ -287,7 +288,7 @@ class BreadApp : Application(), KodeinAware {
         }
 
         bind<BrdUserManager>() with singleton {
-            CryptoUserManager(::createEncryptedPrefs, instance())
+            CryptoUserManager(this@BreadApp, ::createEncryptedPrefs, instance())
         }
 
         bind<KVStoreProvider>() with singleton {
@@ -345,6 +346,7 @@ class BreadApp : Application(), KodeinAware {
         installHooks()
         mInstance = this
 
+        BRKeyStore.provideContext(this)
         BRSharedPrefs.provideContext(this)
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(ApplicationLifecycleObserver())

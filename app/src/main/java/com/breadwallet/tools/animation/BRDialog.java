@@ -45,10 +45,9 @@ public class BRDialog {
      * @param context needs to be activity
      */
     // TODO: This method was moved to DialogActivity. This can be removed once all the callers have been moved to DialogActivity.
-    public static void showCustomDialog(@NonNull final Context context, @NonNull final String title, @NonNull final String message,
+    public static void showCustomDialog(@NonNull final Activity activity, @NonNull final String title, @NonNull final String message,
                                         @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
                                         final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
-        final Activity activity = (context instanceof Activity) ? (Activity) context : (Activity) BreadApp.getBreadContext();
         if (activity.isDestroyed()) {
             Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
             return;
@@ -98,7 +97,7 @@ public class BRDialog {
         });
     }
 
-    public static void showSimpleDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message) {
+    public static void showSimpleDialog(@NonNull final Activity app, @NonNull final String title, @NonNull final String message) {
         showCustomDialog(app, title, message, app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
