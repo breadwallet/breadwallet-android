@@ -9,14 +9,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import cash.just.wac.WacSDK
-import cash.just.wac.model.AtmMachine
-import cash.just.wac.model.CashCodeResponse
-import cash.just.wac.model.CashCodeStatusResponse
-import cash.just.wac.model.CashStatus
-import cash.just.wac.model.SendVerificationCodeResponse
-import cash.just.wac.model.isValidAmount
-import cash.just.wac.model.parseError
+import cash.just.sdk.CashSDK
+import cash.just.sdk.model.AtmMachine
+import cash.just.sdk.model.CashCodeResponse
+import cash.just.sdk.model.CashCodeStatusResponse
+import cash.just.sdk.model.CashStatus
+import cash.just.sdk.model.SendVerificationCodeResponse
+import cash.just.sdk.model.isValidAmount
+import cash.just.sdk.model.parseError
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
@@ -91,7 +91,7 @@ class RequestCashCodeController(
 
         getAtmCode.setOnClickListener {
 
-            if (!WacSDK.isSessionCreated()) {
+            if (!CashSDK.isSessionCreated()) {
                 Toast.makeText(view.context, "Invalid session", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -127,7 +127,7 @@ class RequestCashCodeController(
         confirmAction.setOnClickListener {
 
 
-            if (!WacSDK.isSessionCreated()) {
+            if (!CashSDK.isSessionCreated()) {
                 Toast.makeText(view.context, "invalid session", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -162,7 +162,7 @@ class RequestCashCodeController(
     }
 
     private fun requestVerificationCode(context: Context){
-        WacSDK.sendVerificationCode(
+        CashSDK.sendVerificationCode(
             getName()!!,
             getSurname()!!,
             getPhone(),
@@ -173,10 +173,12 @@ class RequestCashCodeController(
                     Toast.makeText(context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
                     if (getEmail() != null && getEmail()!!.isNotEmpty()) {
                         confirmationMessage.text = "We've sent a confirmation code to your email."
-                        code.helperText = "Check your email for the confirmation code we sent you. It may take a couple of minutes."
+                        code.helperText = "Check your email for the confirmation code we sent you." +
+                            " It may take a couple of minutes."
                     } else {
                         confirmationMessage.text = "We've sent a confirmation code to your phone by SMS."
-                        code.helperText = "Check your SMS inbox for the confirmation code we sent you. It may take a couple of minutes."
+                        code.helperText = "Check your SMS inbox for the confirmation code we sent you." +
+                            " It may take a couple of minutes."
                     }
                     verificationGroup.visibility = View.GONE
                     confirmGroup.visibility = View.VISIBLE
@@ -200,7 +202,7 @@ class RequestCashCodeController(
 
     private fun createCashCode(context: Context, atm: AtmMachine){
 
-        WacSDK.createCashCode(atm.atmId, getAmount()!!, getCode()!!)
+        CashSDK.createCashCode(atm.atmId, getAmount()!!, getCode()!!)
             .enqueue(object: Callback<CashCodeResponse> {
                 override fun onResponse(
                     call: Call<CashCodeResponse>,
@@ -233,7 +235,7 @@ class RequestCashCodeController(
     private fun proceedWithCashCode(context: Context, secureCode:String) {
         AtmSharedPreferencesManager.setWithdrawalRequest(context, secureCode)
 
-        WacSDK.checkCashCodeStatus(secureCode).enqueue(object: Callback<CashCodeStatusResponse> {
+        CashSDK.checkCashCodeStatus(secureCode).enqueue(object: Callback<CashCodeStatusResponse> {
             override fun onResponse(
                 call: Call<CashCodeStatusResponse>,
                 response: Response<CashCodeStatusResponse>

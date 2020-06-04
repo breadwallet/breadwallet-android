@@ -9,9 +9,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import cash.just.wac.WacSDK
-import cash.just.wac.model.CashCodeStatusResponse
-import cash.just.wac.model.CodeStatus
+import cash.just.sdk.CashSDK
+import cash.just.sdk.model.CashCodeStatusResponse
+import cash.just.sdk.model.CodeStatus
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
@@ -96,7 +96,7 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
     }
 
     private fun refreshCodeStatus(code:String, context:Context) {
-        WacSDK.checkCashCodeStatus(code).enqueue(object: Callback<CashCodeStatusResponse> {
+        CashSDK.checkCashCodeStatus(code).enqueue(object: Callback<CashCodeStatusResponse> {
             override fun onResponse(call: Call<CashCodeStatusResponse>,
                 response: Response<CashCodeStatusResponse>) {
                 if (response.isSuccessful && response.code() == HTTP_OK) {

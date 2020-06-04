@@ -1,14 +1,14 @@
 package com.breadwallet.ui.atm
 
-import cash.just.wac.Wac
+import cash.just.sdk.Cash
 import com.breadwallet.BuildConfig
 
 object BitcoinServer {
-    fun getServer(): Wac.BtcSERVER{
+    fun getServer(): Cash.BtcNetwork{
         return if (BuildConfig.FLAVOR.contains("testnet", true)) {
-            Wac.BtcSERVER.TEST_NET
+            Cash.BtcNetwork.TEST_NET
         } else {
-            Wac.BtcSERVER.MAIN_NET
+            Cash.BtcNetwork.MAIN_NET
         }
     }
 }

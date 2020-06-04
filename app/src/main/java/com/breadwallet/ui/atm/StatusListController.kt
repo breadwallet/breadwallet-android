@@ -7,11 +7,11 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import cash.just.wac.Wac
-import cash.just.wac.WacSDK
-import cash.just.wac.model.CashCodeStatusResponse
-import cash.just.wac.model.CashStatus
-import cash.just.wac.model.CodeStatus
+import cash.just.sdk.Cash
+import cash.just.sdk.CashSDK
+import cash.just.sdk.model.CashCodeStatusResponse
+import cash.just.sdk.model.CashStatus
+import cash.just.sdk.model.CodeStatus
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
@@ -40,6 +40,7 @@ class StatusListController(args: Bundle) : BaseController(args) {
         const val SEVER_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         const val DISPLAY_TIME_FORMAT = "dd MMM, hh:mm"
         const val HTTP_OK = 200
+        const val REFRESH_UI_DELAY_MS = 400L
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -52,8 +53,8 @@ class StatusListController(args: Bundle) : BaseController(args) {
         text_no_request.visibility = View.GONE
 
         val context = view.context
-        if (!WacSDK.isSessionCreated()) {
-            WacSDK.createSession(BitcoinServer.getServer(), object: Wac.SessionCallback {
+        if (!CashSDK.isSessionCreated()) {
+            CashSDK.createSession(BitcoinServer.getServer(), object: Cash.SessionCallback {
                 override fun onSessionCreated(sessionKey: String) {
                     proceed(context)
                 }
@@ -90,7 +91,7 @@ class StatusListController(args: Bundle) : BaseController(args) {
                 if (refreshListAction != null) {
                     refresh(context)
                 }
-            }, 400)
+            }, REFRESH_UI_DELAY_MS)
         }
 
         refresh(context)
@@ -116,7 +117,7 @@ class StatusListController(args: Bundle) : BaseController(args) {
     }
 
     private fun loadRequest(context: Context, secureCode:String) {
-        WacSDK.checkCashCodeStatus(secureCode).enqueue(object: Callback<CashCodeStatusResponse> {
+        CashSDK.checkCashCodeStatus(secureCode).enqueue(object: Callback<CashCodeStatusResponse> {
             override fun onResponse(call: Call<CashCodeStatusResponse>, response: Response<CashCodeStatusResponse>) {
                 if (loadingView != null) {
                     loadingView.visibility = View.GONE

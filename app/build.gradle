@@ -338,7 +338,7 @@ dependencies {
 
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detekt_version"
 
-    implementation project(":wac")
+    implementation project(':CashSDK')
     implementation 'com.google.code.gson:gson:2.8.6'
 }
 

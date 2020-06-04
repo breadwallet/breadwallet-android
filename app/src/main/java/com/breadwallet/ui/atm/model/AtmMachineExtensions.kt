@@ -1,6 +1,6 @@
 package com.breadwallet.ui.atm.model
 
-import cash.just.wac.model.AtmMachine
+import cash.just.sdk.model.AtmMachine
 fun getAtmMachineMock() : AtmMachine {
     return AtmMachine("34",
         "bay street, 23", "white bulding",

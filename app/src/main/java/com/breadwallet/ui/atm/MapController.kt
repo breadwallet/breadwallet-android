@@ -29,10 +29,10 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import cash.just.wac.Wac
-import cash.just.wac.WacSDK
-import cash.just.wac.model.AtmListResponse
-import cash.just.wac.model.AtmMachine
+import cash.just.sdk.Cash
+import cash.just.sdk.CashSDK
+import cash.just.sdk.model.AtmListResponse
+import cash.just.sdk.model.AtmMachine
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.R
@@ -73,9 +73,9 @@ class MapController(
 
         prepareMap(view.context)
 
-        if (!WacSDK.isSessionCreated()) {
+        if (!CashSDK.isSessionCreated()) {
 
-            WacSDK.createSession(BitcoinServer.getServer(), object: Wac.SessionCallback {
+            CashSDK.createSession(BitcoinServer.getServer(), object: Cash.SessionCallback {
                 override fun onSessionCreated(sessionKey: String) {
                     fetchAtms()
                 }
@@ -138,7 +138,7 @@ class MapController(
     // }
 
     private fun fetchAtms(){
-        WacSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {
+        CashSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {
             override fun onResponse(call: Call<AtmListResponse>, response: Response<AtmListResponse>) {
                 map?.let {
                     response.body()?.let { response ->
