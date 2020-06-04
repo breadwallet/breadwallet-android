@@ -29,8 +29,6 @@ plugins {
 }
 
 allprojects {
-
-
     repositories {
         exclusiveContent {
             forRepository {
@@ -52,5 +50,6 @@ allprojects {
                 includeGroup "io.sweers.redacted"
             }
         }
+        maven { url 'https://jitpack.io' }
     }
 }
