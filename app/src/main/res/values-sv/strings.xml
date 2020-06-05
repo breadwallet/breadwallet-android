@@ -30,15 +30,19 @@
     <string name="Account.exchangeRate">%1$s per %2$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">Laddar plånbok</string>
-    <!-- Prompt text for confirmation dialog for Hedera account creation -->
+    <!-- Confirm Account Creation mesage body -->
     <string name="AccountCreation.body">Skapa bara ett Hedera-konto om du tänker lagra HBAR i din plånbok.</string>
-    <!-- Label for create Hedera account button -->
+    <!-- Create Account button label -->
     <string name="AccountCreation.create">Skapa konto</string>
-    <!-- Error message for Hedera account creation failure  -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.creating">Skapar konto</string>
+    <!-- Creating Account progress Label -->
     <string name="AccountCreation.error">Ett fel inträffade under skapandet av kontot. Vänligen försök igen senare.</string>
-    <!-- Label for cancel button on confirmation dialog for Hedera account creation -->
+    <!-- Not Now button label. -->
     <string name="AccountCreation.notNow">Inte nu</string>
-    <!-- Title for confirmation dialog for Hedera account creation -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.timeout">Begäran avbröts. Vänligen försök igen senare.</string>
+    <!-- Confirm Account Creation Title -->
     <string name="AccountCreation.title">Bekräfta konto skapande</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">Mitt BRD</string>
@@ -191,7 +195,7 @@
     <!-- Network Fee: (ETH) -->
     <string name="Confirmation.feeLabelETH">Nätverksavgift (ETH):</string>
     <!-- Label for Hedera Memo field on transaction confirmation screen -->
-    <string name="Confirmation.hederaMemo">"Hedera Memo "</string>
+    <string name="Confirmation.hederaMemo">Hedera Memo</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">Behandlingstid: Den här transaktionen beräknas slutföras om %1$s.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -710,6 +714,10 @@
     <string name="RewardsView.normalTitle">Belöningar</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">Kamerablixt</string>
+    <!-- (alert dialog message) Would you like to send a [Bitcoin / Bitcoin Cash / Ethereum] payment to this address?") -->
+    <string name="Scanner.paymentPromptMessage">Vill du skicka en %1$@ betalning till den här adressen?</string>
+    <!-- alert dialog title -->
+    <string name="Scanner.paymentPromptTitle">Skicka betalning</string>
     <!-- Complete filter label -->
     <string name="Search.complete">avsluta</string>
     <!-- Pending filter label -->
@@ -725,7 +733,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">Det enda sättet att komma åt dina bitcoin om du förlorar eller uppgraderar din telefon.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
- * to not break existing client code. -->
+   * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Ordnyckel</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">Ordnyckel</string>
@@ -799,7 +807,7 @@
     <string name="Send.legacyAddressWarning">Varning: detta är en legacy bitcoin-adress. Är du säker på att du vill skicka Bitcoin Cash till den?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">Laddar förfrågan</string>
-    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <!-- Hedera Memo Tag Label -->
     <string name="Send.memoTag_optional">Hedera Memo (valfritt)</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">Inte tillräckligt med pengar för att täcka transaktionsavgiften.</string>
@@ -811,6 +819,14 @@
     <string name="Send.noFeesError">Villkor för nätverksavgifter laddas ned. Försök igen.</string>
     <!-- Paste button label -->
     <string name="Send.pasteLabel">Klistra in</string>
+    <!-- Error message for invalid PayID -->
+    <string name="Send.payId_invalid">Ogiltigt PayID.</string>
+    <!-- Error message for no address associated with a PayID for a given currency -->
+    <string name="Send.payId_noAddress">Det finns ingen %1$s adress kopplad till detta PayID.</string>
+    <!-- Error message for error in retrieving the address from the PayID endpoint -->
+    <string name="Send.payId_retrievalError">Det gick inte att hämta adressen för detta PayID. Vänligen försök igen senare.</string>
+    <!-- PayID label -->
+    <string name="Send.payId_toLabel">PayID</string>
     <!-- Could not publish transaction alert title -->
     <string name="Send.publishTransactionError">Kunde inte lägga ut transaktion.</string>
     <!-- Could not load remote request error message -->
@@ -1065,7 +1081,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">Gaspris</string>
     <!-- Label for Hedera Memo field on transaction details screen -->
-    <string name="TransactionDetails.hederaMemo">"Hedera Memo "</string>
+    <string name="TransactionDetails.hederaMemo">Hedera Memo</string>
     <!-- Hide Details button -->
     <string name="TransactionDetails.hideDetails">Dölj detaljer</string>
     <!-- Label showing the transaction was started (initialized) -->
