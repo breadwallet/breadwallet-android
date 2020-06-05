@@ -30,15 +30,19 @@
     <string name="Account.exchangeRate">%2$sあたり%1$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">ウォレット読み込み中</string>
-    <!-- Prompt text for confirmation dialog for Hedera account creation -->
+    <!-- Confirm Account Creation mesage body -->
     <string name="AccountCreation.body">HBARをウォレットに保管する場合にのみ、Hederaアカウントを作成してください。</string>
-    <!-- Label for create Hedera account button -->
+    <!-- Create Account button label -->
     <string name="AccountCreation.create">アカウントを作成する</string>
-    <!-- Error message for Hedera account creation failure  -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.creating">アカウントを作成する</string>
+    <!-- Creating Account progress Label -->
     <string name="AccountCreation.error">アカウントの作成中にエラーが発生しました。後でもう一度やり直してください。</string>
-    <!-- Label for cancel button on confirmation dialog for Hedera account creation -->
+    <!-- Not Now button label. -->
     <string name="AccountCreation.notNow">今はやめろ</string>
-    <!-- Title for confirmation dialog for Hedera account creation -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.timeout">要求がタイムアウトしました。後でもう一度やり直してください。</string>
+    <!-- Confirm Account Creation Title -->
     <string name="AccountCreation.title">アカウント作成の確認</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">マイブレッド</string>
@@ -710,6 +714,10 @@
     <string name="RewardsView.normalTitle">リワード</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">カメラのフラッシュ</string>
+    <!-- (alert dialog message) Would you like to send a [Bitcoin / Bitcoin Cash / Ethereum] payment to this address?") -->
+    <string name="Scanner.paymentPromptMessage">この住所に %1$@ の支払いを送信しますか?</string>
+    <!-- alert dialog title -->
+    <string name="Scanner.paymentPromptTitle">支払いを送る</string>
     <!-- Complete filter label -->
     <string name="Search.complete">完了</string>
     <!-- Pending filter label -->
@@ -725,7 +733,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">あなたが携帯電話を紛失したり、アップグレードした場合にご自身のビットコインへアクセスできる唯一の方法です。</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
- * to not break existing client code. -->
+   * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">復元フレーズ</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">復元フレーズ</string>
@@ -799,7 +807,7 @@
     <string name="Send.legacyAddressWarning">警告: これはレガシービットコインアドレスです。本当にビットコインキャッシュを送金しますか?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">リクエストをロード中</string>
-    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <!-- Hedera Memo Tag Label -->
     <string name="Send.memoTag_optional">Hedera Memo（オプション）</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">残高不足で取引手数料を支払うことができません。</string>
@@ -811,6 +819,14 @@
     <string name="Send.noFeesError">ネットワーク手数料の諸条件のダウンロード中です。もう一度お試し下さい。</string>
     <!-- Paste button label -->
     <string name="Send.pasteLabel">貼り付け</string>
+    <!-- Error message for invalid PayID -->
+    <string name="Send.payId_invalid">PayIDが無効です。</string>
+    <!-- Error message for no address associated with a PayID for a given currency -->
+    <string name="Send.payId_noAddress">このPayIDに関連付けられている%1$sアドレスはありません。</string>
+    <!-- Error message for error in retrieving the address from the PayID endpoint -->
+    <string name="Send.payId_retrievalError">このPayIDの住所の取得中にエラーが発生しました。後でもう一度やり直してください。</string>
+    <!-- PayID label -->
+    <string name="Send.payId_toLabel">PayID</string>
     <!-- Could not publish transaction alert title -->
     <string name="Send.publishTransactionError">取引を実行できませんでした。</string>
     <!-- Could not load remote request error message -->

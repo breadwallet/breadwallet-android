@@ -30,15 +30,19 @@
     <string name="Account.exchangeRate">%1$s por %2$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">Cargando cartera</string>
-    <!-- Prompt text for confirmation dialog for Hedera account creation -->
+    <!-- Confirm Account Creation mesage body -->
     <string name="AccountCreation.body">Solo cree una cuenta de Hedera si tiene la intención de almacenar HBAR en su billetera.</string>
-    <!-- Label for create Hedera account button -->
+    <!-- Create Account button label -->
     <string name="AccountCreation.create">Crear una cuenta</string>
-    <!-- Error message for Hedera account creation failure  -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.creating">Creando cuenta</string>
+    <!-- Creating Account progress Label -->
     <string name="AccountCreation.error">Se produjo un error durante la creación de la cuenta. Por favor, inténtelo de nuevo más tarde.</string>
-    <!-- Label for cancel button on confirmation dialog for Hedera account creation -->
+    <!-- Not Now button label. -->
     <string name="AccountCreation.notNow">Ahora no</string>
-    <!-- Title for confirmation dialog for Hedera account creation -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.timeout">La petición caducó. Por favor, inténtelo de nuevo más tarde.</string>
+    <!-- Confirm Account Creation Title -->
     <string name="AccountCreation.title">Confirmar la creación de la cuenta</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">Mi BRD</string>
@@ -710,6 +714,10 @@
     <string name="RewardsView.normalTitle">Recompensas</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">Flash de la cámara</string>
+    <!-- (alert dialog message) Would you like to send a [Bitcoin / Bitcoin Cash / Ethereum] payment to this address?") -->
+    <string name="Scanner.paymentPromptMessage">¿Desea enviar un pago de %1$@ a esta dirección?</string>
+    <!-- alert dialog title -->
+    <string name="Scanner.paymentPromptTitle">Enviar pago</string>
     <!-- Complete filter label -->
     <string name="Search.complete">completar</string>
     <!-- Pending filter label -->
@@ -725,7 +733,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">La única manera de acceder a tu bitcoin si pierdes o actualizas tu teléfono.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
- * to not break existing client code. -->
+   * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Clave en papel</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">Clave en papel</string>
@@ -799,7 +807,7 @@
     <string name="Send.legacyAddressWarning">Aviso: Esta es una dirección Bitcoin antigua. ¿Estás seguro/a de que deseas enviar dinero en bitcoines a ella?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">Cargando solicitud</string>
-    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <!-- Hedera Memo Tag Label -->
     <string name="Send.memoTag_optional">Hedera Memo (Opcional)</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">Fondos insuficientes para cubrir la tarifa de transacción.</string>
@@ -811,6 +819,14 @@
     <string name="Send.noFeesError">Se están descargando las condiciones de tarifa de red. Inténtalo de nuevo.</string>
     <!-- Paste button label -->
     <string name="Send.pasteLabel">Pegar</string>
+    <!-- Error message for invalid PayID -->
+    <string name="Send.payId_invalid">PayID inválido.</string>
+    <!-- Error message for no address associated with a PayID for a given currency -->
+    <string name="Send.payId_noAddress">No hay una dirección %1$s asociada con este PayID.</string>
+    <!-- Error message for error in retrieving the address from the PayID endpoint -->
+    <string name="Send.payId_retrievalError">Se produjo un error al recuperar la dirección de este PayID. Por favor, inténtelo de nuevo más tarde.</string>
+    <!-- PayID label -->
+    <string name="Send.payId_toLabel">PayID</string>
     <!-- Could not publish transaction alert title -->
     <string name="Send.publishTransactionError">No se pudo publicar la transacción.</string>
     <!-- Could not load remote request error message -->
