@@ -32,7 +32,7 @@ android {
     ext {
         brdMarketingVersion = 4   // Major version. Usually affected by marketing. Maximum value: 99
         brdProductVersion = 3    // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 1 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdEngineeringVersion = 2 // Hot fix version. Usually affected by engineering. Maximum value: 9
         brdBuildVersion = 1       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
@@ -338,8 +338,9 @@ dependencies {
 
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detekt_version"
 
-    implementation project(':CashSDK')
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    implementation 'com.github.atmcoin:cash-sdk-android:1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
