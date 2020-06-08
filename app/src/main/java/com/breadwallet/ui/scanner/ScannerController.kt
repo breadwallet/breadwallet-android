@@ -31,6 +31,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.breadwallet.R
+import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.qrcode.scannedText
@@ -39,6 +40,7 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.MainActivity
+import com.breadwallet.util.CryptoUriParser
 import kotlinx.android.synthetic.main.controller_scanner.*
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
@@ -49,6 +51,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.transformLatest
+import org.kodein.di.erased.instance
 
 private const val CAMERA_UI_UPDATE_MS = 100L
 
@@ -64,13 +67,16 @@ class ScannerController(
 
     override val layoutId = R.layout.controller_scanner
 
+    private val breadBox by instance<BreadBox>()
+    private val uriParser by instance<CryptoUriParser>()
+
     override fun onAttach(view: View) {
         super.onAttach(view)
         val context = checkNotNull(applicationContext)
 
         val cameraPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
         if (cameraPermission == PackageManager.PERMISSION_GRANTED) {
-            startScanner()
+            startScanner(breadBox, uriParser)
         } else {
             requestPermissions(
                 arrayOf(Manifest.permission.CAMERA),
@@ -83,16 +89,16 @@ class ScannerController(
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == BRConstants.CAMERA_REQUEST_ID) {
             when (grantResults.singleOrNull()) {
-                PackageManager.PERMISSION_GRANTED -> startScanner()
+                PackageManager.PERMISSION_GRANTED -> startScanner(breadBox, uriParser)
                 PackageManager.PERMISSION_DENIED, null -> router.popController(this)
             }
         }
     }
 
-    private fun startScanner() {
+    private fun startScanner(breadBox: BreadBox, uriParser: CryptoUriParser) {
         qrdecoderview
             .scannedText(true)
-            .mapLatest { text -> text to text.asLink() }
+            .mapLatest { text -> text to text.asLink(breadBox, uriParser) }
             .flowOn(Default)
             .transformLatest { (text, link) ->
                 if (link == null) {

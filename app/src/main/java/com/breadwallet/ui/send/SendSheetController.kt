@@ -125,6 +125,7 @@ class SendSheetController(args: Bundle? = null) :
         get() = SendSheetHandler.create(
             checkNotNull(applicationContext),
             breadBox = direct.instance(),
+            uriParser = direct.instance(),
             userManager = direct.instance(),
             apiClient = direct.instance(),
             ratesRepository = direct.instance(),
