@@ -8,6 +8,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'io.sweers.redacted.redacted-plugin'
+apply from: rootProject.file("jacoco.gradle")
 
 if (file('fabric.properties').exists()) {
     apply plugin: 'io.fabric'
@@ -23,7 +24,8 @@ detekt {
     baseline = file("detekt-baseline.xml")
 }
 sonarqube {
-    androidVariant 'brdTestnetRelease'
+    androidVariant 'brdTestnetDebug'
+
 }
 
 android {
@@ -135,6 +137,7 @@ android {
             jniDebuggable = true
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "true"
+            testCoverageEnabled true
 
         }
 

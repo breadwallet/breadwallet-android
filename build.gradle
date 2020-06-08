@@ -21,14 +21,23 @@ buildscript {
         classpath 'com.google.gms:google-services:4.3.3' // google-services plugin
         classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.10"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jacoco:org.jacoco.core:$jacocoVersion"
     }
 }
 
 plugins {
-    id("org.sonarqube") version  "$sonar_version"
+    id("org.sonarqube") version "$sonar_version"
+
 }
 
-allprojects {
+
+allprojects  {
+
+
+
+
+
+
     repositories {
         exclusiveContent {
             forRepository {
