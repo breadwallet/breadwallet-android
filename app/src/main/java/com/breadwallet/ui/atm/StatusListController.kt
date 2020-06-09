@@ -17,6 +17,7 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.atm.model.RetryableCashStatus
+import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.formatTo
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.breadwallet.ui.toDate
@@ -41,6 +42,11 @@ class StatusListController(args: Bundle) : BaseController(args) {
         const val DISPLAY_TIME_FORMAT = "dd MMM, hh:mm"
         const val HTTP_OK = 200
         const val REFRESH_UI_DELAY_MS = 400L
+    }
+
+    init {
+        overridePushHandler(BottomSheetChangeHandler())
+        overridePopHandler(BottomSheetChangeHandler())
     }
 
     @SuppressLint("SetJavaScriptEnabled")
