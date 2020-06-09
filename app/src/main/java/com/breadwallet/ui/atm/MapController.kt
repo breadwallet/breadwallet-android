@@ -180,8 +180,14 @@ class MapController(
                         false
                     }
 
-                    it.setOnInfoWindowClickListener { atm ->
-                        moveToVerification(atm.tag as AtmMachine)
+                    it.setOnInfoWindowClickListener { info ->
+                        val atm = info.tag as AtmMachine
+                        if (atm.redemption == 1) {
+                            moveToVerification(atm)
+                        } else {
+                            Toast.makeText(context, "This ATM does support only to buy," +
+                                " redemption is still not supported", Toast.LENGTH_SHORT).show()
+                        }
                     }
 
                     if (atmList.isNotEmpty()) {
