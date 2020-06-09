@@ -125,6 +125,7 @@ class WalletJs(
         private const val BASE_10 = 10
 
         private const val FORMAT_DELIMITER = "?format="
+        private const val FORMAT_LEGACY = "legacy"
         private const val FORMAT_SEGWIT = "segwit"
     }
 
@@ -379,8 +380,14 @@ class WalletJs(
 
         metaDataProvider.enableWallet(currencyId)
 
+        // Suspend until the wallet exists, i.e. an address is available.
+        val wallet = breadBox.wallet(currencyCode).first()
         JSONObject().apply {
             put(KEY_CURRENCY, currencyCode)
+            put(KEY_ADDRESS, getAddress(wallet, FORMAT_LEGACY))
+            if (wallet.currency.isBitcoin()) {
+                put("${KEY_ADDRESS}_${FORMAT_SEGWIT}", getAddress(wallet, FORMAT_SEGWIT))
+            }
         }
     }
 
