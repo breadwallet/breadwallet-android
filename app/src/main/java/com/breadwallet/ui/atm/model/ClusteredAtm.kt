@@ -1,8 +1,5 @@
 package com.breadwallet.ui.atm.model
 
-import android.content.Context
-import com.breadwallet.R
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 
@@ -23,7 +20,5 @@ data class ClusteredAtm(val atmMarkerInfo: AtmMarkerInfo) : ClusterItem {
     fun getMarkerInfo(): AtmMarkerInfo {
         return atmMarkerInfo
     }
-
-
 }
 

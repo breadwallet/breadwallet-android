@@ -179,7 +179,7 @@ class MapController(
         map.setOnCameraIdleListener(clusterManager)
         map.setOnMarkerClickListener(clusterManager)
         clusterManager.setOnClusterItemInfoWindowClickListener {
-            // processInfoWindowClicked(context, )
+            //TODO the click event is not implemented
         }
 
         clusterManager.renderer = AtmClusterRenderer(context, map, clusterManager)
