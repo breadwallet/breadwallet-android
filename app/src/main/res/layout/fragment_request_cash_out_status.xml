@@ -1,11 +1,9 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/background_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="bottom"
-    android:filterTouchesWhenObscured="true"
-    android:isScrollContainer="false">
+    android:id="@+id/layoutBackground">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -29,4 +27,4 @@
 
         <include android:id="@+id/awaitingCard" layout="@layout/request_status_awaiting"/>
     </androidx.cardview.widget.CardView>
-</FrameLayout>
+</ScrollView>
