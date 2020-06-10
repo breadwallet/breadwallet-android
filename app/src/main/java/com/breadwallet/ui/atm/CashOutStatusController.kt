@@ -19,6 +19,7 @@ import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.tools.qrcode.QRUtils
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.atm.model.RetryableCashStatus
+import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.util.CryptoUriParser
@@ -64,6 +65,11 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
         LOADING,
         AWAITING,
         FUNDED
+    }
+
+    init {
+        overridePushHandler(BottomSheetChangeHandler())
+        overridePopHandler(BottomSheetChangeHandler())
     }
 
     @SuppressLint("SetJavaScriptEnabled")
