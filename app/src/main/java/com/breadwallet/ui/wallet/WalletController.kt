@@ -116,7 +116,8 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             direct.instance(),
             Connectable { output ->
                 MetaDataEffectHandler(output, direct.instance(), direct.instance())
-            }
+            },
+            direct.instance()
         )
 
     private var fastAdapter: GenericFastAdapter? = null
