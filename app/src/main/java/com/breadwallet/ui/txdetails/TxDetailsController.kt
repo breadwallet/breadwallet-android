@@ -138,7 +138,7 @@ class TxDetailsController(
 
     override fun handleViewEffect(effect: ViewEffect) {
         when (effect) {
-            is F.CopyToClipboard -> BRClipboardManager.putClipboard(activity, effect.text)
+            is F.CopyToClipboard -> copyToClipboard(effect.text)
         }
     }
 
@@ -403,7 +403,7 @@ class TxDetailsController(
 
     private fun copyToClipboard(text: String) {
         BRClipboardManager.putClipboard(
-            applicationContext,
+            activity,
             text
         )
         toastLong(R.string.Receive_copied)
