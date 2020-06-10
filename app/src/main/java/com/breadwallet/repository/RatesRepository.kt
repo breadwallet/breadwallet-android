@@ -28,13 +28,9 @@ import android.content.Context
 import android.util.Log
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity
 import com.breadwallet.model.PriceChange
-import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.model.TokenItem
 import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.TokenUtil
-import com.breadwallet.tools.util.btc
-import com.breadwallet.ui.wallet.Interval
-import com.platform.network.service.CurrencyHistoricalDataClient.getHistoricalData
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
 import kotlinx.coroutines.flow.Flow
@@ -63,7 +59,7 @@ class RatesRepository private constructor(private val mContext: Context) {
      * @return a currency entity encapsulating the two currencies and the rate between them, returns
      * null if either the currencies are empty or the rate wasn't found
      */
-    fun getCurrencyByCode(fromCurrency: String?, toCurrency: String?): CurrencyEntity? {
+    private fun getCurrencyByCode(fromCurrency: String?, toCurrency: String?): CurrencyEntity? {
         if (fromCurrency.isNullOrBlank() || toCurrency.isNullOrBlank()) {
             return null
         }
@@ -119,19 +115,12 @@ class RatesRepository private constructor(private val mContext: Context) {
         cryptoCode: String,
         fiatCode: String
     ): BigDecimal? {
-        //fiat rate for btc
-        val btcRate = getCurrencyByCode(btc, fiatCode)
-        //Btc rate for the given crypto
-        val cryptoBtcRate = getCurrencyByCode(cryptoCode, btc)
-        if (btcRate == null) {
-            Log.e(TAG, "getFiatForBch: No $fiatCode rates for BTC")
+        val cryptoRate = getCurrencyByCode(cryptoCode, fiatCode)
+        if (cryptoRate == null) {
+            Log.e(TAG, "getFiatForBch: No fiat rate for $cryptoCode")
             return null
         }
-        if (cryptoBtcRate == null) {
-            Log.e(TAG, "getFiatForBch: No BTC rates for $cryptoCode")
-            return null
-        }
-        return cryptoAmount * cryptoBtcRate.rate.toBigDecimal() * btcRate.rate.toBigDecimal()
+        return cryptoAmount * cryptoRate.rate.toBigDecimal()
     }
 
     fun getFiatPerCryptoUnit(cryptoCode: String, fiatCode: String): BigDecimal {
@@ -198,19 +187,6 @@ class RatesRepository private constructor(private val mContext: Context) {
         val actualCurrencyCode =
             TokenUtil.getExchangeRateCode(currencyCode).toUpperCase(Locale.ROOT)
         return mPriceChanges[actualCurrencyCode]
-    }
-
-    fun getHistoricalData(
-        fromCurrencyCode: String,
-        toCurrencyCode: String,
-        interval: Interval
-    ): List<PriceDataPoint> {
-        return getHistoricalData(
-            mContext,
-            TokenUtil.getExchangeRateCode(fromCurrencyCode),
-            toCurrencyCode,
-            interval
-        )
     }
 
     @get:Synchronized

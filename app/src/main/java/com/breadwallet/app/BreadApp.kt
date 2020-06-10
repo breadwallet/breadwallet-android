@@ -57,7 +57,7 @@ import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.InternetManager
-import com.breadwallet.tools.manager.updateRatesForCurrencies
+import com.breadwallet.tools.manager.RatesFetcher
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.BrdUserState
@@ -79,6 +79,9 @@ import com.platform.interfaces.KVStoreProvider
 import com.platform.interfaces.MetaDataManager
 import com.platform.interfaces.WalletProvider
 import com.platform.tools.KVStoreManager
+import drewcarlson.coingecko.CoinGeckoService
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -148,7 +151,6 @@ class BreadApp : Application(), KodeinAware {
         )
 
         fun getBreadBox(): BreadBox = mInstance.direct.instance()
-        fun getAccountMetaDataProvider(): AccountMetaDataProvider = mInstance.direct.instance()
 
         // TODO: For code organization only, to be removed
         fun getStorageDir(context: Context): File {
@@ -329,6 +331,16 @@ class BreadApp : Application(), KodeinAware {
         bind<ExperimentsRepository>() with singleton { ExperimentsRepositoryImpl }
 
         bind<RatesRepository>() with singleton { RatesRepository.getInstance(this@BreadApp) }
+
+        bind<RatesFetcher>() with singleton {
+            val httpClient = HttpClient(OkHttp)
+            val coinGecko = CoinGeckoService(httpClient)
+            RatesFetcher(
+                instance(),
+                coinGecko,
+                this@BreadApp
+            )
+        }
     }
 
     private var mDelayServerShutdownCode = -1
@@ -338,8 +350,10 @@ class BreadApp : Application(), KodeinAware {
 
     private var accountLockJob: Job? = null
 
-    private val userManager: BrdUserManager by instance()
-    private val apiClient: APIClient by instance()
+    private val apiClient by instance<APIClient>()
+    private val userManager by instance<BrdUserManager>()
+    private val ratesFetcher by instance<RatesFetcher>()
+    private val accountMetaData by instance<AccountMetaDataProvider>()
 
     override fun onCreate() {
         super.onCreate()
@@ -466,13 +480,11 @@ class BreadApp : Application(), KodeinAware {
             UserMetricsUtil.makeUserMetricsRequest(context)
         }
 
-        getAccountMetaDataProvider()
+        accountMetaData
             .recoverAll(migrate)
             .launchIn(startedScope)
 
-        breadBox.currencyCodes()
-            .updateRatesForCurrencies(context)
-            .launchIn(startedScope)
+        ratesFetcher.start(startedScope)
 
         applicationScope.launch {
             trackAddressMismatch(breadBox)

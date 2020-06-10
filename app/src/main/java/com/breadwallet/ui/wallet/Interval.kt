@@ -24,11 +24,11 @@
  */
 package com.breadwallet.ui.wallet
 
-enum class Interval {
-    ONE_DAY,
-    ONE_WEEK,
-    ONE_MONTH,
-    THREE_MONTHS,
-    ONE_YEAR,
-    THREE_YEARS
+enum class Interval(val days: Int, val keepEvery: Int) {
+    ONE_DAY(1, 6),
+    ONE_WEEK(7, 0),
+    ONE_MONTH(30, 2),
+    THREE_MONTHS(90, 8),
+    ONE_YEAR(365, 1),
+    THREE_YEARS(1095, 5)
 }
