@@ -30,7 +30,7 @@ import com.breadwallet.ui.provekey.PaperKeyProve.F
 import drewcarlson.mobius.flow.subtypeEffectHandler
 
 fun createPaperKeyProveHandler() = subtypeEffectHandler<F, E> {
-    addAction<F.StoreWroteDownPhrase> {
+    addFunction<F.StoreWroteDownPhrase> {
         BRSharedPrefs.putPhraseWroteDown(true)
         E.OnWroteDownKeySaved
     }
