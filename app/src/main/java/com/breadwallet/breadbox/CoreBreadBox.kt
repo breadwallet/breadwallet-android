@@ -69,6 +69,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -222,6 +223,7 @@ internal class CoreBreadBox(
     override fun system(): Flow<System> =
         systemChannel
             .asFlow()
+            .dropWhile { !isOpen }
             .mapNotNull { system }
 
     override fun account() =
