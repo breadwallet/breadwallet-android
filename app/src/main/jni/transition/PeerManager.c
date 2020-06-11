@@ -39,6 +39,12 @@
 
 #define fprintf(...) __android_log_print(ANDROID_LOG_ERROR, "bread", _va_rest(__VA_ARGS__, NULL))
 
+#if LITECOIN_TESTNET
+#define BR_CHAIN_PARAMS BRTestNetParams
+#else
+#define BR_CHAIN_PARAMS BRMainNetParams
+#endif
+
 static BRMerkleBlock **_blocks;
 BRPeerManager *_peerManager;
 static JavaVM *_jvmPM;
@@ -291,7 +297,8 @@ Java_com_breadwallet_wallet_BRPeerManager_create(JNIEnv *env, jobject thiz,
         if (earliestKeyTime < BIP39_CREATION_TIME) earliestKeyTime = BIP39_CREATION_TIME;
         __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "earliestKeyTime: %d",
                             earliestKeyTime);
-        _peerManager = BRPeerManagerNew(_wallet, (uint32_t) earliestKeyTime, _blocks,
+
+        _peerManager = BRPeerManagerNew(&BR_CHAIN_PARAMS, _wallet, (uint32_t) earliestKeyTime, _blocks,
                                         (size_t) blocksCount,
                                         _peers, (size_t) peersCount);
         BRPeerManagerSetCallbacks(_peerManager, NULL, syncStarted, syncStopped,
@@ -422,7 +429,7 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated(J
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isConnected(JNIEnv *env,
                                                                                  jobject obj) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "isConnected");
-    return (jboolean) (_peerManager && BRPeerManagerIsConnected(_peerManager));
+    return (jboolean) (_peerManager && BRPeerManagerConnectStatus(_peerManager) == BRPeerStatusConnected);
 }
 
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlockHeight(
@@ -459,7 +466,7 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_setFixedPee
         if (inet_pton(AF_INET, host, &addr) != 1) return JNI_FALSE;
         address.u16[5] = 0xffff;
         address.u32[3] = addr.s_addr;
-        if (port == 0) _port = STANDARD_PORT;
+        if (port == 0) _port = BRPeerManagerStandardPort(_peerManager);
     } else {
         _port = 0;
     }

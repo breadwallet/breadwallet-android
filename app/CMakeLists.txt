@@ -60,6 +60,9 @@ add_library( # Specifies the name of the library.
              src/main/jni/loafwallet-core/BRTransaction.h
              src/main/jni/loafwallet-core/BRWallet.c
              src/main/jni/loafwallet-core/BRWallet.h
+             src/main/jni/loafwallet-core/BRChainParams.h
+             src/main/jni/loafwallet-core/BRBech32.c
+             src/main/jni/loafwallet-core/BRBech32.h
 
              src/main/jni/transition/core.c
              src/main/jni/transition/core.h

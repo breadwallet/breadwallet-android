@@ -136,7 +136,7 @@ static void txAdded(void *info, BRTransaction *tx) {
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) len, (jbyte *) buf);
 
     UInt256 transactionHash = tx->txHash;
-    const char *strHash = u256_hex_encode(transactionHash);
+    const char *strHash = u256hex(transactionHash);
     jstring jstrHash = (*env)->NewStringUTF(env, strHash);
 
     (*env)->CallStaticVoidMethod(env, _walletManagerClass, mid, result, (jint) tx->blockHeight,
@@ -158,7 +158,7 @@ static void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32
                                               "(Ljava/lang/String;II)V");
 
     for (size_t i = 0; i < count; i++) {
-        const char *strHash = u256_hex_encode(txHashes[i]);
+        const char *strHash = u256hex(txHashes[i]);
         jstring JstrHash = (*env)->NewStringUTF(env, strHash);
 
         (*env)->CallStaticVoidMethod(env, _walletManagerClass, mid, JstrHash, (jint) blockHeight,
@@ -175,7 +175,7 @@ static void txDeleted(void *info, UInt256 txHash, int notifyUser, int recommendR
 
     if (!env || _walletManagerClass == NULL) return;
 
-    const char *strHash = u256_hex_encode(txHash);
+    const char *strHash = u256hex(txHash);
 
     //create class
     jmethodID mid = (*env)->GetStaticMethodID(env, _walletManagerClass, "onTxDeleted",
@@ -319,7 +319,7 @@ Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env, jobject 
     tmpTx->timestamp = (uint32_t) jTimeStamp;
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "tmpTx->timestamp: %u",
 //                        tmpTx->timestamp);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "tmpTx: %s", u256_hex_encode(tmpTx->txHash));
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "tmpTx: %s", u256hex(tmpTx->txHash));
     _transactions[_transactionsCounter++] = tmpTx;
 
 }
@@ -380,7 +380,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
 
         UInt256 reversedHash = UInt256Reverse((txid));
 
-        jstring txReversed = (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
+        jstring txReversed = (*env)->NewStringUTF(env, u256hex(reversedHash));
 
 
         jlong Jsent = (jlong) BRWalletAmountSentByTx(_wallet, tempTx);
@@ -576,7 +576,7 @@ Java_com_breadwallet_wallet_BRWalletManager_transactionIsVerified(JNIEnv *env, j
     if (!_wallet) return JNI_FALSE;
 
     const char *txHash = (*env)->GetStringUTFChars(env, jtxHash, NULL);
-    UInt256 txHashResult = u256_hex_decode(txHash);
+    UInt256 txHashResult = uint256(txHash);
     BRTransaction *tx = BRWalletTransactionForHash(_wallet, txHashResult);
 
     if (!tx) return JNI_FALSE;
@@ -865,10 +865,10 @@ Java_com_breadwallet_wallet_BRWalletManager_reverseTxHash(JNIEnv *env, jobject t
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "reverseTxHash");
 
     const char *rawString = (*env)->GetStringUTFChars(env, txHash, 0);
-    UInt256 theHash = u256_hex_decode(rawString);
+    UInt256 theHash = uint256(rawString);
     UInt256 reversedHash = UInt256Reverse(theHash);
 
-    return (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
+    return (*env)->NewStringUTF(env, u256hex(reversedHash));
 }
 
 JNIEXPORT jstring JNICALL
@@ -882,10 +882,10 @@ Java_com_breadwallet_wallet_BRWalletManager_txHashToHex(JNIEnv *env, jobject thi
     UInt256 reversedHash = UInt256Reverse((*(UInt256 *) hash));
 
 //    const char *rawString = (*env)->GetStringUTFChars(env, txHash, 0);
-//    UInt256 theHash = u256_hex_decode(rawString);
+//    UInt256 theHash = uint256(rawString);
 //    UInt256 reversedHash = UInt256Reverse(theHash);
 //
-    return (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
+    return (*env)->NewStringUTF(env, u256hex(reversedHash));
 }
 
 
@@ -895,14 +895,14 @@ Java_com_breadwallet_wallet_BRWalletManager_txHashSha256Hex(JNIEnv *env, jobject
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "reverseTxHash");
 
     const char *rawString = (*env)->GetStringUTFChars(env, txHash, 0);
-    UInt256 theHash = u256_hex_decode(rawString);
+    UInt256 theHash = uint256(rawString);
 //    UInt256 reversedHash = UInt256Reverse(theHash);
-//    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "reversedHash: %s", u256_hex_encode(reversedHash));
+//    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "reversedHash: %s", u256hex(reversedHash));
     UInt256 sha256Hash;
     BRSHA256(&sha256Hash, theHash.u8, sizeof(theHash));
 
 //    UInt256 reversedHash = UInt256Reverse(sha256Hash);
-    char *result = u256_hex_encode(sha256Hash);
+    char *result = u256hex(sha256Hash);
     return (*env)->NewStringUTF(env, result);
 }
 
