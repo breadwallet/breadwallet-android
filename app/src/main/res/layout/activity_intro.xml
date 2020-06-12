@@ -84,8 +84,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 </com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout>
