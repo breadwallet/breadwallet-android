@@ -1,6 +1,5 @@
 package com.breadwallet.ui.atm
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.annotation.NonNull

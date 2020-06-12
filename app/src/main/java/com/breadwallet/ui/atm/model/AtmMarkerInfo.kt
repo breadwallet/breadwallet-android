@@ -67,10 +67,10 @@ class AtmMarkerInfo(val atm: AtmMachine) {
     }
 
     fun getTitle(): String {
-        return if (atm.redemption ==1) {
+        return if (atm.redemption == 1) {
             "ATM"
         } else {
-            "ATM - Buy Only"
+            "ATM - Purchase Only"
         }
     }
 
