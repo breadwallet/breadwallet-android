@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [4.4.0 (4048001)]
+## Added
+- Added the flags to show redemption vs purchase only atm.
+## Security
+- Adding session to the headers using the new CashSDK 2.0
+## Fixed
+- Crash in status.
+ 
 ## [4.3.1 (4028001)]
 ### Fixed
 - I fixed the crash `Canvas: trying to draw too large` in Samsung S7
