@@ -23,6 +23,7 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.ui.BaseController
+import com.breadwallet.ui.atm.model.RetryableCashStatus
 import com.breadwallet.ui.atm.model.WacMarker
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.breadwallet.ui.send.SendSheetController
@@ -250,7 +251,7 @@ class RequestCashCodeController(
         })
     }
 
-    private fun showDialog(context:Context, code:String, cashStatus: CashStatus){
+    private fun showDialog(context:Context, secureCode:String, cashStatus: CashStatus){
         BRDialog.showCustomDialog(
             context, "Withdrawal requested",
             "Please send the amount of ${cashStatus.btc_amount} BTC to the ATM",
@@ -259,7 +260,7 @@ class RequestCashCodeController(
                 dialog.dismissWithAnimation()
             },
             { dialog ->
-                goToDetails(code)
+                goToDetails(secureCode, cashStatus)
                 dialog.dismissWithAnimation()
             }, null)
     }
@@ -289,8 +290,10 @@ class RequestCashCodeController(
         })
     }
 
-    private fun goToDetails(code:String) {
-        router.replaceTopController(RouterTransaction.with(CashOutStatusController(code)))
+    private fun goToDetails(secureCode:String, status:CashStatus) {
+        router.replaceTopController(RouterTransaction.with(CashOutStatusController(
+            RetryableCashStatus(secureCode, status)
+        )))
     }
 
     private fun goToSend(btc:String, address:String) {

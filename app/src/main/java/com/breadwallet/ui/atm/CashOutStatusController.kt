@@ -96,8 +96,11 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
                 populateFundedView(context, safeCode, cashStatus.usdAmount, cashStatus.description)
             }
         } ?: run {
-            safeCode = code ?: throw IllegalArgumentException("Missing arguments $cashStatus and $secureCode")
-            refreshCodeStatus(safeCode, context)
+            if (code != null) {
+                refreshCodeStatus(code, context)
+            } else {
+                throw IllegalArgumentException("Missing arguments $cashStatus and $secureCode")
+            }
         }
     }
 
