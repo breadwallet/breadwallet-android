@@ -206,5 +206,4 @@
         android:src="@drawable/fingerprint_icon"
         app:layout_constraintBottom_toTopOf="@+id/brkeyboard"
         app:layout_constraintRight_toRightOf="parent"/>
-
 </com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout>
