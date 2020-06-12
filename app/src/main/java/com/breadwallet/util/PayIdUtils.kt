@@ -26,6 +26,7 @@ package com.breadwallet.util
 
 import com.breadwallet.BuildConfig
 import com.breadwallet.logger.logError
+import com.platform.util.getStringOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONException
@@ -44,6 +45,9 @@ private const val PAY_ID_FIELD_ENVIRONMENT = "environment"
 private const val PAY_ID_FIELD_CURRENCY = "paymentNetwork"
 private const val PAY_ID_FIELD_ADDRESS_DETAILS = "addressDetails"
 private const val PAY_ID_FIELD_ADDRESS = "address"
+private const val PAY_ID_FIELD_TAG = "tag"
+
+private const val PAY_ID_CURRENCY_ID_XRP = "XRPL"
 
 fun String?.isPayId() =
     this?.let {
@@ -60,8 +64,8 @@ class PayIdService(private val httpClient: OkHttpClient) {
 
         return try {
             requestAddress(url, currencyCode)?.let {
-                if (it.isBlank()) PayIdResult.NoAddress
-                PayIdResult.Success(it)
+                if (it.first.isBlank()) PayIdResult.NoAddress
+                PayIdResult.Success(it.first, it.second)
             } ?: PayIdResult.NoAddress
         } catch (ex: Exception) {
             logError("payID: ${ex.message}")
@@ -73,7 +77,7 @@ class PayIdService(private val httpClient: OkHttpClient) {
         url: String,
         currencyCode: String,
         attempt: Int = 0
-    ): String? {
+    ): Pair<String, String?>? {
         val request = Request.Builder()
             .addHeader("Accept", PAY_ID_ACCEPT_TYPE)
             .addHeader(PAY_ID_HEADER_VERSION, PAY_ID_VERSION)
@@ -94,22 +98,24 @@ class PayIdService(private val httpClient: OkHttpClient) {
 
         if (response.isSuccessful) {
             val bodyString = checkNotNull(response.body).string()
-
+            
             try {
                 val addressesArray = JSONObject(bodyString).getJSONArray(PAY_ID_FIELD_ADDRESSES)
                 for (i in 0 until addressesArray.length()) {
                     val addressObject = addressesArray.getJSONObject(i)
                     val environment = addressObject.getString(PAY_ID_FIELD_ENVIRONMENT)
                     val payIdCurrency = addressObject.getString(PAY_ID_FIELD_CURRENCY)
-                    
+
                     if (isTargetEnvironment(environment) && isTargetCurrency(
                             payIdCurrency,
                             currencyCode
                         )
                     ) {
-                        return addressObject
-                            .getJSONObject(PAY_ID_FIELD_ADDRESS_DETAILS)
-                            .getString(PAY_ID_FIELD_ADDRESS)
+                        val detailsObj = addressObject.getJSONObject(PAY_ID_FIELD_ADDRESS_DETAILS)
+                        return Pair<String, String?>(
+                            detailsObj.getString(PAY_ID_FIELD_ADDRESS),
+                            detailsObj.getStringOrNull(PAY_ID_FIELD_TAG)
+                        )
                     }
                 }
             } catch (e: JSONException) {
@@ -128,14 +134,15 @@ class PayIdService(private val httpClient: OkHttpClient) {
     }
 
     private fun isTargetCurrency(payIdCurrency: String, currencyCode: CurrencyCode) =
-        payIdCurrency.equals(
-            currencyCode,
-            true
-        )
+        if (currencyCode.isRipple()) {
+            payIdCurrency.equals(PAY_ID_CURRENCY_ID_XRP, true)
+        } else {
+            payIdCurrency.equals(currencyCode, true)
+        }
 }
 
 sealed class PayIdResult {
-    data class Success(val address: String) : PayIdResult()
+    data class Success(val address: String, val destinationTag: String?) : PayIdResult()
     object InvalidPayId : PayIdResult()
     object ExternalError : PayIdResult()
     object NoAddress : PayIdResult()

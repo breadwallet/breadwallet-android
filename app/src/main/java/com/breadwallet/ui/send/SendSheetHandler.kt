@@ -273,7 +273,8 @@ object SendSheetHandler {
                 validateTargetString(breadBox, uriParser, effect.currencyCode, result.address)) {
                 is E.OnAddressValidated.Address.ValidAddress -> E.OnAddressValidated.PayId.ValidAddress(
                     effect.payId,
-                    validateResult.address
+                    validateResult.address,
+                    result.destinationTag
                 )
                 is E.OnAddressValidated.Address.PayIdString -> E.OnAddressValidated.PayId.InvalidPayId
                 is E.OnAddressValidated.Address.InvalidAddress -> E.OnAddressValidated.PayId.InvalidPayId
