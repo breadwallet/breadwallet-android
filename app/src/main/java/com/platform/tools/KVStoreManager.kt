@@ -66,13 +66,22 @@ class KVStoreManager(
 
     private val keyChannelMap = ConcurrentHashMap<String, BroadcastChannel<JSONObject>>()
 
+
+
+
     override fun get(key: String): JSONObject? =
         getData(context, key)?.run { JSONObject(String(this)) }
 
     override fun put(key: String, value: JSONObject): Boolean {
         logDebug("put $key -> $value")
         val valueStr = value.toString().toByteArray()
-
+        key.trim().filter {
+            it.isDigit() or (it == '-')
+        }
+        val first = key.trim().toCharArray()[0]
+        if (!first.isDigit() and (first != '-')) {
+            Int.MIN_VALUE
+        }
         if (valueStr.isEmpty()) {
             return false
         }

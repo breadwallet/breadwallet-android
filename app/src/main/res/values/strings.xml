@@ -291,7 +291,7 @@
     <!-- home screen toolbar 'Buy & Sell' button -->
     <string name="HomeScreen.buyAndSell">Buy &amp; Sell</string>
     <!-- home screen toolbar 'Buy & Sell' button -->
-    <string name="HomeScreen.cashOut">ATM Cash Out</string>
+    <string name="HomeScreen.cashOut">Cash Out</string>
     <!-- Menu button on the home screen toolbar -->
     <string name="HomeScreen.menu">Menu</string>
     <!-- This section lists the users wallets -->

@@ -127,6 +127,9 @@ class HomeController(
     private var addWalletAdapter: ItemAdapter<AddWalletItem>? = null
 
     override fun bindView(output: Consumer<E>): Disposable {
+        sweep_layout.setOnClickListener {
+
+        }
         buy_layout.setOnClickListener { output.accept(E.OnBuyClicked) }
         trade_layout.setOnClickListener {
             output.accept(E.OnTradeClicked)

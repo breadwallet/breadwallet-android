@@ -91,19 +91,19 @@ android {
     flavorDimensions "mode"
     productFlavors {
         brd {
-            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher"]
+            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher_white"]
             applicationId = "cash.just.wallet"
             dimension "mode"
-            resValue "string", "app_name", "Coinsquare"
+            resValue "string", "app_name", "Coinsquare Wallet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
             signingConfig signingConfigs.FakeSigningConfig // Uncomment to fake sign a mainnet release build for testing.
             missingDimensionStrategy 'network', 'onMainnet'
         }
         brdTestnet {
-            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher_testnet"]
+            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher_wallet"]
             applicationId = "cash.just.testnet"
             dimension "mode"
-            resValue "string", "app_name", "Coinsquare Testnet"
+            resValue "string", "app_name", "Wallet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
             signingConfig signingConfigs.FakeSigningConfig
             missingDimensionStrategy 'network', 'onTestnet'
