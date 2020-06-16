@@ -37,12 +37,17 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
+import com.breadwallet.ui.atm.model.AtmClusterRenderer
+import com.breadwallet.ui.atm.model.ClusteredAtm
+import com.breadwallet.ui.atm.model.AtmMarkerInfo
 import com.breadwallet.ui.atm.model.WacMarker
 import com.breadwallet.ui.atm.model.getAtmMachineMock
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.maps.android.clustering.ClusterManager
 import com.platform.PlatformTransactionBus
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.Dispatchers
@@ -97,53 +102,15 @@ class MapController(
         }
     }
 
-    // private fun showDialog() {
-    //
-    //     BRDialog.showCustomDialog(
-    //         applicationContext!!, "Withdrawal requested",
-    //         "Please send the amount of 0.069 BTC to the ATM",
-    //         "Send", "Details", { dialog ->
-    //             val builder = CryptoRequest.Builder()
-    //             builder.address = "n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF "
-    //             builder.amount = 0.234f.toBigDecimal()
-    //             builder.currencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE
-    //             val request = builder.build()
-    //             router.pushController(RouterTransaction.with(
-    //                 SendSheetController(
-    //                     request //make it default
-    //                 )
-    //             ))
-    //             dialog.dismissWithAnimation()
-    //         },
-    //         { dialog ->
-    //             // router.pushController(RouterTransaction.with(
-    //             //     CashOutStatusController(
-    //             //          //make it default
-    //             //          getAwaitingState()
-    //             //     )
-    //             // ))
-    //             dialog.dismissWithAnimation()
-    //             dialog.dismissWithAnimation()
-    //         }, null)
-    // }
-
-    // private fun getAwaitingState() : CashStatus {
-    //     return CashStatus("BTC","A","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","20.0","0.2345","",
-    //         "","","Mataró, Cami de la Geganta","","")
-    // }
-    //
-    // private fun getFundedState() : CashStatus {
-    //     return CashStatus("1234-1234","V","n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF","10","0.2345","",
-    //         "","","Mataró, Cami de la Geganta","","")
-    // }
-
     private fun fetchAtms(){
         CashSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {
             override fun onResponse(call: Call<AtmListResponse>, response: Response<AtmListResponse>) {
-                map?.let {
+                map?.let { map ->
                     response.body()?.let { response ->
                         atmList = response.data.items
-                        addAtmMarkers(it, atmList)
+                        view?.let {
+                            proceedToAddMarkers(it.context, map, atmList)
+                        }
                     }
                 }
             }
@@ -180,15 +147,46 @@ class MapController(
                         false
                     }
 
-                    it.setOnInfoWindowClickListener { atm ->
-                        moveToVerification(atm.tag as AtmMachine)
+                    it.setOnInfoWindowClickListener { info ->
+                       processInfoWindowClicked(context, info)
                     }
 
-                    if (atmList.isNotEmpty()) {
-                       addAtmMarkers(it, atmList)
-                    }
+                    proceedToAddMarkers(context, it, atmList)
                 }
             }
+    }
+
+    private fun processInfoWindowClicked(context:Context, marker: Marker) {
+        val atm = marker.tag as AtmMachine
+        if (atm.redemption == 1) {
+            moveToVerification(atm)
+        } else {
+            Toast.makeText(context, "This ATM does support only to buy," +
+                " redemption is still not supported", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun proceedToAddMarkers(context:Context, map:GoogleMap, atmList:List<AtmMachine>) {
+        if (atmList.size > 100) {
+            addAtmMarkersWithCluster(context, map, atmList)
+        } else if(atmList.isNotEmpty()) {
+            addAtmMarkers(map, atmList)
+        }
+    }
+
+    private fun addAtmMarkersWithCluster(context: Context, map:GoogleMap, list:List<AtmMachine>){
+        val clusterManager = ClusterManager<ClusteredAtm>(context, map)
+        map.setOnCameraIdleListener(clusterManager)
+        map.setOnMarkerClickListener(clusterManager)
+        clusterManager.setOnClusterItemInfoWindowClickListener {
+            //TODO the click event is not implemented
+        }
+
+        clusterManager.renderer = AtmClusterRenderer(context, map, clusterManager)
+        list.forEach {
+            val atm = ClusteredAtm(AtmMarkerInfo(it))
+            clusterManager.addItem(atm)
+        }
     }
 
     private fun moveToVerification(atm:AtmMachine) {

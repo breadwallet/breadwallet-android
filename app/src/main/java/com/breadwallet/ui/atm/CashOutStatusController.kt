@@ -97,7 +97,8 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
             }
         } ?: run {
             safeCode = code ?: throw IllegalArgumentException("Missing arguments $cashStatus and $secureCode")
-            refreshCodeStatus(safeCode, context)
+
+            refreshCodeStatus(code, context)
         }
     }
 

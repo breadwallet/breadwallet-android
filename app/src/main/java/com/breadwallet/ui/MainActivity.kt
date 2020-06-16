@@ -101,14 +101,14 @@ class MainActivity : BRActivity() {
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!BuildConfig.DEBUG || intent.getBooleanExtra(EXTRA_SECURE_WINDOW, BRSharedPrefs.secureScreenMode)) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        } else {
-            Toast.makeText(this, SECURE_MODE_WARNING, Toast.LENGTH_LONG).show()
-        }
+        // if (!BuildConfig.DEBUG || intent.getBooleanExtra(EXTRA_SECURE_WINDOW, BRSharedPrefs.secureScreenMode)) {
+        //     window.setFlags(
+        //         WindowManager.LayoutParams.FLAG_SECURE,
+        //         WindowManager.LayoutParams.FLAG_SECURE
+        //     )
+        // } else {
+        //     Toast.makeText(this, SECURE_MODE_WARNING, Toast.LENGTH_LONG).show()
+        // }
         // The view of this activity is nothing more than a Controller host with animation support
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
