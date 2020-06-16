@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   android:id="@+id/root_view"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.breadwallet.legacy.presenter.customviews.BRNotificationBar
         android:id="@+id/notification_bar"
@@ -139,7 +139,7 @@
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </com.google.android.material.appbar.AppBarLayout>
@@ -201,18 +201,18 @@
                 android:id="@+id/buttonCreateAccount"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="@dimen/bread_margin"
-                android:layout_marginEnd="@dimen/bread_margin"
                 android:layout_gravity="center"
+                android:layout_marginStart="@dimen/bread_margin"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="@dimen/bread_margin"
                 android:background="@color/currency_buttons_color"
                 android:fontFamily="@font/circular_pro_bold"
                 android:text="@string/AccountCreation.create"
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_text_size"
+                android:visibility="visible"
                 app:buttonType="4"
                 app:hasShadow="false"
-                android:visibility="visible"
                 app:isBreadButton="true" />
 
             <ProgressBar
@@ -221,24 +221,24 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:visibility="gone"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
         </FrameLayout>
 
         <LinearLayout
             android:id="@+id/layout_send_receive"
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:background="@color/extra_light_blue_background"
             android:layout_gravity="bottom"
+            android:background="@color/extra_light_blue_background"
             android:elevation="0dp"
             android:orientation="horizontal"
-            android:weightSum="3"
-            tools:visibility="visible"
             android:visibility="gone"
+            android:weightSum="3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
 
 
             <com.breadwallet.legacy.presenter.customviews.BRButton

@@ -34,6 +34,8 @@ import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.wallet.Interval
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.platform.interfaces.AccountMetaDataProvider
 import drewcarlson.coingecko.CoinGeckoService
 import drewcarlson.coingecko.models.coins.CoinPrice
@@ -56,7 +58,15 @@ private const val REFRESH_DELAY_MS = 60_000L
 private const val REFRESH_ERROR_DELAY_MS = 2_000L
 
 /** Default fiat currencies to retrieve exchange rates for. */
-private val DEFAULT_FIATS = listOf("USD", "EUR")
+private const val USD = "USD"
+private const val EUR = "EUR"
+private val DEFAULT_FIATS = listOf(USD, EUR)
+
+/** Hard-coded AVM currencies and related remote config keys. */
+private const val AVM_CURRENCY_CODE = "avm"
+private const val EUR_AVM_CURRENCY_CODE = "eur.avm"
+private const val AVM_TO_EUR_KEY = "AVM_TO_EUR"
+private const val EUR_AVM_TO_EUR_KEY = "EUR_AVM_TO_EUR"
 
 class RatesFetcher(
     private val accountMetaData: AccountMetaDataProvider,
@@ -156,6 +166,8 @@ class RatesFetcher(
             }
         }
 
+        currencyEntities.addAll(getFixedRates())
+
         if (currencyEntities.isNotEmpty()) {
             ratesRepo.putCurrencyRates(currencyEntities)
         }
@@ -163,6 +175,24 @@ class RatesFetcher(
         if (priceChanges.isNotEmpty()) {
             ratesRepo.updatePriceChanges(priceChanges)
         }
+    }
+
+    /** Pull hard-coded rates from remote config. */
+    private fun getFixedRates(): List<CurrencyEntity> {
+        val remoteConfig = Firebase.remoteConfig
+        return mapOf(
+            AVM_CURRENCY_CODE to remoteConfig.getDouble(AVM_TO_EUR_KEY),
+            EUR_AVM_CURRENCY_CODE to remoteConfig.getDouble(EUR_AVM_TO_EUR_KEY)
+        ).entries
+            .filter { it.value != 0.0 }
+            .map { (currencyCode, price) ->
+                CurrencyEntity(
+                    name = EUR,
+                    code = EUR,
+                    rate = price.toFloat(),
+                    iso = currencyCode
+                )
+            }
     }
 
     private suspend fun fetchRates(
@@ -193,7 +223,7 @@ class RatesFetcher(
         val id = getCoinGeckoIdMap()
             .filterKeys { it.equals(fromCurrency, true) }
             .values
-            .single()
+            .singleOrNull() ?: return emptyList()
         return coinGeckoService.getCoinMarketChartById(id, toCurrency, interval.days)
             .prices
             .map { p ->
