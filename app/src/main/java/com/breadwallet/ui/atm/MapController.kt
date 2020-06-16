@@ -27,6 +27,7 @@ package com.breadwallet.ui.atm
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import cash.just.sdk.Cash
@@ -41,7 +42,6 @@ import com.breadwallet.ui.atm.model.AtmClusterRenderer
 import com.breadwallet.ui.atm.model.ClusteredAtm
 import com.breadwallet.ui.atm.model.AtmMarkerInfo
 import com.breadwallet.ui.atm.model.WacMarker
-import com.breadwallet.ui.atm.model.getAtmMachineMock
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -71,15 +71,19 @@ class MapController(
     private var texas = LatLng(31.000000, -100.000000)
     @Suppress("MagicNumber")
     private var initialZoom = 5f
+    private lateinit var appContext:Context
+    private val enableMapClusters = false
+    @Suppress("MagicNumber")
+    private val clustersThreshold = 100
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-
+        appContext = view.context.applicationContext
         prepareMap(view.context)
 
         if (!CashSDK.isSessionCreated()) {
-
+            Log.d("MapController", "Creating session")
             CashSDK.createSession(BitcoinServer.getServer(), object: Cash.SessionCallback {
                 override fun onSessionCreated(sessionKey: String) {
                     fetchAtms()
@@ -90,27 +94,28 @@ class MapController(
                 }
             })
         } else {
+            Log.d("MapController", "Session already created.")
             fetchAtms()
         }
 
         handlePlatformMessages().launchIn(viewCreatedScope)
 
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                moveToVerification(getAtmMachineMock())
-            }
+            // if (hasFocus) {
+            //     moveToVerification(getAtmMachineMock())
+            // }
         }
     }
 
-    private fun fetchAtms(){
+    private fun fetchAtms() {
         CashSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {
             override fun onResponse(call: Call<AtmListResponse>, response: Response<AtmListResponse>) {
-                map?.let { map ->
-                    response.body()?.let { response ->
-                        atmList = response.data.items
-                        view?.let {
-                            proceedToAddMarkers(it.context, map, atmList)
-                        }
+                response.body()?.let { safeResponse ->
+                    atmList = safeResponse.data.items
+                    map?.let { mapObject ->
+                        proceedToAddMarkers(appContext, mapObject, atmList)
+                    } ?: run {
+                        Log.e("MapController", "Map not ready to load markers")
                     }
                 }
             }
@@ -136,6 +141,7 @@ class MapController(
         AtmMapHelper.addMapFragment(context, R.id.mapFragment, "ATMS_MAP")
             .getMapAsync { googleMap ->
                 googleMap?.let {
+                    Log.d("MapController", "Map prepared")
                     map = it
 
                     it.uiSettings.isMapToolbarEnabled = false
@@ -150,7 +156,7 @@ class MapController(
                     it.setOnInfoWindowClickListener { info ->
                        processInfoWindowClicked(context, info)
                     }
-
+                    Log.d("MapController", "atm list size {$atmList.size}")
                     proceedToAddMarkers(context, it, atmList)
                 }
             }
@@ -167,9 +173,9 @@ class MapController(
     }
 
     private fun proceedToAddMarkers(context:Context, map:GoogleMap, atmList:List<AtmMachine>) {
-        if (atmList.size > 100) {
+        if (enableMapClusters && atmList.size > clustersThreshold) {
             addAtmMarkersWithCluster(context, map, atmList)
-        } else if(atmList.isNotEmpty()) {
+        } else if (atmList.isNotEmpty()) {
             addAtmMarkers(map, atmList)
         }
     }

@@ -62,6 +62,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Moved the cash out tab button to the middle
 - Added activity tab button to the left.
+## [4.2.6 (4025001)]
+## Fixed
+- Fixed the problem where the map was not showing the pins the first time due during its initialization.
+- Starting the session when the app is created instead of doing in lazy way when was needed.
+## Removed
+- Disabling the clustered pins.
 
 ## [4.2.5 (4025001)]
 ### Added
