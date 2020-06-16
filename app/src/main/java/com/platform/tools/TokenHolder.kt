@@ -33,9 +33,6 @@ import com.breadwallet.logger.logError
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.BrdUserState
 import com.platform.APIClient
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.erased.instance
@@ -54,11 +51,10 @@ object TokenHolder : KodeinAware {
         //If token is not present
         if (mApiToken.isNullOrBlank()) {
             //Check BrdUserManager
-            val token = runBlocking {
-                userManager.stateChanges()
-                    .filterIsInstance<BrdUserState.Enabled>()
-                    .first()
-                userManager.getToken()
+            val token = when (userManager.getState()) {
+                BrdUserState.Enabled, BrdUserState.Locked ->
+                    userManager.getToken()
+                else -> null
             }
             //Not in the BrdUserManager, update from server.
             if (token.isNullOrEmpty()) {
