@@ -117,7 +117,7 @@ class RatesRepository private constructor(private val mContext: Context) {
     ): BigDecimal? {
         val cryptoRate = getCurrencyByCode(cryptoCode, fiatCode)
         if (cryptoRate == null) {
-            Log.e(TAG, "getFiatForBch: No fiat rate for $cryptoCode")
+            Log.e(TAG, "getFiatForCrypto: No fiat rate for $cryptoCode")
             return null
         }
         return cryptoAmount * cryptoRate.rate.toBigDecimal()

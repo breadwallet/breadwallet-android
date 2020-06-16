@@ -470,6 +470,10 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             mPriceDataAdapter.notifyDataSetChanged()
         }
 
+        ifChanged(M::priceChartIsLoading) {
+            if (!it && priceChartDataPoints.isEmpty()) toolbar_layout.isVisible = false
+        }
+
         ifChanged(M::priceChartInterval) {
             val deselectedColor = resources.getColor(R.color.trans_white)
             val selectedColor = resources.getColor(R.color.white)

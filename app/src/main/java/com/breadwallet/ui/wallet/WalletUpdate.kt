@@ -519,7 +519,10 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
         event: E.OnMarketChartDataUpdated
     ): Next<M, F> =
         next(
-            model.copy(priceChartDataPoints = event.priceDataPoints)
+            model.copy(
+                priceChartIsLoading = false,
+                priceChartDataPoints = event.priceDataPoints
+            )
         )
 
     override fun onChartDataPointSelected(

@@ -98,7 +98,8 @@ class WalletListItem(
                 val syncProgress = wallet.syncProgress
                 var labelText = context.getString(R.string.SyncingView_syncing)
                 if (syncProgress > 0) {
-                    labelText += " ${NumberFormat.getPercentInstance().format(syncProgress.toDouble())}"
+                    labelText += " ${NumberFormat.getPercentInstance()
+                        .format(syncProgress.toDouble())}"
                 }
                 syncing_label.text = labelText
             } else if (isLoading) {
@@ -107,6 +108,7 @@ class WalletListItem(
 
             val priceChange = wallet.priceChange
             price_change.visibility = if (priceChange != null) View.VISIBLE else View.INVISIBLE
+            divider.visibility = if (priceChange != null) View.VISIBLE else View.INVISIBLE
             if (priceChange != null) {
                 price_change.text = priceChange.getPercentageChange()
             }
