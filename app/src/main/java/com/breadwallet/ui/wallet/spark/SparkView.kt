@@ -26,23 +26,21 @@ package com.breadwallet.ui.wallet.spark
 
 import android.animation.Animator
 import android.content.Context
-import android.util.AttributeSet
-import android.view.View
-import com.breadwallet.R
-import android.graphics.Path
-import android.graphics.Paint.ANTI_ALIAS_FLAG
-import android.graphics.Paint
-import android.graphics.RectF
-import android.graphics.CornerPathEffect
 import android.database.DataSetObserver
 import android.graphics.Canvas
+import android.graphics.CornerPathEffect
+import android.graphics.Paint
+import android.graphics.Paint.ANTI_ALIAS_FLAG
+import android.graphics.Path
+import android.graphics.RectF
 import android.os.Handler
-import androidx.annotation.ColorInt
+import android.util.AttributeSet
+import android.view.View
 import android.view.ViewConfiguration
+import androidx.annotation.ColorInt
+import com.breadwallet.R
 import com.breadwallet.ui.wallet.spark.animation.SparkAnimator
-import com.google.common.collect.ImmutableList
-import java.util.*
-
+import java.util.Collections
 
 /**
  * A view that shows a Spark line to the user without any axes.

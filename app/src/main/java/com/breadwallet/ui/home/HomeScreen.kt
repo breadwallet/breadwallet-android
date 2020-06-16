@@ -26,6 +26,10 @@ package com.breadwallet.ui.home
 
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.model.PriceChange
+import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
+import com.breadwallet.ui.navigation.OnCompleteAction
+import com.breadwallet.ui.settings.SettingsSection
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
@@ -69,17 +73,6 @@ object HomeScreen {
         data class OnEnabledWalletsUpdated(@Redacted val wallets: List<Wallet>) : E()
 
         data class OnWalletsUpdated(@Redacted val wallets: List<Wallet>) : E()
-        data class OnWalletBalanceUpdated(
-            val currencyCode: String,
-            val balance: BigDecimal,
-            val fiatBalance: BigDecimal
-        ) : E()
-
-        data class OnUnitPriceChanged(
-            val currencyCode: String,
-            val fiatPricePerUnit: BigDecimal,
-            val priceChange: PriceChange? = null
-        ) : E()
 
         data class OnWalletDisplayOrderUpdated(@Redacted val displayOrder: List<String>) : E()
 
@@ -104,6 +97,7 @@ object HomeScreen {
 
         data class OnShowBuyAndSell(val showBuyAndSell: Boolean) : E()
 
+        object CheckForPrompt : E()
         data class OnPromptDismissed(val promptId: PromptItem) : E()
         object OnFingerprintPromptClicked : E()
         object OnPaperKeyPromptClicked : E()
@@ -115,22 +109,46 @@ object HomeScreen {
     sealed class F {
 
         object LoadWallets : F()
+        object LoadEnabledWallets : F()
+        object LoadSyncStates : F()
         object LoadIsBuyBellNeeded : F()
         object LoadPrompt : F()
         object CheckInAppNotification : F()
         object CheckIfShowBuyAndSell : F()
 
-        data class GoToDeepLink(val url: String) : F()
-        data class GoToInappMessage(val inAppMessage: InAppMessage) : F()
-        data class GoToWallet(val currencyCode: String) : F()
-        object GoToAddWallet : F()
+        data class GoToDeepLink(val url: String) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.DeepLink(url, true)
+        }
+        data class GoToInappMessage(val inAppMessage: InAppMessage) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.GoToInAppMessage(inAppMessage)
+        }
+        data class GoToWallet(val currencyCode: String) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Wallet(currencyCode)
+        }
+        object GoToAddWallet : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AddWallet
+        }
 
-        object GoToBuy : F()
-        object GoToTrade : F()
-        object GoToMenu : F()
-        object GoToFingerprintSettings : F()
-        object GoToWriteDownKey : F()
-        object GoToUpgradePin : F()
+        object GoToBuy : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Buy
+        }
+        object GoToTrade : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Trade
+        }
+        object GoToMenu : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Menu(SettingsSection.HOME)
+        }
+        object GoToFingerprintSettings : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.FingerprintSettings
+        }
+        object GoToWriteDownKey : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.WriteDownKey(
+                OnCompleteAction.GO_HOME
+            )
+        }
+        object GoToUpgradePin : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin()
+        }
 
         data class RecordPushNotificationOpened(val campaignId: String) : F()
 
@@ -162,7 +180,10 @@ data class Wallet(
     val syncingThroughMillis: Long = 0L,
     val isSyncing: Boolean = false,
     val priceChange: PriceChange? = null,
-    val state: State = State.READY
+    val state: State = State.READY,
+    val startColor: String? = null,
+    val endColor: String? = null,
+    val isSupported: Boolean = true
 ) {
     enum class State {
         READY, LOADING, UNINITIALIZED

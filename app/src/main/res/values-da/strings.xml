@@ -30,14 +30,18 @@
     <string name="Account.exchangeRate">%1$s per %2$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">Indlæser pung</string>
-    <!-- Confirm Account Creation message body -->
-    <string name="AccountCreation.body">Opret kun en Hedera-konto, hvis du agter at opbevare HBAR i din tegnebog.”</string>
+    <!-- Confirm Account Creation mesage body -->
+    <string name="AccountCreation.body">Opret kun en Hedera-konto, hvis du agter at opbevare HBAR i din tegnebog.</string>
     <!-- Create Account button label -->
     <string name="AccountCreation.create">Opret konto</string>
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.creating">Opretter konto</string>
     <!-- Creating Account progress Label -->
     <string name="AccountCreation.error">Der opstod en fejl under oprettelsen af kontoen. Prøv igen senere.</string>
     <!-- Not Now button label. -->
     <string name="AccountCreation.notNow">Ikke nu</string>
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.timeout">Anmodningen blev udløbet. Prøv igen senere.</string>
     <!-- Confirm Account Creation Title -->
     <string name="AccountCreation.title">Bekræft oprettelse af konto</string>
     <!-- Default wallet name -->
@@ -710,6 +714,10 @@
     <string name="RewardsView.normalTitle">Belønninger</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">Kamerablitz</string>
+    <!-- (alert dialog message) Would you like to send a [Bitcoin / Bitcoin Cash / Ethereum] payment to this address?") -->
+    <string name="Scanner.paymentPromptMessage">Vil du sende en %1$@ betaling til denne adresse?</string>
+    <!-- alert dialog title -->
+    <string name="Scanner.paymentPromptTitle">Send betaling</string>
     <!-- Complete filter label -->
     <string name="Search.complete">færdig</string>
     <!-- Pending filter label -->
@@ -725,7 +733,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">Den eneste måde at få adgang til dine bitcoin på, hvis du mister eller opgraderer din telefon.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
- * to not break existing client code. -->
+   * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Paper key</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">Paper key</string>
@@ -799,7 +807,7 @@
     <string name="Send.legacyAddressWarning">Advarsel: dette er en legacy-bitcoinadresse. Er du sikker på du vil sende Bitcoin-penge til den?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">Behandler Anmodning</string>
-    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <!-- Hedera Memo Tag Label -->
     <string name="Send.memoTag_optional">Hedera Memo (valgfrit)</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">Utilstrækkelige midler til at dække transaktionsgebyret.</string>
@@ -811,6 +819,14 @@
     <string name="Send.noFeesError">Netværksgebyr-vilkår bliver downloadet. Prøv venligst igen.</string>
     <!-- Paste button label -->
     <string name="Send.pasteLabel">Indsæt</string>
+    <!-- Error message for invalid PayID -->
+    <string name="Send.payId_invalid">Ugyldig PayID.</string>
+    <!-- Error message for no address associated with a PayID for a given currency -->
+    <string name="Send.payId_noAddress">Der er ingen %1$s adresse tilknyttet denne PayID.</string>
+    <!-- Error message for error in retrieving the address from the PayID endpoint -->
+    <string name="Send.payId_retrievalError">Der opstod en fejl under hentning af adressen til denne PayID. Prøv igen senere.</string>
+    <!-- PayID label -->
+    <string name="Send.payId_toLabel">PayID</string>
     <!-- Could not publish transaction alert title -->
     <string name="Send.publishTransactionError">Kunne ikke offentliggøre transaktion.</string>
     <!-- Could not load remote request error message -->

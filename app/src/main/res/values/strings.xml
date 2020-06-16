@@ -30,6 +30,20 @@
     <string name="Account.exchangeRate">%1$s per %2$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">Loading Wallet</string>
+    <!-- Confirm Account Creation mesage body -->
+    <string name="AccountCreation.body">Only create a Hedera account if you intend on storing HBAR in your wallet.</string>
+    <!-- Create Account button label -->
+    <string name="AccountCreation.create">Create Account</string>
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.creating">Creating Account</string>
+    <!-- Creating Account error -->
+    <string name="AccountCreation.error">An error occurred during account creation. Please try again later.</string>
+    <!-- Not Now button label. -->
+    <string name="AccountCreation.notNow">Not Now</string>
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.timeout">The Request timed out. Please try again later.</string>
+    <!-- Confirm Account Creation Title -->
+    <string name="AccountCreation.title">Confirm Account Creation</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">My BRD</string>
     <!-- Third party keyboard warning -->
@@ -180,6 +194,8 @@
     <string name="Confirmation.feeLabel">Network Fee:</string>
     <!-- Network Fee: (ETH) -->
     <string name="Confirmation.feeLabelETH">Network Fee (ETH):</string>
+    <!-- Label for Hedera Memo field on transaction confirmation screen -->
+    <string name="Confirmation.hederaMemo">Hedera Memo</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">Processing time: This transaction is predicted to complete in %1$s.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -698,6 +714,10 @@
     <string name="RewardsView.normalTitle">Rewards</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">Camera Flash</string>
+    <!-- (alert dialog message) Would you like to send a [Bitcoin / Bitcoin Cash / Ethereum] payment to this address?") -->
+    <string name="Scanner.paymentPromptMessage">Would you like to send a %1$@ payment to this address?</string>
+    <!-- alert dialog title -->
+    <string name="Scanner.paymentPromptTitle">Send Payment</string>
     <!-- Complete filter label -->
     <string name="Search.complete">complete</string>
     <!-- Pending filter label -->
@@ -713,7 +733,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">The only way to access your assets if you lose or upgrade your phone.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
- * to not break existing client code. -->
+   * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Recovery Key</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">Paper Key</string>
@@ -787,6 +807,8 @@
     <string name="Send.legacyAddressWarning">Warning: this is a legacy bitcoin address. Are you sure you want to send Bitcoin Cash to it?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">Loading Request</string>
+    <!-- Hedera Memo Tag Label -->
+    <string name="Send.memoTag_optional">Hedera Memo (Optional)</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">Insufficient funds to cover the transaction fee.</string>
     <!-- Empty address alert message -->
@@ -797,6 +819,14 @@
     <string name="Send.noFeesError">Network Fee conditions are being downloaded. Please try again.</string>
     <!-- Paste button label -->
     <string name="Send.pasteLabel">Paste</string>
+    <!-- Error message for invalid PayID -->
+    <string name="Send.payId_invalid">Invalid PayID.</string>
+    <!-- Error message for no address associated with a PayID for a given currency -->
+    <string name="Send.payId_noAddress">There is no %1$s address associated with this PayID.</string>
+    <!-- Error message for error in retrieving the address from the PayID endpoint -->
+    <string name="Send.payId_retrievalError">There was an error retrieving the address for this PayID. Please try again later.</string>
+    <!-- PayID label -->
+    <string name="Send.payId_toLabel">PayID</string>
     <!-- Could not publish transaction alert title -->
     <string name="Send.publishTransactionError">Could not publish transaction.</string>
     <!-- Could not load remote request error message -->
@@ -1050,6 +1080,8 @@
     <string name="TransactionDetails.gasLimitHeader">Gas Limit</string>
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">Gas Price</string>
+    <!-- Label for Hedera Memo field on transaction details screen -->
+    <string name="TransactionDetails.hederaMemo">Hedera Memo</string>
     <!-- Hide Details button -->
     <string name="TransactionDetails.hideDetails">Hide Details</string>
     <!-- Label showing the transaction was started (initialized) -->
@@ -1276,13 +1308,4 @@
     <string name="Confirmation.destinationTag">Destination Tag</string>
     <string name="Confirmation.destinationTag_EmptyHint">(empty)</string>
     <string name="Send.destinationTag_required_error">A valid Destination Tag is required for the target address.</string>
-
-    <string name="TransactionDetails.hederaMemo">Hedera Memo</string>
-    <string name="Confirmation.hederaMemo">Hedera Memo</string>
-    <string name="Send.memoTag_optional">Hedera Memo (Optional)</string>
-    <string name="AccountCreation.create">Create Account</string>
-    <string name="AccountCreation.notNow">Not Now</string>
-    <string name="AccountCreation.title">Confirm Account Creation</string>
-    <string name="AccountCreation.body">Only create a Hedera account if you intend on storing HBAR in your wallet.</string>
-    <string name="AccountCreation.error">An error occurred during account creation. Please try again later.</string>
 </resources>

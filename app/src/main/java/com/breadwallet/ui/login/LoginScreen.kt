@@ -24,6 +24,11 @@
  */
 package com.breadwallet.ui.login
 
+import com.breadwallet.R
+import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
@@ -32,7 +37,6 @@ object LoginScreen {
     data class M(
         val fingerprintEnable: Boolean = false,
         val showHomeScreen: Boolean = true,
-        val currentCurrencyCode: String = "",
         @Redacted val extraUrl: String,
         val isUnlocked: Boolean = false
     ) {
@@ -57,28 +61,45 @@ object LoginScreen {
         object OnPinLocked : E()
         object OnUnlockAnimationEnd : E()
         data class OnFingerprintEnabled(val enabled: Boolean) : E()
-        data class OnLoginPreferencesLoaded(
-            val currentCurrencyCode: String
-        ) : E()
 
         object OnAuthenticationSuccess : E()
         object OnAuthenticationFailed : E()
     }
 
     sealed class F {
-        object GoToDisableScreen : F()
-        object GoToHome : F()
+        object UnlockBrdUser : F()
         object CheckFingerprintEnable : F()
-        object LoadLoginPreferences : F()
-        object ShowFingerprintController : F()
-        object AuthenticationSuccess : F()
-        object AuthenticationFailed : F()
-        object GoBack : F()
-        data class GoToWallet(val currencyCode: String) : F()
-        data class GoToDeepLink(@Redacted val url: String) : F()
+        object AuthenticationSuccess : F(), ViewEffect
+        object AuthenticationFailed : F(), ViewEffect
         data class TrackEvent(
             val eventName: String,
             val attributes: Map<String, String>? = null
         ) : F()
+
+        object GoBack : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
+        }
+        object GoToHome : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Home
+        }
+        object ShowFingerprintController : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Authentication(
+                mode = AuthenticationController.Mode.BIOMETRIC_REQUIRED,
+                titleResId = R.string.UnlockScreen_touchIdTitle_android
+            )
+        }
+        object GoToDisableScreen : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.DisabledScreen
+        }
+        data class GoToDeepLink(
+            @Redacted val url: String
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.DeepLink(url, true)
+        }
+        data class GoToWallet(
+            val currencyCode: String
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Wallet(currencyCode)
+        }
     }
 }

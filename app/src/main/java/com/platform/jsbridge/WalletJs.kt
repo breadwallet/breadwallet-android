@@ -57,6 +57,7 @@ import com.breadwallet.logger.logDebug
 import com.breadwallet.crypto.errors.LimitEstimationError
 import com.breadwallet.crypto.utility.CompletionHandler
 import com.breadwallet.logger.logError
+import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
@@ -132,7 +133,7 @@ class WalletJs(
         val system = checkNotNull(breadBox.getSystemUnsafe())
         val btcWallet = system.wallets.first { it.currency.isBitcoin() }
 
-        val preferredCode = BRSharedPrefs.getPreferredFiatIso(context)
+        val preferredCode = BRSharedPrefs.getPreferredFiatIso()
         val fiatCurrency = Currency.getInstance(preferredCode)
 
         JSONObject().apply {
@@ -183,12 +184,12 @@ class WalletJs(
     @Suppress("LongMethod", "ComplexMethod")
     @JavascriptInterface
     @JvmOverloads
-    fun currencies(
-        listAll: Boolean = false
-    ) = promise.create {
+    fun currencies(listAll: Boolean = false) = promise.create {
         val system = checkNotNull(breadBox.getSystemUnsafe())
         val wallets = if (listAll) {
-            TokenUtil.getTokenItems(context).filter { it.isSupported }.map { it.currencyId }
+            TokenUtil.getTokenItems()
+                .filter(TokenItem::isSupported)
+                .map(TokenItem::currencyId)
         } else {
             checkNotNull(metaDataProvider.getEnabledWalletsUnsafe())
         }
@@ -209,8 +210,8 @@ class WalletJs(
                     put(KEY_NAME, tokenItem?.name ?: wallet?.name)
 
                     val colors = JSONArray().apply {
-                        put(TokenUtil.getTokenStartColor(currencyCode, context))
-                        put(TokenUtil.getTokenEndColor(currencyCode, context))
+                        put(TokenUtil.getTokenStartColor(currencyCode))
+                        put(TokenUtil.getTokenEndColor(currencyCode))
                     }
                     put(KEY_COLORS, colors)
 
@@ -359,11 +360,9 @@ class WalletJs(
     }
 
     @JavascriptInterface
-    fun enableCurrency(
-        currencyCode: String
-    ) = promise.create {
+    fun enableCurrency(currencyCode: String) = promise.create {
         val system = checkNotNull(breadBox.system().first())
-        val currencyId = TokenUtil.getTokenItemByCurrencyCode(currencyCode).currencyId.orEmpty()
+        val currencyId = TokenUtil.getTokenItemByCurrencyCode(currencyCode)?.currencyId.orEmpty()
         check(currencyId.isNotEmpty()) { ERR_CURRENCY_NOT_SUPPORTED }
 
         val network = system.networks.find { it.containsCurrency(currencyId) }
@@ -456,7 +455,7 @@ class WalletJs(
         feeBasis: TransferFeeBasis,
         transferAttributes: Set<TransferAttribute>
     ): Transfer? {
-        val fiatCode = BRSharedPrefs.getPreferredFiatIso(context)
+        val fiatCode = BRSharedPrefs.getPreferredFiatIso()
         val fiatAmount = ratesRepository.getFiatForCrypto(
             amount.toBigDecimal(),
             wallet.currency.code,

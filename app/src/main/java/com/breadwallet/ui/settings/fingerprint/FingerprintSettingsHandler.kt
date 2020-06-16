@@ -27,31 +27,16 @@ package com.breadwallet.ui.settings.fingerprint
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.E
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.F
-import com.spotify.mobius.Connection
-import com.spotify.mobius.functions.Consumer
+import drewcarlson.mobius.flow.subtypeEffectHandler
 
-class FingerprintSettingsHandler(
-    private val output: Consumer<E>
-) : Connection<F> {
-
-    override fun accept(value: F) {
-        when (value) {
-            F.LoadCurrentSettings -> loadCurrentSettings()
-            is F.UpdateFingerprintSetting -> updateSettings(value)
-        }
-    }
-
-    override fun dispose() = Unit
-
-    private fun loadCurrentSettings() {
-        val event = E.OnSettingsLoaded(
+fun createFingerprintSettingsHandler() = subtypeEffectHandler<F, E> {
+    addFunction<F.LoadCurrentSettings> {
+        E.OnSettingsLoaded(
             sendMoney = BRSharedPrefs.sendMoneyWithFingerprint,
             unlockApp = BRSharedPrefs.unlockWithFingerprint
         )
-        output.accept(event)
     }
-
-    private fun updateSettings(effect: F.UpdateFingerprintSetting) {
+    addConsumer<F.UpdateFingerprintSetting> { effect ->
         BRSharedPrefs.unlockWithFingerprint = effect.unlockApp
         BRSharedPrefs.sendMoneyWithFingerprint = effect.sendMoney
     }

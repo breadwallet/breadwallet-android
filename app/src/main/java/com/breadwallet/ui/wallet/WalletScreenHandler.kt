@@ -41,11 +41,9 @@ import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.model.PriceChange
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.sqlite.RatesDataSource
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.models.TransactionState
-import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.wallet.WalletScreen.E
 import com.breadwallet.ui.wallet.WalletScreen.F
 import com.platform.util.AppReviewPromptManager
@@ -53,14 +51,9 @@ import com.spotify.mobius.Connectable
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -78,12 +71,8 @@ object WalletScreenHandler {
     fun createEffectHandler(
         context: Context,
         breadBox: BreadBox,
-        navEffectHandler: NavEffectTransformer,
-        metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>,
-        showCreateAccountDialog: () -> Unit,
-        showCreateAccountErrorDialog: () -> Unit
+        metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
     ) = subtypeEffectHandler<F, E> {
-        addTransformer<F.Nav>(navEffectHandler)
         addTransformer(handleCheckReviewPrompt(context))
         addTransformer(handleLoadPricePerUnit(context))
 
@@ -100,7 +89,7 @@ object WalletScreenHandler {
         addActionSync<F.RecordReviewPrompt>(Default, ::handleRecordReviewPrompt)
         addActionSync<F.RecordReviewPromptDismissed>(
             Default,
-            handleRecordReviewPromptDismissed(context)
+            ::handleRecordReviewPromptDismissed
         )
 
         addConsumerSync(Default, ::handleTrackEvent)
@@ -111,8 +100,6 @@ object WalletScreenHandler {
         addFunctionSync<F.LoadCryptoPreferred>(Default) {
             E.OnIsCryptoPreferredLoaded(BRSharedPrefs.isCryptoPreferred())
         }
-        addActionSync<F.ShowCreateAccountDialog>(Main, showCreateAccountDialog)
-        addActionSync<F.ShowCreateAccountErrorDialog>(Main, showCreateAccountErrorDialog)
     }
 
     private fun handleUpdateCryptoPreferred(
@@ -138,7 +125,7 @@ object WalletScreenHandler {
         context: Context
     ) = flowTransformer<F.CheckReviewPrompt, E> { effects ->
         effects.transformLatest { (currencyCode, transactions) ->
-            if (AppReviewPromptManager.showReview(context, currencyCode, transactions)) {
+            if (AppReviewPromptManager.showReview(currencyCode, transactions)) {
                 emit(E.OnShowReviewPrompt)
             }
         }
@@ -148,11 +135,9 @@ object WalletScreenHandler {
         EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISPLAYED)
     }
 
-    private fun handleRecordReviewPromptDismissed(
-        context: Context
-    ): () -> Unit = {
+    private fun handleRecordReviewPromptDismissed() {
         EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISMISSED)
-        AppReviewPromptManager.onReviewPromptDismissed(context)
+        AppReviewPromptManager.onReviewPromptDismissed()
     }
 
     private fun handleTrackEvent(value: F.TrackEvent) {
@@ -163,24 +148,14 @@ object WalletScreenHandler {
         context: Context
     ) = flowTransformer<F.LoadFiatPricePerUnit, E> { effects ->
         val ratesRepository = RatesRepository.getInstance(context)
-        val ratesDataSource = RatesDataSource.getInstance(context)
-        val fiatIso = BRSharedPrefs.getPreferredFiatIso(context)
+        val fiatIso = BRSharedPrefs.getPreferredFiatIso()
         effects
-            .transformLatest { effect ->
-                // Emit effect and observe rate changes,
-                // dispatching the latest effect if needed
-                emit(effect)
-                emitAll(ratesDataSource
-                    .rateChangesFlow()
-                    .map { effect })
+            .flatMapLatest { effect ->
+                ratesRepository.changes().map { effect }
             }
             .mapLatest { effect ->
-                val exchangeRate: BigDecimal? = ratesRepository.getFiatForCrypto(
-                    BigDecimal.ONE,
-                    effect.currencyCode,
-                    BRSharedPrefs.getPreferredFiatIso(context)
-                )
-                val fiatPricePerUnit = exchangeRate?.formatFiatForUi(fiatIso).orEmpty()
+                val exchangeRate = ratesRepository.getFiatPerCryptoUnit(effect.currencyCode, fiatIso)
+                val fiatPricePerUnit = exchangeRate.formatFiatForUi(fiatIso)
                 val priceChange: PriceChange? = ratesRepository.getPriceChange(effect.currencyCode)
                 E.OnFiatPricePerUpdated(fiatPricePerUnit, priceChange)
             }
@@ -292,15 +267,6 @@ object WalletScreenHandler {
             }
     }
 
-    private fun RatesDataSource.rateChangesFlow() =
-        callbackFlow<Unit> {
-            val listener = RatesDataSource.OnDataChanged { offer(Unit) }
-            addOnDataChangedListener(listener)
-            awaitClose {
-                removeOnDataChangedListener(listener)
-            }
-        }
-
     private fun handleWalletState(breadBox: BreadBox) =
         flowTransformer<F.LoadWalletState, E> { effects ->
             effects
@@ -321,7 +287,7 @@ private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
     return RatesRepository.getInstance(context).getFiatForCrypto(
         balanceAmt.toBigDecimal(),
         balanceAmt.currency.code,
-        BRSharedPrefs.getPreferredFiatIso(context)
+        BRSharedPrefs.getPreferredFiatIso()
     ) ?: BigDecimal.ZERO
 }
 

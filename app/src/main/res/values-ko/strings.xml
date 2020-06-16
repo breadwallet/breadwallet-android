@@ -30,15 +30,19 @@
     <string name="Account.exchangeRate">%2$s 당 %1$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">지갑 로딩</string>
-    <!-- Prompt text for confirmation dialog for Hedera account creation -->
+    <!-- Confirm Account Creation mesage body -->
     <string name="AccountCreation.body">지갑에 HBAR을 저장하려는 경우에만 Hedera 계정을 만드십시오.</string>
-    <!-- Label for create Hedera account button -->
+    <!-- Create Account button label -->
     <string name="AccountCreation.create">계정 만들기</string>
-    <!-- Error message for Hedera account creation failure  -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.creating">계정 만들기</string>
+    <!-- Creating Account progress Label -->
     <string name="AccountCreation.error">계정 생성 중 오류가 발생했습니다. 나중에 다시 시도하세요.</string>
-    <!-- Label for cancel button on confirmation dialog for Hedera account creation -->
+    <!-- Not Now button label. -->
     <string name="AccountCreation.notNow">지금은 아님</string>
-    <!-- Title for confirmation dialog for Hedera account creation -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.timeout">요청 시간이 초과되었습니다. 나중에 다시 시도하세요.</string>
+    <!-- Confirm Account Creation Title -->
     <string name="AccountCreation.title">계정 생성 확인</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">나의 BRD</string>
@@ -191,7 +195,7 @@
     <!-- Network Fee: (ETH) -->
     <string name="Confirmation.feeLabelETH">네트워크 요금 (ETH):</string>
     <!-- Label for Hedera Memo field on transaction confirmation screen -->
-    <string name="Confirmation.hederaMemo">헤 데라 메모</string>
+    <string name="Confirmation.hederaMemo">Hedera Memo</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">처리 시간: 이 거래는 %1$s에 완료될 것으로 예상됩니다.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -710,6 +714,10 @@
     <string name="RewardsView.normalTitle">리워즈</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">카메라 플래시</string>
+    <!-- (alert dialog message) Would you like to send a [Bitcoin / Bitcoin Cash / Ethereum] payment to this address?") -->
+    <string name="Scanner.paymentPromptMessage">이 주소로 %1$@ 지불금을 보내시겠습니까?</string>
+    <!-- alert dialog title -->
+    <string name="Scanner.paymentPromptTitle">지불 보내기</string>
     <!-- Complete filter label -->
     <string name="Search.complete">완료</string>
     <!-- Pending filter label -->
@@ -725,7 +733,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">전화를 분실하거나 업그레이드하는 경우, 비트코인에 액세스할 수 있는 유일한 방법입니다.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
- * to not break existing client code. -->
+   * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">페이퍼 키</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">페이퍼 키</string>
@@ -799,7 +807,7 @@
     <string name="Send.legacyAddressWarning">경고: 이것은 레거시 비트코인 주소입니다. 비트코인 캐시를 보내시겠습니까?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">요청 불러오는 중</string>
-    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <!-- Hedera Memo Tag Label -->
     <string name="Send.memoTag_optional">헤 데라 메모 (선택 사항)</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">거래 수수료를 지급하기에 자금이 부족합니다</string>
@@ -811,6 +819,14 @@
     <string name="Send.noFeesError">네트워크 수수료 조건을 다운로드 중입니다. 다시 시도하십시오.</string>
     <!-- Paste button label -->
     <string name="Send.pasteLabel">붙여넣기</string>
+    <!-- Error message for invalid PayID -->
+    <string name="Send.payId_invalid">잘못된 PayID입니다.</string>
+    <!-- Error message for no address associated with a PayID for a given currency -->
+    <string name="Send.payId_noAddress">이 PayID와 연결된 %1$s 주소가 없습니다.</string>
+    <!-- Error message for error in retrieving the address from the PayID endpoint -->
+    <string name="Send.payId_retrievalError">이 PayID의 주소를 검색하는 중에 오류가 발생했습니다. 나중에 다시 시도하십시오.</string>
+    <!-- PayID label -->
+    <string name="Send.payId_toLabel">PayID</string>
     <!-- Could not publish transaction alert title -->
     <string name="Send.publishTransactionError">전송할 수 없습니다.</string>
     <!-- Could not load remote request error message -->
@@ -1065,7 +1081,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">Gas Price</string>
     <!-- Label for Hedera Memo field on transaction details screen -->
-    <string name="TransactionDetails.hederaMemo">헤 데라 메모</string>
+    <string name="TransactionDetails.hederaMemo">Hedera Memo</string>
     <!-- Hide Details button -->
     <string name="TransactionDetails.hideDetails">세부 정보 숨기기</string>
     <!-- Label showing the transaction was started (initialized) -->

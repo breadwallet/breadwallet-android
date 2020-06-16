@@ -63,7 +63,7 @@ object AddWalletsUpdate : Update<M, E, F>, AddWalletsUpdateSpec {
     ): Next<M, F> {
         return next(
             model.copy(
-                tokens = event.tokens.toMutableList().apply { sortBy { it.currencyCode } }
+                tokens = event.tokens
             )
         )
     }

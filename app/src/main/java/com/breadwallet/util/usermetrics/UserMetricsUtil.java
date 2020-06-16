@@ -108,8 +108,8 @@ public final class UserMetricsUtil {
     public static void makeUserMetricsRequest(Context context) {
         try {
             JSONObject bundles = new JSONObject();
-            for (String bundleName : ServerBundlesHelper.getBundleNames(context)) {
-                bundles.put(bundleName, BRSharedPrefs.getBundleHash(context, bundleName));
+            for (String bundleName : ServerBundlesHelper.getBundleNames()) {
+                bundles.put(bundleName, BRSharedPrefs.getBundleHash(bundleName));
             }
 
             JSONObject data = new JSONObject();

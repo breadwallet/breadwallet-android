@@ -27,30 +27,34 @@ package com.breadwallet.ui.login
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.os.Handler
 import android.text.format.DateUtils
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.customviews.PinLayout
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.login.LoginScreen.E
 import com.breadwallet.ui.login.LoginScreen.F
 import com.breadwallet.ui.login.LoginScreen.M
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
-import com.spotify.mobius.Connectable
-import com.spotify.mobius.disposables.Disposable
-import com.spotify.mobius.functions.Consumer
+import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.controller_login.*
 import kotlinx.android.synthetic.main.pin_digits.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -77,41 +81,33 @@ class LoginController(args: Bundle? = null) :
     )
     override val update = LoginUpdate
     override val init = LoginInit
-    override val effectHandler: Connectable<F, E> = CompositeEffectHandler.from(
-        Connectable { output ->
-            LoginScreenHandler(
-                output,
-                direct.instance(),
-                direct.instance(),
-                shakeKeyboard = {
-                    SpringAnimator.failShakeAnimation(
-                        activity,
-                        pinLayout
-                    )
-                },
-                unlockWalletAnimation = ::unlockWallet,
-                showFingerprintPrompt = ::showFingerprintPrompt
-            )
-        },
-        nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                is F.GoToDeepLink -> NavigationEffect.GoToDeepLink(effect.url, true)
-                F.GoToDisableScreen -> NavigationEffect.GoToDisabledScreen
-                F.GoToHome -> NavigationEffect.GoToHome
-                F.GoBack -> NavigationEffect.GoBack
-                else -> null
-            }
-        })
-    )
+    override val flowEffectHandler: FlowTransformer<F, E>
+        get() = createLoginScreenHandler(
+            checkNotNull(applicationContext),
+            direct.instance()
+        )
 
-    override fun bindView(output: Consumer<E>): Disposable {
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        modelFlow.map { it.fingerprintEnable }
+            .distinctUntilChanged()
+            .onEach { fingerprintEnable ->
+                fingerprint_icon.isVisible = fingerprintEnable
+            }
+            .launchIn(uiBindScope)
+        return merge(
+            fingerprint_icon.clicks().map { E.OnFingerprintClicked },
+            pin_digits.bindInput()
+        )
+    }
+
+    private fun PinLayout.bindInput() = callbackFlow<E> {
         val pinListener = object : PinLayout.PinLayoutListener {
             override fun onPinLocked() {
-                output.accept(E.OnPinLocked)
+                offer(E.OnPinLocked)
             }
 
             override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
-                output.accept(
+                offer(
                     if (isPinCorrect) {
                         E.OnAuthenticationSuccess
                     } else {
@@ -120,17 +116,8 @@ class LoginController(args: Bundle? = null) :
                 )
             }
         }
-        pin_digits.setup(brkeyboard, pinListener)
-        fingerprint_icon.setOnClickListener { output.accept(E.OnFingerprintClicked) }
-        return Disposable {
-            pin_digits.cleanUp()
-        }
-    }
-
-    override fun M.render() {
-        ifChanged(M::fingerprintEnable) {
-            fingerprint_icon.isVisible = fingerprintEnable
-        }
+        setup(brkeyboard, pinListener)
+        awaitClose { cleanUp() }
     }
 
     override fun onCreateView(view: View) {
@@ -147,6 +134,18 @@ class LoginController(args: Bundle? = null) :
         (router.backstackSize > 1 && !currentModel.isUnlocked) ||
             activity?.isTaskRoot == false
 
+    override fun handleViewEffect(effect: ViewEffect) {
+        when (effect) {
+            F.AuthenticationSuccess -> unlockWallet()
+            F.AuthenticationFailed -> showError()
+        }
+    }
+
+    override fun onAuthenticationSuccess() {
+        super.onAuthenticationSuccess()
+        eventConsumer.accept(E.OnAuthenticationSuccess)
+    }
+
     private fun unlockWallet() {
         fingerprint_icon.visibility = View.INVISIBLE
         pinLayout.animate().translationY(-R.dimen.animation_long.toFloat())
@@ -157,27 +156,15 @@ class LoginController(args: Bundle? = null) :
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
-                    Handler().postDelayed({
+                    controllerScope.launch {
+                        delay(DateUtils.SECOND_IN_MILLIS / 2)
                         eventConsumer.accept(E.OnUnlockAnimationEnd)
-                    }, DateUtils.SECOND_IN_MILLIS / 2)
+                    }
                 }
             })
     }
 
-    private fun showFingerprintPrompt() {
-        if (router.backstack.last().controller() is AuthenticationController) {
-            return
-        }
-        val controller = AuthenticationController(
-            mode = AuthenticationController.Mode.BIOMETRIC_REQUIRED,
-            title = resources!!.getString(R.string.UnlockScreen_touchIdTitle_android)
-        )
-        controller.targetController = this@LoginController
-        router.pushController(RouterTransaction.with(controller))
-    }
-
-    override fun onAuthenticationSuccess() {
-        super.onAuthenticationSuccess()
-        eventConsumer.accept(E.OnAuthenticationSuccess)
+    private fun showError() {
+        SpringAnimator.failShakeAnimation(applicationContext, pinLayout)
     }
 }

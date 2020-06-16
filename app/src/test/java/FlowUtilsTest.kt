@@ -26,18 +26,17 @@ package com.breadwallet
 
 import com.breadwallet.ext.throttleLatest
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class FlowUtilsTest {
 
+    // TODO: Use runBlockingTest: https://github.com/Kotlin/kotlinx.coroutines/issues/1204
     @Test
-    fun throttleLatestTest() = runBlockingTest {
+    fun throttleLatestTest() = runBlocking {
         assertEquals(
             listOf(1, 3),
             testFlow(count = 3, millis = 100)
@@ -75,6 +74,10 @@ class FlowUtilsTest {
         )
     }
 
-    private fun testFlow(count: Int, millis: Long) =
-        (1..count).asFlow().onEach { delay(millis) }
+    private fun testFlow(count: Int, millis: Long) = flow {
+        repeat(count) {
+            emit(it + 1)
+            delay(millis)
+        }
+    }
 }

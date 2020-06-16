@@ -24,9 +24,10 @@
  */
 package com.breadwallet.ui.sync
 
+import com.breadwallet.R
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
 
 object SyncBlockchain {
@@ -45,21 +46,25 @@ object SyncBlockchain {
             val currencyCode: CurrencyCode
         ) : F()
 
-        object ShowSyncConfirmation : F()
 
         sealed class Nav(
-            override val navigationEffect: NavigationEffect
-        ) : F(), NavEffectHolder {
+            override val navigationTarget: NavigationTarget
+        ) : F(), NavigationEffect {
 
-            object GoToHome : Nav(NavigationEffect.GoToHome)
+            object ShowSyncConfirmation : Nav(
+                NavigationTarget.AlertDialog(
+                    messageResId = R.string.ReScan_footer,
+                    titleResId = R.string.ReScan_alertTitle,
+                    positiveButtonResId = R.string.ReScan_alertAction,
+                    negativeButtonResId = R.string.Button_cancel
+                )
+            )
+
+            object GoToHome : Nav(NavigationTarget.Home)
 
             data class GoToSyncFaq(
                 val currencyCode: CurrencyCode
-            ) : Nav(NavigationEffect.GoToFaq(BRConstants.FAQ_RESCAN))
+            ) : Nav(NavigationTarget.SupportPage(BRConstants.FAQ_RESCAN))
         }
-    }
-
-    interface ViewActions {
-        fun showRescanPrompt()
     }
 }

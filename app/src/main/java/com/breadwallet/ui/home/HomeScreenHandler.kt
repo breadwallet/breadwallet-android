@@ -27,153 +27,161 @@ package com.breadwallet.ui.home
 import android.content.Context
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.WalletState
-import com.breadwallet.breadbox.applyDisplayOrder
 import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.toBigDecimal
-import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.WalletManagerState
-import com.breadwallet.ext.bindConsumerIn
 import com.breadwallet.ext.throttleLatest
 import com.breadwallet.model.Experiments
+import com.breadwallet.model.InAppMessage
+import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.repository.MessagesRepository
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.sqlite.RatesDataSource
+import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
-import com.breadwallet.util.errorHandler
+import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.WalletProvider
-import com.spotify.mobius.Connection
-import com.spotify.mobius.functions.Consumer
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
+import drewcarlson.mobius.flow.subtypeEffectHandler
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.math.BigDecimal
 import java.util.Locale
+import kotlin.coroutines.resume
 import com.breadwallet.crypto.Wallet as CryptoWallet
 
-private const val DATA_THROTTLE_MS = 500L
+private const val PROMPT_DISMISSED_FINGERPRINT = "fingerprint"
 
-class HomeScreenHandler(
-    private val output: Consumer<E>,
-    private val context: Context,
-    private val breadBox: BreadBox,
-    private val walletProvider: WalletProvider,
-    private val accountMetaDataProvider: AccountMetaDataProvider
-) : Connection<F>,
-    CoroutineScope,
-    RatesDataSource.OnDataChanged {
+private const val WALLET_UPDATE_THROTTLE = 2_000L
 
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
-
-    init {
-        RatesDataSource.getInstance(context).addOnDataChangedListener(this)
+fun createHomeScreenHandler(
+    context: Context,
+    breadBox: BreadBox,
+    ratesRepo: RatesRepository,
+    brdUser: BrdUserManager,
+    walletProvider: WalletProvider,
+    accountMetaDataProvider: AccountMetaDataProvider
+) = subtypeEffectHandler<F, E> {
+    addConsumer<F.SaveEmail> { effect ->
+        UserMetricsUtil.makeEmailOptInRequest(context, effect.email)
+        BRSharedPrefs.putEmailOptIn(true)
+    }
+    addFunction<F.DismissPrompt> { effect ->
+        when (effect.promptItem) {
+            PromptItem.FINGER_PRINT -> {
+                BRSharedPrefs.putPromptDismissed(PROMPT_DISMISSED_FINGERPRINT, true)
+            }
+            PromptItem.EMAIL_COLLECTION -> {
+                BRSharedPrefs.putEmailOptInDismissed(true)
+            }
+        }
+        E.CheckForPrompt
+    }
+    addFunction<F.LoadPrompt> {
+        val promptId = when {
+            !BRSharedPrefs.getEmailOptIn()
+                && !BRSharedPrefs.getEmailOptInDismissed() -> {
+                PromptItem.EMAIL_COLLECTION
+            }
+            brdUser.pinCodeNeedsUpgrade() -> PromptItem.UPGRADE_PIN
+            !BRSharedPrefs.getPhraseWroteDown() -> PromptItem.PAPER_KEY
+            (!BRSharedPrefs.unlockWithFingerprint
+                && Utils.isFingerprintAvailable(context)
+                && !BRSharedPrefs.getPromptDismissed(PROMPT_DISMISSED_FINGERPRINT)) -> {
+                PromptItem.FINGER_PRINT
+            }
+            // BRSharedPrefs.getScanRecommended(iso = "BTC") -> PromptItem.RECOMMEND_RESCAN
+            else -> null
+        }
+        if (promptId != null) {
+            EventUtils.pushEvent(getPromptName(promptId) + EventUtils.EVENT_PROMPT_SUFFIX_DISPLAYED)
+        }
+        E.OnPromptLoaded(promptId)
+    }
+    addConsumer<F.TrackEvent> { effect ->
+        EventUtils.pushEvent(effect.eventName, effect.attributes)
+    }
+    addFunction<F.CheckInAppNotification> {
+        E.OnInAppNotificationProvided(context.loadInAppMessage())
+    }
+    addConsumer<F.UpdateWalletOrder> { effect ->
+        accountMetaDataProvider.reorderWallets(effect.orderedCurrencyIds)
+    }
+    addConsumer<F.RecordPushNotificationOpened> { effect ->
+        EventUtils.pushEvent(
+            EventUtils.EVENT_MIXPANEL_APP_OPEN,
+            mapOf(EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID to effect.campaignId)
+        )
+        EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATION_OPEN)
+    }
+    addAction<F.CheckIfShowBuyAndSell> {
+        val showBuyAndSell =
+            ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_SELL_MENU_BUTTON)
+                && BRSharedPrefs.getPreferredFiatIso() == BRConstants.USD
+        EventUtils.pushEvent(
+            EventUtils.EVENT_EXPERIMENT_BUY_SELL_MENU_BUTTON,
+            mapOf(EventUtils.EVENT_ATTRIBUTE_SHOW to showBuyAndSell.toString())
+        )
+        E.OnShowBuyAndSell(showBuyAndSell)
+    }
+    addFunction<F.LoadIsBuyBellNeeded> {
+        val isBuyBellNeeded =
+            ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_NOTIFICATION) &&
+                CurrencyUtils.isBuyNotificationNeeded()
+        E.OnBuyBellNeededLoaded(isBuyBellNeeded)
     }
 
-    override fun accept(value: F) {
-        when (value) {
-            F.LoadWallets -> loadWallets()
-            F.LoadIsBuyBellNeeded -> loadIsBuyBellNeeded()
-            F.CheckInAppNotification -> checkInAppNotification()
-            F.CheckIfShowBuyAndSell -> checkIfShowBuyAndSell()
-            is F.RecordPushNotificationOpened -> recordPushNotificationOpened(value.campaignId)
-            is F.TrackEvent -> EventUtils.pushEvent(
-                value.eventName,
-                value.attributes
-            )
-            is F.UpdateWalletOrder -> {
-                accountMetaDataProvider
-                    .reorderWallets(value.orderedCurrencyIds)
-                    .launchIn(this)
+    addTransformer<F.LoadEnabledWallets> {
+        walletProvider.enabledWallets().mapLatest { wallets ->
+            val fiatIso = BRSharedPrefs.getPreferredFiatIso()
+            val enabledWallets = wallets.mapNotNull { currencyId ->
+                val token = TokenUtil.getTokenItems()
+                    .find { currencyId.equals(it.currencyId, true) }
+                if (token == null) {
+                    null
+                } else {
+                    val state = breadBox.walletState(token.symbol).first()
+                    token.asWallet(state, fiatIso, ratesRepo)
+                }
             }
+            E.OnEnabledWalletsUpdated(enabledWallets)
         }
     }
 
-    override fun dispose() {
-        RatesDataSource.getInstance(context).removeOnDataChangedListener(this)
-        cancel()
+    addTransformer<F.LoadWallets> { effects ->
+        effects.combine(ratesRepo.changes()) { _, _ -> Unit }
+            .flatMapLatest { breadBox.wallets() }
+            .throttleLatest(WALLET_UPDATE_THROTTLE)
+            .mapLatest { wallets ->
+                val fiatIso = BRSharedPrefs.getPreferredFiatIso()
+                E.OnWalletsUpdated(wallets.map {
+                    val name = TokenUtil.getTokenItemByCurrencyCode(it.currency.code)?.name
+                    it.asWallet(name, fiatIso, ratesRepo)
+                })
+            }
     }
 
-    private fun loadWallets() {
-        // Load enabled wallets
-        walletProvider.enabledWallets()
-            .distinctUntilChanged { old, new -> old.containsAll(new) }
-            .mapLatest { wallets ->
-                wallets.mapNotNull { currencyId ->
-                    val token = TokenUtil.getTokenItems(context)
-                        .find { currencyId.equals(it.currencyId, true) }
-                    if (token == null) {
-                        null
-                    } else {
-                        val currencyCode = token.symbol.toLowerCase(Locale.ROOT)
-                        Wallet(
-                            currencyId = currencyId,
-                            currencyCode = currencyCode,
-                            currencyName = token.name,
-                            fiatPricePerUnit = getFiatPerPriceUnit(currencyCode),
-                            priceChange = getPriceChange(currencyCode),
-                            state = when (breadBox.walletState(currencyCode).first()) {
-                                WalletState.Loading -> Wallet.State.LOADING
-                                else -> Wallet.State.UNINITIALIZED
-                            }
-                        )
-                    }
-                }
-            }
-            .map { E.OnEnabledWalletsUpdated(it) }
-            .bindConsumerIn(output, this)
-
-        // Update wallets list
-        breadBox.wallets()
-            .throttleLatest(DATA_THROTTLE_MS)
-            .applyDisplayOrder(walletProvider.enabledWallets())
-            .mapLatest { wallets -> wallets.map { it.asWallet() } }
-            .map { E.OnWalletsUpdated(it) }
-            .bindConsumerIn(output, this)
-
-        // Update wallet balances
-        breadBox.currencyCodes()
-            .throttleLatest(DATA_THROTTLE_MS)
-            .flatMapLatest { currencyCodes ->
-                currencyCodes.map { currencyCode ->
-                    breadBox.wallet(currencyCode)
-                        .distinctUntilChangedBy { it.balance }
-                }.merge()
-            }
-            .map {
-                E.OnWalletBalanceUpdated(
-                    currencyCode = it.currency.code,
-                    balance = it.balance.toBigDecimal(),
-                    fiatBalance = getBalanceInFiat(it.balance)
-                )
-            }
-            .bindConsumerIn(output, this)
-
-        // Update wallet sync state
-        breadBox.currencyCodes()
+    addTransformer<F.LoadSyncStates> { effects ->
+        effects.flatMapLatest { breadBox.currencyCodes() }
             .flatMapLatest { currencyCodes ->
                 currencyCodes.map {
                     breadBox.walletSyncState(it)
-                        .mapLatest { syncState ->
+                        .throttleLatest(WALLET_UPDATE_THROTTLE)
+                        .map { syncState ->
                             E.OnWalletSyncProgressUpdated(
                                 currencyCode = syncState.currencyCode,
                                 progress = syncState.percentComplete,
@@ -183,128 +191,85 @@ class HomeScreenHandler(
                         }
                 }.merge()
             }
-            .bindConsumerIn(output, this)
-
-        updatePriceData()
     }
+}
 
-    private fun loadIsBuyBellNeeded() {
-        val isBuyBellNeeded =
-            ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_NOTIFICATION) &&
-                CurrencyUtils.isBuyNotificationNeeded(context)
-        output.accept(E.OnBuyBellNeededLoaded(isBuyBellNeeded))
-    }
-
-    private fun checkInAppNotification() {
-        val notification = MessagesRepository.getInAppNotification(context) ?: return
-
-        // If the notification contains an image we need to pre fetch it to avoid showing the image space empty
-        // while we fetch the image while the notification is shown.
-        when (notification.imageUrl == null) {
-            true -> output.accept(E.OnInAppNotificationProvided(notification))
-            false -> {
+private suspend fun Context.loadInAppMessage(): InAppMessage =
+    suspendCancellableCoroutine { continuation ->
+        val notification = MessagesRepository.getInAppNotification(this)
+        if (notification == null) {
+            continuation.cancel()
+        } else {
+            // If the notification contains an image we need to pre fetch it
+            // to avoid showing the image space empty while we fetch the image
+            // while the notification is shown.
+            if (notification.imageUrl == null) {
+                continuation.resume(notification)
+            } else {
                 Picasso.get().load(notification.imageUrl).fetch(object : Callback {
-
                     override fun onSuccess() {
-                        output.accept(E.OnInAppNotificationProvided(notification))
+                        continuation.resume(notification)
                     }
 
                     override fun onError(exception: Exception) {
+                        continuation.cancel()
                     }
                 })
             }
         }
     }
 
-    private fun recordPushNotificationOpened(campaignId: String) {
-        val attributes = HashMap<String, String>()
-        attributes[EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID] = campaignId
-        EventUtils.pushEvent(EventUtils.EVENT_MIXPANEL_APP_OPEN, attributes)
-        EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATION_OPEN)
-    }
+private fun getPromptName(prompt: PromptItem): String = when (prompt) {
+    PromptItem.FINGER_PRINT -> EventUtils.PROMPT_TOUCH_ID
+    PromptItem.PAPER_KEY -> EventUtils.PROMPT_PAPER_KEY
+    PromptItem.UPGRADE_PIN -> EventUtils.PROMPT_UPGRADE_PIN
+    PromptItem.RECOMMEND_RESCAN -> EventUtils.PROMPT_RECOMMEND_RESCAN
+    PromptItem.EMAIL_COLLECTION -> EventUtils.PROMPT_EMAIL
+}
 
-    override fun onChanged() {
-        updatePriceData()
-        val wallets = breadBox.getSystemUnsafe()?.wallets ?: emptyList()
-        wallets.onEach { wallet ->
-            updateBalance(wallet.currency.code, wallet.balance)
-        }
-    }
+private fun TokenItem.asWallet(
+    walletState: WalletState,
+    fiatIso: String,
+    ratesRepo: RatesRepository
+): Wallet {
+    val currencyCode = symbol.toLowerCase(Locale.ROOT)
+    return Wallet(
+        currencyId = currencyId,
+        currencyCode = currencyCode,
+        currencyName = name,
+        fiatPricePerUnit = ratesRepo.getFiatPerCryptoUnit(currencyCode, fiatIso),
+        priceChange = ratesRepo.getPriceChange(currencyCode),
+        state = when (walletState) {
+            WalletState.Loading -> Wallet.State.LOADING
+            else -> Wallet.State.UNINITIALIZED
+        },
+        startColor = startColor,
+        endColor = endColor
+    )
+}
 
-    private fun updatePriceData() {
-        breadBox.currencyCodes()
-            .take(1)
-            .transform { currencyCodes ->
-                currencyCodes.onEach { code ->
-                    emit(
-                        E.OnUnitPriceChanged(
-                            code,
-                            getFiatPerPriceUnit(code),
-                            getPriceChange(code)
-                        )
-                    )
-                }
-            }
-            .bindConsumerIn(output, this)
-    }
-
-    private fun getFiatPerPriceUnit(currencyCode: String): BigDecimal {
-        return RatesRepository.getInstance(context)
-            .getFiatForCrypto(
-                BigDecimal.ONE,
-                currencyCode,
-                BRSharedPrefs.getPreferredFiatIso(context)
-            )
-            ?: BigDecimal.ZERO
-    }
-
-    private fun updateBalance(currencyCode: String, balanceAmt: Amount) {
-        val balanceInFiat = getBalanceInFiat(balanceAmt)
-
-        output.accept(
-            E.OnWalletBalanceUpdated(
-                currencyCode,
-                balanceAmt.toBigDecimal(),
-                balanceInFiat
-            )
-        )
-    }
-
-    private fun getBalanceInFiat(balanceAmt: Amount): BigDecimal {
-        return RatesRepository.getInstance(context).getFiatForCrypto(
-            balanceAmt.toBigDecimal(),
-            balanceAmt.currency.code,
-            BRSharedPrefs.getPreferredFiatIso(context)
-        ) ?: BigDecimal.ZERO
-    }
-
-    private fun getPriceChange(currencyCode: String) =
-        RatesRepository.getInstance(context).getPriceChange(currencyCode)
-
-    private fun CryptoWallet.asWallet(): Wallet {
-        return Wallet(
-            currencyId = currencyId,
-            currencyName = currency.name,
-            currencyCode = currency.code,
-            fiatPricePerUnit = getFiatPerPriceUnit(currency.code),
-            balance = balance.toBigDecimal(),
-            fiatBalance = getBalanceInFiat(balance),
-            syncProgress = 0f, // will update via sync events
-            syncingThroughMillis = 0L, // will update via sync events
-            priceChange = getPriceChange(currency.code),
-            state = Wallet.State.READY,
-            isSyncing = walletManager.state == WalletManagerState.SYNCING()
-        )
-    }
-
-    private fun checkIfShowBuyAndSell() {
-        val showBuyAndSell =
-            ExperimentsRepositoryImpl.isExperimentActive(Experiments.BUY_SELL_MENU_BUTTON)
-                && BRSharedPrefs.getPreferredFiatIso() == BRConstants.USD
-        EventUtils.pushEvent(
-            EventUtils.EVENT_EXPERIMENT_BUY_SELL_MENU_BUTTON,
-            mapOf(EventUtils.EVENT_ATTRIBUTE_SHOW to showBuyAndSell.toString())
-        )
-        output.accept(E.OnShowBuyAndSell(showBuyAndSell))
-    }
+private fun CryptoWallet.asWallet(
+    name: String?,
+    fiatIso: String,
+    ratesRepo: RatesRepository
+): Wallet {
+    val tokenItem = TokenUtil.getTokenItemByCurrencyCode(currency.code)
+    val balanceBig = balance.toBigDecimal()
+    return Wallet(
+        currencyId = currencyId,
+        currencyName = name ?: currency.name,
+        currencyCode = currency.code,
+        fiatPricePerUnit = ratesRepo.getFiatPerCryptoUnit(currency.code, fiatIso),
+        balance = balanceBig,
+        fiatBalance = ratesRepo.getFiatForCrypto(balanceBig, currency.code, fiatIso)
+            ?: BigDecimal.ZERO,
+        syncProgress = 0f, // will update via sync events
+        syncingThroughMillis = 0L, // will update via sync events
+        priceChange = ratesRepo.getPriceChange(currency.code),
+        state = Wallet.State.READY,
+        isSyncing = walletManager.state == WalletManagerState.SYNCING(),
+        startColor = tokenItem?.startColor,
+        endColor = tokenItem?.endColor,
+        isSupported = tokenItem?.isSupported ?: true
+    )
 }

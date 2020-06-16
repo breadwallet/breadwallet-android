@@ -24,9 +24,9 @@ android {
     buildToolsVersion = '29.0.3'
     ext {
         brdMarketingVersion = 4   // Major version. Usually affected by marketing. Maximum value: 99
-        brdProductVersion = 3    // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 1 // Hot fix version. Usually affected by engineering. Maximum value: 9
-        brdBuildVersion = 7       // Build version. Increase for each new build. Maximum value: 999
+        brdProductVersion = 4    // Minor version. Usually affected by product. Maximum value: 99
+        brdEngineeringVersion = 0 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdBuildVersion = 3       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
         // relationship between builds with a max value of 2 100 000 000.
@@ -190,9 +190,9 @@ static def getChangelog() {
 
 task downloadBundles {
     doLast {
-        def bundles = ["brd-web-3", "brd-tokens-prod", "brd-web-3-staging", "brd-tokens-staging"]
-        def stagingHost = "api.breadwallet.com"
-        def releaseHost = "stage2.breadwallet.com"
+        def bundles = ["brd-web-3", "brd-tokens", "brd-web-3-staging", "brd-tokens-staging"]
+        def stagingHost = "stage2.breadwallet.com"
+        def releaseHost = "api.breadwallet.com"
         for (String bundleName : bundles) {
             def fileUrl
             def resFolder
@@ -323,6 +323,7 @@ dependencies {
     implementation "org.kodein.di:kodein-di-framework-android-x:$kodein_version"
 
     // Debugging/Monitoring
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
     debugImplementation "com.github.anrwatchdog:anrwatchdog:$anr_watchdog_version"
     implementation "com.google.firebase:firebase-crashlytics:$firebase_crashlytics_version"
 

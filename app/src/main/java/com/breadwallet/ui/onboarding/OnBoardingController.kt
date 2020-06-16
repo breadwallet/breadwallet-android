@@ -25,30 +25,27 @@
 package com.breadwallet.ui.onboarding
 
 import android.os.Bundle
-import androidx.viewpager.widget.ViewPager
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.viewpager.widget.ViewPager
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.OnCompleteAction
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.onboarding.OnBoarding.E
 import com.breadwallet.ui.onboarding.OnBoarding.F
 import com.breadwallet.ui.onboarding.OnBoarding.M
-import com.spotify.mobius.Connectable
-import com.spotify.mobius.disposables.Disposable
-import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_on_boarding.*
 import kotlinx.android.synthetic.main.controller_onboarding_page.*
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -67,56 +64,34 @@ class OnBoardingController(
 
     override val layoutId = R.layout.controller_on_boarding
 
-    private val effectJob = SupervisorJob()
-    private val _effectHandler by lazy {
-        OnBoardingHandler(
-            effectJob,
-            applicationContext as BreadApp,
-            direct.instance(),
-            direct.instance(),
-            { eventConsumer },
-            { router }
-        )
-    }
-
     override val defaultModel = M.DEFAULT
     override val init = OnBoardingInit
     override val update = OnBoardingUpdate
-    override val effectHandler: Connectable<F, E> =
-        CompositeEffectHandler.from(
-            Connectable { _effectHandler },
-            nestedConnectable({ RouterNavigationEffectHandler(router) }, { effect ->
-                when (effect) {
-                    is F.ShowError -> NavigationEffect.GoToErrorDialog(
-                        title = "",
-                        message = effect.message
-                    )
-                    F.Browse,
-                    F.Skip -> NavigationEffect.GoToSetPin(onboarding = true)
-                    F.Buy -> NavigationEffect.GoToSetPin(
-                        onboarding = true,
-                        onComplete = OnCompleteAction.GO_TO_BUY
-                    )
-                    else -> null
-                }
-            })
-        )
 
-    override fun bindView(output: Consumer<E>): Disposable {
+    override val flowEffectHandler
+        get() = createOnBoardingHandler(direct.instance())
+
+    override fun onCreateView(view: View) {
+        super.onCreateView(view)
         view_pager.adapter = OnBoardingPageAdapter()
-        view_pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
-            override fun onPageSelected(position: Int) {
-                output.accept(E.OnPageChanged(position + 1))
-            }
-        })
-        button_skip.setOnClickListener {
-            output.accept(E.OnSkipClicked)
-        }
-        button_back.setOnClickListener {
-            output.accept(E.OnBackClicked)
-        }
+    }
 
-        return Disposable {}
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        return merge(
+            button_skip.clicks().map { E.OnSkipClicked },
+            button_back.clicks().map { E.OnBackClicked },
+            callbackFlow<E.OnPageChanged> {
+                val listener = object : ViewPager.SimpleOnPageChangeListener() {
+                    override fun onPageSelected(position: Int) {
+                        offer(E.OnPageChanged(position + 1))
+                    }
+                }
+                view_pager.addOnPageChangeListener(listener)
+                awaitClose {
+                    view_pager.removeOnPageChangeListener(listener)
+                }
+            }
+        )
     }
 
     override fun M.render() {
@@ -158,11 +133,6 @@ class OnBoardingController(
     }
 
     override fun handleBack() = currentModel.isLoading
-
-    override fun onDestroy() {
-        effectJob.cancel()
-        super.onDestroy()
-    }
 }
 
 class PageOneController(args: Bundle? = null) : BaseController(args) {

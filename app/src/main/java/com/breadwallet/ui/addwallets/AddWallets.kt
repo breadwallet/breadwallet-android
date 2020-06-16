@@ -24,8 +24,8 @@
  */
 package com.breadwallet.ui.addwallets
 
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
@@ -59,8 +59,8 @@ object AddWallets {
         data class AddWallet(val token: Token) : F()
         data class RemoveWallet(val token: Token) : F()
 
-        object GoBack : F(), NavEffectHolder {
-            override val navigationEffect = NavigationEffect.GoBack
+        object GoBack : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
         }
     }
 }

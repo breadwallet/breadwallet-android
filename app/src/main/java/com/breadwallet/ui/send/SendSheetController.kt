@@ -39,7 +39,6 @@ import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
 import com.breadwallet.legacy.presenter.customviews.BRKeyboard
-import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.animation.UiUtils
@@ -52,6 +51,7 @@ import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
+import com.breadwallet.ui.flowbind.focusChanges
 import com.breadwallet.ui.flowbind.textChanges
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheet.E
@@ -73,8 +73,8 @@ import java.text.NumberFormat
 import java.util.Locale
 
 private const val CURRENCY_CODE = "CURRENCY_CODE"
-private const val CRYPTO_REQUEST = "CRYPTO_REQUEST"
 private const val CRYPTO_REQUEST_LINK = "CRYPTO_REQUEST_LINK"
+private const val RESOLVED_ADDRESS_CHARS = 10
 
 /** A BottomSheet for sending crypto from the user's wallet to a specified target. */
 @Suppress("TooManyFunctions")
@@ -124,17 +124,14 @@ class SendSheetController(args: Bundle? = null) :
     override val flowEffectHandler
         get() = SendSheetHandler.create(
             checkNotNull(applicationContext),
-            router,
-            viewCreatedScope,
-            { eventConsumer },
             breadBox = direct.instance(),
             userManager = direct.instance(),
             apiClient = direct.instance(),
             ratesRepository = direct.instance(),
-            navEffectHandler = direct.instance(),
             metaDataEffectHandler = Connectable {
                 MetaDataEffectHandler(it, direct.instance(), direct.instance())
-            }
+            },
+            payIdService = direct.instance()
         )
 
     override fun onCreateView(view: View) {
@@ -145,6 +142,8 @@ class SendSheetController(args: Bundle? = null) :
         keyboard.setDeleteImage(R.drawable.ic_delete_black)
 
         showKeyboard(false)
+
+        textInputAmount.showSoftInputOnFocus = false
 
         layoutSignal.layoutTransition = UiUtils.getDefaultTransition()
         layoutSignal.setOnTouchListener(SlideDetector(router, layoutSignal))
@@ -167,10 +166,16 @@ class SendSheetController(args: Bundle? = null) :
             textInputMemo.bindActionComplete(E.OnSendClicked),
             textInputMemo.clicks().map { E.OnAmountEditDismissed },
             textInputMemo.textChanges().map { E.OnMemoChanged(it) },
-            textInputAddress.bindFocusChanged(),
+            textInputAddress.focusChanges().map { hasFocus ->
+                if (hasFocus) {
+                    E.OnAmountEditDismissed
+                } else {
+                    Utils.hideKeyboard(activity)
+                    E.OnTargetStringEntered
+                }
+            },
             textInputAddress.clicks().map { E.OnAmountEditDismissed },
-            textInputAddress.bindActionComplete(E.OnAmountEditDismissed),
-            textInputAddress.textChanges().map { E.OnTargetAddressChanged(it) },
+            textInputAddress.textChanges().map { E.OnTargetStringChanged(it) },
             textInputDestinationTag.textChanges().map {
                 E.TransferFieldUpdate.Value(TransferField.DESTINATION_TAG, it)
             },
@@ -184,6 +189,13 @@ class SendSheetController(args: Bundle? = null) :
             buttonPaste.clicks().map { E.OnPasteClicked },
             layoutBackground.clicks().map { E.OnCloseClicked },
             textInputAmount.clicks().map { E.OnAmountEditClicked },
+            textInputAmount.focusChanges().map { hasFocus ->
+                if (hasFocus) {
+                    E.OnAmountEditClicked
+                } else {
+                    E.OnAmountEditDismissed
+                }
+            },
             buttonCurrencySelect.clicks().map { E.OnToggleCurrencyClicked },
             buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.REGULAR) },
             buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.ECONOMY) },
@@ -236,6 +248,21 @@ class SendSheetController(args: Bundle? = null) :
     override fun M.render() {
         val res = checkNotNull(resources)
 
+        ifChanged(M::isPayId, M::isResolvingAddress) {
+            addressProgressBar.isVisible = isResolvingAddress
+            if (isPayId) {
+                inputLayoutAddress.hint = res.getString(R.string.Send_payId_toLabel)
+                inputLayoutAddress.helperText = if (isResolvingAddress) null else {
+                    val first = targetAddress.take(RESOLVED_ADDRESS_CHARS)
+                    val last = targetAddress.takeLast(RESOLVED_ADDRESS_CHARS)
+                    "$first...$last"
+                }
+            } else {
+                inputLayoutAddress.helperText = null
+                inputLayoutAddress.hint = res.getString(R.string.Send_toLabel)
+            }
+        }
+
         ifChanged(M::targetInputError) {
             inputLayoutAddress.isErrorEnabled = targetInputError != null
             inputLayoutAddress.error = when (targetInputError) {
@@ -250,6 +277,12 @@ class SendSheetController(args: Bundle? = null) :
                     )
                 is M.InputError.ClipboardEmpty ->
                     res.getString(R.string.Send_emptyPasteboard)
+                is M.InputError.PayIdInvalid -> res.getString(R.string.Send_payId_invalid)
+                is M.InputError.PayIdNoAddress -> res.getString(
+                    R.string.Send_payId_noAddress,
+                    currencyCode.toUpperCase(Locale.ROOT)
+                )
+                is M.InputError.PayIdRetrievalError -> res.getString(R.string.Send_payId_retrievalError)
                 else -> null
             }
         }
@@ -330,9 +363,9 @@ class SendSheetController(args: Bundle? = null) :
             )
         }
 
-        ifChanged(M::targetAddress) {
-            if (textInputAddress.text.toString() != targetAddress) {
-                textInputAddress.setText(targetAddress, TextView.BufferType.EDITABLE)
+        ifChanged(M::targetString) {
+            if (textInputAddress.text.toString() != targetString) {
+                textInputAddress.setText(targetString, TextView.BufferType.EDITABLE)
             }
         }
 
@@ -356,7 +389,9 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(M::isConfirmingTx) {
-            if (isConfirmingTx) {
+            val isConfirmVisible =
+                router.backstack.lastOrNull()?.controller() is ConfirmTxController
+            if (isConfirmingTx && !isConfirmVisible) {
                 val controller = ConfirmTxController(
                     currencyCode,
                     fiatCode,
@@ -375,7 +410,9 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(M::isAuthenticating) {
-            if (isAuthenticating) {
+            val isAuthVisible =
+                router.backstack.lastOrNull()?.controller() is AuthenticationController
+            if (isAuthenticating && !isAuthVisible) {
                 val authenticationMode = if (isFingerprintAuthEnable) {
                     AuthenticationController.Mode.USER_PREFERRED
                 } else {
@@ -417,7 +454,7 @@ class SendSheetController(args: Bundle? = null) :
                 )
 
                 if ((destinationTag.value.isNullOrBlank() &&
-                    !textInputDestinationTag.text.isNullOrBlank()) ||
+                        !textInputDestinationTag.text.isNullOrBlank()) ||
                     (!destinationTag.value.isNullOrBlank() &&
                         textInputDestinationTag.text.isNullOrBlank())
                 ) {

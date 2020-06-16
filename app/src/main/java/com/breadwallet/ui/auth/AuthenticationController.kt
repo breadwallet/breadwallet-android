@@ -107,8 +107,6 @@ class AuthenticationController(
             Mode.BIOMETRIC_REQUIRED -> R.layout.controller_fingerprint
         }
 
-    private val listener get() = targetController as? Listener
-
     private var fingerprintUiHelper: FingerprintUiHelper? = null
 
     override fun onCreateView(view: View) {
@@ -133,13 +131,13 @@ class AuthenticationController(
                 pin_digits.setup(brkeyboard, object : PinLayout.PinLayoutListener {
                     override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
                         if (isPinCorrect) {
-                            listener?.onAuthenticationSuccess()
+                            findListener<Listener>()?.onAuthenticationSuccess()
                             router.popCurrentController()
                         }
                     }
 
                     override fun onPinLocked() {
-                        listener?.onAuthenticationFailed()
+                        findListener<Listener>()?.onAuthenticationFailed()
                         router.popCurrentController()
                     }
                 })
@@ -150,12 +148,12 @@ class AuthenticationController(
                     FingerprintUiHelper.FingerprintUiHelperBuilder(fingerprintManager)
                 val callback = object : FingerprintUiHelper.Callback {
                     override fun onAuthenticated() {
-                        listener?.onAuthenticationSuccess()
+                        findListener<Listener>()?.onAuthenticationSuccess()
                         router.popCurrentController()
                     }
 
                     override fun onError() {
-                        listener?.onAuthenticationFailed()
+                        findListener<Listener>()?.onAuthenticationFailed()
                         router.popCurrentController()
                     }
                 }
@@ -184,7 +182,7 @@ class AuthenticationController(
     }
 
     override fun handleBack(): Boolean {
-        listener?.onAuthenticationCancelled()
+        findListener<Listener>()?.onAuthenticationCancelled()
         return super.handleBack()
     }
 
@@ -192,7 +190,7 @@ class AuthenticationController(
         fingerprint_title.text = argOptional(KEY_TITLE)
         cancel_button.setText(R.string.Button_cancel)
         cancel_button.setOnClickListener {
-            listener?.onAuthenticationCancelled()
+            findListener<Listener>()?.onAuthenticationCancelled()
             router.popCurrentController()
         }
         second_dialog_button.setText(R.string.Prompts_TouchId_usePin_android)

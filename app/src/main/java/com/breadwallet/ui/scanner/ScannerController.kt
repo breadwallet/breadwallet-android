@@ -115,7 +115,7 @@ class ScannerController(
     private fun handleValidLink(text: String, link: Link) {
         // Try calling the targetController to handle the link,
         // if no listener handles it, dispatch to MainActivity.
-        val consumed: Unit? = (targetController as? Listener)?.run {
+        val consumed: Unit? = findListener<Listener>()?.run {
             onRawTextScanned(text)
             onLinkScanned(link)
         }

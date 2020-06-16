@@ -38,7 +38,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
  */
 public class BRDialog {
     private static final String TAG = BRDialog.class.getName();
-    private static BRDialogView dialog;
 
     /**
      * Safe from any threads
@@ -46,10 +45,9 @@ public class BRDialog {
      * @param context needs to be activity
      */
     // TODO: This method was moved to DialogActivity. This can be removed once all the callers have been moved to DialogActivity.
-    public static void showCustomDialog(@NonNull final Context context, @NonNull final String title, @NonNull final String message,
+    public static void showCustomDialog(@NonNull final Activity activity, @NonNull final String title, @NonNull final String message,
                                         @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
                                         final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
-        final Activity activity = (context instanceof Activity) ? (Activity) context : (Activity) BreadApp.getBreadContext();
         if (activity.isDestroyed()) {
             Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
             return;
@@ -58,7 +56,7 @@ public class BRDialog {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                dialog = new BRDialogView();
+                BRDialogView dialog = new BRDialogView();
                 dialog.setTitle(title);
                 dialog.setMessage(message);
                 dialog.setPosButton(posButton);
@@ -84,7 +82,7 @@ public class BRDialog {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                dialog = new BRDialogView();
+                BRDialogView dialog = new BRDialogView();
                 dialog.setTitle(title);
                 dialog.setMessage(message);
                 dialog.setPosButton(posButton);
@@ -99,7 +97,7 @@ public class BRDialog {
         });
     }
 
-    public static void showSimpleDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message) {
+    public static void showSimpleDialog(@NonNull final Activity app, @NonNull final String title, @NonNull final String message) {
         showCustomDialog(app, title, message, app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
@@ -120,7 +118,7 @@ public class BRDialog {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                dialog = new BRDialogView();
+                BRDialogView dialog = new BRDialogView();
                 dialog.setTitle(title);
                 dialog.setSpan(message);//setting Span instead of String
                 dialog.setPosButton(posButton);
@@ -156,7 +154,7 @@ public class BRDialog {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                dialog = new BRDialogView();
+                BRDialogView dialog = new BRDialogView();
                 dialog.setTitle(title);
                 dialog.setMessage(message);
                 dialog.setPosButton(posButton);
@@ -171,9 +169,5 @@ public class BRDialog {
             }
         });
 
-    }
-
-    public static void hideDialog() {
-        if (dialog != null) dialog.dismiss();
     }
 }

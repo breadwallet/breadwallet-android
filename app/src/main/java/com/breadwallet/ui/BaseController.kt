@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -85,15 +86,15 @@ abstract class BaseController(
     }
 
     override fun onDestroyView(view: View) {
-        super.onDestroyView(view)
         viewCreatedScope.coroutineContext.cancelChildren()
+        super.onDestroyView(view)
         clearFindViewByIdCache()
         containerView = null
     }
 
     override fun onDetach(view: View) {
-        super.onDetach(view)
         viewAttachScope.coroutineContext.cancelChildren()
+        super.onDetach(view)
     }
 
     override fun onDestroy() {
@@ -123,4 +124,13 @@ abstract class BaseController(
 
     /** Display a [Toast] message of [text] with a long duration. */
     fun toastLong(text: String) = Toast.makeText(checkNotNull(applicationContext), text, Toast.LENGTH_LONG).show()
+
+    fun requireContext(): Context = checkNotNull(applicationContext) {
+        "requireContext() cannot be called before onAttach(..)"
+    }
+
+    inline fun <reified T> findListener(): T? =
+        (targetController as? T)
+            ?: (parentController as? T)
+            ?: (router.backstack.dropLast(1).lastOrNull()?.controller() as? T)
 }

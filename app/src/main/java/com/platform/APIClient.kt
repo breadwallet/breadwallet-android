@@ -465,12 +465,8 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
             val startTime = System.currentTimeMillis()
             ServerBundlesHelper.updateBundles(context)
             val endTime = System.currentTimeMillis()
-            logDebug(
-                "updateBundles " + ServerBundlesHelper.getBundle(
-                    context,
-                    ServerBundlesHelper.Type.WEB
-                ) + ": DONE in " + (endTime - startTime) + "ms"
-            )
+            val bundle = ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.WEB)
+            logDebug("updateBundles $bundle: DONE in ${endTime - startTime}ms")
             itemFinished()
         }
 

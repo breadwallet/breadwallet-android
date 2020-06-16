@@ -67,7 +67,7 @@ interface AccountMetaDataProvider {
     fun disableWallet(currencyId: String)
 
     /** Reorders the wallet display order */
-    fun reorderWallets(currencyIds: List<String>): Flow<Unit>
+    fun reorderWallets(currencyIds: List<String>)
 
     /** Persists [mode] for the wallet. */
     suspend fun putWalletMode(currencyId: String, mode: WalletManagerMode)

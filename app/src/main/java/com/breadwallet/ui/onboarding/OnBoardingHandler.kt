@@ -24,11 +24,6 @@
  */
 package com.breadwallet.ui.onboarding
 
-import com.bluelinelabs.conductor.Router
-import com.breadwallet.app.BreadApp
-import com.breadwallet.breadbox.BreadBox
-import com.breadwallet.crypto.Account
-import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.security.BrdUserManager
@@ -36,69 +31,37 @@ import com.breadwallet.tools.security.SetupResult
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.onboarding.OnBoarding.E
 import com.breadwallet.ui.onboarding.OnBoarding.F
-import com.breadwallet.util.errorHandler
-import com.spotify.mobius.Connection
-import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import drewcarlson.mobius.flow.subtypeEffectHandler
 
-class OnBoardingHandler(
-    coroutineJob: Job,
-    private val breadApp: BreadApp,
-    private val breadBox: BreadBox,
-    private val userManager: BrdUserManager,
-    private val outputProvider: () -> Consumer<E>,
-    private val routerProvider: () -> Router
-) : Connection<F>, CoroutineScope {
-
-    override val coroutineContext = coroutineJob + Dispatchers.Default + errorHandler()
-
-    override fun accept(effect: F) {
-        when (effect) {
-            is F.CreateWallet -> launch { createWallet() }
-            F.Cancel -> cancelSetup()
-            is F.TrackEvent -> trackEvent(effect)
-        }
-    }
-
-    override fun dispose() {
-        // NOTE: We cancel coroutineJob in OnBoardingController
-    }
-
-    private fun cancelSetup() {
-        launch(Dispatchers.Main) {
-            routerProvider().popCurrentController()
-        }
-    }
-
-    private fun trackEvent(effect: F.TrackEvent) {
+fun createOnBoardingHandler(
+    userManager: BrdUserManager
+) = subtypeEffectHandler<F, E> {
+    addConsumer<F.TrackEvent> { effect ->
         EventUtils.pushEvent(effect.event)
     }
 
-    private suspend fun createWallet() {
+    addFunction<F.CreateWallet> {
         when (val result = userManager.setupWithGeneratedPhrase()) {
-            SetupResult.Success -> logInfo("Wallet created successfully.")
+            SetupResult.Success -> {
+                logInfo("Wallet created successfully.")
+
+                try {
+                    E.OnWalletCreated
+                } catch (e: IllegalStateException) {
+                    logError("Error initializing crypto system", e)
+                    E.SetupError.CryptoSystemBootError
+                }
+            }
             is SetupResult.FailedToGeneratePhrase -> {
                 logError("Failed to generate phrase.", result.exception)
-                outputProvider().accept(E.SetupError.PhraseCreationFailed)
-                return
+                E.SetupError.PhraseCreationFailed
             }
             else -> {
                 // TODO: Handle specific errors, message possible recourse to the user
                 logError("Error creating wallet: $result")
-                outputProvider().accept(E.SetupError.StoreWalletFailed)
-                return
+                E.SetupError.StoreWalletFailed
             }
-        }
-
-        try {
-            outputProvider().accept(E.OnWalletCreated)
-        } catch (e: IllegalStateException) {
-            logError("Error initializing crypto system", e)
-            outputProvider().accept(E.SetupError.CryptoSystemBootError)
         }
     }
 }
+

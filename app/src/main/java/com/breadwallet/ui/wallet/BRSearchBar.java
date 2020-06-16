@@ -2,14 +2,13 @@ package com.breadwallet.ui.wallet;
 
 import android.content.Context;
 import android.os.Handler;
-import androidx.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-
+import androidx.annotation.Nullable;
 import com.breadwallet.R;
 import com.breadwallet.legacy.presenter.customviews.BRButton;
 import kotlinx.coroutines.channels.SendChannel;
@@ -98,7 +97,9 @@ public class BRSearchBar extends androidx.appcompat.widget.Toolbar {
         });
 
         cancelButton.setOnClickListener(view -> {
-            output.offer(WalletScreen.E.OnSearchDismissClicked.INSTANCE);
+            if (output != null) {
+                output.offer(WalletScreen.E.OnSearchDismissClicked.INSTANCE);
+            }
         });
 
         searchEdit.addTextChangedListener(new TextWatcher() {
@@ -109,7 +110,9 @@ public class BRSearchBar extends androidx.appcompat.widget.Toolbar {
 
             @Override
             public void onTextChanged(CharSequence sequence, int start, int before, int count) {
-                output.offer(new WalletScreen.E.OnQueryChanged(sequence.toString()));
+                if (output != null) {
+                    output.offer(new WalletScreen.E.OnQueryChanged(sequence.toString()));
+                }
             }
 
             @Override
@@ -119,7 +122,9 @@ public class BRSearchBar extends androidx.appcompat.widget.Toolbar {
         });
         searchEdit.setOnKeyListener((view, keyCode, event) -> {
             if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                output.offer(WalletScreen.E.OnSearchDismissClicked.INSTANCE);
+                if (output != null) {
+                    output.offer(WalletScreen.E.OnSearchDismissClicked.INSTANCE);
+                }
                 return true;
             }
             return false;

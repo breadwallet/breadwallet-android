@@ -26,7 +26,6 @@ package com.breadwallet.ui.sync
 
 import android.os.Bundle
 import androidx.core.os.bundleOf
-import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
@@ -47,7 +46,6 @@ private const val CURRENCY_CODE = "currency_code"
 class SyncBlockchainController(
     args: Bundle
 ) : BaseMobiusController<M, E, F>(args),
-    SyncBlockchain.ViewActions,
     AlertDialogController.Listener {
 
     constructor(currencyCode: CurrencyCode) : this(
@@ -62,11 +60,7 @@ class SyncBlockchainController(
     override val update = SyncBlockchainUpdate
 
     override val flowEffectHandler
-        get() = SyncBlockchainHandler.create(
-            this,
-            direct.instance(),
-            direct.instance()
-        )
+        get() = createSyncBlockchainHandler(direct.instance())
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
         return merge(
@@ -77,17 +71,5 @@ class SyncBlockchainController(
 
     override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
         eventConsumer.accept(E.OnConfirmSyncClicked)
-    }
-
-    override fun showRescanPrompt() {
-        val res = checkNotNull(resources)
-        val dialog = AlertDialogController(
-            res.getString(R.string.ReScan_footer),
-            res.getString(R.string.ReScan_alertTitle),
-            res.getString(R.string.ReScan_alertAction),
-            res.getString(R.string.Button_cancel)
-        )
-        dialog.targetController = this
-        router.pushController(RouterTransaction.with(dialog))
     }
 }

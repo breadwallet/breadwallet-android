@@ -41,6 +41,7 @@ import com.breadwallet.tools.util.TokenUtil
 import com.squareup.picasso.Picasso
 
 import java.io.File
+import java.util.Locale
 
 class SelectAlertTokenAdapter(
     private val context: Context,
@@ -59,23 +60,23 @@ class SelectAlertTokenAdapter(
 
     override fun onBindViewHolder(holder: TokenItemViewHolder, position: Int) {
         val item = tokenItems[position]
-        val currencyCode = item.symbol.toLowerCase()
-        val tokenIconPath = TokenUtil.getTokenIconPath(context, currencyCode, true)
+        val currencyCode = item.symbol.toLowerCase(Locale.ROOT)
+        val tokenIconPath = TokenUtil.getTokenIconPath(currencyCode, true)
 
         val iconDrawable = holder.iconParent.background as GradientDrawable
 
-        if (tokenIconPath.isNotBlank()) {
-            val iconFile = File(tokenIconPath)
-            Picasso.get().load(iconFile).into(holder.logo)
-            holder.iconLetter.visibility = View.GONE
-            holder.logo.visibility = View.VISIBLE
-            iconDrawable.setColor(Color.TRANSPARENT)
-        } else {
+        if (tokenIconPath == null) {
             // If no icon is present, then use the capital first letter of the token currency code instead.
             holder.iconLetter.visibility = View.VISIBLE
             iconDrawable.setColor(Color.parseColor(item.startColor))
             holder.iconLetter.text = currencyCode.substring(0, 1).toUpperCase()
             holder.logo.visibility = View.GONE
+        } else {
+            val iconFile = File(tokenIconPath)
+            Picasso.get().load(iconFile).into(holder.logo)
+            holder.iconLetter.visibility = View.GONE
+            holder.logo.visibility = View.VISIBLE
+            iconDrawable.setColor(Color.TRANSPARENT)
         }
 
         holder.name.text = item.name

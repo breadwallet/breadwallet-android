@@ -35,23 +35,22 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.breadwallet.R
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
-import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.navigation.OnCompleteAction
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.showkey.ShowPaperKey.E
 import com.breadwallet.ui.showkey.ShowPaperKey.F
 import com.breadwallet.ui.showkey.ShowPaperKey.M
 import com.breadwallet.util.DefaultOnPageChangeListener
-import com.spotify.mobius.disposables.Disposable
-import com.spotify.mobius.functions.Consumer
+import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.android.synthetic.main.controller_paper_key.*
 import kotlinx.android.synthetic.main.fragment_word_item.*
-import org.kodein.di.direct
-import org.kodein.di.erased.instance
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 
 class ShowPaperKeyController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
 
@@ -80,37 +79,25 @@ class ShowPaperKeyController(args: Bundle) : BaseMobiusController<M, E, F>(args)
     override val layoutId = R.layout.controller_paper_key
     override val defaultModel = M.createDefault(phrase, onComplete)
     override val update = ShowPaperKeyUpdate
-    override val effectHandler = CompositeEffectHandler.from<F, E>(
-        nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                F.GoToBuy -> NavigationEffect.GoToBuy
-                F.GoToHome -> NavigationEffect.GoToHome
-                F.GoBack -> NavigationEffect.GoBack
-                is F.GoToPaperKeyProve -> NavigationEffect.GoToPaperKeyProve(
-                    effect.phrase,
-                    effect.onComplete
-                )
-                else -> null
-            }
-        })
-    )
+    override val flowEffectHandler = subtypeEffectHandler<F, E> { }
 
-    override fun bindView(output: Consumer<E>): Disposable {
-        next_button.setOnClickListener {
-            output.accept(E.OnNextClicked)
-        }
-        previous_button.setOnClickListener {
-            output.accept(E.OnPreviousClicked)
-        }
-        close_button.setOnClickListener {
-            output.accept(E.OnCloseClicked)
-        }
-        words_pager.addOnPageChangeListener(object : DefaultOnPageChangeListener() {
-            override fun onPageSelected(position: Int) {
-                output.accept(E.OnPageChanged(position))
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        return merge(
+            next_button.clicks().map { E.OnNextClicked },
+            previous_button.clicks().map { E.OnPreviousClicked },
+            close_button.clicks().map { E.OnCloseClicked },
+            callbackFlow<E> {
+                val listener = object : DefaultOnPageChangeListener() {
+                    override fun onPageSelected(position: Int) {
+                        offer(E.OnPageChanged(position))
+                    }
+                }
+                words_pager.addOnPageChangeListener(listener)
+                awaitClose {
+                    words_pager.removeOnPageChangeListener(listener)
+                }
             }
-        })
-        return Disposable { }
+        )
     }
 
     override fun M.render() {

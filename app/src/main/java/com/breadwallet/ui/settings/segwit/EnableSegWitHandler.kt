@@ -30,43 +30,22 @@ import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.settings.segwit.EnableSegWit.E
 import com.breadwallet.ui.settings.segwit.EnableSegWit.F
-import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.usermetrics.UserMetricsUtil
-import com.spotify.mobius.Connection
-import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.launch
+import drewcarlson.mobius.flow.subtypeEffectHandler
+import kotlinx.coroutines.flow.first
 
-class EnableSegWitHandler(
-    private val output: Consumer<E>,
-    private val context: Context,
-    private val breadBox: BreadBox
-) : Connection<F>, CoroutineScope {
-
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
-
-    override fun accept(value: F) {
-        when (value) {
-            F.EnableSegWit -> {
-                BRSharedPrefs.putIsSegwitEnabled(context, true)
-                UserMetricsUtil.logSegwitEvent(context, UserMetricsUtil.ENABLE_SEG_WIT)
-                launch {
-                    breadBox.system()
-                        .single()
-                        .walletManagers
-                        .find { it.currency.code.isBitcoin() }
-                        ?.addressScheme = AddressScheme.BTC_SEGWIT
-                }
-            }
-        }
-    }
-
-    override fun dispose() {
-        coroutineContext.cancel()
+fun createSegWitHandler(
+    context: Context,
+    breadBox: BreadBox
+) = subtypeEffectHandler<F, E> {
+    addAction<F.EnableSegWit> {
+        BRSharedPrefs.putIsSegwitEnabled(true)
+        UserMetricsUtil.logSegwitEvent(context, UserMetricsUtil.ENABLE_SEG_WIT)
+        breadBox.system()
+            .first()
+            .walletManagers
+            .find { it.currency.code.isBitcoin() }
+            ?.addressScheme = AddressScheme.BTC_SEGWIT
     }
 }

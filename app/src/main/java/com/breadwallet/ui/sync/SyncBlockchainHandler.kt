@@ -26,27 +26,15 @@ package com.breadwallet.ui.sync
 
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.WalletManagerSyncDepth.FROM_LAST_TRUSTED_BLOCK
-import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.breadwallet.ui.sync.SyncBlockchain.E
 import com.breadwallet.ui.sync.SyncBlockchain.F
 import drewcarlson.mobius.flow.subtypeEffectHandler
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.first
 
-object SyncBlockchainHandler {
-
-    fun create(
-        viewActions: SyncBlockchain.ViewActions,
-        breadBox: BreadBox,
-        navEffectTransformer: NavEffectTransformer
-    ) = subtypeEffectHandler<F, E> {
-        addTransformer<F.Nav>(navEffectTransformer)
-        addActionSync<F.ShowSyncConfirmation>(Main, viewActions::showRescanPrompt)
-
-        addFunction<F.SyncBlockchain> { effect ->
-            val wallet = breadBox.wallet(effect.currencyCode).first()
-            wallet.walletManager.syncToDepth(FROM_LAST_TRUSTED_BLOCK)
-            E.OnSyncStarted
-        }
+fun createSyncBlockchainHandler(breadBox: BreadBox) = subtypeEffectHandler<F, E> {
+    addFunction<F.SyncBlockchain> { effect ->
+        val wallet = breadBox.wallet(effect.currencyCode).first()
+        wallet.walletManager.syncToDepth(FROM_LAST_TRUSTED_BLOCK)
+        E.OnSyncStarted
     }
 }

@@ -39,7 +39,6 @@ import com.breadwallet.model.TokenItem
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.addwallets.AddWallets.E
 import com.breadwallet.ui.addwallets.AddWallets.F
-import com.breadwallet.ui.navigation.NavEffectTransformer
 import com.platform.interfaces.AccountMetaDataProvider
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
@@ -48,125 +47,119 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 
-object AddWalletsHandler {
+fun createAddWalletsHandler(
+    context: Context,
+    breadBox: BreadBox,
+    acctMetaDataProvider: AccountMetaDataProvider
+) = subtypeEffectHandler<F, E> {
+    addTransformer(searchTokens(breadBox, context, acctMetaDataProvider))
+    addConsumer(addWallet(breadBox, acctMetaDataProvider))
+    addConsumer(removeWallet(acctMetaDataProvider))
+}
 
-    fun create(
-        context: Context,
-        breadBox: BreadBox,
-        acctMetaDataProvider: AccountMetaDataProvider,
-        navEffectHandler: NavEffectTransformer
-    ) = subtypeEffectHandler<F, E> {
-        addTransformer(searchTokens(breadBox, context, acctMetaDataProvider))
-        addConsumer(addWallet(breadBox, acctMetaDataProvider))
-        addConsumer(removeWallet(acctMetaDataProvider))
-        addTransformer<F.GoBack>(navEffectHandler)
+fun List<String>.toTokenItems(): List<TokenItem> {
+    return this.mapNotNull {
+        TokenUtil.getTokenItemForCurrencyId(it)
     }
+}
 
-    fun List<String>.toTokenItems(): List<TokenItem> {
-        return this.mapNotNull {
-            TokenUtil.getTokenItemForCurrencyId(it)
-        }
-    }
-
-    private fun searchTokens(
-        breadBox: BreadBox,
-        context: Context,
-        acctMetaDataProvider: AccountMetaDataProvider
-    ) =
-        flowTransformer<F.SearchTokens, E> { effects ->
-            effects
-                .flatMapLatest { effect ->
-                    acctMetaDataProvider.enabledWallets().map { enabledWallets ->
-                        enabledWallets to effect.query
-                    }
-                }
-                .mapLatest { (trackedWallets, query) ->
-                    val system = breadBox.system().first()
-                    val networks = system.networks
-                    val availableWallets = system.wallets
-                    TokenUtil.getTokenItems(context)
-                        .filter { token ->
-                            val hasNetwork = networks.any { it.containsCurrency(token.currencyId) }
-                            val isErc20 = token.type == "erc20"
-                            val isAlreadyAdded = trackedWallets.any { it == token.currencyId }
-                            isAlreadyAdded || (token.isSupported && (isErc20 || hasNetwork))
-                        }
-                        .applyFilter(query)
-                        .map { tokenItem ->
-                            val currencyId = tokenItem.currencyId
-                            tokenItem.asToken(
-                                enabled = trackedWallets.contains(currencyId),
-                                removable = isRemovable(
-                                    availableWallets.findByCurrencyId(currencyId),
-                                    availableWallets
-                                )
-                            )
-                        }
-                }
-                .map { tokens -> E.OnTokensChanged(tokens) }
-        }
-
-    /** Adds a [Wallet] for the given [currencyId] and its native wallet, if not already tracked. */
-    private fun addWallet(
-        breadBox: BreadBox,
-        acctMetaDataProvider: AccountMetaDataProvider
-    ): suspend (F.AddWallet) -> Unit = { addWallet ->
-        val currencyId = addWallet.token.currencyId
-        val system = checkNotNull(breadBox.getSystemUnsafe())
-        val network = system.networks.find { it.containsCurrency(currencyId) }
-
-        when (network?.findCurrency(currencyId)?.isNative()) {
-            null -> logError("No network or currency found for $currencyId.")
-            false -> {
-                val trackedWallets = breadBox.wallets().first()
-                if (!trackedWallets.containsCurrency(network.currency.uids)) {
-                    logDebug("Adding native wallet ${network.currency.uids} for $currencyId.")
-                    acctMetaDataProvider.enableWallet(network.currency.uids)
-                }
+private fun searchTokens(
+    breadBox: BreadBox,
+    context: Context,
+    acctMetaDataProvider: AccountMetaDataProvider
+) = flowTransformer<F.SearchTokens, E> { effects ->
+    effects
+        .flatMapLatest { effect ->
+            acctMetaDataProvider.enabledWallets().map { enabledWallets ->
+                enabledWallets to effect.query
             }
         }
-
-        logDebug("Adding wallet '$currencyId'")
-        acctMetaDataProvider.enableWallet(currencyId)
-    }
-
-    private fun removeWallet(
-        acctMetaDataProvider: AccountMetaDataProvider
-    ): suspend (F.RemoveWallet) -> Unit = { removeWallet ->
-        val currencyId = removeWallet.token.currencyId
-        logDebug("Removing wallet '$currencyId'")
-        acctMetaDataProvider.disableWallet(currencyId)
-    }
-
-    /**
-     * Returns true if the [Wallet] exists, it's not the last remaining enabled [Wallet], and
-     * it's not a [Wallet] another enabled [Wallet] depends on.
-     */
-    private fun isRemovable(wallet: Wallet?, trackedWallets: List<Wallet>) =
-        trackedWallets.size > 1 && (wallet?.let { !walletIsNeeded(it, trackedWallets) } ?: true)
-
-    private fun walletIsNeeded(wallet: Wallet, trackedWallets: List<Wallet>) =
-        wallet.currency.isNative() &&
-            trackedWallets.filter { !it.currencyId.equals(wallet.currencyId, true) }
-                .any {
-                    wallet.walletManager.networkContainsCurrency(it.currencyId)
+        .mapLatest { (trackedWallets, query) ->
+            val system = breadBox.system().first()
+            val networks = system.networks
+            val availableWallets = system.wallets
+            TokenUtil.getTokenItems()
+                .filter { token ->
+                    val hasNetwork = networks.any { it.containsCurrency(token.currencyId) }
+                    val isErc20 = token.type == "erc20"
+                    val isAlreadyAdded = trackedWallets.any { it == token.currencyId }
+                    isAlreadyAdded || (token.isSupported && (isErc20 || hasNetwork))
                 }
-
-    private fun List<TokenItem>.applyFilter(query: String) =
-        filter { token ->
-            token.name.contains(query, true) || token.symbol.contains(query, true)
+                .applyFilter(query)
+                .map { tokenItem ->
+                    val currencyId = tokenItem.currencyId
+                    tokenItem.asToken(
+                        enabled = trackedWallets.contains(currencyId),
+                        removable = isRemovable(
+                            availableWallets.findByCurrencyId(currencyId),
+                            availableWallets
+                        )
+                    )
+                }
         }
+        .map { tokens -> E.OnTokensChanged(tokens) }
+}
 
-    private fun TokenItem.asToken(enabled: Boolean, removable: Boolean): Token {
-        return Token(
-            name,
-            symbol,
-            checkNotNull(currencyId),
-            checkNotNull(startColor),
-            enabled,
-            removable
-        )
+/** Adds a [Wallet] for the given [currencyId] and its native wallet, if not already tracked. */
+private fun addWallet(
+    breadBox: BreadBox,
+    acctMetaDataProvider: AccountMetaDataProvider
+): suspend (F.AddWallet) -> Unit = { addWallet ->
+    val currencyId = addWallet.token.currencyId
+    val system = checkNotNull(breadBox.getSystemUnsafe())
+    val network = system.networks.find { it.containsCurrency(currencyId) }
+
+    when (network?.findCurrency(currencyId)?.isNative()) {
+        null -> logError("No network or currency found for $currencyId.")
+        false -> {
+            val trackedWallets = breadBox.wallets().first()
+            if (!trackedWallets.containsCurrency(network.currency.uids)) {
+                logDebug("Adding native wallet ${network.currency.uids} for $currencyId.")
+                acctMetaDataProvider.enableWallet(network.currency.uids)
+            }
+        }
     }
+
+    logDebug("Adding wallet '$currencyId'")
+    acctMetaDataProvider.enableWallet(currencyId)
+}
+
+private fun removeWallet(
+    acctMetaDataProvider: AccountMetaDataProvider
+): suspend (F.RemoveWallet) -> Unit = { removeWallet ->
+    val currencyId = removeWallet.token.currencyId
+    logDebug("Removing wallet '$currencyId'")
+    acctMetaDataProvider.disableWallet(currencyId)
+}
+
+/**
+ * Returns true if the [Wallet] exists, it's not the last remaining enabled [Wallet], and
+ * it's not a [Wallet] another enabled [Wallet] depends on.
+ */
+private fun isRemovable(wallet: Wallet?, trackedWallets: List<Wallet>) =
+    trackedWallets.size > 1 && (wallet?.let { !walletIsNeeded(it, trackedWallets) } ?: true)
+
+private fun walletIsNeeded(wallet: Wallet, trackedWallets: List<Wallet>) =
+    wallet.currency.isNative() &&
+        trackedWallets.filter { !it.currencyId.equals(wallet.currencyId, true) }
+            .any {
+                wallet.walletManager.networkContainsCurrency(it.currencyId)
+            }
+
+private fun List<TokenItem>.applyFilter(query: String) =
+    filter { token ->
+        token.name.contains(query, true) || token.symbol.contains(query, true)
+    }
+
+private fun TokenItem.asToken(enabled: Boolean, removable: Boolean): Token {
+    return Token(
+        name,
+        symbol,
+        checkNotNull(currencyId),
+        checkNotNull(startColor),
+        enabled,
+        removable
+    )
 }
 
 

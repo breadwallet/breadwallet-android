@@ -1,10 +1,9 @@
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/layoutBackground">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutSignal"
@@ -26,7 +25,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="invisible"/>
+            tools:visibility="invisible" />
 
         <View
             android:id="@+id/view3"
@@ -50,7 +49,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
-            app:layout_constraintVertical_chainStyle="packed"/>
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <ImageButton
             android:id="@+id/buttonClose"
@@ -73,10 +72,10 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/bread_margin"
+            android:fontFamily="@font/circular_pro_bold"
             android:text="@string/Send.title"
             android:textColor="@color/almost_black"
             android:textSize="@dimen/header"
-            android:fontFamily="@font/circular_pro_bold"
             app:layout_constraintBottom_toTopOf="@+id/separator0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -134,10 +133,22 @@
                 android:ellipsize="middle"
                 android:ems="10"
                 android:hint="@string/Send.toLabel"
-                android:singleLine="true"
+                android:imeOptions="flagNoPersonalizedLearning"
                 android:inputType="textNoSuggestions"
-                android:imeOptions="flagNoPersonalizedLearning" />
+                android:singleLine="true"/>
         </com.google.android.material.textfield.TextInputLayout>
+
+        <ProgressBar
+            android:id="@+id/addressProgressBar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="@dimen/bread_margin"
+            android:indeterminate="true"
+            app:layout_constraintBottom_toBottomOf="@+id/inputLayoutAddress"
+            app:layout_constraintEnd_toEndOf="@+id/inputLayoutAddress"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/inputLayoutAddress"
+            app:layout_constraintTop_toTopOf="@+id/inputLayoutAddress"/>
 
         <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/buttonPaste"
@@ -215,10 +226,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:background="@android:color/transparent"
-                android:singleLine="true"
-                android:inputType="numberSigned|textNoSuggestions"
+                android:hint="@string/Send.destinationTag_optional"
                 android:imeOptions="flagNoPersonalizedLearning"
-                android:hint="@string/Send.destinationTag_optional"/>
+                android:inputType="numberSigned|textNoSuggestions"
+                android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <View
@@ -247,11 +258,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:background="@android:color/transparent"
-                android:singleLine="true"
-                android:inputType="text|textNoSuggestions"
-                android:imeOptions="flagNoPersonalizedLearning"
                 android:hint="@string/Send.memoTag_optional"
-                android:maxLength="100"/>
+                android:imeOptions="flagNoPersonalizedLearning"
+                android:inputType="text|textNoSuggestions"
+                android:maxLength="100"
+                android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <View
@@ -266,8 +277,8 @@
             android:id="@+id/inputLayoutAmount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/bread_margin"
             android:layout_marginStart="@dimen/bread_margin"
+            android:layout_marginTop="@dimen/bread_margin"
             android:layout_marginBottom="8dp"
             android:hint="@string/Send.amountLabel"
             app:layout_constraintBottom_toTopOf="@+id/labelBalance"
@@ -282,8 +293,8 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:cursorVisible="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:inputType="numberDecimal"
                 android:textIsSelectable="false" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -294,6 +305,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="8dp"
+            android:fontFamily="@font/circular_pro_book"
             android:textColor="@color/light_gray"
             app:layout_constraintBottom_toTopOf="@+id/labelNetworkFee"
             app:layout_constraintEnd_toEndOf="@+id/inputLayoutAmount"
@@ -302,8 +314,7 @@
             app:layout_constraintTop_toBottomOf="@+id/inputLayoutAmount"
             app:layout_constraintVertical_bias="0.0"
             tools:text="Current Balance: 1.2345 BTC"
-            tools:visibility="visible"
-            android:fontFamily="@font/circular_pro_book" />
+            tools:visibility="visible" />
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/labelNetworkFee"
@@ -311,9 +322,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
+            android:fontFamily="@font/circular_pro_book"
             android:textColor="@color/light_gray"
             android:visibility="gone"
-            android:fontFamily="@font/circular_pro_book"
             app:layout_constraintBottom_toTopOf="@+id/layoutFeeOption"
             app:layout_constraintEnd_toEndOf="@+id/inputLayoutAmount"
             app:layout_constraintHorizontal_bias="0.0"
@@ -339,8 +350,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/inputLayoutAmount"
             app:layout_constraintTop_toBottomOf="@+id/inputLayoutHederaMemo"
-            app:layout_constraintVertical_bias="0.0" app:layout_goneMarginBottom="8dp"
-            tools:text="iso"/>
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_goneMarginBottom="8dp"
+            tools:text="iso" />
 
         <LinearLayout
             android:id="@+id/layoutFeeOption"
@@ -366,18 +378,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:fontFamily="@font/circular_pro_book"
                 android:text="@string/FeeSelector.title"
                 android:textColor="@color/almost_black"
-                android:textSize="@dimen/sub_header"
-                android:fontFamily="@font/circular_pro_book" />
+                android:textSize="@dimen/sub_header" />
 
             <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/labelFeeDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:textColor="@color/light_gray"
-                android:fontFamily="@font/circular_pro_book" />
+                android:fontFamily="@font/circular_pro_book"
+                android:textColor="@color/light_gray" />
 
             <LinearLayout
                 android:id="@+id/layoutFeeButtons"
@@ -396,11 +408,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:background="@drawable/b_half_left_blue_stroke"
+                    android:fontFamily="@font/circular_pro_medium"
                     android:padding="0dp"
                     android:text="@string/FeeSelector.economy"
                     android:textColor="@color/dark_blue"
                     android:textSize="14sp"
-                    android:fontFamily="@font/circular_pro_medium"
                     app:isBreadButton="false" />
 
                 <com.breadwallet.legacy.presenter.customviews.BRButton
@@ -409,11 +421,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:background="@drawable/b_blue_square"
+                    android:fontFamily="@font/circular_pro_medium"
                     android:padding="0dp"
                     android:text="@string/FeeSelector.regular"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:fontFamily="@font/circular_pro_medium"
                     app:isBreadButton="false" />
 
                 <com.breadwallet.legacy.presenter.customviews.BRButton
@@ -422,11 +434,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:background="@drawable/b_half_right_blue_stroke"
+                    android:fontFamily="@font/circular_pro_medium"
                     android:padding="0dp"
                     android:text="@string/FeeSelector.priority"
                     android:textColor="@color/dark_blue"
                     android:textSize="14sp"
-                    android:fontFamily="@font/circular_pro_medium"
                     app:isBreadButton="false" />
             </LinearLayout>
 
@@ -488,11 +500,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
+                android:hint="@string/Send.descriptionLabel"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:maxLines="1"
-                android:hint="@string/Send.descriptionLabel"
                 android:maxLength="250"
+                android:maxLines="1"
                 android:textSize="@dimen/sub_header" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -538,13 +550,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="separator,inputLayoutDestinationTag"/>
+            app:constraint_referenced_ids="separator,inputLayoutDestinationTag" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/groupHederaMemo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="separator1,inputLayoutHederaMemo"/>
+            app:constraint_referenced_ids="separator1,inputLayoutHederaMemo" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

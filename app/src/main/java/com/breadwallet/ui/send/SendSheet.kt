@@ -25,7 +25,9 @@
 package com.breadwallet.ui.send
 
 import android.os.Parcelable
+import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
+import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.crypto.PaymentProtocolRequest
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferFeeBasis
@@ -34,8 +36,8 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.eth
-import com.breadwallet.ui.navigation.NavEffectHolder
 import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
 import drewcarlson.switchboard.MobiusUpdateSpec
@@ -89,8 +91,12 @@ object SendSheet {
         /** True when [totalCost] is greater than [balance]. */
         val isTotalCostOverBalance: Boolean = false,
 
-        /** The user supplied address to send the [amount] of [currencyCode] to. */
-        @Redacted val targetAddress: String = "",
+        /** The user supplied address or PayID to send the [amount] of [currencyCode] to. */
+        val targetString: String = "",
+        /** The address to send the [amount] of [currencyCode] to. */
+        val targetAddress: String = "",
+        val isPayId: Boolean = false,
+        val isResolvingAddress: Boolean = false,
         /** The user supplied amount to send as a string. */
         val rawAmount: String = "",
         /** The user supplied amount as [BigDecimal]. */
@@ -153,6 +159,10 @@ object SendSheet {
 
             object ClipboardEmpty : InputError()
             object ClipboardInvalid : InputError()
+
+            object PayIdInvalid : InputError()
+            object PayIdNoAddress : InputError()
+            object PayIdRetrievalError : InputError()
 
             object FailedToEstimateFee : InputError()
         }
@@ -321,11 +331,6 @@ object SendSheet {
             val transferSpeed: TransferSpeed
         ) : E()
 
-        data class OnAddressValidated(
-            @Redacted val address: String,
-            val isValid: Boolean
-        ) : E()
-
         sealed class OnAmountChange : E() {
             object AddDecimal : OnAmountChange()
             object Delete : OnAmountChange()
@@ -336,9 +341,11 @@ object SendSheet {
             ) : OnAmountChange()
         }
 
-        data class OnTargetAddressChanged(
+        data class OnTargetStringChanged(
             @Redacted val toAddress: String
         ) : E()
+
+        object OnTargetStringEntered : E()
 
         data class OnMemoChanged(@Redacted val memo: String) : E()
 
@@ -347,14 +354,28 @@ object SendSheet {
             object OnCancelClicked : ConfirmTx()
         }
 
-        sealed class OnAddressPasted : E() {
+        sealed class OnAddressValidated : E() {
 
-            data class ValidAddress(
-                @Redacted val address: String
-            ) : OnAddressPasted()
+            sealed class Address : OnAddressValidated() {
+                data class ValidAddress(
+                    @Redacted val address: String
+                ) : Address()
 
-            object NoAddress : OnAddressPasted()
-            object InvalidAddress : OnAddressPasted()
+                data class PayIdString(val payId: String) : Address()
+                data class InvalidAddress(val fromClipboard: Boolean = false) : Address()
+                data class NoAddress(val fromClipboard: Boolean = false) : Address()
+            }
+
+            sealed class PayId : OnAddressValidated() {
+                data class ValidAddress(
+                    val payId: String,
+                    @Redacted val address: String
+                ) : PayId()
+
+                object InvalidPayId : PayId()
+                object RetrievalError : PayId()
+                object NoAddress : PayId()
+            }
         }
 
         object GoToEthWallet : E()
@@ -393,20 +414,20 @@ object SendSheet {
     sealed class F {
 
         sealed class Nav(
-            override val navigationEffect: NavigationEffect
-        ) : F(), NavEffectHolder {
+            override val navigationTarget: NavigationTarget
+        ) : F(), NavigationEffect {
             data class GoToFaq(
                 val currencyCode: CurrencyCode
-            ) : Nav(NavigationEffect.GoToFaq(BRConstants.FAQ_SEND, currencyCode))
+            ) : Nav(NavigationTarget.SupportPage(BRConstants.FAQ_SEND, currencyCode))
 
             data class GoToReceive(
                 val currencyCode: CurrencyCode
-            ) : Nav(NavigationEffect.GoToReceive(currencyCode))
+            ) : Nav(NavigationTarget.ReceiveSheet(currencyCode))
 
-            object GoToScan : Nav(NavigationEffect.GoToQrScan)
-            object CloseSheet : Nav(NavigationEffect.GoBack)
-            object GoToEthWallet : Nav(NavigationEffect.GoToWallet(eth))
-            object GoToTransactionComplete : Nav(NavigationEffect.GoToTransactionComplete)
+            object GoToScan : Nav(NavigationTarget.QRScanner)
+            object CloseSheet : Nav(NavigationTarget.Back)
+            object GoToEthWallet : Nav(NavigationTarget.Wallet(eth))
+            object GoToTransactionComplete : Nav(NavigationTarget.TransactionComplete)
         }
 
         data class GetTransferFields(
@@ -425,10 +446,24 @@ object SendSheet {
             @Redacted val address: String
         ) : F()
 
+        data class ResolvePayId(
+            val currencyCode: CurrencyCode,
+            @Redacted val payId: String
+        ) : F()
+
         data class ShowEthTooLowForTokenFee(
             val currencyCode: CurrencyCode,
             val networkFee: BigDecimal
-        ) : F()
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
+                dialogId = SendSheetController.DIALOG_NO_ETH_FOR_TOKEN_TRANSFER,
+                titleResId = R.string.Send_insufficientGasTitle,
+                messageResId = R.string.Send_insufficientGasMessage,
+                messageArgs = listOf(networkFee.formatCryptoForUi(currencyCode)),
+                positiveButtonResId = R.string.Button_continueAction,
+                negativeButtonResId = R.string.Button_cancel
+            )
+        }
 
         data class LoadBalance(
             val currencyCode: CurrencyCode,
@@ -471,9 +506,22 @@ object SendSheet {
 
         data class ShowErrorDialog(
             val message: String
-        ) : F()
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
+                dialogId = SendSheetController.DIALOG_PAYMENT_ERROR,
+                titleResId = R.string.Alert_error,
+                message = message,
+                positiveButtonResId = R.string.Button_ok
+            )
+        }
 
-        object ShowTransferFailed : F()
+        object ShowTransferFailed : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
+                titleResId = R.string.Alert_error,
+                messageResId = R.string.Send_publishTransactionError,
+                positiveButtonResId = R.string.Button_ok
+            )
+        }
 
         sealed class PaymentProtocol : F() {
             data class LoadPaymentData(
@@ -501,6 +549,7 @@ fun Link.CryptoRequestUrl.asSendSheetModel(fiatCode: String) =
         amount = amount ?: BigDecimal.ZERO,
         rawAmount = amount?.stripTrailingZeros()?.toPlainString() ?: "",
         targetAddress = address ?: "",
+        targetString = address ?: "",
         cryptoRequestUrl = this,
         memo = message,
         transferFields = when {

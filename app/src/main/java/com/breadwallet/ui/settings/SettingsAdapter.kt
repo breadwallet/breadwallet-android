@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui.settings
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +31,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import kotlinx.android.synthetic.main.settings_list_item.view.*

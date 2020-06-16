@@ -24,8 +24,9 @@
  */
 package com.breadwallet.ui.recovery
 
+import android.content.Context
+import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.app.BreadApp
-import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logError
@@ -37,136 +38,93 @@ import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.ui.recovery.RecoveryKey.E
 import com.breadwallet.ui.recovery.RecoveryKey.F
 import com.breadwallet.util.asNormalizedString
-import com.spotify.mobius.Connection
-import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import drewcarlson.mobius.flow.subtypeEffectHandler
 
-class RecoveryKeyHandler(
-    private val output: Consumer<E>,
-    private val breadApp: BreadApp,
-    private val breadBox: BreadBox,
-    private val userManager: BrdUserManager,
-    private val retainedScope: CoroutineScope,
-    private val retainedProducer: () -> Consumer<E>,
-    val goToUnlink: () -> Unit,
-    val goToErrorDialog: () -> Unit,
-    val errorShake: () -> Unit
-) : Connection<F>, CoroutineScope {
-
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
-
-    override fun accept(effect: F) {
-        when (effect) {
-            F.ErrorShake -> launch(Dispatchers.Main) { errorShake() }
-            F.GoToPhraseError -> goToErrorDialog()
-            is F.ResetPin -> retainedScope.launch { resetPin(effect) }
-            is F.Unlink -> retainedScope.launch { unlink(effect) }
-            is F.RecoverWallet -> retainedScope.launch { recoverWallet(effect) }
-            is F.ValidateWord -> validateWord(effect)
-            is F.ValidatePhrase -> validatePhrase(effect)
+fun createRecoveryKeyHandler(
+    breadApp: BreadApp,
+    userManager: BrdUserManager
+) = subtypeEffectHandler<F, E> {
+    addFunction<F.Unlink> { effect ->
+        val phraseBytes = effect.phrase.asNormalizedString().toByteArray()
+        val storedPhrase = try {
+            userManager.getPhrase()
+        } catch (e: UserNotAuthenticatedException) {
+            return@addFunction E.OnWipeWalletCancelled
+        }
+        if (storedPhrase?.contentEquals(phraseBytes) == true) {
+            E.OnRequestWipeWallet
+        } else {
+            E.OnPhraseInvalid
         }
     }
 
-    override fun dispose() {
-        coroutineContext.cancel()
-    }
-
-    private fun validateWord(effect: F.ValidateWord) {
-        val isValid = Bip39Reader.isWordValid(BreadApp.getBreadContext(), effect.word)
-        output.accept(E.OnWordValidated(effect.index, !isValid))
-    }
-
-    private fun validatePhrase(effect: F.ValidatePhrase) {
-        val errors = MutableList(RecoveryKey.M.RECOVERY_KEY_WORDS_COUNT) { false }
-        effect.phrase.forEachIndexed { index, word ->
-            errors[index] = !Bip39Reader.isWordValid(BreadApp.getBreadContext(), word)
-        }
-        output.accept(E.OnPhraseValidated(errors))
-    }
-
-    private suspend fun resetPin(effect: F.ResetPin) {
+    addFunction<F.ResetPin> { effect ->
         val phrase = effect.phrase.asNormalizedString()
-        retainedProducer().accept(
-            try {
-                userManager.clearPinCode(phrase.toByteArray())
-                E.OnPinCleared
-            } catch (e: Exception) {
-                E.OnPhraseInvalid
-            }
+        try {
+            userManager.clearPinCode(phrase.toByteArray())
+            E.OnPinCleared
+        } catch (e: Exception) {
+            E.OnPhraseInvalid
+        }
+    }
+
+    addFunction<F.ValidateWord> { effect ->
+        E.OnWordValidated(
+            index = effect.index,
+            hasError = !Bip39Reader.isWordValid(breadApp, effect.word)
         )
     }
 
-    private suspend fun unlink(effect: F.Unlink) {
-        val phrase = effect.phrase.asNormalizedString()
-
-        val storedPhrase = try {
-            userManager.getPhrase() ?: throw IllegalStateException("null phrase")
-        } catch (e: Exception) {
-            logError("Error storing phrase", e)
-            // TODO: BRAccountManager read error
-            retainedProducer().accept(E.OnPhraseInvalid)
-            return
+    addFunction<F.ValidatePhrase> { effect ->
+        val errors = MutableList(RecoveryKey.M.RECOVERY_KEY_WORDS_COUNT) { false }
+        effect.phrase.forEachIndexed { index, word ->
+            errors[index] = !Bip39Reader.isWordValid(breadApp, word)
         }
-
-        if (phrase.toByteArray().contentEquals(storedPhrase)) {
-            goToUnlink()
-        } else {
-            retainedProducer().accept(E.OnPhraseInvalid)
-        }
+        E.OnPhraseValidated(errors)
     }
 
-    private suspend fun recoverWallet(effect: F.RecoverWallet) {
+    addFunction<F.RecoverWallet> { effect ->
         val phraseBytes = effect.phrase.asNormalizedString().toByteArray()
-        val words = findWordsForPhrase(phraseBytes)
+        val words = breadApp.findWordsForPhrase(phraseBytes)
         if (words == null) {
             logInfo("Phrase validation failed.")
-            retainedProducer().accept(E.OnPhraseInvalid)
-            return
+            return@addFunction E.OnPhraseInvalid
         }
 
-        retainedScope.launch(Dispatchers.Main) {
-            try {
-                when (val result = userManager.setupWithPhrase(phraseBytes)) {
-                    SetupResult.Success -> logInfo("Wallet recovered.")
-                    else -> {
-                        logError("Error recovering wallet from phrase: $result")
-                        retainedProducer().accept(E.OnPhraseInvalid)
-                        return@launch
-                    }
+        try {
+            when (val result = userManager.setupWithPhrase(phraseBytes)) {
+                SetupResult.Success -> {
+                    logInfo("Wallet recovered.")
+                    BRSharedPrefs.putPhraseWroteDown(check = true)
+                    E.OnRecoveryComplete
                 }
-
-                BRSharedPrefs.putPhraseWroteDown(check = true)
-            } catch (e: Exception) {
-                logError("Error opening BreadBox", e)
-                // TODO: Define initialization error
-                retainedProducer().accept(E.OnPhraseInvalid)
-                return@launch
+                else -> {
+                    logError("Error recovering wallet from phrase: $result")
+                    E.OnPhraseInvalid
+                }
             }
-
-            retainedProducer().accept(E.OnRecoveryComplete)
+        } catch (e: Exception) {
+            logError("Error opening BreadBox", e)
+            // TODO: Define initialization error
+            E.OnPhraseInvalid
         }
     }
+}
 
-    /**
-     * Returns the list of words for the language resulting in
-     * a successful [Account.validatePhrase] call or null if
-     * the phrase is invalid.
-     */
-    private fun findWordsForPhrase(phraseBytes: ByteArray): List<String>? {
-        val context = BreadApp.getBreadContext()
-        return Bip39Reader.SupportedLanguage.values()
-            .asSequence()
-            .mapNotNull { l ->
-                val words = Bip39Reader.getBip39Words(context, l.toString())
-                if (Account.validatePhrase(phraseBytes, words)) {
-                    BRSharedPrefs.recoveryKeyLanguage = l.toString()
-                    Key.setDefaultWordList(words)
-                    words
-                } else null
-            }.firstOrNull()
-    }
+/**
+ * Returns the list of words for the language resulting in
+ * a successful [Account.validatePhrase] call or null if
+ * the phrase is invalid.
+ */
+private fun Context.findWordsForPhrase(phraseBytes: ByteArray): List<String>? {
+    return Bip39Reader.SupportedLanguage.values()
+        .asSequence()
+        .mapNotNull { l ->
+            val words = Bip39Reader.getBip39Words(this, l.toString())
+            if (Account.validatePhrase(phraseBytes, words)) {
+                BRSharedPrefs.recoveryKeyLanguage = l.toString()
+                Key.setDefaultWordList(words)
+                words
+            } else null
+        }.firstOrNull()
 }

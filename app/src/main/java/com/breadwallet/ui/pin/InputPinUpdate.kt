@@ -73,12 +73,12 @@ object InputPinUpdate : Update<M, E, F>, InputPinUpdateSpec {
             F.GoToHome
         } else {
             F.GoToWriteDownKey(model.onComplete)
-        }
+        } as F
         return next(model, setOf(effect))
     }
 
     override fun onPinSaveFailed(model: M): Next<M, F> {
-        return next(model.copy(mode = M.Mode.NEW, pin = ""))
+        return next(model.copy(mode = M.Mode.NEW, pin = ""), setOf<F>(F.ShowPinError))
     }
 
     override fun onPinCheck(

@@ -27,18 +27,16 @@ package com.breadwallet.ui.settings.segwit
 import android.os.Bundle
 import androidx.core.view.isVisible
 import com.breadwallet.R
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.ui.BaseMobiusController
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.settings.segwit.EnableSegWit.E
 import com.breadwallet.ui.settings.segwit.EnableSegWit.F
 import com.breadwallet.ui.settings.segwit.EnableSegWit.M
-import com.breadwallet.ui.view
-import com.spotify.mobius.Connectable
-import com.spotify.mobius.functions.Consumer
+import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.controller_enable_segwit.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -50,32 +48,20 @@ class EnableSegWitController(
 
     override val defaultModel = M()
     override val update = EnableSegWitUpdate
-    override val effectHandler =
-        CompositeEffectHandler.from<F, E>(
-            Connectable { output ->
-                EnableSegWitHandler(
-                    output,
-                    direct.instance(),
-                    direct.instance()
-                )
-            },
-            nestedConnectable(
-                { direct.instance<RouterNavigationEffectHandler>() },
-                { effect ->
-                    when (effect) {
-                        F.GoBack -> NavigationEffect.GoBack
-                        F.GoToHome -> NavigationEffect.GoToHome
-                        else -> null
-                    }
-                })
+    override val flowEffectHandler: FlowTransformer<F, E>
+        get() = createSegWitHandler(
+            checkNotNull(applicationContext),
+            direct.instance()
         )
 
-    override fun bindView(output: Consumer<E>) = output.view {
-        enable_button.onClick(E.OnEnableClick)
-        back_button.onClick(E.OnBackClicked)
-        continue_button.onClick(E.OnContinueClicked)
-        cancel_button.onClick(E.OnCancelClicked)
-        done_button.onClick(E.OnDoneClicked)
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        return merge(
+            enable_button.clicks().map { E.OnEnableClick },
+            back_button.clicks().map { E.OnBackClicked },
+            continue_button.clicks().map { E.OnContinueClicked },
+            cancel_button.clicks().map { E.OnCancelClicked },
+            done_button.clicks().map { E.OnDoneClicked }
+        )
     }
 
     override fun M.render() {

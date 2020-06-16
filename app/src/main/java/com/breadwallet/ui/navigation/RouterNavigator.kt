@@ -44,7 +44,6 @@ import com.breadwallet.tools.util.asLink
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.auth.AuthenticationController
-import com.breadwallet.ui.auth.AuthenticationController.Mode
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
@@ -76,33 +75,19 @@ import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
-import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isBrd
 import com.platform.HTTPServer
 import com.platform.util.AppReviewPromptManager
-import com.spotify.mobius.Connection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Suppress("TooManyFunctions")
-class RouterNavigationEffectHandler(
-    private val router: Router
-) : Connection<NavigationEffect>,
-    NavigationEffectHandlerSpec {
+class RouterNavigator(
+    private val routerProvider: () -> Router
+) : NavigationTargetHandlerSpec {
 
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob() + errorHandler())
+    private val router get() = routerProvider()
 
-    override fun accept(value: NavigationEffect) {
-        scope.launch { patch(value) }
-    }
-
-    override fun dispose() {
-        scope.cancel()
-    }
+    fun navigateTo(target: NavigationTarget) = patch(target)
 
     fun Controller.asTransaction(
         popChangeHandler: ControllerChangeHandler? = FadeChangeHandler(),
@@ -111,7 +96,7 @@ class RouterNavigationEffectHandler(
         .popChangeHandler(popChangeHandler)
         .pushChangeHandler(pushChangeHandler)
 
-    override fun goToWallet(effect: NavigationEffect.GoToWallet) {
+    override fun wallet(effect: NavigationTarget.Wallet) {
         val walletController = when {
             effect.currencyCode.isBrd() -> BrdWalletController()
             else -> WalletController(effect.currencyCode)
@@ -123,13 +108,13 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goBack() {
+    override fun back() {
         if (!router.handleBack()) {
             router.activity?.onBackPressed()
         }
     }
 
-    override fun goToBrdRewards() {
+    override fun brdRewards() {
         val rewardsUrl = HTTPServer.getPlatformUrl(HTTPServer.URL_REWARDS)
         router.pushController(
             WebController(rewardsUrl).asTransaction(
@@ -139,12 +124,12 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToReview() {
+    override fun reviewBrd() {
         EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED)
         AppReviewPromptManager.openGooglePlay(checkNotNull(router.activity))
     }
 
-    override fun goToBuy() {
+    override fun buy() {
         val url = String.format(
             BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
             HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
@@ -170,7 +155,7 @@ class RouterNavigationEffectHandler(
         }
     }
 
-    override fun goToTrade() {
+    override fun trade() {
         val url = HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)
         router.pushController(
             WebController(url).asTransaction(
@@ -180,7 +165,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToMenu(effect: NavigationEffect.GoToMenu) {
+    override fun menu(effect: NavigationTarget.Menu) {
         router.pushController(
             RouterTransaction.with(SettingsController(effect.settingsOption))
                 .popChangeHandler(VerticalChangeHandler())
@@ -188,7 +173,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToAddWallet() {
+    override fun addWallet() {
         router.pushController(
             RouterTransaction.with(AddWalletsController())
                 .popChangeHandler(HorizontalChangeHandler())
@@ -196,7 +181,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToSend(effect: NavigationEffect.GoToSend) {
+    override fun sendSheet(effect: NavigationTarget.SendSheet) {
         val controller = when {
             effect.cryptoRequest != null -> SendSheetController(
                 effect.cryptoRequest.asCryptoRequestUrl()
@@ -207,17 +192,17 @@ class RouterNavigationEffectHandler(
         router.pushController(RouterTransaction.with(controller))
     }
 
-    override fun goToReceive(effect: NavigationEffect.GoToReceive) {
+    override fun receiveSheet(effect: NavigationTarget.ReceiveSheet) {
         val controller = ReceiveController(effect.currencyCode)
         router.pushController(RouterTransaction.with(controller))
     }
 
-    override fun goToTransaction(effect: NavigationEffect.GoToTransaction) {
+    override fun viewTransaction(effect: NavigationTarget.ViewTransaction) {
         val controller = TxDetailsController(effect.currencyId, effect.txHash)
         router.pushController(RouterTransaction.with(controller))
     }
 
-    override fun goToDeepLink(effect: NavigationEffect.GoToDeepLink) {
+    override fun deepLink(effect: NavigationTarget.DeepLink) {
         val link = effect.url?.asLink() ?: effect.link
         if (link == null) {
             logError("Failed to parse url, ${effect.url}")
@@ -252,7 +237,10 @@ class RouterNavigationEffectHandler(
                 }
             }
             is Link.ImportWallet -> {
-                val controller = ImportController().asTransaction()
+                val controller = ImportController(
+                    privateKey = link.privateKey,
+                    isPasswordProtected = link.passwordProtected
+                ).asTransaction()
                 router.pushWithStackIfEmpty(controller, effect.authenticated) {
                     listOf(
                         HomeController().asTransaction(),
@@ -272,7 +260,7 @@ class RouterNavigationEffectHandler(
             is Link.PlatformDebugUrl -> {
                 val context = router.activity!!.applicationContext
                 if (!link.webBundleUrl.isNullOrBlank()) {
-                    ServerBundlesHelper.setWebPlatformDebugURL(context, link.webBundleUrl)
+                    ServerBundlesHelper.setWebPlatformDebugURL(link.webBundleUrl)
                 } else if (!link.webBundle.isNullOrBlank()) {
                     ServerBundlesHelper.setDebugBundle(
                         context,
@@ -321,11 +309,11 @@ class RouterNavigationEffectHandler(
         }
     }
 
-    override fun goToInAppMessage(effect: NavigationEffect.GoToInAppMessage) {
+    override fun goToInAppMessage(effect: NavigationTarget.GoToInAppMessage) {
         InAppNotificationActivity.start(checkNotNull(router.activity), effect.inAppMessage)
     }
 
-    override fun goToFaq(effect: NavigationEffect.GoToFaq) {
+    override fun supportPage(effect: NavigationTarget.SupportPage) {
         router.pushController(
             WebController(effect.asSupportUrl()).asTransaction(
                 BottomSheetChangeHandler(),
@@ -334,7 +322,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
+    override fun setPin(effect: NavigationTarget.SetPin) {
         val transaction = RouterTransaction.with(
             InputPinController(
                 onComplete = effect.onComplete,
@@ -350,13 +338,13 @@ class RouterNavigationEffectHandler(
         }
     }
 
-    override fun goToHome() {
+    override fun home() {
         router.setBackstack(
             listOf(RouterTransaction.with(HomeController())), HorizontalChangeHandler()
         )
     }
 
-    override fun goToLogin() {
+    override fun brdLogin() {
         router.pushController(
             RouterTransaction.with(LoginController())
                 .popChangeHandler(FadeChangeHandler())
@@ -364,34 +352,32 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToAuthentication() {
+    override fun authentication(effect: NavigationTarget.Authentication) {
         val res = checkNotNull(router.activity).resources
         val controller = AuthenticationController(
-            Mode.PIN_REQUIRED,
-            title = res.getString(R.string.VerifyPin_title),
-            message = res.getString(R.string.VerifyPin_continueBody)
+            mode = effect.mode,
+            title = res.getString(effect.titleResId ?: R.string.VerifyPin_title),
+            message = res.getString(effect.messageResId ?: R.string.VerifyPin_continueBody)
         )
-        val listener = router.backstack.lastOrNull()?.controller()
-        if (listener is AuthenticationController.Listener) {
-            controller.targetController = listener
-        }
         router.pushController(RouterTransaction.with(controller))
     }
 
-    override fun goToErrorDialog(effect: NavigationEffect.GoToErrorDialog) {
+    override fun alertDialog(effect: NavigationTarget.AlertDialog) {
         val res = checkNotNull(router.activity).resources
-        router.pushController(
-            RouterTransaction.with(
-                AlertDialogController(
-                    effect.message,
-                    effect.title,
-                    negativeText = res.getString(R.string.AccessibilityLabels_close)
-                )
-            )
+        val message = effect.message ?: effect.messageResId?.let {
+            res.getString(it, *effect.messageArgs.toTypedArray())
+        } ?: ""
+        val controller = AlertDialogController(
+            dialogId = effect.dialogId,
+            message = message,
+            title = effect.title ?: effect.titleResId?.run(res::getString) ?: "",
+            positiveText = effect.positiveButtonResId?.run(res::getString),
+            negativeText = effect.negativeButtonResId?.run(res::getString)
         )
+        router.pushController(RouterTransaction.with(controller))
     }
 
-    override fun goToDisabledScreen() {
+    override fun disabledScreen() {
         router.pushController(
             RouterTransaction.with(DisabledController())
                 .pushChangeHandler(FadeChangeHandler())
@@ -399,7 +385,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToQrScan() {
+    override fun qRScanner() {
         val controller = ScannerController()
         controller.targetController = router.backstack.lastOrNull()?.controller()
         router.pushController(
@@ -409,7 +395,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) {
+    override fun writeDownKey(effect: NavigationTarget.WriteDownKey) {
         router.pushController(
             RouterTransaction.with(WriteDownKeyController(effect.onComplete, effect.requestAuth))
                 .pushChangeHandler(HorizontalChangeHandler())
@@ -417,7 +403,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToPaperKey(effect: NavigationEffect.GoToPaperKey) {
+    override fun paperKey(effect: NavigationTarget.PaperKey) {
         router.pushController(
             RouterTransaction.with(ShowPaperKeyController(effect.phrase, effect.onComplete))
                 .pushChangeHandler(HorizontalChangeHandler())
@@ -425,7 +411,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToPaperKeyProve(effect: NavigationEffect.GoToPaperKeyProve) {
+    override fun paperKeyProve(effect: NavigationTarget.PaperKeyProve) {
         router.pushController(
             RouterTransaction.with(PaperKeyProveController(effect.phrase, effect.onComplete))
                 .pushChangeHandler(HorizontalChangeHandler())
@@ -433,11 +419,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToGooglePlay() {
-        AppReviewPromptManager.openGooglePlay(checkNotNull(router.activity))
-    }
-
-    override fun goToAbout() {
+    override fun about() {
         router.pushController(
             AboutController().asTransaction(
                 HorizontalChangeHandler(),
@@ -446,7 +428,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToDisplayCurrency() {
+    override fun displayCurrency() {
         router.pushController(
             RouterTransaction.with(DisplayCurrencyController())
                 .pushChangeHandler(HorizontalChangeHandler())
@@ -454,7 +436,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToNotificationsSettings() {
+    override fun notificationsSettings() {
         router.pushController(
             NotificationSettingsController().asTransaction(
                 HorizontalChangeHandler(),
@@ -463,7 +445,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToShareData() {
+    override fun shareDataSettings() {
         router.pushController(
             ShareDataController().asTransaction(
                 HorizontalChangeHandler(),
@@ -472,7 +454,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToFingerprintAuth() {
+    override fun fingerprintSettings() {
         router.pushController(
             RouterTransaction.with(FingerprintSettingsController())
                 .pushChangeHandler(HorizontalChangeHandler())
@@ -480,7 +462,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToWipeWallet() {
+    override fun wipeWallet() {
         router.pushController(
             RouterTransaction.with(WipeWalletController())
                 .pushChangeHandler(HorizontalChangeHandler())
@@ -488,7 +470,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToOnboarding() {
+    override fun onBoarding() {
         router.pushController(
             RouterTransaction.with(OnBoardingController())
                 .pushChangeHandler(HorizontalChangeHandler())
@@ -496,7 +478,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToImportWallet() {
+    override fun importWallet() {
         router.pushController(
             ImportController().asTransaction(
                 HorizontalChangeHandler(),
@@ -505,7 +487,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToSyncBlockchain(effect: NavigationEffect.GoToSyncBlockchain) {
+    override fun syncBlockchain(effect: NavigationTarget.SyncBlockchain) {
         router.pushController(
             RouterTransaction.with(SyncBlockchainController(effect.currencyCode))
                 .popChangeHandler(HorizontalChangeHandler())
@@ -513,7 +495,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToBitcoinNodeSelector() {
+    override fun bitcoinNodeSelector() {
         router.pushController(
             RouterTransaction.with(NodeSelectorController())
                 .pushChangeHandler(HorizontalChangeHandler())
@@ -521,7 +503,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToEnableSegWit() {
+    override fun enableSegWit() {
         router.pushController(
             RouterTransaction.with(EnableSegWitController())
                 .pushChangeHandler(HorizontalChangeHandler())
@@ -529,13 +511,13 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToLegacyAddress() {
+    override fun legacyAddress() {
         router.pushController(
             RouterTransaction.with(LegacyAddressController())
         )
     }
 
-    override fun goToFastSync(effect: NavigationEffect.GoToFastSync) {
+    override fun fastSync(effect: NavigationTarget.FastSync) {
         router.pushController(
             RouterTransaction.with(FastSyncController(effect.currencyCode))
                 .pushChangeHandler(HorizontalChangeHandler())
@@ -543,7 +525,7 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToTransactionComplete() {
+    override fun transactionComplete() {
         val res = checkNotNull(router.activity).resources
         router.replaceTopController(
             RouterTransaction.with(
@@ -556,17 +538,28 @@ class RouterNavigationEffectHandler(
         )
     }
 
-    override fun goToNativeApiExplorer() {
+    override fun nativeApiExplorer() {
         val url = "file:///android_asset/native-api-explorer.html"
         router.pushController(RouterTransaction.with(WebController(url)))
     }
 
-    override fun goToATMMap(effect: NavigationEffect.GoToATMMap) {
+    override fun aTMMap(effect: NavigationTarget.ATMMap) {
         router.pushController(
             WebController(effect.url, effect.mapJson).asTransaction(
                 VerticalChangeHandler(),
                 VerticalChangeHandler()
             )
+        )
+    }
+
+    override fun signal(effect: NavigationTarget.Signal) {
+        val res = checkNotNull(router.activity).resources
+        router.pushController(
+            SignalController(
+                title = res.getString(effect.titleResId),
+                description = res.getString(effect.messageResId),
+                iconResId = effect.iconResId
+            ).asTransaction()
         )
     }
 
