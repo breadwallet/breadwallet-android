@@ -30,15 +30,19 @@
     <string name="Account.exchangeRate">%1$s per %2$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">Portemonnee laden</string>
-    <!-- Prompt text for confirmation dialog for Hedera account creation -->
+    <!-- Confirm Account Creation mesage body -->
     <string name="AccountCreation.body">Maak alleen een Hedera-account aan als u van plan bent HBAR in uw portemonnee op te slaan.</string>
-    <!-- Label for create Hedera account button -->
+    <!-- Create Account button label -->
     <string name="AccountCreation.create">Account maken</string>
-    <!-- Error message for Hedera account creation failure  -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.creating">Account maken</string>
+    <!-- Creating Account progress Label -->
     <string name="AccountCreation.error">Er is een fout opgetreden tijdens het maken van een account. Probeer het later opnieuw.</string>
-    <!-- Label for cancel button on confirmation dialog for Hedera account creation -->
+    <!-- Not Now button label. -->
     <string name="AccountCreation.notNow">Niet nu</string>
-    <!-- Title for confirmation dialog for Hedera account creation -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.timeout">Er is een time-out ophet verzoek. Probeer het later opnieuw.</string>
+    <!-- Confirm Account Creation Title -->
     <string name="AccountCreation.title">Account aanmaken bevestigen</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">Mijn BRD</string>
@@ -191,7 +195,7 @@
     <!-- Network Fee: (ETH) -->
     <string name="Confirmation.feeLabelETH">Netwerkkosten (ETH):</string>
     <!-- Label for Hedera Memo field on transaction confirmation screen -->
-    <string name="Confirmation.hederaMemo">"Hedera Memo "</string>
+    <string name="Confirmation.hederaMemo">Hedera Memo</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">Verwerkingstijd: deze transactie wordt voltooid in %1$s.</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -710,6 +714,10 @@
     <string name="RewardsView.normalTitle">Beloningen</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">Camera Flits</string>
+    <!-- (alert dialog message) Would you like to send a [Bitcoin / Bitcoin Cash / Ethereum] payment to this address?") -->
+    <string name="Scanner.paymentPromptMessage">Wilt u een betaling van %1$@ naar dit adres sturen?</string>
+    <!-- alert dialog title -->
+    <string name="Scanner.paymentPromptTitle">Betaling verzenden</string>
     <!-- Complete filter label -->
     <string name="Search.complete">complete</string>
     <!-- Pending filter label -->
@@ -725,7 +733,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">De enige manier om toegang te hebben tot je Bitcoins is als je je telefoon verliest of upgrade.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
- * to not break existing client code. -->
+   * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Papieren Sleutel</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">Papieren Sleutel</string>
@@ -799,7 +807,7 @@
     <string name="Send.legacyAddressWarning">Waarschuwing: dit is een verouderd bitcoinadres. Weet je zeker dat je er bitcoincash naartoe wilt sturen?</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">Verzoek aan het laden</string>
-    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <!-- Hedera Memo Tag Label -->
     <string name="Send.memoTag_optional">Hedera Memo (optioneel)</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">Onvoldoende middelen om de transactiekosten te betalen.</string>
@@ -811,6 +819,14 @@
     <string name="Send.noFeesError">Voorwaarden voor Netwerkkosten worden gedownload. Probeer het opnieuw.</string>
     <!-- Paste button label -->
     <string name="Send.pasteLabel">Plakken</string>
+    <!-- Error message for invalid PayID -->
+    <string name="Send.payId_invalid">Ongeldige PayID.</string>
+    <!-- Error message for no address associated with a PayID for a given currency -->
+    <string name="Send.payId_noAddress">Er is geen %1$s adres gekoppeld aan deze PayID.</string>
+    <!-- Error message for error in retrieving the address from the PayID endpoint -->
+    <string name="Send.payId_retrievalError">Er is een fout opgetreden bij het ophalen van het adres voor deze PayID. Probeer het later opnieuw.</string>
+    <!-- PayID label -->
+    <string name="Send.payId_toLabel">PayID</string>
     <!-- Could not publish transaction alert title -->
     <string name="Send.publishTransactionError">Kon de transactie niet publiceren.</string>
     <!-- Could not load remote request error message -->
@@ -1065,7 +1081,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">Gasprijs</string>
     <!-- Label for Hedera Memo field on transaction details screen -->
-    <string name="TransactionDetails.hederaMemo">"Hedera Memo "</string>
+    <string name="TransactionDetails.hederaMemo">Hedera Memo</string>
     <!-- Hide Details button -->
     <string name="TransactionDetails.hideDetails">Details verbergen</string>
     <!-- Label showing the transaction was started (initialized) -->

@@ -29,8 +29,10 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
+import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.flowbind.textChanges
@@ -108,6 +110,19 @@ class PaperKeyProveController(args: Bundle) :
         ifChanged(M::secondWordIndex) {
             second_word_label.text =
                 activity!!.getString(R.string.ConfirmPaperPhrase_word, secondWordIndex + 1)
+        }
+    }
+
+    override fun handleViewEffect(effect: ViewEffect) {
+        when (effect) {
+            is F.ShakeWords -> {
+                if (effect.first) {
+                    SpringAnimator.failShakeAnimation(applicationContext, first_word)
+                }
+                if (effect.second) {
+                    SpringAnimator.failShakeAnimation(applicationContext, second_word)
+                }
+            }
         }
     }
 
