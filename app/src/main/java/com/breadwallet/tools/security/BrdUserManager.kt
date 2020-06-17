@@ -282,8 +282,6 @@ class CryptoUserManager(
             (BRKeyStore.getMasterPublicKey() != null || BRKeyStore.hasAccountBytes())
 
     override fun getState(): BrdUserState = when {
-        // Cannot create/use phrase key, device lock must be enabled
-        !keyguard.isKeyguardSecure -> BrdUserState.KeyStoreInvalid.Lock
         // Account invalidated and phrase not provided or phrase Key invalidated, recovery required
         accountInvalidated.get() || !isPhraseKeyValid() -> if (requiresUninstall()) {
             BrdUserState.KeyStoreInvalid.Uninstall
