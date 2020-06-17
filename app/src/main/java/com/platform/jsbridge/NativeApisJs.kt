@@ -24,7 +24,6 @@
  */
 package com.platform.jsbridge
 
-import android.webkit.JavascriptInterface
 import android.webkit.WebView
 
 interface JsApi
@@ -39,14 +38,13 @@ class NativeApisJs(
             NativeApisJs(apis.toList())
     }
 
-    @JavascriptInterface
-    fun getApiNamesJson(): String =
+    private fun getApiNamesJson(): String =
         apis.joinToString(prefix = "[", postfix = "]") {
             "\"${it::class.java.simpleName}_Native\""
         }
 
     fun attachToWebView(webView: WebView) {
-        webView.addJavascriptInterface(this, JS_NAME)
+        webView.addJavascriptInterface(PromiseJs(webView, getApiNamesJson()), PromiseJs.JS_NAME)
         apis.forEach { api ->
             val name = "${api::class.java.simpleName}_Native"
             webView.addJavascriptInterface(api, name)
