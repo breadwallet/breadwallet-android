@@ -119,18 +119,18 @@
             <input id="apiPath" type="text" value="/currencies"/>
         </p>
         <p>
-            <input type="radio" id="get" name="method" value="GET" checked/>
+            <input checked id="get" name="method" type="radio" value="GET"/>
             <label for="get">GET</label>
-            <input type="radio" id="post" name="method" value="POST"/>
+            <input id="post" name="method" type="radio" value="POST"/>
             <label for="post">POST</label>
-            <input type="radio" id="put" name="method" value="PUT"/>
+            <input id="put" name="method" type="radio" value="PUT"/>
             <label for="put">PUT</label>
-            <input type="radio" id="delete" name="method" value="DELETE"/>
+            <input id="delete" name="method" type="radio" value="DELETE"/>
             <label for="delete">DELETE</label>
         </p>
         <p>
-            <textarea id="apiBody" style="width: 100%;overflow-y: scroll;height: 75px;"
-                      placeholder="{ /* JSON request body */ }"></textarea>
+            <textarea id="apiBody" placeholder="{ /* JSON request body */ }"
+                      style="width: 100%;overflow-y: scroll;height: 75px;"></textarea>
         </p>
         <p>
             <button onclick="submitApiRequest(); return false;">Submit Request</button>
@@ -140,40 +140,7 @@
 </form>
 
 <script type="application/javascript">
-    function injectPromiseHooks() {
-        let nativeObjs = JSON.parse(NativeApisJs.getApiNamesJson())
-        nativeObjs.forEach( nativeObjectName => {
-            let objectName = nativeObjectName.replace("_Native", "")
-            window[objectName] = Object()
-            for (let [key, value] of Object.entries(window[nativeObjectName])) {
-                window[objectName][key] = function() {
-                    let primaryArgs = arguments
-                    for (var i = 0; i < primaryArgs.length; i++) {
-                      let arg = primaryArgs[i]
-                      if (arg && arg.constructor === Object.constructor) {
-                          primaryArgs[i] = JSON.stringify(arg)
-                      }
-                    }
-
-                    return new Promise(function(resolve, reject) {
-                        let promiseBinder = value.apply(window[nativeObjectName], primaryArgs)
-                        let callbackName = promiseBinder.getJsName()
-                        if (typeof window.brdCallbacks === 'undefined') {
-                            window.brdCallbacks = Object()
-                        }
-                        window.brdCallbacks[callbackName] = {
-                            scope: this,
-                            resolve: resolve,
-                            reject: reject
-                        }
-                        promiseBinder.execute()
-                    })
-                }
-            }
-        })
-    }
-
-    injectPromiseHooks()
+    PromiseJs.injectPromiseHooks()
 
     let updateTransferAttrs = () => {
         WalletJs.transferAttrsFor(currencyCode.value, toAddress.value)
@@ -358,6 +325,7 @@
     function jsonString(string) {
         return JSON.stringify(string, undefined, 4)
     }
+
 
 
 </script>

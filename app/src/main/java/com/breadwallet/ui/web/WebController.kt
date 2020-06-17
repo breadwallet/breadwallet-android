@@ -219,7 +219,14 @@ class WebController(
                 direct.instance()
             )
             val nativeApis = if (BuildConfig.DEBUG) {
-                NativeApisJs.with(cameraJs, locationJs, kvStoreJs, linkJs, walletJs, brdApiJs)
+                NativeApisJs.with(
+                    cameraJs,
+                    locationJs,
+                    kvStoreJs,
+                    linkJs,
+                    walletJs,
+                    brdApiJs
+                )
             } else {
                 NativeApisJs.with(walletJs, linkJs)
             }
