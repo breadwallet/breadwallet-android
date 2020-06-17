@@ -26,6 +26,7 @@ package com.breadwallet.ui.settings
 
 import android.app.ActivityManager
 import android.content.Context
+import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
@@ -112,8 +113,12 @@ class SettingsScreenHandler(
                     ?.clearApplicationUserData()
             }
             F.GetPaperKey -> launch {
-                val phrase = checkNotNull(userManager.getPhrase()).toString(UTF_8)
-                output.accept(E.ShowPhrase(phrase.split(" ")))
+                 try {
+                    val phrase = checkNotNull(userManager.getPhrase()).toString(UTF_8)
+                     output.accept(E.ShowPhrase(phrase.split(" ")))
+                } catch (e: UserNotAuthenticatedException) {
+                     // User denied confirmation, ignored
+                }
             }
         }
     }
