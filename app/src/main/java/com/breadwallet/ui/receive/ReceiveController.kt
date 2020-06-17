@@ -59,7 +59,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -121,8 +120,17 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
         keyboard.setBRKeyboardColor(R.color.white)
     }
 
-    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+    override fun onAttach(view: View) {
+        super.onAttach(view)
         signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
+    }
+
+    override fun onDetach(view: View) {
+        signal_layout.setOnTouchListener(null)
+        super.onDetach(view)
+    }
+
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
         return merge(
             faq_button.clicks().map { E.OnFaqClicked },
             share_button.clicks().map { E.OnShareClicked },
@@ -133,9 +141,7 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
             address_text.clicks().map { E.OnCopyAddressClicked },
             iso_button.clicks().map { E.OnToggleCurrencyClicked },
             keyboard.bindInput()
-        ).onCompletion {
-            signal_layout.setOnTouchListener(null)
-        }
+        )
     }
 
     private fun BRKeyboard.bindInput() = callbackFlow<E> {
