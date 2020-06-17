@@ -34,6 +34,8 @@ import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.camera.camera2.Camera2Config
+import androidx.camera.core.CameraXConfig
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.security.crypto.EncryptedSharedPreferences
@@ -114,7 +116,7 @@ private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val ENCRYPTED_PREFS_FILE = "crypto_shared_prefs"
 
 @Suppress("TooManyFunctions")
-class BreadApp : Application(), KodeinAware {
+class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
     companion object {
         private val TAG = BreadApp::class.java.name
@@ -545,5 +547,9 @@ class BreadApp : Application(), KodeinAware {
         }.onFailure { e ->
             BRReportsManager.error("Failed to create Encrypted Shared Preferences", e)
         }.getOrNull()
+    }
+
+    override fun getCameraXConfig(): CameraXConfig {
+        return Camera2Config.defaultConfig()
     }
 }
