@@ -73,6 +73,10 @@ class InAppNotificationActivity : BRActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!intent.hasExtra(EXT_NOTIFICATION)) {
+            finish()
+            return
+        }
         setContentView(R.layout.activity_in_app_notification)
 
         close_button.setOnClickListener {
@@ -108,6 +112,8 @@ class InAppNotificationActivity : BRActivity(), KodeinAware {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        viewModel.markAsRead(false)
+        if (!isFinishing) {
+            viewModel.markAsRead(false)
+        }
     }
 }
