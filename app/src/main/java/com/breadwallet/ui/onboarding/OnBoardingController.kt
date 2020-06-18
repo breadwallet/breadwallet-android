@@ -172,7 +172,7 @@ class PageOneController(args: Bundle? = null) : BaseController(args) {
     override val layoutId = R.layout.controller_onboarding_page_one
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        primary_text.setText(R.string.OnboardingPageTwo_title)
+        primary_text.text = "Direct cash redemption of crypto at thousands of ATMs."
         secondary_text.text = "Our wallet is open source and " +
             "fully compatible with any other wallet."
     }
@@ -184,8 +184,8 @@ class PageTwoController(args: Bundle? = null) : BaseController(args) {
         super.onCreateView(view)
         val resources = checkNotNull(resources)
         val theme = checkNotNull(activity).theme
-        primary_text.setText("Buy BTC and withdraw $ in our American ATMs")
-        secondary_text.setText("1000 ATM are already available and our network is keep growing ")
+        primary_text.text = "Buy BTC and withdraw $ in our American ATMs"
+        secondary_text.text = "1000 ATM are already available and our network is keep growing "
         // image_view.setImageDrawable(resources.getDrawable(R.drawable.atm_guy, theme))
     }
 }
@@ -196,7 +196,7 @@ class PageThreeController(args: Bundle? = null) : BaseController(args) {
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         val onBoardingController = (parentController as OnBoardingController)
-
+        last_screen_title.text = "Welcome to Coinsquare Networks!"
         last_screen_title.isVisible = true
         button_buy.isVisible = false
         button_browse.isVisible = true

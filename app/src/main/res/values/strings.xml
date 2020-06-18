@@ -889,9 +889,9 @@
     <!-- button label -->
     <string name="StartPaperPhrase.againButtonTitle">Write Down Paper Key Again</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Your paper key is the only way to restore your Coinsquare if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+    <string name="StartPaperPhrase.body">Your recovery key is the only way to restore your Coinsquare if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">Your paper key is the only way to restore your Coinsquare if your phone is lost, stolen, broken, or upgraded.\n\nYour paper key is also required if you change the security settings on your device.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+    <string name="StartPaperPhrase.Body.Android">Your recovery key is the only way to restore your Coinsquare if your phone is lost, stolen, broken, or upgraded.\n\nYour paper key is also required if you change the security settings on your device.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">Write Down Paper Key</string>
     <!-- Argument is date; date should be on a new line -->
@@ -1207,7 +1207,7 @@
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different Coinsquare wallet on this device.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your Paper Key.</string>
+    <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your recovery key.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Start or Recover Another Wallet</string>
     <!-- Wipe wallet button title -->
