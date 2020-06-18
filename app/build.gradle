@@ -100,10 +100,10 @@ android {
             missingDimensionStrategy 'network', 'onMainnet'
         }
         brdTestnet {
-            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher_wallet"]
+            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher_gray"]
             applicationId = "cash.just.testnet"
             dimension "mode"
-            resValue "string", "app_name", "Wallet"
+            resValue "string", "app_name", "Coinsquare Wallet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
             signingConfig signingConfigs.FakeSigningConfig
             missingDimensionStrategy 'network', 'onTestnet'
