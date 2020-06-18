@@ -25,7 +25,6 @@
 package com.breadwallet.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -35,6 +34,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
@@ -50,6 +51,7 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
 import com.breadwallet.ui.home.HomeScreen.M
+import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
@@ -70,10 +72,8 @@ import kotlinx.android.synthetic.main.controller_home.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.internal.toImmutableList
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
-import java.util.Collections
 
 private const val EMAIL_SUCCESS_DELAY = 3_000L
 private const val NETWORK_TESTNET = "TESTNET"
@@ -128,8 +128,13 @@ class HomeController(
 
     override fun bindView(output: Consumer<E>): Disposable {
         sweep_layout.setOnClickListener {
-
+            router.pushController(
+                RouterTransaction.with(ImportController())
+                    .popChangeHandler(HorizontalChangeHandler())
+                    .pushChangeHandler(HorizontalChangeHandler())
+                )
         }
+
         buy_layout.setOnClickListener { output.accept(E.OnBuyClicked) }
         trade_layout.setOnClickListener {
             output.accept(E.OnTradeClicked)
@@ -220,13 +225,13 @@ class HomeController(
         }
 
         ifChanged(M::hasInternet) {
-            buy_text_view.setText(
-                // when {
-                    // showBuyAndSell -> R.string.HomeScreen_buyAndSell
-                    // else -> R.string.HomeScreen_buy
-                // }
-                R.string.HomeScreen_cashOut
-            )
+            // buy_text_view.setText(
+            //     // when {
+            //         // showBuyAndSell -> R.string.HomeScreen_buyAndSell
+            //         // else -> R.string.HomeScreen_buy
+            //     // }
+            //     R.string.HomeScreen_cashOut
+            // )
         }
     }
 

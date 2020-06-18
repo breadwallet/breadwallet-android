@@ -3,7 +3,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-## [4.4.0 (4048001)]
+
+## [4.4.1 (40418001)]
+## Fixed
+- Fixed the problem where the map was not showing the pins the first time due during its initialization.
+- Starting the session when the app is created instead of doing in lazy way when was needed.
+## Added
+- White app icon instead of black.
+- Adding new icons and label in the home's bottom actions
+- Adding `scan qr code` action.
+
+## [4.4.0 (40408001)]
 ## Added
 - Added the flags to show redemption vs purchase only atm.
 ## Security
@@ -11,11 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 - Crash in status.
  
-## [4.3.1 (4028001)]
+## [4.3.1 (40318001)]
 ### Fixed
 - I fixed the crash `Canvas: trying to draw too large` in Samsung S7
 
-## [4.3.0 (4028001)]
+## [4.3.0 (40408001)]
 ### Fixed - Victor feedback
 - change third page of onBoarding to "Buy bitcoin at thousands of ATMs" and let only one button to be continue
 - zoom on the map Texas by default
@@ -63,9 +73,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved the cash out tab button to the middle
 - Added activity tab button to the left.
 ## [4.2.6 (4025001)]
-## Fixed
-- Fixed the problem where the map was not showing the pins the first time due during its initialization.
-- Starting the session when the app is created instead of doing in lazy way when was needed.
 ## Removed
 - Disabling the clustered pins.
 
