@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [4.4.2 (40428001)]
+## Fixed
+- Changed the text on the text screen in onboarding to "Welcome to Coinsquare networks"
+- Changed the term paper key in the recovery flow
+- Changed the title of the first onboarding page.
 
 ## [4.4.1 (40418001)]
 ## Fixed
