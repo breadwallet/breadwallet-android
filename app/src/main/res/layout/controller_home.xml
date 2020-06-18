@@ -107,14 +107,15 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:padding="8dp"
-            android:stretchColumns="0,1,2"
+            android:stretchColumns="0,1,2,3"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TableRow>
+
                 <LinearLayout
-                    android:id="@+id/trade_layout"
+                    android:id="@+id/sweep_layout"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:gravity="bottom"
                     android:orientation="vertical"
@@ -125,7 +126,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginTop="8dp"
-                        android:src="@drawable/ic_dashboard_black_24dp"
+                        android:src="@drawable/ic_qrcode"
                         android:tint="@color/white" />
 
                     <com.breadwallet.legacy.presenter.customviews.BaseTextView
@@ -133,13 +134,43 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="bottom"
-                        android:text="Activity"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:text="Scan QR Code"
                         android:textColor="@color/white"
                         android:fontFamily="@font/circular_pro_book" />
                 </LinearLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:id="@+id/buy_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="bottom"
+                    android:gravity="bottom"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:src="@drawable/ic_cash_out"
+                        android:tint="@color/white" />
+
+                    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="bottom"
+                        android:text="ATM Cash"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/circular_pro_book" />
+                </LinearLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/trade_layout"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="bottom"
@@ -155,7 +186,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_menu_buy_sell"
+                        android:src="@drawable/ic_clipboard_text"
                         android:tint="@color/white"
                         app:layout_constraintBottom_toTopOf="@+id/buy_text_view"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -181,7 +212,9 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
                         android:gravity="bottom"
-                        android:text="@string/HomeScreen.cashOut"
+                        android:text="Activity"
+                        android:singleLine="true"
+                        android:ellipsize="end"
                         android:textColor="@color/white"
                         android:fontFamily="@font/circular_pro_book"
                         app:layout_constraintBottom_toBottomOf="parent"
