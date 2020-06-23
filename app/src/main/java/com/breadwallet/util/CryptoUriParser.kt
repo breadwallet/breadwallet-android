@@ -34,6 +34,7 @@ import com.breadwallet.breadbox.urlSchemes
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.util.EventUtils
+import kotlinx.coroutines.flow.first
 import java.math.BigDecimal
 import java.util.HashMap
 
@@ -53,15 +54,14 @@ class CryptoUriParser(
 ) {
 
     @Suppress("ComplexMethod")
-    fun createUrl(currencyCode: String, request: CryptoRequest): Uri {
+    suspend fun createUrl(currencyCode: String, request: CryptoRequest): Uri? {
         require(currencyCode.isNotBlank())
 
         val uriBuilder = Uri.Builder()
 
-        val system = checkNotNull(breadBox.getSystemUnsafe())
-        val wallet = checkNotNull(system.wallets.find {
+        val wallet = breadBox.wallets().first().find {
             it.currency.code.equals(currencyCode, true)
-        })
+        } ?: return null
 
         uriBuilder.scheme(wallet.urlScheme)
 
@@ -102,9 +102,9 @@ class CryptoUriParser(
         return Uri.parse(uriBuilder.build().toString().replace("/", ""))
     }
 
-    fun isCryptoUrl(url: String): Boolean {
+    suspend fun isCryptoUrl(url: String): Boolean {
         val request = parseRequest(url)
-        val wallets = checkNotNull(breadBox.getSystemUnsafe()).wallets
+        val wallets = breadBox.wallets().first()
         return if (request != null && request.scheme.isNotBlank()) {
             val wallet = wallets.firstOrNull {
                 it.urlSchemes.contains(request.scheme)
@@ -117,10 +117,10 @@ class CryptoUriParser(
     }
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
-    fun parseRequest(requestString: String): CryptoRequest? {
+    suspend fun parseRequest(requestString: String): CryptoRequest? {
         if (requestString.isBlank()) return null
 
-        val wallets = checkNotNull(breadBox.getSystemUnsafe()).wallets
+        val wallets = breadBox.wallets().first()
 
         val builder = CryptoRequest.Builder()
 
