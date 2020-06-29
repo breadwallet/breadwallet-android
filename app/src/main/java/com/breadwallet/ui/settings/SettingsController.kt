@@ -35,21 +35,22 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
+import com.breadwallet.app.BreadApp
 import com.breadwallet.tools.util.Link
+import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.auth.AuthenticationController
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.ui.settings.SettingsScreen.M
-import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_settings.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -81,57 +82,16 @@ class SettingsController(
     override val layoutId = R.layout.controller_settings
     override val defaultModel = M.createDefault(section)
     override val update = SettingsUpdate
-    override val effectHandler = CompositeEffectHandler.from<F, E>(
-        Connectable { output ->
-            SettingsScreenHandler(
-                eventConsumer,
-                viewCreatedScope,
-                direct.instance(),
-                checkNotNull(activity),
-                direct.instance(),
-                ::showApiServerDialog,
-                ::showPlatformDebugUrlDialog,
-                ::showPlatformBundleDialog,
-                ::showTokenBundleDialog,
-                direct.instance(),
-                direct.instance()
-            )
-        },
-        nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
-            when (effect) {
-                F.GoToGooglePlay -> NavigationEffect.GoToGooglePlay
-                F.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
-                F.GoToShareData -> NavigationEffect.GoToShareData
-                F.GoToAbout -> NavigationEffect.GoToAbout
-                F.GoToBrdRewards -> NavigationEffect.GoToBrdRewards
-                F.GoToQrScan -> NavigationEffect.GoToQrScan
-                F.GoToSupport -> NavigationEffect.GoToFaq("")
-                is F.GoToSection -> NavigationEffect.GoToMenu(effect.section)
-                F.GoBack -> NavigationEffect.GoBack
-                is F.GoToPaperKey -> NavigationEffect.GoToPaperKey(effect.phrase, null)
-                F.GoToAuthentication -> NavigationEffect.GoToAuthentication
-                F.GoToUpdatePin -> NavigationEffect.GoToSetPin()
-                F.GoToOnboarding -> NavigationEffect.GoToOnboarding
-                F.GoToFingerprintAuth -> NavigationEffect.GoToFingerprintAuth
-                F.GoToWipeWallet -> NavigationEffect.GoToWipeWallet
-                F.GoToEnableSegWit -> NavigationEffect.GoToEnableSegWit
-                F.GoToLegacyAddress -> NavigationEffect.GoToLegacyAddress
-                F.GoToImportWallet -> NavigationEffect.GoToImportWallet
-                F.GoToNodeSelector -> NavigationEffect.GoToBitcoinNodeSelector
-                is F.GoToFastSync -> NavigationEffect.GoToFastSync(effect.currencyCode)
-                F.GoToDisplayCurrency -> NavigationEffect.GoToDisplayCurrency
-                F.GoToNativeApiExplorer -> NavigationEffect.GoToNativeApiExplorer
-                is F.GoToSyncBlockchain -> NavigationEffect.GoToSyncBlockchain(effect.currencyCode)
-                F.GoToHomeScreen -> NavigationEffect.GoToHome
-                is F.GoToLink -> NavigationEffect.GoToDeepLink(
-                    link = effect.link,
-                    authenticated = true
-                )
-                is F.GoToATMMap -> NavigationEffect.GoToATMMap(effect.url, effect.mapJson)
-                else -> null
-            }
-        })
-    )
+    override val effectHandler = Connectable<F, E> { output ->
+        SettingsScreenHandler(
+            output,
+            applicationContext!!,
+            direct.instance(),
+            direct.instance(),
+            direct.instance(),
+            direct.instance()
+        )
+    }
 
     override val init = SettingsInit
 
@@ -146,9 +106,11 @@ class SettingsController(
         )
     }
 
-    override fun bindView(output: Consumer<E>) = output.view {
-        close_button.onClick(E.OnCloseClicked)
-        back_button.onClick(E.OnBackClicked)
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        return merge(
+            close_button.clicks().map { E.OnCloseClicked },
+            back_button.clicks().map { E.OnBackClicked }
+        )
     }
 
     override fun M.render() {
@@ -171,6 +133,21 @@ class SettingsController(
                 eventConsumer.accept(E.OnOptionClicked(option))
             }
             settings_list.adapter = adapter
+        }
+    }
+
+    override fun handleViewEffect(effect: ViewEffect) {
+        when (effect) {
+            F.ShowApiServerDialog -> showApiServerDialog(BreadApp.host)
+            F.ShowPlatformDebugUrlDialog -> showPlatformDebugUrlDialog(
+                ServerBundlesHelper.getWebPlatformDebugURL()
+            )
+            F.ShowTokenBundleDialog -> showTokenBundleDialog(
+                ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.TOKEN)
+            )
+            F.ShowPlatformBundleDialog -> showPlatformBundleDialog(
+                ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.WEB)
+            )
         }
     }
 

@@ -52,9 +52,8 @@ class AddWalletsController : BaseMobiusController<M, E, F>() {
     override val init = AddWalletsInit
     override val update = AddWalletsUpdate
     override val flowEffectHandler
-        get() = AddWalletsHandler.create(
+        get() = createAddWalletsHandler(
             checkNotNull(applicationContext),
-            direct.instance(),
             direct.instance(),
             direct.instance()
         )
@@ -79,13 +78,14 @@ class AddWalletsController : BaseMobiusController<M, E, F>() {
     private fun bindTokenList(
         modelFlow: Flow<M>
     ) = callbackFlow<E> {
-        AddTokenListAdapter(
-            context = checkNotNull(activity),
+        val adapter = AddTokenListAdapter(
+            context = checkNotNull(applicationContext),
             tokensFlow = modelFlow
                 .map { model -> model.tokens }
                 .distinctUntilChanged(),
             sendChannel = channel
-        ).also(token_list::setAdapter)
+        )
+        token_list.adapter = adapter
 
         awaitClose { token_list.adapter = null }
     }

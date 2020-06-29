@@ -135,7 +135,7 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
 
     override fun onPhraseInvalid(model: M): Next<M, F> {
         return next(
-            model.copy(isLoading = false), setOf(
+            model.copy(isLoading = false), setOf<F>(
                 F.ErrorShake,
                 F.GoToPhraseError
             )
@@ -188,10 +188,28 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
 
     override fun onShowPhraseFailed(model: M): Next<M, F> {
         return next(
-            model.copy(isLoading = false), setOf(
+            model.copy(isLoading = false), setOf<F>(
                 F.ErrorShake,
                 F.GoToPhraseError
             )
         )
+    }
+
+    override fun onRequestWipeWallet(model: M): Next<M, F> = when {
+        !model.isLoading || model.mode != RecoveryKey.Mode.WIPE -> noChange()
+        else -> next(
+            model.copy(isLoading = true),
+            setOf<F>(F.GoToWipeWallet)
+        )
+    }
+
+    override fun onWipeWalletConfirmed(model: M): Next<M, F> = when {
+        !model.isLoading || model.mode != RecoveryKey.Mode.WIPE -> noChange()
+        else -> dispatch(setOf<F>(F.WipeWallet))
+    }
+
+    override fun onWipeWalletCancelled(model: M): Next<M, F> = when {
+        !model.isLoading || model.mode != RecoveryKey.Mode.WIPE -> noChange()
+        else -> next(model.copy(isLoading = false))
     }
 }

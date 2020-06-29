@@ -171,4 +171,10 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
             showDetails = !model.showDetails
         )
     )
+
+    override fun onAddressClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.CopyToClipboard(model.toOrFromAddress)))
+
+    override fun onTransactionHashClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.CopyToClipboard(model.transactionHash)))
 }

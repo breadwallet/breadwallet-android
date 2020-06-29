@@ -33,14 +33,14 @@ import com.breadwallet.R
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.SpringAnimator
-import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.login.LoginController
-import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.asSupportUrl
 import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
@@ -63,7 +63,7 @@ class DisabledController(args: Bundle? = null) : BaseController(args) {
         super.onCreateView(view)
 
         faq_button.setOnClickListener {
-            val url = NavigationEffect.GoToFaq(BRConstants.FAQ_WALLET_DISABLE).asSupportUrl()
+            val url = NavigationTarget.SupportPage(BRConstants.FAQ_WALLET_DISABLE).asSupportUrl()
             router.pushController(
                 RouterTransaction.with(WebController(url))
                     .popChangeHandler(BottomSheetChangeHandler())

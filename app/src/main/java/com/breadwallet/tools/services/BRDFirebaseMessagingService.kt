@@ -81,8 +81,8 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
          * @param context The context in which we are operating.
          */
         fun initialize(context: Context) {
-            val firebaseToken = BRSharedPrefs.getFCMRegistrationToken(context)
-            if (!firebaseToken.isNullOrBlank() && BRSharedPrefs.getShowNotification(context)) {
+            val firebaseToken = BRSharedPrefs.getFCMRegistrationToken()
+            if (!firebaseToken.isNullOrBlank() && BRSharedPrefs.getShowNotification()) {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
                     NotificationsSettingsClientImpl.registerToken(
                         context,
@@ -102,9 +102,9 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
         @Synchronized get() {
             // Get the previously used notification id.
             // Increment the current id and update shared preferences.
-            var previousId = BRSharedPrefs.getNotificationId(this)
+            var previousId = BRSharedPrefs.getNotificationId()
             val nextId = ++previousId
-            BRSharedPrefs.putNotificationId(this, nextId)
+            BRSharedPrefs.putNotificationId(nextId)
             return nextId
         }
 
@@ -118,7 +118,7 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
 
         // Save token in shared preferences.
         Log.d(TAG, "onNewToken: token value: $token")
-        BRSharedPrefs.putFCMRegistrationToken(this, token)
+        BRSharedPrefs.putFCMRegistrationToken(token)
         BreadApp.applicationScope.launch {
             val kodein by closestKodein(applicationContext)
             val userManager = kodein.direct.instance<BrdUserManager>()
@@ -138,7 +138,7 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
         Log.d(TAG, "message received")
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
 
-        if (BRSharedPrefs.getShowNotification(this)
+        if (BRSharedPrefs.getShowNotification()
             && notificationManager != null
             && notificationManager is NotificationManager
         ) {
@@ -177,7 +177,7 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
      * @param context The context in which we are operating.
      */
     private fun updateFcmRegistrationToken(context: Context, token: String) {
-        if (BRSharedPrefs.getShowNotification(context)) {
+        if (BRSharedPrefs.getShowNotification()) {
             Log.d(TAG, "updating FCM token: $token")
             BRExecutor.getInstance().forLightWeightBackgroundTasks()
                 .execute { NotificationsSettingsClientImpl.registerToken(context, token) }

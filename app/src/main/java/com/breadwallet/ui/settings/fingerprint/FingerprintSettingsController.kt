@@ -25,26 +25,19 @@
 package com.breadwallet.ui.settings.fingerprint
 
 import com.breadwallet.R
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
-import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.flowbind.checked
 import com.breadwallet.ui.flowbind.clicks
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.E
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.F
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettings.M
-import com.spotify.mobius.Connectable
+import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.controller_fingerprint_settings.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
-import org.kodein.di.direct
-import org.kodein.di.erased.instance
 
 class FingerprintSettingsController : BaseMobiusController<M, E, F>() {
 
@@ -52,19 +45,8 @@ class FingerprintSettingsController : BaseMobiusController<M, E, F>() {
     override val defaultModel = M()
     override val update = FingerprintSettingsUpdate
     override val init = FingerprintSettingsInit
-    override val effectHandler =
-        CompositeEffectHandler.from<F, E>(
-            Connectable { output ->
-                FingerprintSettingsHandler(output)
-            },
-            nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
-                when (effect) {
-                    F.GoBack -> NavigationEffect.GoBack
-                    F.GoToFaq -> NavigationEffect.GoToFaq(BRConstants.FAQ_ENABLE_FINGERPRINT)
-                    else -> null
-                }
-            })
-        )
+    override val flowEffectHandler: FlowTransformer<F, E>
+        get() = createFingerprintSettingsHandler()
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
         modelFlow.map { it.unlockApp }

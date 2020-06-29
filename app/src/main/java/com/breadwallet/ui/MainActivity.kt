@@ -36,23 +36,21 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
-import com.breadwallet.legacy.view.dialog.DialogActivity
-import com.breadwallet.legacy.view.dialog.DialogActivity.DialogType
 import com.breadwallet.logger.logDebug
-import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.disabled.DisabledController
+import com.breadwallet.ui.keystore.KeyStoreController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.migrate.MigrateController
-import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
+import com.breadwallet.ui.navigation.RouterNavigator
 import com.breadwallet.ui.onboarding.IntroController
 import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
@@ -61,7 +59,6 @@ import com.breadwallet.ui.recovery.RecoveryKeyController
 import com.breadwallet.util.ControllerTrackingListener
 import com.breadwallet.util.errorHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
@@ -70,6 +67,7 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -101,15 +99,13 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     private var trackingListener: ControllerTrackingListener? = null
 
     // NOTE: Used only to centralize deep link navigation handling.
-    private var routerNavHandler: RouterNavigationEffectHandler? = null
+    private var routerNavigator: RouterNavigator? = null
 
     private val resumedScope = CoroutineScope(
         Default + SupervisorJob() + errorHandler("resumedScope")
     )
 
     private var launchedWithInvalidState = false
-    private val isDeviceStateValid: Boolean
-        get() = (application as BreadApp).isDeviceStateValid()
 
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,27 +113,14 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         // The view of this activity is nothing more than a Controller host with animation support
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
-            routerNavHandler = RouterNavigationEffectHandler(router)
+            routerNavigator = RouterNavigator { router }
         })
 
         trackingListener = ControllerTrackingListener(this).also(router::addChangeListener)
 
-        if (!isDeviceStateValid) {
-            // In this case, isDeviceStateValid displays a dialog (activity)
-            // for user resolution of the invalid state. We must check this
-            // again in onResume to ensure we display the dialog if the state
-            // is unchanged or recreate the activity.
-            launchedWithInvalidState = true
-            logError("Device state is invalid.")
-            return
-        }
-
-        BreadApp.applicationScope.launch(Dispatchers.Main) {
-            if (userManager.isAccountInvalidated()) {
-                DialogActivity.startDialogActivity(
-                    this@MainActivity,
-                    DialogType.KEY_STORE_INVALID_WIPE
-                )
+        BreadApp.applicationScope.launch(Main) {
+            userManager.checkAccountInvalidated()
+            if (userManager.getState() is BrdUserState.KeyStoreInvalid) {
                 return@launch
             }
 
@@ -175,10 +158,10 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                         .pushChangeHandler(FadeChangeHandler())
                 )
             }
+        }
 
-            if (BuildConfig.DEBUG) {
-                Utils.printPhoneSpecs(this@MainActivity)
-            }
+        if (BuildConfig.DEBUG) {
+            Utils.printPhoneSpecs(this@MainActivity)
         }
     }
 
@@ -195,23 +178,10 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         BreadApp.setBreadContext(this)
 
         userManager.stateChanges()
+            .onStart { userManager.checkAccountInvalidated() }
             .map { processUserState(it) }
             .flowOn(Main)
             .launchIn(resumedScope)
-
-        // If we come back to the activity after launching with
-        // an invalid device state, check the state again.
-        // If the state is valid, recreate the activity otherwise
-        // the resolution dialog will display again.
-        if (launchedWithInvalidState) {
-            if (isDeviceStateValid) {
-                logDebug("Device state is valid, recreating activity.")
-                recreate()
-            } else {
-                logError("Device state is invalid.")
-            }
-            return
-        }
     }
 
     override fun onPause() {
@@ -246,7 +216,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             val hasRoot = router.hasRootController()
             val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
             val isAuthenticated = !isTopLogin && hasRoot
-            routerNavHandler?.goToDeepLink(NavigationEffect.GoToDeepLink(data, isAuthenticated))
+            routerNavigator?.deepLink(NavigationTarget.DeepLink(data, isAuthenticated))
         }
     }
 
@@ -267,10 +237,26 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun processUserState(userState: BrdUserState) {
-        if (userManager.isInitialized() && router.hasRootController()) {
-            when (userState) {
-                BrdUserState.Locked -> lockApp()
-                is BrdUserState.Disabled -> disableApp()
+        if (userState is BrdUserState.KeyStoreInvalid) {
+            launchedWithInvalidState = true
+            logDebug("Device state is invalid, $userState")
+            val needsKeyStoreController = router.backstack
+                .map(RouterTransaction::controller)
+                .filterIsInstance<KeyStoreController>()
+                .none()
+            if (needsKeyStoreController) {
+                router.setRoot(RouterTransaction.with(KeyStoreController()))
+            }
+        } else if (launchedWithInvalidState) {
+            logDebug("Device state is now valid, recreating activity.")
+            router.setBackstack(emptyList(), null)
+            recreate()
+        } else {
+            if (userManager.isInitialized() && router.hasRootController()) {
+                when (userState) {
+                    BrdUserState.Locked -> lockApp()
+                    is BrdUserState.Disabled -> disableApp()
+                }
             }
         }
     }

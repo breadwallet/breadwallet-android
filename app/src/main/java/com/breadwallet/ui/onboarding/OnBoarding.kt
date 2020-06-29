@@ -24,6 +24,9 @@
  */
 package com.breadwallet.ui.onboarding
 
+import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
+import com.breadwallet.ui.navigation.OnCompleteAction
 import drewcarlson.switchboard.MobiusUpdateSpec
 
 object OnBoarding {
@@ -76,12 +79,28 @@ object OnBoarding {
 
         object CreateWallet : F()
 
-        data class ShowError(val message: String) : F()
+        data class ShowError(val message: String) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
+                title = "",
+                message = message
+            )
+        }
 
-        object Skip : F()
-        object Buy : F()
-        object Browse : F()
+        object Skip : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin(onboarding = true)
+        }
+        object Buy : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin(
+                onboarding = true,
+                onComplete = OnCompleteAction.GO_TO_BUY
+            )
+        }
+        object Browse : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SetPin(onboarding = true)
+        }
 
-        object Cancel : F()
+        object Cancel : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
+        }
     }
 }

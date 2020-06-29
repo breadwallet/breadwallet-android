@@ -26,8 +26,8 @@ package com.breadwallet.ui.addwallets
 
 import com.breadwallet.ui.addwallets.AddWallets.F
 import com.breadwallet.ui.addwallets.AddWallets.M
-import com.spotify.mobius.Init
 import com.spotify.mobius.First.first
+import com.spotify.mobius.Init
 
 val AddWalletsInit = Init<M, F> { model ->
     first(model, setOf<F>(F.SearchTokens(model.searchQuery)))

@@ -69,7 +69,7 @@ class APIClientTests {
         val context = InstrumentationRegistry.getInstrumentation().context
         TokenHolder.reset()
         BRKeyStore.resetWalletKeyStore(context)
-        BRSharedPrefs.clearAllPrefs(context)
+        BRSharedPrefs.clearAllPrefs()
         APIClient(context)
         try {
             server.close()

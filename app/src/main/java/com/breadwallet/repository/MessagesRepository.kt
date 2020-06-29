@@ -43,7 +43,7 @@ object MessagesRepository {
      */
     fun getInAppNotification(context: Context): InAppMessage? {
         Log.d(TAG, "getInAppNotification: Looking for new in app notifications")
-        val readMessages = BRSharedPrefs.getReadInAppNotificationIds(context)
+        val readMessages = BRSharedPrefs.getReadInAppNotificationIds()
         // Filter any notification that we already shown
         val inAppMessages = InAppMessagesClient.fetchMessages(context, InAppMessage.Type.IN_APP_NOTIFICATION)
                 .filterNot{ readMessages.contains(it.messageId) }
@@ -65,7 +65,7 @@ object MessagesRepository {
     /**
      * Mark the given message as read.
      */
-    fun markAsRead(context: Context, messageId: String) {
-        BRSharedPrefs.putReadInAppNotificationId(context, messageId)
+    fun markAsRead(messageId: String) {
+        BRSharedPrefs.putReadInAppNotificationId(messageId)
     }
 }

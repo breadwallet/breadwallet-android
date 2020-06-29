@@ -116,8 +116,8 @@ public class CurrencyUtils {
         return currencyFormat.format(amount);
     }
 
-    public static boolean isBuyNotificationNeeded(Context context) {
-        String fiatCurrencyCode = BRSharedPrefs.getPreferredFiatIso(context);
+    public static boolean isBuyNotificationNeeded() {
+        String fiatCurrencyCode = BRSharedPrefs.getPreferredFiatIso();
         return KRONE.equalsIgnoreCase(fiatCurrencyCode) || POUND.equalsIgnoreCase(fiatCurrencyCode) || EURO.equalsIgnoreCase(fiatCurrencyCode);
     }
 }

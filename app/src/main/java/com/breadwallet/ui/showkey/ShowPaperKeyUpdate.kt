@@ -43,7 +43,7 @@ object ShowPaperKeyUpdate : Update<ShowPaperKey.M, ShowPaperKey.E, ShowPaperKey.
     ): Next<ShowPaperKey.M, ShowPaperKey.F> {
         return if (model.currentWord == model.phrase.size - 1) {
             dispatch(
-                setOf(
+                setOf<ShowPaperKey.F>(
                     if (model.onComplete == null) {
                         ShowPaperKey.F.GoBack
                     } else {
@@ -77,7 +77,7 @@ object ShowPaperKeyUpdate : Update<ShowPaperKey.M, ShowPaperKey.E, ShowPaperKey.
             OnCompleteAction.GO_HOME -> ShowPaperKey.F.GoToHome
             OnCompleteAction.GO_TO_BUY -> ShowPaperKey.F.GoToBuy
             null -> ShowPaperKey.F.GoBack
-        }
+        } as ShowPaperKey.F
         return dispatch(setOf(effect))
     }
 }

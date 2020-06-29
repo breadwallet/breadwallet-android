@@ -26,6 +26,9 @@ package com.breadwallet.ui.receive
 
 import com.breadwallet.ext.isZero
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.send.MAX_DIGITS
 import com.breadwallet.util.CurrencyCode
 import drewcarlson.switchboard.MobiusUpdateSpec
@@ -44,8 +47,6 @@ object ReceiveScreen {
         @Redacted val receiveAddress: String = "",
         /** The address without network specific decoration. */
         @Redacted val sanitizedAddress: String = "",
-        /** True when the user copies their address and resets after some time.*/
-        val isDisplayingCopyMessage: Boolean = false,
         /** The user supplied amount to receive as a string. */
         val rawAmount: String = "",
         /** The user supplied amount as [BigDecimal]. */
@@ -121,16 +122,11 @@ object ReceiveScreen {
             val fiatPricePerUnit: BigDecimal
         ) : E()
 
-        data class OnWalletNameUpdated(
-            val walletName: String
-        ) : E()
-
-        data class OnReceiveAddressUpdated(
+        data class OnWalletInfoLoaded(
+            val walletName: String,
             @Redacted val address: String,
             @Redacted val sanitizedAddress: String
         ) : E()
-
-        object OnHideCopyMessage : E()
 
         object OnCloseClicked : E()
         object OnFaqClicked : E()
@@ -150,13 +146,28 @@ object ReceiveScreen {
     }
 
     sealed class F {
-        object ResetCopiedAfterDelay : F()
-        object CloseSheet : F()
-
-        data class GoToFaq(
+        data class LoadExchangeRate(
             val currencyCode: CurrencyCode
         ) : F()
 
+        data class LoadWalletInfo(
+            val currencyCode: CurrencyCode
+        ) : F()
+
+        object CloseSheet : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Back
+        }
+
+        data class GoToFaq(
+            val currencyCode: CurrencyCode
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.SupportPage(
+                BRConstants.FAQ_RECEIVE,
+                currencyCode
+            )
+        }
+
+        object ShowCopiedMessage : F(), ViewEffect
         data class CopyAddressToClipboard(
             @Redacted val address: String
         ) : F()
@@ -165,6 +176,6 @@ object ReceiveScreen {
             @Redacted val address: String,
             val amount: BigDecimal,
             val walletName: String
-        ) : F()
+        ) : F(), ViewEffect
     }
 }

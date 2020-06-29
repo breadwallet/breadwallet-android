@@ -29,7 +29,6 @@ package com.breadwallet.breadbox
 import com.breadwallet.BuildConfig
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Address
-import com.breadwallet.crypto.AddressScheme
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Currency
 import com.breadwallet.crypto.Key
@@ -51,9 +50,7 @@ import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.errors.WalletSweeperError
 import com.breadwallet.crypto.utility.CompletionHandler
 import com.breadwallet.logger.logError
-import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.util.WalletDisplayUtils
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isEthereum
@@ -189,7 +186,7 @@ fun Wallet.feeForSpeed(speed: TransferSpeed): NetworkFee {
 // TODO: Move somewhere UI related
 fun BigDecimal.formatCryptoForUi(
     currencyCode: String,
-    scale: Int = WalletDisplayUtils.MAX_DECIMAL_PLACES_FOR_UI,
+    scale: Int = 5,
     negate: Boolean = false
 ): String {
     val amount = if (negate) negate() else this
@@ -279,22 +276,16 @@ fun Network.containsCurrencyCode(currencyCode: String) =
 
 /** Returns the [Currency] code if the [Transfer] is a ETH fee transfer, blank otherwise. */
 fun Transfer.feeForToken(): String {
-    val issuerCode = findIssuerCurrency()
+    val targetAddress = target.orNull()?.toSanitizedString() ?: return ""
+    val issuerCode = wallet.walletManager.network.currencies.find { networkCurrency ->
+        networkCurrency.issuer.or("").equals(targetAddress, true)
+    }
     return when {
         !wallet.walletManager.currency.isEthereum() -> ""
         issuerCode == null || issuerCode.isEthereum() -> ""
         else -> issuerCode.code
     }
 }
-
-/** Returns the [Currency] for the issuer matching the target address, null otherwise. */
-fun Transfer.findIssuerCurrency() =
-    wallet.walletManager.network.currencies.find { networkCurrency ->
-        networkCurrency
-            .issuer
-            .or("")
-            .equals(target.get().toSanitizedString(), true)
-    }
 
 fun WalletManagerState.isTracked() =
     type == WalletManagerState.Type.CONNECTED ||

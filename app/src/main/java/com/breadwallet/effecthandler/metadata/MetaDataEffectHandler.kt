@@ -179,9 +179,6 @@ class MetaDataEffectHandler(
         fiatPricePerUnit: BigDecimal
     ) {
         val deviceId = BRSharedPrefs.getDeviceId()
-        val blockHeight = BRSharedPrefs.getLastBlockHeight(
-            transaction.wallet.currency.code
-        ) // TODO: this pref not being updated anymore
         val size = transaction.getSize()?.toInt() ?: 0
         val fee = transaction.fee.toBigDecimal().toDouble()
         val creationTime =
@@ -192,7 +189,7 @@ class MetaDataEffectHandler(
             comment,
             fiatCurrencyCode,
             fiatPricePerUnit.toDouble(),
-            blockHeight,
+            transaction.wallet.walletManager.network.height.toLong(),
             fee,
             size,
             creationTime

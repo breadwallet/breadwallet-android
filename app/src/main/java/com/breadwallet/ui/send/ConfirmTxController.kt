@@ -50,8 +50,6 @@ private const val KEY_FIAT_TOTAL_COST = "fiat_total_cost"
 private const val KEY_NETWORK_FEE = "fiat_network_fee"
 private const val KEY_TRANSFER_FIELDS = "transfer_fields"
 
-private val NOOP_LISTENER = object : ConfirmTxController.Listener {}
-
 /**
  * Transaction detail to be shown for user verification before requesting authentication.
  */
@@ -105,10 +103,6 @@ class ConfirmTxController(
 
     override val layoutId = R.layout.controller_confirm_tx_details
 
-    private val listener: Listener
-        get() = targetController as? Listener
-            ?: NOOP_LISTENER
-
     init {
         overridePushHandler(DialogChangeHandler())
         overridePopHandler(DialogChangeHandler())
@@ -118,11 +112,11 @@ class ConfirmTxController(
         super.onCreateView(view)
         ok_btn.setOnClickListener {
             router.popCurrentController()
-            listener.onPositiveClicked(this)
+            findListener<Listener>()?.onPositiveClicked(this)
         }
         val cancelTxListener = View.OnClickListener {
             router.popCurrentController()
-            listener.onNegativeClicked(this)
+            findListener<Listener>()?.onNegativeClicked(this)
         }
         cancel_btn.setOnClickListener(cancelTxListener)
         close_btn.setOnClickListener(cancelTxListener)
@@ -135,7 +129,7 @@ class ConfirmTxController(
     }
 
     override fun handleBack(): Boolean {
-        listener.onNegativeClicked(this)
+        findListener<Listener>()?.onNegativeClicked(this)
         return super.handleBack()
     }
 

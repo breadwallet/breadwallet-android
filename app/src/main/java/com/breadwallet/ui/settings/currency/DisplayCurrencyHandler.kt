@@ -24,45 +24,36 @@
  */
 package com.breadwallet.ui.settings.currency
 
+import android.content.Context
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.BRSharedPrefs.putPreferredFiatIso
-import com.breadwallet.ui.navigation.NavEffectTransformer
-import drewcarlson.mobius.flow.subtypeEffectHandler
+import com.breadwallet.ui.settings.currency.DisplayCurrency.E
+import com.breadwallet.ui.settings.currency.DisplayCurrency.F
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import drewcarlson.mobius.flow.subtypeEffectHandler
 
-object DisplayCurrencyHandler {
-    fun create(
-        navEffectHandler: NavEffectTransformer
-    ) = subtypeEffectHandler<DisplayCurrency.F, DisplayCurrency.E> {
-        addTransformer<DisplayCurrency.F.Nav>(navEffectHandler)
-        addFunction(loadCurrencies())
-        addFunction(setDisplayCurrency())
+private val adapter = Moshi.Builder()
+    .build()
+    .adapter<List<FiatCurrency>>(
+        Types.newParameterizedType(List::class.java, FiatCurrency::class.java)
+    )
+
+fun createDisplayCurrencyHandler(
+    context: Context
+) = subtypeEffectHandler<F, E> {
+    addFunction<F.SetDisplayCurrency> {
+        putPreferredFiatIso(iso = it.currencyCode)
+        E.OnSelectedCurrencyUpdated(it.currencyCode)
     }
-
-    private fun loadCurrencies()
-        : suspend (DisplayCurrency.F.LoadCurrencies) -> DisplayCurrency.E.OnCurrenciesLoaded = {
+    addFunction<F.LoadCurrencies> {
         val selectedCurrency = BRSharedPrefs.getPreferredFiatIso()
-        val inputStream = BreadApp.getBreadContext().resources.openRawResource(R.raw.fiatcurrencies)
+        val inputStream = context.resources.openRawResource(R.raw.fiatcurrencies)
         val fiatCurrenciesString = inputStream.bufferedReader().use { it.readText() }
-        val adapter = Moshi.Builder()
-            .build()
-            .adapter<List<FiatCurrency>>(
-                Types.newParameterizedType(List::class.java, FiatCurrency::class.java)
-            )
         val fiatCurrencies = adapter.fromJson(fiatCurrenciesString).orEmpty()
 
-        DisplayCurrency.E.OnCurrenciesLoaded(
-            selectedCurrency, fiatCurrencies
-        )
+        E.OnCurrenciesLoaded(selectedCurrency, fiatCurrencies)
     }
-
-    private fun setDisplayCurrency()
-        : suspend (DisplayCurrency.F.SetDisplayCurrency) -> DisplayCurrency.E.OnSelectedCurrencyUpdated =
-        {
-            putPreferredFiatIso(iso = it.currencyCode)
-            DisplayCurrency.E.OnSelectedCurrencyUpdated(it.currencyCode)
-        }
 }

@@ -39,15 +39,18 @@ import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.tools.util.TrustedNode
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.E
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.F
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.M
-import com.breadwallet.ui.view
 import com.spotify.mobius.Connectable
-import com.spotify.mobius.functions.Consumer
 import kotlinx.android.synthetic.main.controller_node_selector.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -67,11 +70,13 @@ class NodeSelectorController : BaseMobiusController<M, E, F>() {
 
     override val effectHandler = CompositeEffectHandler.from<F, E>(
         Connectable { output ->
-            NodeSelectorHandler(output, direct.instance(), ::showNodeDialog)
+            NodeSelectorHandler(output, direct.instance())
         })
 
-    override fun bindView(output: Consumer<E>) = output.view {
-        button_switch.onClick(E.OnSwitchButtonClicked)
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        return merge(
+            button_switch.clicks().map { E.OnSwitchButtonClicked }
+        )
     }
 
     override fun M.render() {
@@ -98,6 +103,12 @@ class NodeSelectorController : BaseMobiusController<M, E, F>() {
             } else {
                 res.getString(R.string.NodeSelector_notConnected)
             }
+        }
+    }
+
+    override fun handleViewEffect(effect: ViewEffect) {
+        when (effect) {
+            F.ShowNodeDialog -> showNodeDialog()
         }
     }
 

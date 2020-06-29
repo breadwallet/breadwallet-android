@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui
 
-import com.breadwallet.model.PriceChange
 import com.breadwallet.ui.home.HomeScreen.M
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
@@ -37,7 +36,6 @@ import com.spotify.mobius.test.NextMatchers.hasNoEffects
 import com.spotify.mobius.test.UpdateSpec
 import com.spotify.mobius.test.UpdateSpec.assertThatNext
 import org.junit.Test
-import java.math.BigDecimal
 
 @Suppress("LongMethod")
 class HomeScreenUpdateTests {
@@ -65,7 +63,7 @@ class HomeScreenUpdateTests {
                         wallets = wallets,
                         displayOrder = wallets.values.map { it.currencyId }
                     )),
-                    hasNoEffects()
+                    hasEffects<M, F>(F.LoadWallets)
                 )
             )
 
@@ -102,33 +100,6 @@ class HomeScreenUpdateTests {
                             wallets = expectedWallets
                         )
                     ),
-                    hasNoEffects()
-                )
-            )
-
-        // Update ETH wallet balance
-        val ethWalletAddedState = initialWalletsAddedState.copy(wallets = expectedWallets)
-        val updatedWallet = walletToAdd.copy(
-            balance = BigDecimal.valueOf(1),
-            fiatBalance = BigDecimal.valueOf(1000),
-            state = Wallet.State.READY
-        )
-
-
-        expectedWallets = expectedWallets.toMutableMap()
-        expectedWallets[updatedWallet.currencyCode] = updatedWallet
-
-        spec.given(ethWalletAddedState)
-            .`when`(
-                E.OnWalletBalanceUpdated(
-                    updatedWallet.currencyCode,
-                    updatedWallet.balance,
-                    updatedWallet.fiatBalance
-                )
-            )
-            .then(
-                assertThatNext(
-                    hasModel(ethWalletAddedState.copy(wallets = expectedWallets)),
                     hasNoEffects()
                 )
             )

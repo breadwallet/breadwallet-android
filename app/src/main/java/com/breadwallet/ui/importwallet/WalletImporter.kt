@@ -39,7 +39,6 @@ import com.breadwallet.crypto.errors.WalletSweeperInsufficientFundsError
 import com.breadwallet.crypto.errors.WalletSweeperNoTransfersFoundError
 import com.breadwallet.logger.logError
 import com.breadwallet.util.CurrencyCode
-import java.lang.IllegalArgumentException
 
 /**
  * Import a wallet using a private key, supports only BTC and BCH.

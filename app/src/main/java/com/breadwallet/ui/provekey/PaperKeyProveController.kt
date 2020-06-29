@@ -25,32 +25,27 @@
 package com.breadwallet.ui.provekey
 
 import android.os.Bundle
-import android.text.Editable
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
-import com.breadwallet.mobius.CompositeEffectHandler
-import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.controllers.SignalController
-import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.flowbind.clicks
+import com.breadwallet.ui.flowbind.textChanges
 import com.breadwallet.ui.navigation.OnCompleteAction
-import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
 import com.breadwallet.ui.provekey.PaperKeyProve.E
 import com.breadwallet.ui.provekey.PaperKeyProve.F
 import com.breadwallet.ui.provekey.PaperKeyProve.M
-import com.breadwallet.util.DefaultTextWatcher
 import com.breadwallet.util.normalize
-import com.spotify.mobius.Connectable
-import com.spotify.mobius.disposables.Disposable
-import com.spotify.mobius.functions.Consumer
+import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.controller_paper_key_prove.*
-import org.kodein.di.direct
-import org.kodein.di.erased.instance
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 
 private const val EXTRA_PHRASE = "phrase"
 private const val EXTRA_ON_COMPLETE = "on-complete"
@@ -72,51 +67,15 @@ class PaperKeyProveController(args: Bundle) :
     override val layoutId = R.layout.controller_paper_key_prove
     override val defaultModel = M.createDefault(phrase, onComplete)
     override val update = PaperKeyProveUpdate
-    override val effectHandler =
-        CompositeEffectHandler.from<F, E>(
-            Connectable { output: Consumer<E> ->
-                PaperKeyProveHandler(
-                    output,
-                    { SpringAnimator.failShakeAnimation(activity!!, first_word) },
-                    { SpringAnimator.failShakeAnimation(activity!!, second_word) },
-                    {
-                        val res = router.activity!!.resources
-                        val signal = SignalController(
-                            title = res.getString(R.string.Alerts_paperKeySet),
-                            description = res.getString(R.string.Alerts_paperKeySetSubheader),
-                            iconResId = R.drawable.ic_check_mark_white
-                        )
-                        signal.targetController = this@PaperKeyProveController
-                        router.pushController(RouterTransaction.with(signal))
-                    }
-                )
-            },
-            nestedConnectable(
-                { direct.instance<RouterNavigationEffectHandler>() },
-                { effect ->
-                    when (effect) {
-                        F.GoToBuy -> NavigationEffect.GoToBuy
-                        F.GoToHome -> NavigationEffect.GoToHome
-                        else -> null
-                    }
-                })
-        )
+    override val flowEffectHandler: FlowTransformer<F, E>
+        get() = createPaperKeyProveHandler()
 
-    override fun bindView(output: Consumer<E>): Disposable {
-        submit_btn.setOnClickListener { output.accept(E.OnSubmitClicked) }
-        first_word.addTextChangedListener(object : DefaultTextWatcher() {
-            override fun afterTextChanged(s: Editable?) {
-                val word = s?.toString().orEmpty().normalize()
-                output.accept(E.OnFirstWordChanged(word))
-            }
-        })
-        second_word.addTextChangedListener(object : DefaultTextWatcher() {
-            override fun afterTextChanged(s: Editable?) {
-                val word = s?.toString().orEmpty().normalize()
-                output.accept(E.OnSecondWordChanged(word))
-            }
-        })
-        return Disposable { } // remove text watcher here
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        return merge(
+            submit_btn.clicks().map { E.OnSubmitClicked },
+            first_word.textChanges().map { E.OnFirstWordChanged(it.normalize()) },
+            second_word.textChanges().map { E.OnSecondWordChanged(it.normalize()) }
+        )
     }
 
     override fun onDetach(view: View) {
@@ -151,6 +110,19 @@ class PaperKeyProveController(args: Bundle) :
         ifChanged(M::secondWordIndex) {
             second_word_label.text =
                 activity!!.getString(R.string.ConfirmPaperPhrase_word, secondWordIndex + 1)
+        }
+    }
+
+    override fun handleViewEffect(effect: ViewEffect) {
+        when (effect) {
+            is F.ShakeWords -> {
+                if (effect.first) {
+                    SpringAnimator.failShakeAnimation(applicationContext, first_word)
+                }
+                if (effect.second) {
+                    SpringAnimator.failShakeAnimation(applicationContext, second_word)
+                }
+            }
         }
     }
 

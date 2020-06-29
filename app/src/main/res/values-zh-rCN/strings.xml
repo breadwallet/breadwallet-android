@@ -30,15 +30,19 @@
     <string name="Account.exchangeRate">%1$s / %2$s</string>
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">正在加载钱包</string>
-    <!-- Prompt text for confirmation dialog for Hedera account creation -->
+    <!-- Confirm Account Creation mesage body -->
     <string name="AccountCreation.body">仅当您打算在钱包中存储HBAR时，才创建一个Hedera帐户。</string>
-    <!-- Label for create Hedera account button -->
+    <!-- Create Account button label -->
     <string name="AccountCreation.create">创建帐号</string>
-    <!-- Error message for Hedera account creation failure  -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.creating">建立帐户</string>
+    <!-- Creating Account progress Label -->
     <string name="AccountCreation.error">创建帐户期间发生错误。请稍后再试。</string>
-    <!-- Label for cancel button on confirmation dialog for Hedera account creation -->
+    <!-- Not Now button label. -->
     <string name="AccountCreation.notNow">现在不要</string>
-    <!-- Title for confirmation dialog for Hedera account creation -->
+    <!-- Creating Account progress Label -->
+    <string name="AccountCreation.timeout">请求超时。请稍后再试。</string>
+    <!-- Confirm Account Creation Title -->
     <string name="AccountCreation.title">确认帐户创建</string>
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">我的 BRD</string>
@@ -191,7 +195,7 @@
     <!-- Network Fee: (ETH) -->
     <string name="Confirmation.feeLabelETH">网络费 (ETH):</string>
     <!-- Label for Hedera Memo field on transaction confirmation screen -->
-    <string name="Confirmation.hederaMemo">Hedera备忘</string>
+    <string name="Confirmation.hederaMemo">Hedera Memo</string>
     <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
     <string name="Confirmation.processingTime">处理时间：预计此交易将在 %1$s 后完成。</string>
     <!-- Label for "send" button on final confirmation screen -->
@@ -710,6 +714,10 @@
     <string name="RewardsView.normalTitle">奖励</string>
     <!-- Scan bitcoin address camera flash toggle -->
     <string name="Scanner.flashButtonLabel">相机闪光灯</string>
+    <!-- (alert dialog message) Would you like to send a [Bitcoin / Bitcoin Cash / Ethereum] payment to this address?") -->
+    <string name="Scanner.paymentPromptMessage">您想向此地址发送 %1$@ 付款吗？</string>
+    <!-- alert dialog title -->
+    <string name="Scanner.paymentPromptTitle">发送付款</string>
     <!-- Complete filter label -->
     <string name="Search.complete">完成</string>
     <!-- Pending filter label -->
@@ -725,7 +733,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">若您丢失或升级您的手机，访问您的比特币的唯一方法。</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
- * to not break existing client code. -->
+   * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">纸键</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">纸键</string>
@@ -799,7 +807,7 @@
     <string name="Send.legacyAddressWarning">警告：这是已停用的比特币地址。您确定要向这个地址发送比特币现金吗？</string>
     <!-- We are loading the request (now) -->
     <string name="Send.loadingRequest">加载请求中</string>
-    <!-- Placeholder text for Hedera Memo field on send screen -->
+    <!-- Hedera Memo Tag Label -->
     <string name="Send.memoTag_optional">Hedera备忘（可选）</string>
     <!-- Transaction fee could not be be caluculated error. -->
     <string name="Send.nilFeeError">资金不够支付交易费。</string>
@@ -811,6 +819,14 @@
     <string name="Send.noFeesError">正在下载网络费状态。请重试。</string>
     <!-- Paste button label -->
     <string name="Send.pasteLabel">粘贴</string>
+    <!-- Error message for invalid PayID -->
+    <string name="Send.payId_invalid">无效的PayID。</string>
+    <!-- Error message for no address associated with a PayID for a given currency -->
+    <string name="Send.payId_noAddress">没有与此PayID相关的%1$s地址。</string>
+    <!-- Error message for error in retrieving the address from the PayID endpoint -->
+    <string name="Send.payId_retrievalError">检索此PayID的地址时出错。请稍后再试。</string>
+    <!-- PayID label -->
+    <string name="Send.payId_toLabel">PayID</string>
     <!-- Could not publish transaction alert title -->
     <string name="Send.publishTransactionError">无法发布交易。</string>
     <!-- Could not load remote request error message -->
@@ -1065,7 +1081,7 @@
     <!-- Tx detail field header -->
     <string name="TransactionDetails.gasPriceHeader">燃料价格</string>
     <!-- Label for Hedera Memo field on transaction details screen -->
-    <string name="TransactionDetails.hederaMemo">Hedera备忘</string>
+    <string name="TransactionDetails.hederaMemo">Hedera Memo</string>
     <!-- Hide Details button -->
     <string name="TransactionDetails.hideDetails">隐藏详细信息</string>
     <!-- Label showing the transaction was started (initialized) -->

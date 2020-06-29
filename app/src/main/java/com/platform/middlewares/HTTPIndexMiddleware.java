@@ -55,7 +55,7 @@ public class HTTPIndexMiddleware implements Middleware {
             return true;
         }
 
-        String indexFile = ServerBundlesHelper.getExtractedPath(app, ServerBundlesHelper.getBundle(app, ServerBundlesHelper.Type.WEB), rTrim(target, "/") + "/index.html");
+        String indexFile = ServerBundlesHelper.getExtractedPath(app, ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.WEB), rTrim(target, "/") + "/index.html");
 
         File temp = new File(indexFile);
         if (!temp.exists()) {

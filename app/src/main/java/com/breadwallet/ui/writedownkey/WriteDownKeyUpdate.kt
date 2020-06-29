@@ -41,7 +41,7 @@ object WriteDownKeyUpdate : Update<M, E, F>, WriteDownKeyUpdateSpec {
         val effect = when (model.onComplete) {
             OnCompleteAction.GO_TO_BUY -> F.GoToBuy
             OnCompleteAction.GO_HOME -> F.GoToHome
-        }
+        } as F
         return dispatch(setOf(effect))
     }
 

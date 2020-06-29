@@ -35,6 +35,10 @@ import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.wallet.Interval
 import com.platform.network.service.CurrencyHistoricalDataClient.getHistoricalData
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import java.math.BigDecimal
 import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
@@ -46,6 +50,7 @@ import java.util.concurrent.ConcurrentHashMap
 class RatesRepository private constructor(private val mContext: Context) {
 
     private val dataSource = RatesDataSource.getInstance(mContext)
+    private val changeEventChannel = BroadcastChannel<Unit>(CONFLATED)
 
     private val mCache = ConcurrentHashMap<String, CurrencyEntity>()
     private val mPriceChanges = ConcurrentHashMap<String, PriceChange>()
@@ -79,12 +84,13 @@ class RatesRepository private constructor(private val mContext: Context) {
      *
      * @param currencyEntities the list of currency pairs and their rates to persist
      */
-    fun putCurrencyRates(currencyEntities: Collection<CurrencyEntity>?) {
+    fun putCurrencyRates(currencyEntities: Collection<CurrencyEntity>) {
         if (currencyEntities.isNullOrEmpty()) return
-        val isRatesUpdateSuccessful = dataSource.putCurrencies(mContext, currencyEntities)
+        val isRatesUpdateSuccessful = dataSource.putCurrencies(currencyEntities)
         if (isRatesUpdateSuccessful) {
             updateCache(currencyEntities)
         }
+        changeEventChannel.offer(Unit)
     }
 
     /**
@@ -126,6 +132,10 @@ class RatesRepository private constructor(private val mContext: Context) {
             return null
         }
         return cryptoAmount * cryptoBtcRate.rate.toBigDecimal() * btcRate.rate.toBigDecimal()
+    }
+
+    fun getFiatPerCryptoUnit(cryptoCode: String, fiatCode: String): BigDecimal {
+        return getFiatForCrypto(BigDecimal.ONE, cryptoCode, fiatCode) ?: BigDecimal.ZERO
     }
 
     /**
@@ -206,9 +216,11 @@ class RatesRepository private constructor(private val mContext: Context) {
     @get:Synchronized
     val allCurrencyCodesPossible: List<String>
         get() {
-            return TokenUtil.getTokenItems(mContext)
+            return TokenUtil.getTokenItems()
                 .map(TokenItem::exchangeRateCurrencyCode)
         }
+
+    fun changes(): Flow<Unit> = changeEventChannel.asFlow()
 
     companion object {
         private val TAG = RatesRepository::class.java.name

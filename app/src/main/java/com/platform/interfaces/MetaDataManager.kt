@@ -51,6 +51,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.Date
+import java.util.Locale
 
 @Suppress("TooManyFunctions")
 class MetaDataManager(
@@ -156,9 +157,8 @@ class MetaDataManager(
             ?.run(::putEnabledWallets)
     }
 
-    override fun reorderWallets(currencyIds: List<String>) = flow {
+    override fun reorderWallets(currencyIds: List<String>) {
         putEnabledWallets(currencyIds)
-        emit(Unit)
     }
 
     override fun walletModes(): Flow<Map<String, WalletManagerMode>> =
@@ -299,9 +299,7 @@ class MetaDataManager(
 
     private fun putEnabledWallets(enabledWallets: List<String>) =
         enabledWalletsToJSON(enabledWallets)
-            .also {
-                storeProvider.put(KEY_ASSET_INDEX, it)
-            }
+            .also { storeProvider.put(KEY_ASSET_INDEX, it) }
 
     private fun migrateTokenList() {
         if (storeProvider.get(KEY_ASSET_INDEX) != null) {
@@ -319,22 +317,18 @@ class MetaDataManager(
             }
 
             TokenUtil.initialize(BreadApp.getBreadContext(), true)
-            val currencyCodeToToken =
-                TokenUtil.getTokenItems(BreadApp.getBreadContext())
-                    ?.associateBy { it.symbol.toLowerCase() } ?: emptyMap()
+            val currencyCodeToToken = TokenUtil.getTokenItems()
+                .associateBy { it.symbol.toLowerCase(Locale.ROOT) }
 
             tokenListMetaData.enabledCurrencies
                 .filter { enabledToken ->
                     // Need to also ensure not in hidden currencies list
                     tokenListMetaData.hiddenCurrencies.find {
-                        it.symbol.equals(
-                            enabledToken.symbol,
-                            true
-                        )
+                        it.symbol.equals(enabledToken.symbol, true)
                     } == null
                 }
                 .mapNotNull {
-                    currencyCodeToToken[it.symbol.toLowerCase()]?.currencyId
+                    currencyCodeToToken[it.symbol.toLowerCase(Locale.ROOT)]?.currencyId
                 }
                 .apply {
                     if (isNotEmpty()) {

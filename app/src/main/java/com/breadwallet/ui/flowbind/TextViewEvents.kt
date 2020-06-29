@@ -46,7 +46,9 @@ fun TextView.textChanges(debounceMs: Long = 100L): Flow<String> =
     callbackFlow<String> {
         val listener = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+
             override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
                 offer(text?.toString() ?: "")
             }
@@ -55,3 +57,12 @@ fun TextView.textChanges(debounceMs: Long = 100L): Flow<String> =
         awaitClose { removeTextChangedListener(listener) }
     }.flowOn(Dispatchers.Main)
         .debounce(debounceMs)
+
+fun TextView.focusChanges(): Flow<Boolean> =
+    callbackFlow<Boolean> {
+        setOnFocusChangeListener { _, hasFocus ->
+            offer(hasFocus)
+        }
+
+        awaitClose { onFocusChangeListener = null }
+    }

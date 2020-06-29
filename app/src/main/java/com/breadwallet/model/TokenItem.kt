@@ -45,4 +45,6 @@ data class TokenItem(
                 cryptocompareAlias
             }
         }
+
+    val isNative: Boolean = type.isBlank()
 }

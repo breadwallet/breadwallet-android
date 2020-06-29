@@ -32,6 +32,9 @@ import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.flowbind.editorActions
 import com.breadwallet.ui.flowbind.textChanges
+import com.breadwallet.ui.importwallet.PasswordController.E
+import com.breadwallet.ui.importwallet.PasswordController.F
+import com.breadwallet.ui.importwallet.PasswordController.M
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
@@ -46,7 +49,7 @@ import kotlinx.coroutines.flow.merge
 
 class PasswordController(
     args: Bundle? = null
-) : BaseMobiusController<PasswordController.M, PasswordController.E, PasswordController.F>(args) {
+) : BaseMobiusController<M, E, F>(args) {
 
     init {
         overridePopHandler(DialogChangeHandler())
@@ -81,12 +84,12 @@ class PasswordController(
     }
 
     private fun handleConfirm(effect: F.Confirm) {
-        (targetController as? Listener)?.onPasswordConfirmed(effect.password)
+        findListener<Listener>()?.onPasswordConfirmed(effect.password)
         router.popController(this)
     }
 
     private fun handleCancel() {
-        (targetController as? Listener)?.onPasswordCancelled()
+        findListener<Listener>()?.onPasswordCancelled()
         router.popController(this)
     }
 

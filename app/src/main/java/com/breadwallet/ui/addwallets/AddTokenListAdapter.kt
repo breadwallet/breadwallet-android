@@ -24,28 +24,28 @@
  */
 package com.breadwallet.ui.addwallets
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import androidx.recyclerview.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-
+import androidx.recyclerview.widget.RecyclerView
 import com.breadwallet.R
 import com.breadwallet.tools.util.TokenUtil
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-
 import java.io.File
+import java.util.Locale
 
 class AddTokenListAdapter(
     private val context: Context,
@@ -54,6 +54,7 @@ class AddTokenListAdapter(
 ) : RecyclerView.Adapter<AddTokenListAdapter.TokenItemViewHolder>() {
 
     private var tokens: List<Token> = emptyList()
+    private val scope = CoroutineScope(Dispatchers.Main)
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -62,18 +63,23 @@ class AddTokenListAdapter(
                 this.tokens = tokens
                 notifyDataSetChanged()
             }
-            .launchIn(CoroutineScope(Dispatchers.Main))
+            .launchIn(scope)
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        scope.coroutineContext.cancelChildren()
     }
 
     override fun onBindViewHolder(holder: TokenItemViewHolder, position: Int) {
         val token = tokens[position]
-        val currencyCode = token.currencyCode.toLowerCase()
-        val tokenIconPath = TokenUtil.getTokenIconPath(context, currencyCode, true)
+        val currencyCode = token.currencyCode.toLowerCase(Locale.ROOT)
+        val tokenIconPath = TokenUtil.getTokenIconPath(currencyCode, true)
 
         val iconDrawable = holder.iconParent.background as GradientDrawable
 
         when {
-            tokenIconPath.isNullOrEmpty() -> {
+            tokenIconPath == null -> {
                 // If no icon is present, then use the capital first letter of the token currency code instead.
                 holder.iconLetter.visibility = View.VISIBLE
                 iconDrawable.setColor(Color.parseColor(token.startColor))
@@ -122,7 +128,7 @@ class AddTokenListAdapter(
         viewType: Int
     ): TokenItemViewHolder {
 
-        val inflater = (context as Activity).layoutInflater
+        val inflater = LayoutInflater.from(parent.context)
         val convertView = inflater.inflate(R.layout.token_list_item, parent, false)
 
         val holder = TokenItemViewHolder(convertView)

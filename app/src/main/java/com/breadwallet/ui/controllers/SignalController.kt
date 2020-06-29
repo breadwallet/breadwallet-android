@@ -30,6 +30,8 @@ import androidx.core.os.bundleOf
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
+import com.breadwallet.ui.controllers.SignalController.Companion.CLOSE_DELAY_MS
+import com.breadwallet.ui.controllers.SignalController.Listener
 import kotlinx.android.synthetic.main.fragment_signal.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -90,7 +92,7 @@ class SignalController(args: Bundle) : BaseController(args) {
         super.onAttach(view)
         viewAttachScope.launch(Dispatchers.Main) {
             delay(CLOSE_DELAY_MS)
-            (targetController as? Listener)?.onSignalComplete()
+            findListener<Listener>()?.onSignalComplete()
             router.popCurrentController()
         }
     }

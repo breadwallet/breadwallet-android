@@ -40,7 +40,7 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.BaseController
-import com.breadwallet.ui.navigation.NavigationEffect
+import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.asSupportUrl
 import com.breadwallet.ui.web.WebController
 import kotlinx.android.synthetic.main.controller_intro.*
@@ -86,7 +86,7 @@ class IntroController : BaseController() {
         }
         faq_button.setOnClickListener {
             if (!UiUtils.isClickAllowed()) return@setOnClickListener
-            val url = NavigationEffect.GoToFaq(BRConstants.FAQ_START_VIEW).asSupportUrl()
+            val url = NavigationTarget.SupportPage(BRConstants.FAQ_START_VIEW).asSupportUrl()
             router.pushController(
                 RouterTransaction.with(
                     WebController(url)
@@ -103,13 +103,13 @@ class IntroController : BaseController() {
 
     private fun startAnimations() {
         viewAttachScope.launch(Dispatchers.IO) {
-            val icons = TokenUtil.getTokenItems(applicationContext)
+            TokenUtil.waitUntilInitialized()
+            val icons = TokenUtil.getTokenItems()
                 .shuffled()
                 .take(ICONS_TO_SHOW)
-                .map { token ->
-                    TokenUtil.getTokenIconPath(applicationContext, token.symbol, false)
+                .mapNotNull { token ->
+                    TokenUtil.getTokenIconPath(token.symbol, false)
                 }
-                .filter { it.isNotBlank() }
 
             Main { loadViewsAndAnimate(icons) }
         }
