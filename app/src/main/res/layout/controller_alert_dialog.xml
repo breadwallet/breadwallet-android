@@ -54,7 +54,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:fontFamily="@font/circular_pro_bold" android:textAlignment="center"
+             android:textAlignment="center"
             android:textColor="?attr/secondary_text_color" android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/dialog_text" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/view6"/>
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:fontFamily="@font/circular_pro_book"
+
             android:gravity="center_horizontal|center_vertical"
             android:textColor="?attr/secondary_text_color"
             android:textSize="16sp"
@@ -82,7 +82,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1.0"
-            android:background="@android:color/transparent" android:fontFamily="@font/circular_pro_bold"
+            android:background="@android:color/transparent"
             app:buttonType="4" app:hasShadow="false"
             app:isBreadButton="true" app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/pos_button" app:layout_constraintStart_toStartOf="parent"
@@ -98,7 +98,7 @@
             android:layout_marginBottom="8dp"
             android:layout_weight="1.0"
             android:background="@android:color/transparent"
-            android:fontFamily="@font/circular_pro_bold"
+
             android:textColor="@color/white" app:buttonType="1"
             app:hasShadow="false" app:isBreadButton="true"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"

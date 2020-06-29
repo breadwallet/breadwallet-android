@@ -206,7 +206,7 @@
                 android:layout_marginEnd="@dimen/bread_margin"
                 android:layout_gravity="center"
                 android:background="@color/currency_buttons_color"
-                android:fontFamily="@font/circular_pro_bold"
+
                 android:text="@string/AccountCreation.create"
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_text_size"
@@ -252,7 +252,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1.5"
                 android:background="@color/currency_buttons_color"
-                android:fontFamily="@font/circular_pro_bold"
+
                 android:text="@string/Button.send"
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_text_size"
@@ -271,7 +271,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1.5"
                 android:background="@color/currency_buttons_color"
-                android:fontFamily="@font/circular_pro_bold"
+
                 android:text="@string/Button.receive"
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_text_size"
@@ -289,7 +289,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="0"
                 android:background="@color/currency_buttons_color"
-                android:fontFamily="@font/circular_pro_bold"
+
                 android:paddingTop="3dp"
                 android:text="Sell"
                 android:textColor="@color/white"

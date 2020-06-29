@@ -27,7 +27,7 @@
                 android:layout_centerInParent="true"
                 android:text="@string/PaymentConfirmation.title"
                 android:textSize="18sp"
-                android:fontFamily="@font/circular_pro_bold" />
+                 />
         </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

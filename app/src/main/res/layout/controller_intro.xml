@@ -63,7 +63,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="32dp"
-        android:fontFamily="@font/circular_pro_book"
+
         android:lineSpacingMultiplier="1.3"
         android:text="@string/OnboardingPageOne.title"
         android:textAlignment="center"
