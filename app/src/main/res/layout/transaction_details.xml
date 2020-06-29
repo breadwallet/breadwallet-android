@@ -71,7 +71,7 @@
                     android:layout_below="@id/tx_amount"
                     android:layout_centerHorizontal="true"
                     android:layout_marginStart="2dp"
-                    android:fontFamily="@font/circular_pro_bold"
+
                     android:textColor="@color/settings_chevron_right"
                     tools:text="X" />
 

@@ -21,7 +21,7 @@
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="@dimen/sub_header"
-        android:fontFamily="@font/circular_pro_medium"
+
         tools:text="USD ($)" />
 
     <ImageView
