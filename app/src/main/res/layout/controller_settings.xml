@@ -33,7 +33,7 @@
                 android:layout_marginStart="@dimen/bread_margin"
                 android:layout_marginTop="@dimen/bread_margin"
                 android:layout_marginEnd="@dimen/bread_margin"
-                android:fontFamily="@font/circular_pro_bold"
+
                 android:text="@string/MenuViewController.modalTitle"
                 android:textColor="@color/white"
                 android:textSize="20sp" />

@@ -18,7 +18,7 @@
         android:layout_marginTop="8dp"
         android:textColor="@color/white"
         android:textSize="@dimen/large_header"
-        android:fontFamily="@font/circular_pro_medium"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -64,7 +64,7 @@
         android:layout_marginTop="24dp"
         android:text="@string/Wallet.one_day"
         android:textColor="@color/white"
-        android:fontFamily="@font/circular_pro_medium"
+
         app:layout_constraintEnd_toStartOf="@id/one_week"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,7 +77,7 @@
         android:layout_marginStart="30dp"
         android:text="@string/Wallet.one_week"
         android:textColor="@color/white"
-        android:fontFamily="@font/circular_pro_medium"
+
         app:layout_constraintBottom_toBottomOf="@+id/one_day"
         app:layout_constraintEnd_toStartOf="@id/one_month"
         app:layout_constraintStart_toEndOf="@id/one_day"
@@ -90,7 +90,7 @@
         android:layout_marginStart="30dp"
         android:text="@string/Wallet.one_month"
         android:textColor="@color/white"
-        android:fontFamily="@font/circular_pro_medium"
+
         app:layout_constraintBottom_toBottomOf="@+id/one_week"
         app:layout_constraintEnd_toStartOf="@id/three_months"
         app:layout_constraintStart_toEndOf="@id/one_week"
@@ -103,7 +103,7 @@
         android:layout_marginStart="30dp"
         android:text="@string/Wallet.three_months"
         android:textColor="@color/white"
-        android:fontFamily="@font/circular_pro_medium"
+
         app:layout_constraintBottom_toBottomOf="@+id/one_month"
         app:layout_constraintEnd_toStartOf="@id/one_year"
         app:layout_constraintStart_toEndOf="@id/one_month"
@@ -116,7 +116,7 @@
         android:layout_marginStart="30dp"
         android:text="@string/Wallet.one_year"
         android:textColor="@color/white"
-        android:fontFamily="@font/circular_pro_medium"
+
         app:layout_constraintBottom_toBottomOf="@+id/three_months"
         app:layout_constraintEnd_toStartOf="@id/three_years"
         app:layout_constraintStart_toEndOf="@id/three_months"
@@ -129,7 +129,7 @@
         android:layout_marginStart="30dp"
         android:text="@string/Wallet.three_years"
         android:textColor="@color/white"
-        android:fontFamily="@font/circular_pro_medium"
+
         app:layout_constraintBottom_toBottomOf="@+id/one_year"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/one_year"
