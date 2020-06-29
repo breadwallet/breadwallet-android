@@ -92,13 +92,16 @@ class LegacyAddressHandler(
                         val cryptoRequest = CryptoRequest.Builder()
                             .setAddress(effect.address)
                             .build()
-                        val cryptoUri = cryptoUriParser.createUrl(btc, cryptoRequest)
-                        QRUtils.sendShareIntent(
-                            context,
-                            cryptoUri.toString(),
-                            effect.address,
-                            effect.walletName
-                        )?.run(controller::startActivity)
+                        cryptoUriParser.createUrl(btc, cryptoRequest)
+                            ?.let { cryptoUri ->
+                                QRUtils.sendShareIntent(
+                                    context,
+                                    cryptoUri.toString(),
+                                    effect.address,
+                                    effect.walletName
+                                )
+                            }
+                            ?.run(controller::startActivity)
                     } else {
                         controller.requestPermissions(
                             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
