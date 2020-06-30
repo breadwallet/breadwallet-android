@@ -81,9 +81,6 @@ import com.platform.interfaces.KVStoreProvider
 import com.platform.interfaces.MetaDataManager
 import com.platform.interfaces.WalletProvider
 import com.platform.tools.KVStoreManager
-import drewcarlson.coingecko.CoinGeckoService
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -305,9 +302,10 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         bind<AccountMetaDataProvider>() with singleton { metaDataManager }
 
-        val httpClient = OkHttpClient()
+        bind<OkHttpClient>() with singleton { OkHttpClient() }
 
         bind<BlockchainDb>() with singleton {
+            val httpClient = instance<OkHttpClient>()
             val authInterceptor = BdbAuthInterceptor(httpClient, direct.instance())
             BlockchainDb(
                 httpClient.newBuilder()
@@ -317,7 +315,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         }
 
         bind<PayIdService>() with singleton {
-            PayIdService(httpClient)
+            PayIdService(instance())
         }
 
         bind<BreadBox>() with singleton {
@@ -335,11 +333,9 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         bind<RatesRepository>() with singleton { RatesRepository.getInstance(this@BreadApp) }
 
         bind<RatesFetcher>() with singleton {
-            val httpClient = HttpClient(OkHttp)
-            val coinGecko = CoinGeckoService(httpClient)
             RatesFetcher(
                 instance(),
-                coinGecko,
+                instance(),
                 this@BreadApp
             )
         }

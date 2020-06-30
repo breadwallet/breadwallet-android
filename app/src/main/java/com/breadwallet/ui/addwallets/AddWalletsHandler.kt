@@ -59,7 +59,7 @@ fun createAddWalletsHandler(
 
 fun List<String>.toTokenItems(): List<TokenItem> {
     return this.mapNotNull {
-        TokenUtil.getTokenItemForCurrencyId(it)
+        TokenUtil.tokenForCurrencyId(it)
     }
 }
 

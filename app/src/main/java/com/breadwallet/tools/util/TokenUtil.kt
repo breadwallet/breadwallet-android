@@ -63,7 +63,7 @@ object TokenUtil {
     private const val FIELD_CURRENCY_ID = "currency_id"
     private const val FIELD_TYPE = "type"
     private const val FIELD_ALTERNATE_NAMES = "alternate_names"
-    private const val FIELD_CRYPTOCOMPARE = "cryptocompare"
+    private const val FIELD_COINGECK_ID = "coingecko"
     private const val ICON_DIRECTORY_NAME_WHITE_NO_BACKGROUND = "white-no-bg"
     private const val ICON_DIRECTORY_NAME_WHITE_SQUARE_BACKGROUND = "white-square-bg"
     private const val ICON_FILE_NAME_FORMAT = "%s.png"
@@ -98,7 +98,7 @@ object TokenUtil {
                     .use { it.readText() }
 
                 // Copy the APK tokens.json to a file on internal storage
-                saveTokenListToFile(context, tokens)
+                saveDataToFile(context, tokens, TOKENS_FILENAME)
                 loadTokens(parseJsonToTokenList(tokens))
                 initLock.unlock()
             } catch (e: IOException) {
@@ -126,22 +126,6 @@ object TokenUtil {
         return getInstance(context).sendRequest(request, true)
     }
 
-    /**
-     * This method fetches a specific token by saleAddress
-     *
-     * @param saleAddress Optional sale address value if we are looking for a specific token response.
-     */
-    fun getTokenItem(saleAddress: String): TokenItem? {
-        val url = getBaseURL() + ENDPOINT_CURRENCIES_SALE_ADDRESS + saleAddress
-        val response = fetchTokensFromServer(url)
-        if (response.isSuccessful && response.bodyText.isNotEmpty()) {
-            val tokenItems = parseJsonToTokenList(response.bodyText)
-            // The response in this case should contain exactly 1 token item.
-            return tokenItems.singleOrNull()
-        }
-        return null
-    }
-
     @Synchronized
     fun getTokenItems(): List<TokenItem> {
         if (tokenItems.isEmpty()) {
@@ -156,8 +140,25 @@ object TokenUtil {
      * @param currencyCode The currency code of the token we are looking.
      * @return The TokenItem with the given currency code or null.
      */
-    fun getTokenItemByCurrencyCode(currencyCode: String): TokenItem? {
-        return tokenMap[currencyCode.toLowerCase()]
+    fun tokenForCode(currencyCode: String): TokenItem? {
+        return tokenMap[currencyCode.toLowerCase(Locale.ROOT)]
+    }
+
+    fun tokenForCoingeckoId(coingeckoId: String): TokenItem? {
+        val matches = coingeckoIdMap.filterValues { coingeckoId.equals(it, true) }
+        return matches.keys.firstOrNull()?.run(::tokenForCode)
+            ?: tokenItems.firstOrNull {
+                coingeckoId.equals(it.coingeckoId, true)
+            }
+    }
+
+    fun tokenForCurrencyId(currencyId: String): TokenItem? {
+        return tokenItems.find { it.currencyId.equals(currencyId, true) }
+    }
+
+    fun coingeckoIdForCode(code: String): String? {
+        return coingeckoIdMap[code.toUpperCase(Locale.ROOT)]
+            ?: tokenForCode(code)?.coingeckoId
     }
 
     private fun fetchTokensFromServer() {
@@ -170,7 +171,7 @@ object TokenUtil {
 
                 // Check if the response from the server is valid JSON before trying to save & parse.
                 if (Utils.isValidJSON(responseBody)) {
-                    saveTokenListToFile(context, responseBody)
+                    saveDataToFile(context, responseBody, TOKENS_FILENAME)
                     loadTokens(parseJsonToTokenList(responseBody))
                 }
             }
@@ -196,9 +197,9 @@ object TokenUtil {
         }.filterNotNull().run(::ArrayList)
     }
 
-    private fun saveTokenListToFile(context: Context, jsonResponse: String) {
+    private fun saveDataToFile(context: Context, jsonResponse: String, fileName: String) {
         try {
-            File(context.filesDir.absolutePath, TOKENS_FILENAME).writeText(jsonResponse)
+            File(context.filesDir.absolutePath, fileName).writeText(jsonResponse)
         } catch (e: IOException) {
             BRReportsManager.error("Failed to write tokens.json file", e)
         }
@@ -252,18 +253,6 @@ object TokenUtil {
         return tokenMap[symbol.toLowerCase(Locale.ROOT)]?.isSupported ?: true
     }
 
-    /**
-     * Returns the currency code to be used when fetching the exchange rate for the token with the
-     * given currency code.
-     *
-     * @param currencyCode the currency code
-     * @return
-     */
-    fun getExchangeRateCode(currencyCode: String): String {
-        val code = currencyCode.toLowerCase(Locale.ROOT)
-        return tokenMap[code]?.exchangeRateCurrencyCode ?: currencyCode
-    }
-
     private fun loadTokens(tokenItems: List<TokenItem>) {
         val native = tokenItems.filter(TokenItem::isNative).sortedBy { it.name }
         val tokens = tokenItems.filterNot(TokenItem::isNative).sortedBy { it.symbol }
@@ -271,10 +260,6 @@ object TokenUtil {
         tokenMap = this.tokenItems.associateBy { item ->
             item.symbol.toLowerCase(Locale.ROOT)
         }
-    }
-
-    fun getTokenItemForCurrencyId(currencyId: String): TokenItem? {
-        return tokenItems.find { it.currencyId.equals(currencyId, true) }
     }
 
     private fun JSONObject.asTokenItem(): TokenItem? = try {
@@ -290,18 +275,19 @@ object TokenUtil {
             } else this
         }
 
+        val name = getString(FIELD_NAME)
         TokenItem(
             address = getStringOrNull(FIELD_CONTRACT_ADDRESS),
             symbol = getString(FIELD_CODE),
-            name = getString(FIELD_NAME),
+            name = name,
             image = null,
             isSupported = getBooleanOrDefault(FIELD_IS_SUPPORTED, true),
             currencyId = currencyId,
             type = getString(FIELD_TYPE),
             startColor = startColor,
             endColor = endColor,
-            cryptocompareAlias = getJSONObjectOrNull(FIELD_ALTERNATE_NAMES)
-                ?.getStringOrNull(FIELD_CRYPTOCOMPARE)
+            coingeckoId = getJSONObjectOrNull(FIELD_ALTERNATE_NAMES)
+                ?.getStringOrNull(FIELD_COINGECK_ID)
         )
     } catch (e: JSONException) {
         BRReportsManager.error("Token JSON: $this")

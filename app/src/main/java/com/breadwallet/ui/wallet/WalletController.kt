@@ -530,7 +530,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
 
     private fun updateUi() {
         val resources = checkNotNull(resources)
-        val token = TokenUtil.getTokenItemByCurrencyCode(currencyCode) ?: return
+        val token = TokenUtil.tokenForCode(currencyCode) ?: return
 
         val startColor = token.startColor
         val endColor = token.endColor

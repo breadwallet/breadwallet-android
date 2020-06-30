@@ -150,6 +150,11 @@ class MetaDataManager(
         }
     }
 
+    override fun enableWallets(currencyIds: List<String>) {
+        val enabledWallets = getEnabledWalletsUnsafe().orEmpty()
+        putEnabledWallets(enabledWallets.union(currencyIds).toList())
+    }
+
     override fun disableWallet(currencyId: String) {
         getEnabledWalletsUnsafe()
             ?.toMutableList()
