@@ -296,7 +296,6 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-    implementation("io.ktor:ktor-client-okhttp:$ktor_version")
 
     // Mobius
     implementation "com.spotify.mobius:mobius-core:$mobius_version"
@@ -307,9 +306,6 @@ dependencies {
 
     compileOnly "drewcarlson.switchboard:api-mobius:$switchboard_version"
     kapt "drewcarlson.switchboard:generator-mobius:$switchboard_version"
-
-    // CoinGecko
-    implementation "drewcarlson.coingecko:coingecko-jvm:$coingecko_version"
 
     // Fastadapter
     implementation "com.mikepenz:fastadapter:$fastadapter_version"
