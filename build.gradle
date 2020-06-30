@@ -32,12 +32,6 @@ plugins {
 
 
 allprojects  {
-
-
-
-
-
-
     repositories {
         exclusiveContent {
             forRepository {
