@@ -24,6 +24,12 @@
  */
 package com.breadwallet.model
 
+import com.breadwallet.BuildConfig
+import com.breadwallet.util.isBitcoin
+import com.breadwallet.util.isBitcoinCash
+import com.breadwallet.util.isEthereum
+import com.breadwallet.util.isRipple
+
 data class TokenItem(
     val address: String?,
     val symbol: String,
@@ -47,4 +53,22 @@ data class TokenItem(
         }
 
     val isNative: Boolean = type.isBlank()
+
+    val urlScheme: String?
+        get() = when {
+            symbol.isEthereum() || type == "erc20" -> "ethereum"
+            symbol.isRipple() -> "xrp"
+            symbol.isBitcoin() -> "bitcoin"
+            symbol.isBitcoinCash() -> when {
+                BuildConfig.BITCOIN_TESTNET -> "bchtest"
+                else -> "bitcoincash"
+            }
+            else -> null
+        }
+
+    val urlSchemes: List<String>
+        get() = when {
+            symbol.isRipple() -> listOf(urlScheme!!, "xrpl", "ripple")
+            else -> urlScheme?.run(::listOf) ?: emptyList()
+        }
 }
