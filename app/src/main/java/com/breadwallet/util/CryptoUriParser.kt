@@ -34,6 +34,9 @@ import com.breadwallet.breadbox.urlSchemes
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.tools.util.eth
+import kotlinx.coroutines.flow.first
 import java.math.BigDecimal
 import java.util.HashMap
 
@@ -41,11 +44,15 @@ private const val AMOUNT = "amount"
 private const val VALUE = "value"
 private const val LABEL = "label"
 private const val MESSAGE = "message"
+
 /** "req" parameter, whose value is a required variable which are prefixed with a req-. */
 private const val REQ = "req"
+
 /** "r" parameter, whose value is a URL from which a PaymentRequest message should be fetched */
 private const val R_URL = "r"
 private const val TOKEN_ADDRESS = "tokenaddress"
+private const val TARGET_ADDRESS = "address"
+private const val UINT256 = "uint256"
 private const val DESTINATION_TAG = "dt"
 
 class CryptoUriParser(
@@ -53,15 +60,14 @@ class CryptoUriParser(
 ) {
 
     @Suppress("ComplexMethod")
-    fun createUrl(currencyCode: String, request: CryptoRequest): Uri {
+    suspend fun createUrl(currencyCode: String, request: CryptoRequest): Uri? {
         require(currencyCode.isNotBlank())
 
         val uriBuilder = Uri.Builder()
 
-        val system = checkNotNull(breadBox.getSystemUnsafe())
-        val wallet = checkNotNull(system.wallets.find {
+        val wallet = breadBox.wallets().first().find {
             it.currency.code.equals(currencyCode, true)
-        })
+        } ?: return null
 
         uriBuilder.scheme(wallet.urlScheme)
 
@@ -102,9 +108,9 @@ class CryptoUriParser(
         return Uri.parse(uriBuilder.build().toString().replace("/", ""))
     }
 
-    fun isCryptoUrl(url: String): Boolean {
+    suspend fun isCryptoUrl(url: String): Boolean {
         val request = parseRequest(url)
-        val wallets = checkNotNull(breadBox.getSystemUnsafe()).wallets
+        val wallets = breadBox.wallets().first()
         return if (request != null && request.scheme.isNotBlank()) {
             val wallet = wallets.firstOrNull {
                 it.urlSchemes.contains(request.scheme)
@@ -120,7 +126,7 @@ class CryptoUriParser(
     fun parseRequest(requestString: String): CryptoRequest? {
         if (requestString.isBlank()) return null
 
-        val wallets = checkNotNull(breadBox.getSystemUnsafe()).wallets
+        val tokens = TokenUtil.getTokenItems()
 
         val builder = CryptoRequest.Builder()
 
@@ -135,20 +141,27 @@ class CryptoUriParser(
 
         val tokenAddress = uri.getQueryParameter(TOKEN_ADDRESS) ?: ""
         if (tokenAddress.isNotBlank()) {
-            val tokenWallet = wallets.firstOrNull { it.currency.uids.contains(tokenAddress) }
+            val tokenWallet = tokens.firstOrNull { it.currencyId.endsWith(tokenAddress) }
             if (tokenWallet == null) {
                 return null
             } else {
-                builder.currencyCode = tokenWallet.currency.code
+                builder.currencyCode = tokenWallet.symbol
+            }
+        } else if (builder.scheme.contains("ethereum")) {
+            if (uri.queryParameterNames.contains(TARGET_ADDRESS)) {
+                builder.currencyCode = tokens.firstOrNull {
+                    it.currencyId.endsWith(builder.address)
+                }?.symbol
+                builder.address = uri.getQueryParameter(TARGET_ADDRESS)
+                builder.amount = uri.getQueryParameter(UINT256)?.toBigDecimalOrNull()
+                return builder.build()
+            } else {
+                builder.currencyCode = eth
             }
         } else {
-            builder.currencyCode = wallets
-                .mapNotNull { wallet ->
-                    if (wallet.urlSchemes.contains(uri.scheme)) {
-                        wallet.currency.code
-                    } else null
-                }
-                .firstOrNull()
+            builder.currencyCode = TokenUtil.getTokenItems()
+                .firstOrNull { it.urlSchemes.contains(uri.scheme) }
+                ?.symbol
         }
 
         if (builder.currencyCode.isNullOrBlank()) {

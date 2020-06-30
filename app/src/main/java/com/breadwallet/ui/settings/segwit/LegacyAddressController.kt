@@ -30,6 +30,7 @@ import android.view.View
 import androidx.core.view.contains
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.logger.logError
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.qrcode.QRUtils
@@ -113,9 +114,13 @@ class LegacyAddressController(
             val request = CryptoRequest.Builder()
                 .setAddress(receiveAddress)
                 .build()
-            val uri = cryptoUriParser.createUrl(btc, request)
-            if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
-                error("failed to generate qr image for address")
+            viewAttachScope.launch(Dispatchers.Main) {
+                cryptoUriParser.createUrl(btc, request)?.let { uri ->
+                    if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
+                        logError("failed to generate qr image for address")
+                        router.popCurrentController()
+                    }
+                }
             }
         }
     }

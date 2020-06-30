@@ -44,6 +44,7 @@ import com.breadwallet.logger.logInfo
 import com.breadwallet.logger.logWarning
 import com.breadwallet.tools.crypto.CryptoHelper.hexDecode
 import com.breadwallet.tools.crypto.CryptoHelper.hexEncode
+import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.Dispatchers
@@ -282,8 +283,6 @@ class CryptoUserManager(
             (BRKeyStore.getMasterPublicKey() != null || BRKeyStore.hasAccountBytes())
 
     override fun getState(): BrdUserState = when {
-        // Cannot create/use phrase key, device lock must be enabled
-        !keyguard.isKeyguardSecure -> BrdUserState.KeyStoreInvalid.Lock
         // Account invalidated and phrase not provided or phrase Key invalidated, recovery required
         accountInvalidated.get() || !isPhraseKeyValid() -> if (requiresUninstall()) {
             BrdUserState.KeyStoreInvalid.Uninstall
@@ -647,7 +646,7 @@ class CryptoUserManager(
             return true
         }
 
-        return try {
+        return runCatching {
             // Attempt to retrieve the key that protects the paper key and initialize an encryption cipher.
             val key = KeyStore.getInstance(ANDROID_KEY_STORE)
                 .apply { load(null) }
@@ -659,7 +658,7 @@ class CryptoUserManager(
                 cipher.init(Cipher.ENCRYPT_MODE, key)
             }
             true
-        } catch (e: KeyPermanentlyInvalidatedException) {
+        }.recoverCatching { e ->
             // If KeyPermanentlyInvalidatedException
             //  -> with no cause happens, then the password was disabled. See DROID-1019.
             // If UnrecoverableKeyException
@@ -668,18 +667,10 @@ class CryptoUserManager(
             //  -> with cause "Key not found" happens then after DROID-1019 the app was opened again while password is off.
             //  -> with cause "System error" (KeyStoreException) after app wipe on devices that need uninstall to recover.
             // Note: These exceptions would happen before a UserNotAuthenticatedException, so we don't need to handle that.
-            logError("Phrase key permanently invalidated", e)
-            false
-        } catch (e: UnrecoverableKeyException) {
-            logError("Phrase key is unrecoverable", e)
-            false
-        } catch (e: GeneralSecurityException) {
-            logWarning("Phrase key may still be valid.", e)
-            true
-        } catch (e: IOException) {
-            logWarning("Phrase key may still be valid.", e)
-            true
-        }
+            (e !is KeyPermanentlyInvalidatedException && e !is UnrecoverableKeyException).also { isValid ->
+                if (!isValid) BRReportsManager.error("Phrase key permanently invalidated", e)
+            }
+        }.getOrDefault(false)
     }
 
     private fun requiresUninstall(): Boolean {

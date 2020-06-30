@@ -26,6 +26,7 @@ package com.breadwallet.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.security.keystore.UserNotAuthenticatedException
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
@@ -64,10 +65,10 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -119,7 +120,12 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         trackingListener = ControllerTrackingListener(this).also(router::addChangeListener)
 
         BreadApp.applicationScope.launch(Main) {
-            userManager.checkAccountInvalidated()
+            try {
+                userManager.checkAccountInvalidated()
+            } catch (e: UserNotAuthenticatedException) {
+                finish()
+                return@launch
+            }
             if (userManager.getState() is BrdUserState.KeyStoreInvalid) {
                 return@launch
             }
@@ -178,7 +184,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         BreadApp.setBreadContext(this)
 
         userManager.stateChanges()
-            .onStart { userManager.checkAccountInvalidated() }
+            .dropWhile { router.backstackSize == 0 }
             .map { processUserState(it) }
             .flowOn(Main)
             .launchIn(resumedScope)
