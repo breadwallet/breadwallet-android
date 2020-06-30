@@ -34,8 +34,11 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import cash.just.support.BottomSheetSupportDialogFragment
+import cash.just.support.SupportPage
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
@@ -196,7 +199,16 @@ class SendSheetController(args: Bundle? = null) :
             textInputDestinationTag.textChanges().map {
                 E.TransferFieldUpdate.Value(TransferField.DESTINATION_TAG, it)
             },
-            buttonFaq.clicks().map { E.OnFaqClicked },
+            buttonFaq.clicks().map {
+                activity?.let {
+                    if (it is AppCompatActivity) {
+                       val fragment = BottomSheetSupportDialogFragment.newInstance(SupportPage.SEND)
+                       fragment.show(it.supportFragmentManager, "tag")
+                    }
+                }
+
+                E.ConsumeEvent
+            },
             buttonScan.clicks().map { E.OnScanClicked },
             buttonSend.clicks().map { E.OnSendClicked },
             buttonClose.clicks().map {
