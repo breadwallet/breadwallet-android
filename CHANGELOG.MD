@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [Unreleased]
+## Updated
+- CashUI was updated to the 1.0.4.
+
+## [4.4.3 (40428001)]
+## Changed
+- BRDClient token has been changed.
+## Added
+- Added the supportPages (CashUI 1.0.3) for RECEIVE and SEND tips.
+## Updated
+- CashSDK was updated to the 1.3
+
 ## [4.4.2 (40428001)]
 ## Fixed
 - Changed the text on the text screen in onboarding to "Welcome to Coinsquare networks"
