@@ -25,7 +25,6 @@
 package com.breadwallet.ui.send
 
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -37,7 +36,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import cash.just.support.BottomSheetSupportDialogFragment
+import cash.just.support.CashSupport
 import cash.just.support.SupportPage
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
@@ -202,8 +201,9 @@ class SendSheetController(args: Bundle? = null) :
             buttonFaq.clicks().map {
                 activity?.let {
                     if (it is AppCompatActivity) {
-                       val fragment = BottomSheetSupportDialogFragment.newInstance(SupportPage.SEND)
-                       fragment.show(it.supportFragmentManager, "tag")
+                        val fragment = CashSupport.Builder().detail(SupportPage.SEND).build()
+                            .createDialogFragment()
+                        fragment.show(it.supportFragmentManager, "tag")
                     }
                 }
 

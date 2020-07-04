@@ -26,6 +26,8 @@ package com.breadwallet.ui.navigation
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import cash.just.support.CashSupport
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router
@@ -297,12 +299,8 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
-        router.pushController(
-            WebController(effect.asSupportUrl()).asTransaction(
-                BottomSheetChangeHandler(),
-                BottomSheetChangeHandler()
-            )
-        )
+        CashSupport.Builder().build()
+            .createDialogFragment().show((router.activity!! as AppCompatActivity).supportFragmentManager, "tag")
     }
 
     override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {

@@ -178,8 +178,8 @@ class SettingsScreenHandler(
             // ),
             SettingsItem(
                 context.getString(R.string.MenuButton_scan),
-                SettingsOption.SCAN_QR,
-                R.drawable.ic_camera
+                SettingsOption.TRANSFER,
+                R.drawable.ic_arrow_left
             ),
             SettingsItem(
                 context.getString(R.string.Settings_preferences),
@@ -191,11 +191,11 @@ class SettingsScreenHandler(
                 SettingsOption.SECURITY_SETTINGS,
                 R.drawable.ic_security_settings
             ),
-            // SettingsItem(
-            //     context.getString(R.string.MenuButton_support),
-            //     SettingsOption.SUPPORT,
-            //     R.drawable.ic_support
-            // ),
+            SettingsItem(
+                context.getString(R.string.MenuButton_support),
+                SettingsOption.SUPPORT,
+                R.drawable.ic_support
+            ),
             SettingsItem(
                 context.getString(R.string.Settings_review),
                 SettingsOption.SUBMIT_REVIEW,

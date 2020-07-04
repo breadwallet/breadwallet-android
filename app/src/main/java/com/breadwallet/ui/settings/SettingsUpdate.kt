@@ -91,6 +91,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
         return dispatch(
             setOf(
                 when (event.option) {
+                    SettingsOption.TRANSFER -> F.GoToAtmMap
                     SettingsOption.SCAN_QR -> F.GoToQrScan
                     SettingsOption.PREFERENCES -> F.GoToSection(SettingsSection.PREFERENCES)
                     SettingsOption.SECURITY_SETTINGS -> F.GoToSection(SettingsSection.SECURITY)

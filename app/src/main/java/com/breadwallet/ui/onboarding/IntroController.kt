@@ -25,6 +25,8 @@
 package com.breadwallet.ui.onboarding
 
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import cash.just.support.CashSupport
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
@@ -61,12 +63,8 @@ class IntroController : BaseController() {
         }
         faq_button.setOnClickListener {
             if (!UiUtils.isClickAllowed()) return@setOnClickListener
-            val url = NavigationEffect.GoToFaq(BRConstants.FAQ_START_VIEW).asSupportUrl()
-            router.pushController(
-                RouterTransaction.with(
-                    WebController(url)
-                )
-            )
+            CashSupport.Builder().build()
+                .createDialogFragment().show((activity as AppCompatActivity).supportFragmentManager, "tag")
         }
     }
 

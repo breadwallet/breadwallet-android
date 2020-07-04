@@ -30,6 +30,7 @@ enum class SettingsOption {
     PREFERENCES,
     SECURITY_SETTINGS,
     SUPPORT,
+    TRANSFER,
     SUBMIT_REVIEW,
     REWARDS,
     ABOUT,
