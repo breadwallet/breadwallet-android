@@ -178,8 +178,8 @@ class SettingsScreenHandler(
             // ),
             SettingsItem(
                 context.getString(R.string.MenuButton_scan),
-                SettingsOption.TRANSFER,
-                R.drawable.ic_arrow_left
+                SettingsOption.SCAN_QR,
+                R.drawable.ic_camera
             ),
             SettingsItem(
                 context.getString(R.string.Settings_preferences),
