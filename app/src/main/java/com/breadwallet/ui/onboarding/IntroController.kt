@@ -27,6 +27,7 @@ package com.breadwallet.ui.onboarding
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import cash.just.support.CashSupport
+import cash.just.support.SupportPage
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
@@ -63,7 +64,7 @@ class IntroController : BaseController() {
         }
         faq_button.setOnClickListener {
             if (!UiUtils.isClickAllowed()) return@setOnClickListener
-            CashSupport.Builder().build()
+            CashSupport.Builder().detail(SupportPage.GET_STARTED).build()
                 .createDialogFragment().show((activity as AppCompatActivity).supportFragmentManager, "tag")
         }
     }
