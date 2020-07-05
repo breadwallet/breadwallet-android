@@ -41,6 +41,7 @@ import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.ui.settings.analytics.ShareDataController
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.util.BRConstants.FAQ_RESET_PIN_WITH_PAPER_KEY
+import com.breadwallet.tools.util.BRConstants.FAQ_SET_PIN
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
@@ -301,7 +302,7 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
-        if (effect.articleId == FAQ_RESET_PIN_WITH_PAPER_KEY) {
+        if (effect.articleId == FAQ_SET_PIN) {
             CashSupport.Builder().detail(SupportPage.PIN).build()
                 .createDialogFragment().show((router.activity!! as AppCompatActivity).supportFragmentManager, "tag")
         } else {
