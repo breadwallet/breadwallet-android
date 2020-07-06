@@ -26,6 +26,9 @@ package com.breadwallet.ui.navigation
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import cash.just.support.CashSupport
+import cash.just.support.GeneralSupportPage
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router
@@ -35,17 +38,15 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
-import com.breadwallet.ui.settings.analytics.ShareDataController
 import com.breadwallet.tools.animation.UiUtils
+import com.breadwallet.tools.util.BRConstants.FAQ_SET_PIN
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
-import com.breadwallet.ui.settings.about.AboutController
 import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.atm.MapController
 import com.breadwallet.ui.atm.StatusListController
-import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.home.HomeController
@@ -59,6 +60,8 @@ import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.settings.SettingsController
+import com.breadwallet.ui.settings.about.AboutController
+import com.breadwallet.ui.settings.analytics.ShareDataController
 import com.breadwallet.ui.settings.currency.DisplayCurrencyController
 import com.breadwallet.ui.settings.fastsync.FastSyncController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
@@ -297,12 +300,14 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
-        router.pushController(
-            WebController(effect.asSupportUrl()).asTransaction(
-                BottomSheetChangeHandler(),
-                BottomSheetChangeHandler()
-            )
-        )
+        if (effect.articleId == FAQ_SET_PIN) {
+            CashSupport.Builder().detail(GeneralSupportPage.PIN).build()
+                .createDialogFragment().show((router.activity!! as AppCompatActivity).supportFragmentManager, "tag")
+        } else {
+            CashSupport.Builder().build()
+                .createDialogFragment()
+                .show((router.activity!! as AppCompatActivity).supportFragmentManager, "tag")
+        }
     }
 
     override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {

@@ -30,8 +30,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import cash.just.support.BottomSheetSupportDialogFragment
-import cash.just.support.SupportPage
+import cash.just.support.CashSupport
+import cash.just.support.GeneralSupportPage
 
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
@@ -144,7 +144,8 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
         faq_button.setOnClickListener {
             activity?.let {
                 if (it is AppCompatActivity) {
-                    val fragment = BottomSheetSupportDialogFragment.newInstance(SupportPage.RECEIVE)
+                    val fragment = CashSupport.Builder().detail(GeneralSupportPage.RECEIVE).build()
+                        .createDialogFragment()
                     fragment.show(it.supportFragmentManager, "tag")
                 }
             }
