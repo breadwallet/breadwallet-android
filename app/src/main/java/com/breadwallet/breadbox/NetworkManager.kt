@@ -86,6 +86,7 @@ class NetworkManager(
     fun initializeNetwork(network: Network) {
         if (system.walletManagers.any { it.network == network }) {
             logDebug("WalletManager for network (${network.uids}) already exists.")
+            networkState[network.currency.uids] = NetworkState.Initialized
             return
         }
         scope.launch {
