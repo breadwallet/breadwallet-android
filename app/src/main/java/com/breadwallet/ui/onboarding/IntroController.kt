@@ -27,17 +27,13 @@ package com.breadwallet.ui.onboarding
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import cash.just.support.CashSupport
-import cash.just.support.SupportPage
+import cash.just.support.GeneralSupportPage
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.tools.animation.UiUtils
-import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.BaseController
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.asSupportUrl
-import com.breadwallet.ui.web.WebController
 import kotlinx.android.synthetic.main.controller_intro.*
 
 /**
@@ -64,7 +60,7 @@ class IntroController : BaseController() {
         }
         faq_button.setOnClickListener {
             if (!UiUtils.isClickAllowed()) return@setOnClickListener
-            CashSupport.Builder().detail(SupportPage.GET_STARTED).build()
+            CashSupport.Builder().detail(GeneralSupportPage.GET_STARTED).build()
                 .createDialogFragment().show((activity as AppCompatActivity).supportFragmentManager, "tag")
         }
     }

@@ -37,7 +37,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import cash.just.support.CashSupport
-import cash.just.support.SupportPage
+import cash.just.support.GeneralSupportPage
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
@@ -201,7 +201,7 @@ class SendSheetController(args: Bundle? = null) :
             buttonFaq.clicks().map {
                 activity?.let {
                     if (it is AppCompatActivity) {
-                        val fragment = CashSupport.Builder().detail(SupportPage.SEND).build()
+                        val fragment = CashSupport.Builder().detail(GeneralSupportPage.SEND).build()
                             .createDialogFragment()
                         fragment.show(it.supportFragmentManager, "tag")
                     }
