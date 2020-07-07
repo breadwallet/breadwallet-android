@@ -4,7 +4,7 @@ import android.content.Context
 import cash.just.sdk.model.AtmMachine
 import com.google.android.gms.maps.model.MarkerOptions
 
-class WacMarker {
+class AtmMarker {
     companion object {
         fun getMarker(context:Context, atm : AtmMachine): MarkerOptions {
             return AtmMarkerInfo(atm).toMarkerOptions(context)

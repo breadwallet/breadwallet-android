@@ -43,7 +43,7 @@ import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.atm.model.AtmClusterRenderer
 import com.breadwallet.ui.atm.model.AtmMarkerInfo
 import com.breadwallet.ui.atm.model.ClusteredAtm
-import com.breadwallet.ui.atm.model.WacMarker
+import com.breadwallet.ui.atm.model.AtmMarker
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -235,7 +235,7 @@ class MapController(
     private fun addAtmMarkers(map:GoogleMap, list:List<AtmMachine>) {
         map.clear()
         list.forEach { atm ->
-            val markerOpt = WacMarker.getMarker(applicationContext!!, atm)
+            val markerOpt = AtmMarker.getMarker(applicationContext!!, atm)
             val marker = map.addMarker(markerOpt)
             marker.tag = atm
         }

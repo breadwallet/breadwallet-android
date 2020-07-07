@@ -32,7 +32,7 @@ open class AtmItem(var atmMachine: AtmMachine) : AbstractItem<AtmItem.ViewHolder
 
         override fun bindView(item: AtmItem, payloads: MutableList<Any>) {
             name.text = item.atmMachine.addressDesc
-            description.text = item.atmMachine.detail
+            description.text = "${item.atmMachine.city} ${item.atmMachine.zip}"
         }
     }
 }
