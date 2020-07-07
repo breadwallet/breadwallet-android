@@ -28,7 +28,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import cash.just.support.CashSupport
-import cash.just.support.GeneralSupportPage
+import cash.just.support.pages.GeneralSupportPage
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router

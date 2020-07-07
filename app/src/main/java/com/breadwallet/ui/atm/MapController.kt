@@ -30,6 +30,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import cash.just.sdk.Cash
 import cash.just.sdk.CashSDK
 import cash.just.sdk.model.AtmListResponse
@@ -39,8 +40,8 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.atm.model.AtmClusterRenderer
-import com.breadwallet.ui.atm.model.ClusteredAtm
 import com.breadwallet.ui.atm.model.AtmMarkerInfo
+import com.breadwallet.ui.atm.model.ClusteredAtm
 import com.breadwallet.ui.atm.model.WacMarker
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -48,14 +49,26 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.clustering.ClusterManager
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.platform.PlatformTransactionBus
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
+import okhttp3.internal.filterList
 import retrofit2.Call
 import retrofit2.Response
+
+enum class ATMViewMode {
+    MAP,
+    LIST
+}
+
+enum class ATMMode {
+    ALL,
+    REDEMPTION
+}
 
 @Suppress("TooManyFunctions")
 class MapController(
@@ -63,6 +76,8 @@ class MapController(
 ) : BaseController(args) {
 
     override val layoutId = R.layout.fragment_map
+    private var viewMode:ATMViewMode = ATMViewMode.MAP
+    private var atmMode:ATMMode = ATMMode.ALL
 
     private var map:GoogleMap? = null
     private var atmList: List<AtmMachine> = ArrayList()
@@ -75,12 +90,16 @@ class MapController(
     private val enableMapClusters = false
     @Suppress("MagicNumber")
     private val clustersThreshold = 100
-
+    private var isAllAtms = true
+    private val fastAdapter = FastItemAdapter<AtmItem>()
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         appContext = view.context.applicationContext
         prepareMap(view.context)
+        buttonRedeemOnly.isEnabled = false
+        loadingView.visibility = View.VISIBLE
+        atmRecyclerList.visibility = View.GONE
 
         if (!CashSDK.isSessionCreated()) {
             Log.d("MapController", "Creating session")
@@ -105,18 +124,83 @@ class MapController(
             //     moveToVerification(getAtmMachineMock())
             // }
         }
+
+        atmRecyclerList.layoutManager = LinearLayoutManager(
+            router.activity,
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+
+        atmRecyclerList.adapter = fastAdapter
+
+        fastAdapter.onClickListener = { _, _, item, _ ->
+            // Handle click here
+            moveToVerification(item.atmMachine)
+            false
+        }
+
+        listMapButton.setOnClickListener {
+            viewMode = when(viewMode) {
+                ATMViewMode.MAP -> {
+                    listMapButton.setImageResource(R.drawable.ic_view_list)
+                    atmRecyclerList.visibility = View.GONE
+                    mapFragment.visibility = View.VISIBLE
+                    ATMViewMode.LIST
+                }
+                ATMViewMode.LIST -> {
+                    listMapButton.setImageResource(R.drawable.ic_map_marker)
+                    atmRecyclerList.visibility = View.VISIBLE
+                    mapFragment.visibility = View.GONE
+                    ATMViewMode.MAP
+                }
+            }
+        }
+
+        buttonRedeemOnly.setOnClickListener {
+            if (atmList.isNotEmpty() && map != null) {
+                loadingView.visibility = View.VISIBLE
+
+                buttonRedeemOnly.isEnabled = false
+                if (isAllAtms) {
+                    buttonRedeemOnly.text = "Show All"
+                    isAllAtms = false
+                    atmMode = ATMMode.REDEMPTION
+                } else {
+                    buttonRedeemOnly.text = "Show Redeem Only"
+                    isAllAtms = true
+                    atmMode = ATMMode.ALL
+                }
+
+                proceedToAddMarkers(it.context, map!!, atmList, atmMode)
+                populateList(atmList, atmMode)
+            }
+        }
     }
 
+    private fun populateList(list:List<AtmMachine>, mode:ATMMode){
+        fastAdapter.clear()
+        list.forEach {
+            if (mode == ATMMode.REDEMPTION) {
+                if (it.redemption == 1) {
+                    fastAdapter.add(AtmItem(it))
+                }
+            } else {
+                fastAdapter.add(AtmItem(it))
+            }
+        }
+    }
     private fun fetchAtms() {
         CashSDK.getAtmList().enqueue(object: retrofit2.Callback<AtmListResponse> {
             override fun onResponse(call: Call<AtmListResponse>, response: Response<AtmListResponse>) {
                 response.body()?.let { safeResponse ->
                     atmList = safeResponse.data.items
                     map?.let { mapObject ->
-                        proceedToAddMarkers(appContext, mapObject, atmList)
+                        proceedToAddMarkers(appContext, mapObject, atmList, atmMode)
                     } ?: run {
                         Log.e("MapController", "Map not ready to load markers")
                     }
+
+                    populateList(atmList, atmMode)
                 }
             }
 
@@ -127,14 +211,15 @@ class MapController(
     }
 
     private fun addAtmMarkers(map:GoogleMap, list:List<AtmMachine>) {
+        map.clear()
         list.forEach { atm ->
             val markerOpt = WacMarker.getMarker(applicationContext!!, atm)
-
             val marker = map.addMarker(markerOpt)
             marker.tag = atm
-            map.moveCamera(CameraUpdateFactory.newLatLng(texas))
-            map.animateCamera(CameraUpdateFactory.zoomTo(initialZoom))
         }
+
+        map.moveCamera(CameraUpdateFactory.newLatLng(texas))
+        map.animateCamera(CameraUpdateFactory.zoomTo(initialZoom))
     }
 
     private fun prepareMap(context : Context) {
@@ -157,7 +242,7 @@ class MapController(
                        processInfoWindowClicked(context, info)
                     }
                     Log.d("MapController", "atm list size {$atmList.size}")
-                    proceedToAddMarkers(context, it, atmList)
+                    proceedToAddMarkers(context, it, atmList, atmMode)
                 }
             }
     }
@@ -172,12 +257,22 @@ class MapController(
         }
     }
 
-    private fun proceedToAddMarkers(context:Context, map:GoogleMap, atmList:List<AtmMachine>) {
-        if (enableMapClusters && atmList.size > clustersThreshold) {
-            addAtmMarkersWithCluster(context, map, atmList)
-        } else if (atmList.isNotEmpty()) {
-            addAtmMarkers(map, atmList)
+    private fun proceedToAddMarkers(context:Context, map:GoogleMap, atmList:List<AtmMachine>, atmMode:ATMMode) {
+        var filteredList = atmList
+        if (atmMode == ATMMode.REDEMPTION) {
+            filteredList = atmList.filterList {
+                this.redemption == 1
+            }
         }
+
+        if (enableMapClusters && filteredList.size > clustersThreshold) {
+            addAtmMarkersWithCluster(context, map, filteredList)
+        } else if (filteredList.isNotEmpty()) {
+            addAtmMarkers(map, filteredList)
+        }
+
+        buttonRedeemOnly.isEnabled = true
+        loadingView.visibility = View.GONE
     }
 
     private fun addAtmMarkersWithCluster(context: Context, map:GoogleMap, list:List<AtmMachine>){
