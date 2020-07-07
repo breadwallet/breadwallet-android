@@ -151,7 +151,7 @@ class MapController(
         }
 
         listMapButton.setOnClickListener {
-            viewMode = when(viewMode) {
+            viewMode = when (viewMode) {
                 ATMViewMode.MAP -> {
                     switchToMode(ATMViewMode.MAP)
                     ATMViewMode.LIST
@@ -185,7 +185,7 @@ class MapController(
     }
 
     private fun switchToMode(mode: ATMViewMode){
-        when(mode) {
+        when (mode) {
             ATMViewMode.MAP -> {
                 listMapButton.setImageResource(R.drawable.ic_view_list)
                 atmRecyclerList.visibility = View.GONE
