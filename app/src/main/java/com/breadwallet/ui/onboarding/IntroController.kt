@@ -27,7 +27,7 @@ package com.breadwallet.ui.onboarding
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import cash.just.support.CashSupport
-import cash.just.support.GeneralSupportPage
+import cash.just.support.pages.GeneralSupportPage
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R

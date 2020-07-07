@@ -31,7 +31,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import cash.just.support.CashSupport
-import cash.just.support.GeneralSupportPage
+import cash.just.support.pages.GeneralSupportPage
 
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest

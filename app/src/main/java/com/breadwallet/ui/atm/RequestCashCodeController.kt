@@ -24,7 +24,7 @@ import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.atm.model.RetryableCashStatus
-import com.breadwallet.ui.atm.model.WacMarker
+import com.breadwallet.ui.atm.model.AtmMarker
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
 import com.breadwallet.ui.send.SendSheetController
 import com.google.android.gms.maps.CameraUpdate
@@ -327,7 +327,7 @@ class RequestCashCodeController(
     }
 
     private fun addMarkerAndMoveCamera(context: Context, googleMap: GoogleMap, atm: AtmMachine){
-        val markerOpt = WacMarker.getMarker(context, atm)
+        val markerOpt = AtmMarker.getMarker(context, atm)
 
         val marker = googleMap.addMarker(markerOpt)
         marker.tag = atm
