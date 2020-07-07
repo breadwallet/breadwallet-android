@@ -39,6 +39,7 @@ import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.tools.animation.UiUtils
+import com.breadwallet.tools.util.BRConstants.FAQ_IMPORT_WALLET
 import com.breadwallet.tools.util.BRConstants.FAQ_SET_PIN
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
@@ -300,13 +301,20 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
-        if (effect.articleId == FAQ_SET_PIN) {
-            CashSupport.Builder().detail(GeneralSupportPage.PIN).build()
-                .createDialogFragment().show((router.activity!! as AppCompatActivity).supportFragmentManager, "tag")
-        } else {
-            CashSupport.Builder().build()
-                .createDialogFragment()
-                .show((router.activity!! as AppCompatActivity).supportFragmentManager, "tag")
+        val fragmentManager = (router.activity!! as AppCompatActivity).supportFragmentManager
+        when(effect.articleId) {
+            FAQ_SET_PIN -> {
+                CashSupport.Builder().detail(GeneralSupportPage.PIN).build()
+                    .createDialogFragment().show(fragmentManager, "tag")
+            }
+            FAQ_IMPORT_WALLET -> {
+                CashSupport.Builder().detail(GeneralSupportPage.IMPORT_WALLET).build()
+                    .createDialogFragment().show(fragmentManager, "tag")
+            } else -> {
+                CashSupport.Builder().build()
+                    .createDialogFragment()
+                    .show(fragmentManager, "tag")
+            }
         }
     }
 
