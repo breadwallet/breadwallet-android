@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui.settings
 
-import android.graphics.Color
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View

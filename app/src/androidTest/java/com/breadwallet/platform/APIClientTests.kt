@@ -46,7 +46,6 @@ import okhttp3.mockwebserver.RecordedRequest
 import org.junit.*
 import org.mockito.Mockito.*
 
-
 @RunWith(AndroidJUnit4::class)
 @Ignore("Request Signing not yet implemented")
 class APIClientTests {

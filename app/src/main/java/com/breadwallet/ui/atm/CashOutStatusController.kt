@@ -143,7 +143,7 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
             }
             ViewState.FUNDED -> {
                 loadingView.visibility = View.GONE
-                fundedCard.visibility = View.GONE
+                fundedCard.visibility = View.VISIBLE
                 awaitingCard.visibility = View.GONE
             }
         }
