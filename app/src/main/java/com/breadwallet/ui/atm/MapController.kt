@@ -30,6 +30,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import cash.just.sdk.Cash
 import cash.just.sdk.CashSDK
@@ -119,11 +120,21 @@ class MapController(
 
         handlePlatformMessages().launchIn(viewCreatedScope)
 
-        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            // if (hasFocus) {
-            //     moveToVerification(getAtmMachineMock())
-            // }
+        fastAdapter.itemFilter.filterPredicate = { item: AtmItem, constraint: CharSequence? ->
+            item.atmMachine.addressDesc.contains(constraint.toString(), ignoreCase = true)
         }
+
+        searchView.setOnQueryTextListener(object:SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                switchToMode(ATMViewMode.LIST)
+                fastAdapter.filter(newText)
+                return false
+            }
+        })
 
         atmRecyclerList.layoutManager = LinearLayoutManager(
             router.activity,
@@ -142,15 +153,11 @@ class MapController(
         listMapButton.setOnClickListener {
             viewMode = when(viewMode) {
                 ATMViewMode.MAP -> {
-                    listMapButton.setImageResource(R.drawable.ic_view_list)
-                    atmRecyclerList.visibility = View.GONE
-                    mapFragment.visibility = View.VISIBLE
+                    switchToMode(ATMViewMode.MAP)
                     ATMViewMode.LIST
                 }
                 ATMViewMode.LIST -> {
-                    listMapButton.setImageResource(R.drawable.ic_map_marker)
-                    atmRecyclerList.visibility = View.VISIBLE
-                    mapFragment.visibility = View.GONE
+                    switchToMode(ATMViewMode.LIST)
                     ATMViewMode.MAP
                 }
             }
@@ -173,6 +180,21 @@ class MapController(
 
                 proceedToAddMarkers(it.context, map!!, atmList, atmMode)
                 populateList(atmList, atmMode)
+            }
+        }
+    }
+
+    private fun switchToMode(mode: ATMViewMode){
+        when(mode) {
+            ATMViewMode.MAP -> {
+                listMapButton.setImageResource(R.drawable.ic_view_list)
+                atmRecyclerList.visibility = View.GONE
+                mapFragment.visibility = View.VISIBLE
+            }
+            ATMViewMode.LIST -> {
+                listMapButton.setImageResource(R.drawable.ic_map_marker)
+                atmRecyclerList.visibility = View.VISIBLE
+                mapFragment.visibility = View.GONE
             }
         }
     }
