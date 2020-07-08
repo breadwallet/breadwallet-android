@@ -67,6 +67,7 @@ class RequestCashCodeController(
         PHONE,
         EMAIL
     }
+
     private var currentVerificationMode: VerificationState = VerificationState.PHONE
     private var coinCount = 0
 
@@ -88,7 +89,8 @@ class RequestCashCodeController(
         prepareMap(view.context, atm)
 
         atmTitle.text = atm.addressDesc
-        amount.helperText = "Min $${atm.min} max $${atm.max}, multiple of $${atm.bills.toFloat().toInt()} bills"
+        amount.helperText =
+            "Min $${atm.min} max $${atm.max}, multiple of $${atm.bills.toFloat().toInt()} bills"
 
         getAtmCode.setOnClickListener {
 
@@ -106,9 +108,11 @@ class RequestCashCodeController(
                 val min = atm.min.toFloatOrNull()?.toInt()
                 val max = atm.max.toFloatOrNull()?.toInt()
                 if (min == null || max == null) {
-                    Toast.makeText(view.context, "Amount not valid, " +
-                        "it has to be between ${atm.min.toFloatOrNull()?.toInt()} " +
-                        "and ${atm.max.toFloatOrNull()?.toInt()}.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        view.context, "Amount not valid, " +
+                            "it has to be between ${atm.min.toFloatOrNull()?.toInt()} " +
+                            "and ${atm.max.toFloatOrNull()?.toInt()}.", Toast.LENGTH_LONG
+                    ).show()
                 } else {
                     Toast.makeText(view.context, "Amount not valid", Toast.LENGTH_LONG).show()
                 }
@@ -118,7 +122,11 @@ class RequestCashCodeController(
             val amount = getAmount()!!.toFloat().toInt()
             val bills = atm.bills.toFloat().toInt()
             if (amount.rem(bills) != 0) {
-                Toast.makeText(view.context, "Amount must be multiple of ${atm.bills}$", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    view.context,
+                    "Amount must be multiple of ${atm.bills}$",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 
@@ -126,7 +134,6 @@ class RequestCashCodeController(
         }
 
         confirmAction.setOnClickListener {
-
 
             if (!CashSDK.isSessionCreated()) {
                 Toast.makeText(view.context, "invalid session", Toast.LENGTH_SHORT).show()
@@ -151,7 +158,7 @@ class RequestCashCodeController(
 
         coinCount++
         mediaPlayer.setOnCompletionListener { mp ->
-            mp?.let{
+            mp?.let {
                 it.reset()
                 it.release()
             }
@@ -162,28 +169,37 @@ class RequestCashCodeController(
         }
     }
 
-    private fun requestVerificationCode(context: Context){
+    private fun requestVerificationCode(context: Context) {
         CashSDK.sendVerificationCode(
             getName()!!,
             getSurname()!!,
             getPhone(),
             getEmail()
-        ).enqueue(object: Callback<SendVerificationCodeResponse> {
-            override fun onResponse(call: Call<SendVerificationCodeResponse>, response: Response<SendVerificationCodeResponse>) {
+        ).enqueue(object : Callback<SendVerificationCodeResponse> {
+            override fun onResponse(
+                call: Call<SendVerificationCodeResponse>,
+                response: Response<SendVerificationCodeResponse>
+            ) {
                 if (response.code() == HTTP_OK_CODE) {
-                    Toast.makeText(context, response.body()!!.data.items[0].result, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        response.body()!!.data.items[0].result,
+                        Toast.LENGTH_SHORT
+                    ).show()
                     if (getEmail() != null && getEmail()!!.isNotEmpty()) {
                         confirmationMessage.text = "We've sent a confirmation code to your email."
-                        code.helperText = "Check your email for the confirmation code we sent you." +
-                            " It may take a couple of minutes."
+                        code.helperText =
+                            "Check your email for the confirmation code we sent you." +
+                                " It may take a couple of minutes."
                     } else {
-                        confirmationMessage.text = "We've sent a confirmation code to your phone by SMS."
-                        code.helperText = "Check your SMS inbox for the confirmation code we sent you." +
-                            " It may take a couple of minutes."
+                        confirmationMessage.text =
+                            "We've sent a confirmation code to your phone by SMS."
+                        code.helperText =
+                            "Check your SMS inbox for the confirmation code we sent you." +
+                                " It may take a couple of minutes."
                     }
                     verificationGroup.visibility = View.GONE
                     confirmGroup.visibility = View.VISIBLE
-
                 } else {
                     Toast.makeText(context, "error" + response.code(), Toast.LENGTH_SHORT).show()
                 }
@@ -195,20 +211,17 @@ class RequestCashCodeController(
         })
     }
 
-    private fun hideKeyboard(context: Context, editText: EditText){
+    private fun hideKeyboard(context: Context, editText: EditText) {
         val imm: InputMethodManager? =
             context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         imm?.hideSoftInputFromWindow(editText.windowToken, 0)
     }
 
-    private fun createCashCode(context: Context, atm: AtmMachine){
+    private fun createCashCode(context: Context, atm: AtmMachine) {
 
         CashSDK.createCashCode(atm.atmId, getAmount()!!, getCode()!!)
-            .enqueue(object: Callback<CashCodeResponse> {
-                override fun onResponse(
-                    call: Call<CashCodeResponse>,
-                    response: Response<CashCodeResponse>
-                ) {
+            .enqueue(object : Callback<CashCodeResponse> {
+                override fun onResponse(call: Call<CashCodeResponse>, response: Response<CashCodeResponse>) {
                     if (response.code() == HTTP_OK_CODE) {
                         val secureCode = response.body()!!.data.items[0].secureCode
                         proceedWithCashCode(context, secureCode)
@@ -224,23 +237,17 @@ class RequestCashCodeController(
                     }
                 }
 
-                override fun onFailure(
-                    call: Call<CashCodeResponse>,
-                    t: Throwable
-                ) {
+                override fun onFailure(call: Call<CashCodeResponse>, t: Throwable) {
                     Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
                 }
             })
     }
 
-    private fun proceedWithCashCode(context: Context, secureCode:String) {
+    private fun proceedWithCashCode(context: Context, secureCode: String) {
         AtmSharedPreferencesManager.setWithdrawalRequest(context, secureCode)
 
-        CashSDK.checkCashCodeStatus(secureCode).enqueue(object: Callback<CashCodeStatusResponse> {
-            override fun onResponse(
-                call: Call<CashCodeStatusResponse>,
-                response: Response<CashCodeStatusResponse>
-            ) {
+        CashSDK.checkCashCodeStatus(secureCode).enqueue(object : Callback<CashCodeStatusResponse> {
+            override fun onResponse(call: Call<CashCodeStatusResponse>, response: Response<CashCodeStatusResponse>) {
                 val cashStatus = response.body()!!.data!!.items[0]
                 showDialog(context, secureCode, cashStatus)
             }
@@ -251,7 +258,7 @@ class RequestCashCodeController(
         })
     }
 
-    private fun showDialog(context:Context, secureCode:String, cashStatus: CashStatus){
+    private fun showDialog(context: Context, secureCode: String, cashStatus: CashStatus) {
         BRDialog.showCustomDialog(
             context, "Withdrawal requested",
             "Please send the amount of ${cashStatus.btc_amount} BTC to the ATM",
@@ -262,12 +269,13 @@ class RequestCashCodeController(
             { dialog ->
                 goToDetails(secureCode, cashStatus)
                 dialog.dismissWithAnimation()
-            }, null)
+            }, null
+        )
     }
 
-    private fun prepareMap(context : Context, atm:AtmMachine) {
+    private fun prepareMap(context: Context, atm: AtmMachine) {
         val fragment = createAndHideMap(context)
-        fragment.getMapAsync(object: OnMapReadyCallback {
+        fragment.getMapAsync(object : OnMapReadyCallback {
             override fun onMapReady(googleMap: GoogleMap?) {
                 googleMap ?: return
 
@@ -290,34 +298,42 @@ class RequestCashCodeController(
         })
     }
 
-    private fun goToDetails(secureCode:String, status:CashStatus) {
-        router.replaceTopController(RouterTransaction.with(CashOutStatusController(
-            RetryableCashStatus(secureCode, status)
-        )))
+    private fun goToDetails(secureCode: String, status: CashStatus) {
+        router.replaceTopController(
+            RouterTransaction.with(
+                CashOutStatusController(
+                    RetryableCashStatus(secureCode, status)
+                )
+            )
+        )
     }
 
-    private fun goToSend(btc:String, address:String) {
+    private fun goToSend(btc: String, address: String) {
         val builder = CryptoRequest.Builder()
         builder.address = address
         builder.amount = btc.toFloat().toBigDecimal()
         builder.currencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE
         val request = builder.build()
-        router.replaceTopController(RouterTransaction.with(SendSheetController(
-            request //make it default
-        )))
+        router.replaceTopController(
+            RouterTransaction.with(
+                SendSheetController(
+                    request //make it default
+                )
+            )
+        )
     }
 
-    private fun showMap(context:Context) {
+    private fun showMap(context: Context) {
         val fragmentManager = AtmMapHelper.getActivityFromContext(context)!!.supportFragmentManager
         val fragment = fragmentManager.findFragmentByTag(MAP_FRAGMENT_TAG)
-        fragment?.let{
+        fragment?.let {
             fragmentManager.beginTransaction()
                 .show(fragment)
                 .commit()
         }
     }
 
-    private fun createAndHideMap(context:Context): SupportMapFragment {
+    private fun createAndHideMap(context: Context): SupportMapFragment {
         val fragment = AtmMapHelper.addMapFragment(context, R.id.smallMapFragment, MAP_FRAGMENT_TAG)
         val fragmentManager = AtmMapHelper.getActivityFromContext(context)!!.supportFragmentManager
         fragmentManager.beginTransaction()
@@ -326,7 +342,7 @@ class RequestCashCodeController(
         return fragment
     }
 
-    private fun addMarkerAndMoveCamera(context: Context, googleMap: GoogleMap, atm: AtmMachine){
+    private fun addMarkerAndMoveCamera(context: Context, googleMap: GoogleMap, atm: AtmMachine) {
         val markerOpt = AtmMarker.getMarker(context, atm)
 
         val marker = googleMap.addMarker(markerOpt)
@@ -364,11 +380,11 @@ class RequestCashCodeController(
         return lastName.editText?.text.toString()
     }
 
-    private fun getPhone() : String? {
+    private fun getPhone(): String? {
         return phoneNumber.editText?.text.toString()
     }
 
-    private fun getEmail() : String? {
+    private fun getEmail(): String? {
         return email.editText?.text.toString()
     }
 

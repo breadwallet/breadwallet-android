@@ -158,34 +158,41 @@ class StatusListController(args: Bundle) : BaseController(args) {
         }
     }
 
-    private fun populateCashCodeStatus(view:View, secureCode:String, response: CashStatus) {
+    private fun populateCashCodeStatus(view:View, secureCode:String, cashStatus: CashStatus) {
         view.findViewById<TextView>(R.id.date).text =
-            response.expiration.toDate(SEVER_TIME_FORMAT).formatTo(DISPLAY_TIME_FORMAT)
-        view.findViewById<TextView>(R.id.addressLocation).text = response.description
-        val status = CodeStatus.resolve(response.status)
+            cashStatus.expiration.toDate(SEVER_TIME_FORMAT).formatTo(DISPLAY_TIME_FORMAT)
+        view.findViewById<TextView>(R.id.addressLocation).text = cashStatus.description
+        val status = CodeStatus.resolve(cashStatus.status)
         val stateView = view.findViewById<TextView>(R.id.stateMessage)
         when (status) {
             CodeStatus.NEW_CODE -> {
                 stateView.text = "Awaiting funds"
-                stateView.setOnClickListener {
-                    val retryableCashStatus =
-                        RetryableCashStatus(
-                            secureCode,
-                            response
-                        )
-                    router.pushController(RouterTransaction.with(CashOutStatusController(retryableCashStatus)))
-                }
+                setClickListener(stateView, secureCode, cashStatus)
                 val drawable = ContextCompat.getDrawable(view.context, R.drawable.ic_eye)
                 stateView.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
             }
             CodeStatus.FUNDED -> {
                 stateView.text = "Funded"
+                setClickListener(stateView, secureCode, cashStatus)
+                val drawable = ContextCompat.getDrawable(view.context, R.drawable.ic_cash)
+                stateView.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
             }
             else -> {
-                val state = CodeStatus.resolve(response.status).toString().toLowerCase()
+                val state = CodeStatus.resolve(cashStatus.status).toString().toLowerCase()
                 val capitalizeFirst = state.substring(0, 1).toUpperCase() + state.substring(1)
                 stateView.text = capitalizeFirst
             }
+        }
+    }
+
+    private fun setClickListener(textView: TextView, secureCode: String, cashStatus : CashStatus){
+        textView.setOnClickListener {
+            val retryableCashStatus =
+                RetryableCashStatus(
+                    secureCode,
+                    cashStatus
+                )
+            router.pushController(RouterTransaction.with(CashOutStatusController(retryableCashStatus)))
         }
     }
 

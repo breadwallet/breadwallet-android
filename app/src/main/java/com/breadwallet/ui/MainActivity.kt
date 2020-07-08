@@ -27,8 +27,6 @@ package com.breadwallet.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
-import android.view.WindowManager
-import android.widget.Toast
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
@@ -41,7 +39,6 @@ import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.protocols.messageexchange.MessageExchangeService
-import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.KeyStore
 import com.breadwallet.tools.util.EventUtils
@@ -101,14 +98,14 @@ class MainActivity : BRActivity() {
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!BuildConfig.DEBUG || intent.getBooleanExtra(EXTRA_SECURE_WINDOW, BRSharedPrefs.secureScreenMode)) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        } else {
-            Toast.makeText(this, SECURE_MODE_WARNING, Toast.LENGTH_LONG).show()
-        }
+        // if (!BuildConfig.DEBUG || intent.getBooleanExtra(EXTRA_SECURE_WINDOW, BRSharedPrefs.secureScreenMode)) {
+        //     window.setFlags(
+        //         WindowManager.LayoutParams.FLAG_SECURE,
+        //         WindowManager.LayoutParams.FLAG_SECURE
+        //     )
+        // } else {
+        //     Toast.makeText(this, SECURE_MODE_WARNING, Toast.LENGTH_LONG).show()
+        // }
         // The view of this activity is nothing more than a Controller host with animation support
         setContentView(ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
