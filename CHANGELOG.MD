@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Updated
 - CashUI was updated to the 1.4.0, with minor fixes and the support of indexPage and detailsPage.
 - Added FAQ about ATM (ported from coinsquareatm.com)
-
 ## Improved
 - MapController has been improved adding `show all` / `show redemption only`, list vs map, search to filter in the list.
 - Map performance has been improved (before the zoom was modified at every marker) and added a loading view 
+## Fixed
+- Funded state not showing
+- Funded state has a wrong cash code
 
 ## [4.4.3 (40428001)]
 ## Changed
