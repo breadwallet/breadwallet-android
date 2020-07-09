@@ -2,3 +2,4 @@
 Todos
 /exp.gradle
 /.externalNativeBuild/
+/secret.properties

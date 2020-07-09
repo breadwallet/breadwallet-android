@@ -1,13 +1,208 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
+# Java Gradle CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+#
 version: 2.1
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
+jobs:
+  build:
+    docker:
+      - image: circleci/android:api-29-ndk
+    resource_class: medium+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      SDK_FILENAME: sdk-tools-linux-4333796.zip
+      ANDROID_HOME: /opt/android/sdk
+
+
+    steps:
+      - checkout
+
+      #Check init
+      - run:
+          name: check init
+          command: |
+            echo $PWD
+            ls -la .
+            ls -la $ANDROID_HOME
+      # Download and cache dependencies gradle
+      - restore_cache:
+          keys:
+            - v3-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+
+
+      #Check init
+      - run:
+          name: check init Key
+          command: |
+            mkdir /home/circleci/key
+            echo $test_keystore > /home/circleci/key/base64
+            base64 -d /home/circleci/key/base64 > /home/circleci/key/keystore
+            ls -la /home/circleci/key
+
+      #Refresh gradle
+      - run:
+          name: Refresh gradle
+          command: |
+            ./gradlew   dependencies
+
+      #gradle build
+      - run:
+          name: gradle detekt
+          command: |
+            ./gradlew --console=plain detekt
+
+      #gradle build
+      - run:
+          name: gradle testBrdTestnetDebugUnitTest
+          command: |
+            ./gradlew  --console=plain  testBrdTestnetDebugUnitTest
+            
+      #gradle build
+      #- run:
+      #    name: gradle testDebugUnitTest
+      #    command: |
+      #      ./gradlew  --console=plain  testDebugUnitTest
+
+      #gradle build
+      - run:
+          name: gradle jacoco
+          command: |
+            ./gradlew  --console=plain app:jacocoTestReport
+            
+      #gradle build
+      - run:
+          name: gradle assembleRelease
+          command: |
+            ./gradlew --stacktrace  --console=plain app:bundleBrdTestnetRelease  -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$test_password -Pandroid.injected.signing.key.alias='key0' -Pandroid.injected.signing.key.password=$test_sign_password
+
+    # SONAR
+      - run:
+          name:  sonar check  
+          command: |
+                  echo SonarStart
+                  ./gradlew  --console=plain --stacktrace  --debug sonarqube  -Dsonar.organization=$sonar_organization  -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectName=atm-wallet-android -Dsonar.projectKey=atmcoin_atm-wallet-android -Dsonar.login=$sonar_login -Dsonar.branch.name=$CIRCLE_BRANCH  -Dsonar.coverage.jacoco.xmlReportPaths=/home/circleci/repo/app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml -Dsonar.junit.reportPaths=build/test-results/testBrdTestnetDebugUnitTest
+
+      # save cache
+      - save_cache:
+          paths:
+            - ~/.gradle
+
+          key: v3-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+
+
+      # save tests!
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/atrifact
+            ls -l ./app/build
+            cp -r ./app/build/reports ~/atrifact;
+            cp -r ./app/build/test-results ~/atrifact;
+            cp -r ./app/build/outputs ~/atrifact;
+
+          when: always
+      - store_test_results:
+          path: ./app/build/test-results
+      - store_artifacts:
+          path: ~/atrifact
+  release:
+    docker:
+      - image: circleci/android:api-29-ndk
+    resource_class: medium+
+    working_directory: ~/repo
+
+    environment:
+      # Customize the JVM maximum heap limit
+      SDK_FILENAME: sdk-tools-linux-4333796.zip
+      ANDROID_HOME: /opt/android/sdk
+
+
+    steps:
+      - checkout
+
+      #Check init
+      - run:
+          name: check init
+          command: |
+            echo $PWD
+            ls -la .
+            ls -la $ANDROID_HOME
+      # Download and cache dependencies gradle
+      - restore_cache:
+          keys:
+            - v3-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+
+
+      #Check init
+      - run:
+          name: check init Key
+          command: |
+            mkdir /home/circleci/key
+            echo $release_keystore > /home/circleci/key/base64
+            base64 -d /home/circleci/key/base64 > /home/circleci/key/keystore
+            ls -la /home/circleci/key
+
+      #Refresh gradle
+      - run:
+          name: Refresh gradle
+          command: |
+            ./gradlew   dependencies
+
+
+
+
+      #gradle build
+      - run:
+          name: gradle testBrdReleaseUnitTest
+          command: |
+            ./gradlew  --console=plain testBrdReleaseUnitTest
+            
+
+
+      #gradle build
+      - run:
+          name: gradle assembleRelease
+          command: |
+            ./gradlew --stacktrace  --console=plain app:bundleBrdRelease  -Pandroid.injected.signing.store.file='/home/circleci/key/keystore' -Pandroid.injected.signing.store.password=$release_password -Pandroid.injected.signing.key.alias='key0' -Pandroid.injected.signing.key.password=$release_sign_password
+
+
+      # save cache
+      - save_cache:
+          paths:
+            - ~/.gradle
+
+          key: v3-dependencies-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+
+
+
+      # save tests!
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/atrifact
+            ls -l ./app/build
+            cp -r ./app/build/reports ~/atrifact;
+            cp -r ./app/build/test-results ~/atrifact;
+            cp -r ./app/build/outputs ~/atrifact;
+          when: always
+      - store_test_results:
+          path: ./app/build/test-results
+      - store_artifacts:
+          path: ~/atrifact
+
+
+
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+  version: 2
+  commit:
     jobs:
-      - welcome/run
+      - build
+      - release:
+          filters:
+            branches:
+              only:                 
+                - /release\/.*/
+          requires:
+            - build

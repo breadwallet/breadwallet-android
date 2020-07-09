@@ -1,4 +1,7 @@
 buildscript {
+    ext {
+        kotlin_version = '1.3.72'
+    }
     repositories {
         mavenCentral()
         google()
@@ -18,10 +21,16 @@ buildscript {
         classpath 'com.google.gms:google-services:4.3.3' // google-services plugin
         classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.10"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jacoco:org.jacoco.core:$jacocoVersion"
     }
 }
 
-allprojects {
+plugins {
+    id("org.sonarqube") version "$sonar_version"
+}
+
+
+allprojects  {
     repositories {
         exclusiveContent {
             forRepository {
@@ -43,5 +52,6 @@ allprojects {
                 includeGroup "io.sweers.redacted"
             }
         }
+        maven { url 'https://jitpack.io' }
     }
 }

@@ -34,6 +34,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
@@ -49,6 +51,7 @@ import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
 import com.breadwallet.ui.home.HomeScreen.M
+import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigationEffectHandler
@@ -124,8 +127,18 @@ class HomeController(
     private var addWalletAdapter: ItemAdapter<AddWalletItem>? = null
 
     override fun bindView(output: Consumer<E>): Disposable {
+        sweep_layout.setOnClickListener {
+            router.pushController(
+                RouterTransaction.with(ImportController())
+                    .popChangeHandler(HorizontalChangeHandler())
+                    .pushChangeHandler(HorizontalChangeHandler())
+                )
+        }
+
         buy_layout.setOnClickListener { output.accept(E.OnBuyClicked) }
-        trade_layout.setOnClickListener { output.accept(E.OnTradeClicked) }
+        trade_layout.setOnClickListener {
+            output.accept(E.OnTradeClicked)
+        }
         menu_layout.setOnClickListener { output.accept(E.OnMenuClicked) }
 
         val fastAdapter = checkNotNull(fastAdapter)
@@ -150,7 +163,6 @@ class HomeController(
 
         walletAdapter = ModelAdapter(::WalletListItem)
         addWalletAdapter = ItemAdapter()
-
         fastAdapter = FastAdapter.with(listOf(walletAdapter!!, addWalletAdapter!!))
 
         val dragCallback = SimpleDragCallback(DragEventHandler(fastAdapter!!, eventConsumer))
@@ -171,6 +183,13 @@ class HomeController(
 
     override fun M.render() {
         ifChanged(M::wallets) {
+            //Adding only BTC
+            // wallets["btc"]?.let {
+            //     val list = Collections.unmodifiableList(
+            //         ArrayList(Collections.singleton(it))).toImmutableList()
+            //         as List<Wallet>
+            //     walletAdapter?.setNewList(list)
+            // }
             walletAdapter?.setNewList(wallets.values.toList())
             if (addWalletAdapter?.itemList?.size() == 0 && wallets.isNotEmpty()) {
                 addWalletAdapter?.add(AddWalletItem())
@@ -206,12 +225,13 @@ class HomeController(
         }
 
         ifChanged(M::hasInternet) {
-            buy_text_view.setText(
-                when {
-                    showBuyAndSell -> R.string.HomeScreen_buyAndSell
-                    else -> R.string.HomeScreen_buy
-                }
-            )
+            // buy_text_view.setText(
+            //     // when {
+            //         // showBuyAndSell -> R.string.HomeScreen_buyAndSell
+            //         // else -> R.string.HomeScreen_buy
+            //     // }
+            //     R.string.HomeScreen_cashOut
+            // )
         }
     }
 

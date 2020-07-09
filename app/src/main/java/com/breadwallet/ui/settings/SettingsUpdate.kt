@@ -32,6 +32,7 @@ import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 
+@Suppress("TooManyFunctions")
 object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
     override fun update(
         model: M,
@@ -90,6 +91,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
         return dispatch(
             setOf(
                 when (event.option) {
+                    SettingsOption.TRANSFER -> F.GoToAtmMap
                     SettingsOption.SCAN_QR -> F.GoToQrScan
                     SettingsOption.PREFERENCES -> F.GoToSection(SettingsSection.PREFERENCES)
                     SettingsOption.SECURITY_SETTINGS -> F.GoToSection(SettingsSection.SECURITY)
@@ -97,7 +99,8 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.SUBMIT_REVIEW -> F.GoToGooglePlay
                     SettingsOption.REWARDS -> F.GoToBrdRewards
                     SettingsOption.ABOUT -> F.GoToAbout
-                    SettingsOption.ATM_FINDER -> F.SendAtmFinderRequest
+                    SettingsOption.ATM_FINDER -> F.GoToAtmMap
+                    SettingsOption.ATM_WITHDRAWAL -> F.ATMWithdrawalRequest
                     SettingsOption.DEVELOPER_OPTIONS -> F.GoToSection(SettingsSection.DEVELOPER_OPTION)
                     SettingsOption.CURRENCY -> F.GoToDisplayCurrency
                     SettingsOption.BTC_MENU -> F.GoToSection(SettingsSection.BTC_SETTINGS)

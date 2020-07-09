@@ -1045,7 +1045,7 @@ public final class BRKeyStore {
                         public void onDismiss(DialogInterface dialog) {
                             bugMessageShowing = false;
                         }
-                    }, 0);
+                    });
         }
 
     }

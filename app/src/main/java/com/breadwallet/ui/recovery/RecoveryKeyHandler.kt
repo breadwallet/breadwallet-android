@@ -60,6 +60,7 @@ import java.util.Locale
 private const val POLL_ATTEMPTS_MAX = 15
 private const val POLL_TIMEOUT_MS = 1000L
 
+@Suppress("ComplexMethod")
 @UseExperimental(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class RecoveryKeyHandler(
     private val output: Consumer<E>,
@@ -151,6 +152,7 @@ class RecoveryKeyHandler(
         }
     }
 
+    @Suppress("LongMethod", "ReturnCount")
     private fun recoverWallet(effect: F.RecoverWallet) {
         val context = BreadApp.getBreadContext()
 

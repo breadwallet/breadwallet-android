@@ -8,6 +8,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'io.sweers.redacted.redacted-plugin'
+apply from: rootProject.file("jacoco.gradle")
 
 if (file('fabric.properties').exists()) {
     apply plugin: 'io.fabric'
@@ -22,15 +23,19 @@ detekt {
     input = files("src/main/java", "src/test/java")
     baseline = file("detekt-baseline.xml")
 }
+sonarqube {
+    androidVariant 'brdTestnetDebug'
+
+}
 
 android {
     compileSdkVersion = 29
     buildToolsVersion = '29.0.3'
     ext {
         brdMarketingVersion = 4   // Major version. Usually affected by marketing. Maximum value: 99
-        brdProductVersion = 1    // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 1 // Hot fix version. Usually affected by engineering. Maximum value: 9
-        brdBuildVersion = 3       // Build version. Increase for each new build. Maximum value: 999
+        brdProductVersion = 4    // Minor version. Usually affected by product. Maximum value: 99
+        brdEngineeringVersion = 5 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdBuildVersion = 1       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
         // relationship between builds with a max value of 2 100 000 000.
@@ -41,7 +46,12 @@ android {
         brdVersionCode = generateVersionCode(brdMarketingVersion, brdProductVersion, brdEngineeringVersion, brdBuildVersion)
         brdInternalVersionName = "$brdMarketingVersion.$brdProductVersion.$ext.brdEngineeringVersion.$ext.brdBuildVersion"
         fabricEnable = file('fabric.properties').exists()
+
+        def props = new Properties()
+        file("secret.properties").withInputStream { props.load(it) }
+        googleMapKey = props.getProperty("google_map_key")
     }
+
     defaultConfig {
         testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
         applicationId = 'com.breadwallet'
@@ -59,7 +69,9 @@ android {
         missingDimensionStrategy 'network', 'onMainnet'
 
         buildConfigField "String", "BDB_CLIENT_TOKEN", BDB_CLIENT_TOKEN
+        resValue "string", "google_map_key", "$googleMapKey"
     }
+
     signingConfigs {
         FakeSigningConfig {
             keyAlias 'key0'
@@ -74,26 +86,30 @@ android {
     packagingOptions {
         pickFirst 'protobuf.meta'
     }
+
     // Specifies two flavor dimensions.
     flavorDimensions "mode"
     productFlavors {
         brd {
-            applicationId = "com.breadwallet"
+            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher_white"]
+            applicationId = "cash.just.wallet"
             dimension "mode"
-            resValue "string", "app_name", "BRD"
+            resValue "string", "app_name", "Coinsquare Wallet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
             signingConfig signingConfigs.FakeSigningConfig // Uncomment to fake sign a mainnet release build for testing.
             missingDimensionStrategy 'network', 'onMainnet'
         }
         brdTestnet {
-            applicationId = "com.breadwallet.testnet"
+            manifestPlaceholders = [applicationIcon: "@mipmap/ic_cs_launcher_testnet"]
+            applicationId = "cash.just.testnet"
             dimension "mode"
-            resValue "string", "app_name", "BRD Testnet"
+            resValue "string", "app_name", "Coinsquare Wallet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
             signingConfig signingConfigs.FakeSigningConfig
             missingDimensionStrategy 'network', 'onTestnet'
         }
     }
+
     lintOptions {
         lintConfig file("lint.xml")
         // set to true to turn off analysis progress reporting by lint
@@ -111,18 +127,17 @@ android {
     }
     buildTypes {
         release {
-            manifestPlaceholders = [applicationIcon: "@mipmap/ic_launcher"]
             debuggable = false
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "false"
         }
         debug {
             applicationIdSuffix '.debug'
-            manifestPlaceholders = [applicationIcon: "@mipmap/ic_launcher_grayscale"]
             debuggable = true
             jniDebuggable = true
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "true"
+            testCoverageEnabled true
 
         }
 
@@ -186,13 +201,20 @@ task downloadBundles {
     }
 }
 
+task printProps {
+    doFirst {
+        println applicationName
+        println projectName
+    }
+}
+
 tasks.whenTaskAdded {
     if (it.name.startsWith('assemble') && it.name.endsWith('Release')) {
-        it.doFirst {
-            if (!project.file('fabric.properties').exists() && !project.hasProperty("IGNORE_FABRIC_KEYS_MISSING")) {
-                throw new RuntimeException("Please create ${projectDir}/fabric.properties or use -PIGNORE_FABRIC_KEYS_MISSING.")
-            }
-        }
+//        it.doFirst {
+//            if (!project.file('fabric.properties').exists() && !project.hasProperty("IGNORE_FABRIC_KEYS_MISSING")) {
+//                throw new RuntimeException("Please create ${projectDir}/fabric.properties or use -PIGNORE_FABRIC_KEYS_MISSING.")
+//            }
+//        }
     }
 }
 
@@ -243,6 +265,9 @@ dependencies {
     testImplementation "androidx.test.espresso:espresso-core:$ax_espresso"
     testImplementation "androidx.test:runner:$ax_test_runner"
     testImplementation "androidx.test:rules:$ax_test_rules"
+    androidTestImplementation  "androidx.test:rules:$ax_test_rules"
+    androidTestImplementation  "tools.fastlane:screengrab:2.0.0"
+
     androidTestImplementation "androidx.work:work-testing:$ax_workmanager"
 
     // Test infrastructure
@@ -256,6 +281,7 @@ dependencies {
     implementation "com.google.guava:guava:$guava_version"
     implementation "com.google.protobuf:protobuf-lite:$protobuf_version"
     implementation "com.google.zxing:core:$zxing_version"
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
     // Square
     implementation "com.squareup.picasso:picasso:$picasso_version"
@@ -314,6 +340,12 @@ dependencies {
     compileOnly "io.sweers.redacted:redacted-compiler-plugin-annotation:$redacted_version"
 
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detekt_version"
+
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.maps.android:android-maps-utils:1.3.3'
+
+    implementation 'com.github.atmcoin:cash-sdk-android:1.3'
+    implementation 'com.github.atmcoin:cash-ui-android:1.4.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

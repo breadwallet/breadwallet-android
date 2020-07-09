@@ -105,6 +105,7 @@ sealed class NavigationEffect {
 
     data class GoToMenu(val settingsOption: SettingsSection) : NavigationEffect()
 
+    object GoToAtmMap : NavigationEffect()
     object GoToTransactionComplete : NavigationEffect()
     object GoToGooglePlay : NavigationEffect()
     object GoToAbout : NavigationEffect()

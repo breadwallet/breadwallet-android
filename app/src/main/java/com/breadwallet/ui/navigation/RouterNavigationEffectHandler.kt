@@ -25,6 +25,10 @@
 package com.breadwallet.ui.navigation
 
 import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import cash.just.support.CashSupport
+import cash.just.support.pages.GeneralSupportPage
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router
@@ -34,16 +38,16 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
-import com.breadwallet.ui.settings.analytics.ShareDataController
 import com.breadwallet.tools.animation.UiUtils
-import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.BRConstants.FAQ_IMPORT_WALLET
+import com.breadwallet.tools.util.BRConstants.FAQ_SET_PIN
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
-import com.breadwallet.ui.settings.about.AboutController
 import com.breadwallet.ui.addwallets.AddWalletsController
-import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
+import com.breadwallet.ui.atm.MapController
+import com.breadwallet.ui.atm.StatusListController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.home.HomeController
@@ -57,6 +61,8 @@ import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.ui.settings.SettingsController
+import com.breadwallet.ui.settings.about.AboutController
+import com.breadwallet.ui.settings.analytics.ShareDataController
 import com.breadwallet.ui.settings.currency.DisplayCurrencyController
 import com.breadwallet.ui.settings.fastsync.FastSyncController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
@@ -140,25 +146,24 @@ class RouterNavigationEffectHandler(
         AppReviewPromptManager.openGooglePlay(checkNotNull(router.activity))
     }
 
-    override fun goToBuy() {
-        val url = String.format(
-            BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
-            HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
-            BITCOIN_CURRENCY_CODE
-        )
-        val webTransaction =
-            WebController(url).asTransaction(
+    fun goToMap() {
+        // val url = String.format(
+        //     BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+        //     HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
+        //     BITCOIN_CURRENCY_CODE
+        // )
+
+        val mapTransaction = MapController(Bundle.EMPTY).asTransaction(
                 VerticalChangeHandler(),
                 VerticalChangeHandler()
             )
-
         when (router.backstack.lastOrNull()?.controller()) {
-            is HomeController -> router.pushController(webTransaction)
+            is HomeController -> router.pushController(mapTransaction)
             else -> {
                 router.setBackstack(
                     listOf(
                         HomeController().asTransaction(),
-                        webTransaction
+                        mapTransaction
                     ),
                     VerticalChangeHandler()
                 )
@@ -166,13 +171,45 @@ class RouterNavigationEffectHandler(
         }
     }
 
+    override fun goToBuy() {
+            goToMap()
+        // val url = String.format(
+        //     BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
+        //     HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
+        //     BITCOIN_CURRENCY_CODE
+        // )
+        // val webTransaction =
+        //     WebController(url).asTransaction(
+        //         VerticalChangeHandler(),
+        //         VerticalChangeHandler()
+        //     )
+        //
+        // when (router.backstack.lastOrNull()?.controller()) {
+        //     is HomeController -> router.pushController(webTransaction)
+        //     else -> {
+        //         router.setBackstack(
+        //             listOf(
+        //                 HomeController().asTransaction(),
+        //                 webTransaction
+        //             ),
+        //             VerticalChangeHandler()
+        //         )
+        //     }
+        // }
+    }
+
     override fun goToTrade() {
-        val url = HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)
+        // val url = HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)
+        // router.pushController(
+        //     WebController(url).asTransaction(
+        //         VerticalChangeHandler(),
+        //         VerticalChangeHandler()
+        //     )
+        // )
         router.pushController(
-            WebController(url).asTransaction(
-                VerticalChangeHandler(),
-                VerticalChangeHandler()
-            )
+            RouterTransaction.with(StatusListController(Bundle.EMPTY))
+                .popChangeHandler(VerticalChangeHandler())
+                .pushChangeHandler(VerticalChangeHandler())
         )
     }
 
@@ -194,7 +231,7 @@ class RouterNavigationEffectHandler(
 
     override fun goToSend(effect: NavigationEffect.GoToSend) {
         val controller = when {
-            effect.cryptoRequest != null -> SendSheetController(effect.cryptoRequest)
+            effect.cryptoRequest != null -> SendSheetController(effect.cryptoRequest.currencyCode)
             effect.cryptoRequestUrl != null -> SendSheetController(effect.cryptoRequestUrl)
             else -> SendSheetController(effect.currencyId)
         }
@@ -264,12 +301,21 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
-        router.pushController(
-            WebController(effect.asSupportUrl()).asTransaction(
-                BottomSheetChangeHandler(),
-                BottomSheetChangeHandler()
-            )
-        )
+        val fragmentManager = (router.activity!! as AppCompatActivity).supportFragmentManager
+        when(effect.articleId) {
+            FAQ_SET_PIN -> {
+                CashSupport.Builder().detail(GeneralSupportPage.PIN).build()
+                    .createDialogFragment().show(fragmentManager, "tag")
+            }
+            FAQ_IMPORT_WALLET -> {
+                CashSupport.Builder().detail(GeneralSupportPage.IMPORT_WALLET).build()
+                    .createDialogFragment().show(fragmentManager, "tag")
+            } else -> {
+                CashSupport.Builder().build()
+                    .createDialogFragment()
+                    .show(fragmentManager, "tag")
+            }
+        }
     }
 
     override fun goToSetPin(effect: NavigationEffect.GoToSetPin) {
@@ -332,6 +378,14 @@ class RouterNavigationEffectHandler(
     override fun goToWriteDownKey(effect: NavigationEffect.GoToWriteDownKey) {
         router.pushController(
             RouterTransaction.with(WriteDownKeyController(effect.onComplete, effect.requestAuth))
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler())
+        )
+    }
+
+    override fun goToAtmMap() {
+        router.pushController(
+            RouterTransaction.with(MapController(Bundle.EMPTY))
                 .pushChangeHandler(HorizontalChangeHandler())
                 .popChangeHandler(HorizontalChangeHandler())
         )

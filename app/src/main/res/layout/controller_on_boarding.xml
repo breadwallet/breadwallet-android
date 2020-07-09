@@ -67,12 +67,12 @@
             android:layout_margin="4dp"
             android:background="@drawable/page_indicator_inactive" />
 
-        <View
-            android:id="@+id/indicator3"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_margin="4dp"
-            android:background="@drawable/page_indicator_inactive" />
+<!--        <View-->
+<!--            android:id="@+id/indicator3"-->
+<!--            android:layout_width="8dp"-->
+<!--            android:layout_height="8dp"-->
+<!--            android:layout_margin="4dp"-->
+<!--            android:background="@drawable/page_indicator_inactive" />-->
 
     </LinearLayout>
 

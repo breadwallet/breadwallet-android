@@ -27,8 +27,11 @@ package com.breadwallet.ui.receive
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import cash.just.support.CashSupport
+import cash.just.support.pages.GeneralSupportPage
 
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
@@ -138,7 +141,15 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
     }
 
     override fun bindView(output: Consumer<E>) = output.view {
-        faq_button.onClick(E.OnFaqClicked)
+        faq_button.setOnClickListener {
+            activity?.let {
+                if (it is AppCompatActivity) {
+                    val fragment = CashSupport.Builder().detail(GeneralSupportPage.RECEIVE).build()
+                        .createDialogFragment()
+                    fragment.show(it.supportFragmentManager, "tag")
+                }
+            }
+        }
         share_button.onClick(E.OnShareClicked)
         close_button.onClick(E.OnCloseClicked)
         qr_image.onClick(E.OnCopyAddressClicked)

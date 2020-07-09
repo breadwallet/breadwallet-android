@@ -24,14 +24,20 @@
  */
 package com.breadwallet.ui.send
 
+import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import cash.just.support.CashSupport
+import cash.just.support.pages.GeneralSupportPage
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
@@ -116,7 +122,9 @@ class SendSheetController(args: Bundle? = null) :
         overridePopHandler(BottomSheetChangeHandler())
     }
 
+    private var isAtmConfigured = false
     private val currencyCode = arg<String>(CURRENCY_CODE)
+    private val cryptoRequest = argOptional<CryptoRequest>(CRYPTO_REQUEST)
     private val cryptoRequestLink = argOptional<Link.CryptoRequestUrl>(CRYPTO_REQUEST_LINK)
 
     override val layoutId = R.layout.controller_send_sheet
@@ -168,6 +176,7 @@ class SendSheetController(args: Bundle? = null) :
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        Log.d("atm", "bindView")
         return merge(
             keyboard.bindInput(),
             textInputMemo.bindFocusChanged(),
@@ -175,19 +184,45 @@ class SendSheetController(args: Bundle? = null) :
             textInputMemo.clicks().map { E.OnAmountEditDismissed },
             textInputMemo.textChanges().map { E.OnMemoChanged(it) },
             textInputAddress.bindFocusChanged(),
-            textInputAddress.clicks().map { E.OnAmountEditDismissed },
+            textInputAddress.clicks().map {
+                isAtmCashOutFlow()?.let {
+                    E.ConsumeEvent
+                } ?: run {
+                    E.OnAmountEditDismissed
+                }
+            },
             textInputAddress.bindActionComplete(E.OnAmountEditDismissed),
-            textInputAddress.textChanges().map { E.OnTargetAddressChanged(it) },
+            textInputAddress.textChanges().map {
+                E.OnTargetAddressChanged(it)
+            },
             textInputDestinationTag.textChanges().map {
                 E.TransferFieldUpdate.Value(TransferField.DESTINATION_TAG, it)
             },
-            buttonFaq.clicks().map { E.OnFaqClicked },
+            buttonFaq.clicks().map {
+                activity?.let {
+                    if (it is AppCompatActivity) {
+                        val fragment = CashSupport.Builder().detail(GeneralSupportPage.SEND).build()
+                            .createDialogFragment()
+                        fragment.show(it.supportFragmentManager, "tag")
+                    }
+                }
+
+                E.ConsumeEvent
+            },
             buttonScan.clicks().map { E.OnScanClicked },
             buttonSend.clicks().map { E.OnSendClicked },
-            buttonClose.clicks().map { E.OnCloseClicked },
+            buttonClose.clicks().map {
+                E.OnCloseClicked
+            },
             buttonPaste.clicks().map { E.OnPasteClicked },
             layoutBackground.clicks().map { E.OnCloseClicked },
-            textInputAmount.clicks().map { E.OnAmountEditClicked },
+            textInputAmount.clicks().map {
+                isAtmCashOutFlow()?.let {
+                    E.ConsumeEvent
+                } ?: run {
+                    E.OnAmountEditClicked
+                }
+            },
             buttonCurrencySelect.clicks().map { E.OnToggleCurrencyClicked },
             buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.REGULAR) },
             buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.ECONOMY) },
@@ -238,6 +273,7 @@ class SendSheetController(args: Bundle? = null) :
 
     @Suppress("ComplexMethod", "LongMethod")
     override fun M.render() {
+        Log.d("atm", "render")
         val res = checkNotNull(resources)
 
         ifChanged(M::targetInputError) {
@@ -278,7 +314,11 @@ class SendSheetController(args: Bundle? = null) :
         ) {
             val sendTitle = res.getString(R.string.Send_title)
             val upperCaseCurrencyCode = currencyCode.toUpperCase(Locale.getDefault())
-            labelTitle.text = "%s %s".format(sendTitle, upperCaseCurrencyCode)
+            isAtmCashOutFlow()?.let{
+                labelTitle.text = "%s %s to the ATM".format(sendTitle, upperCaseCurrencyCode)
+            } ?: run {
+                labelTitle.text = "%s %s".format(sendTitle, upperCaseCurrencyCode)
+            }
             buttonCurrencySelect.text = when {
                 isAmountCrypto -> upperCaseCurrencyCode
                 else -> {
@@ -289,7 +329,6 @@ class SendSheetController(args: Bundle? = null) :
         }
 
         ifChanged(M::isAmountEditVisible, ::showKeyboard)
-
         ifChanged(
             M::rawAmount,
             M::isAmountCrypto,
@@ -427,6 +466,50 @@ class SendSheetController(args: Bundle? = null) :
                 }
             }
         }
+
+        if (!isAtmConfigured) {
+            isAtmConfigured = true
+            isAtmCashOutFlow()?.let { it ->
+                textInputAddress.isEnabled = false
+                textInputAddress.post {
+                    textInputAddress.setText(it.address)
+                    hideKeyboardFrom(textInputAddress)
+                }
+
+                it.amount?.let { amount -> fakeAmount(amount.toString()) }
+
+                buttonEconomy.isEnabled = false
+                buttonRegular.isSelected = true
+                buttonRegular.isEnabled = false
+                buttonPriority.isEnabled = false
+                buttonPaste.visibility = View.GONE
+                buttonScan.visibility = View.GONE
+                buttonCurrencySelect.visibility = View.GONE
+            }
+        }
+    }
+
+    @Suppress("MagicNumber")
+    private fun fakeAmount(amount : String) {
+        amount.split("").subList(1, amount.length + 1).forEachIndexed {  index, key ->
+            // Hack Alert: if it is too quickly it misses keys
+            keyboard.postDelayed({
+                if (keyboard != null) {
+                    keyboard.fakeInput(key)
+                }
+            }, 5L*index)
+        }
+    }
+
+    private fun hideKeyboardFrom(view: View) {
+        val imm: InputMethodManager =
+            view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    // It returns CryptoRequest if it is atm cash out flow otherwise returns false
+    private fun isAtmCashOutFlow():CryptoRequest? {
+        return cryptoRequest
     }
 
     private fun showKeyboard(show: Boolean) {

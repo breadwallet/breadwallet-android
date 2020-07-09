@@ -80,7 +80,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="32dp"
         android:padding="10dp"
-        android:text="@string/Onboarding.browseFirst"
+        android:text="@string/Onboarding.finalAction"
         android:textColor="@color/white"
         android:textSize="@dimen/button_text_size"
         android:visibility="invisible"
@@ -104,7 +104,6 @@
         android:cropToPadding="true"
         android:focusable="false"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_globe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

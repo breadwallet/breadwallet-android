@@ -99,6 +99,7 @@ class SettingsController(
         },
         nestedConnectable({ direct.instance<RouterNavigationEffectHandler>() }, { effect ->
             when (effect) {
+                F.GoToAtmMap -> NavigationEffect.GoToAtmMap
                 F.GoToGooglePlay -> NavigationEffect.GoToGooglePlay
                 F.GoToNotificationsSettings -> NavigationEffect.GoToNotificationsSettings
                 F.GoToShareData -> NavigationEffect.GoToShareData

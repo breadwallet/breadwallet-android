@@ -116,24 +116,10 @@ class RecoveryKeyController(
                             .clearApplicationUserData()
                     },
                     { brDialogView -> brDialogView.dismissWithAnimation() },
-                    { eventConsumer.accept(E.OnPhraseSaveFailed) },
-                    0
+                    { eventConsumer.accept(E.OnPhraseSaveFailed) }
                 )
             }, {
-                // error dialog
-                BRDialog.showCustomDialog(
-                    activity!!,
-                    "",
-                    resources.getString(R.string.RecoverWallet_invalid),
-                    resources.getString(R.string.AccessibilityLabels_close),
-                    null,
-                    BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
-                    null,
-                    DialogInterface.OnDismissListener {
-                        eventConsumer.accept(E.OnPhraseSaveFailed)
-                    },
-                    0
-                )
+                showErrorDialog()
             }, {
                 SpringAnimator.failShakeAnimation(applicationContext, view)
             })
@@ -151,6 +137,22 @@ class RecoveryKeyController(
             }
         })
     )
+
+    private fun showErrorDialog(){
+        // error dialog
+        BRDialog.showCustomDialog(
+            activity!!,
+            "",
+            resources!!.getString(R.string.RecoverWallet_invalid),
+            resources!!.getString(R.string.AccessibilityLabels_close),
+            null,
+            BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
+            null,
+            DialogInterface.OnDismissListener {
+                eventConsumer.accept(E.OnPhraseSaveFailed)
+            }
+        )
+    }
 
     private val wordInputs: List<BREdit>
         get() = listOf(
@@ -188,8 +190,7 @@ class RecoveryKeyController(
                     brDialogView.dismissWithAnimation()
                 },
                 BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
-                null,
-                0
+                null
             )
         }
     }
@@ -216,21 +217,7 @@ class RecoveryKeyController(
             output.accept(E.OnNextClicked)
         }
 
-        // Bind paste event
-        wordInputs.first().addEditTextEventListener { event ->
-            if (event == BREdit.EditTextEvent.PASTE) {
-                val clipboardText = BRClipboardManager.getClipboard(activity)
-                output.accept(E.OnTextPasted(clipboardText))
-
-                val phrase = clipboardText.split("\\s+".toRegex())
-                if (phrase.isNotEmpty()) {
-                    wordInputs.zip(phrase)
-                        .forEach { (input, word) ->
-                            input.setText(word, TextView.BufferType.EDITABLE)
-                        }
-                }
-            }
-        }
+        bindPastedEvent(output)
 
         // Bind keyboard enter event
         wordInputs.last().setOnEditorActionListener { _, actionId, event ->
@@ -263,6 +250,24 @@ class RecoveryKeyController(
                 .forEach { (input, watcher) ->
                     input.removeTextChangedListener(watcher)
                 }
+        }
+    }
+
+    private fun bindPastedEvent(output: Consumer<E>) {
+        // Bind paste event
+        wordInputs.first().addEditTextEventListener { event ->
+            if (event == BREdit.EditTextEvent.PASTE) {
+                val clipboardText = BRClipboardManager.getClipboard(activity)
+                output.accept(E.OnTextPasted(clipboardText))
+
+                val phrase = clipboardText.split("\\s+".toRegex())
+                if (phrase.isNotEmpty()) {
+                    wordInputs.zip(phrase)
+                        .forEach { (input, word) ->
+                            input.setText(word, TextView.BufferType.EDITABLE)
+                        }
+                }
+            }
         }
     }
 

@@ -40,7 +40,7 @@
     <color name="text_secondary">#bfffffff</color>
     <color name="action_icon_background">#312F4C</color>
 
-    <item name="logo_gradient_start" type="color">#F8A445</item>
+    <item name="logo_gradient_start" type="color">@color/white</item>
     <item name="logo_gradient_end" type="color">#fc5394</item>
 
     <item name="finger_gradient_start" type="color">#9c7ee2</item>
@@ -114,19 +114,19 @@
     <color name="add_wallets_border_color">#e5e5e5</color>
 
     // Dark Mode colors
-    <color name="primary_background">#251935</color>
-    <color name="secondary_background">#302442</color>
-    <color name="tertiary_background">#2E2540</color>
+    <color name="primary_background">@color/black</color>
+    <color name="secondary_background">#010101</color>
+    <color name="tertiary_background">#020202</color>
     <color name="prompt_background">#1E1C41</color>
     <color name="prompt_input">#f8f7fc</color>
-    <color name="button_gradient_start_color">#FF5193</color>
-    <color name="button_gradient_end_color">#F29500</color>
+    <color name="button_gradient_start_color">@color/white</color>
+    <color name="button_gradient_end_color">@color/white</color>
     <color name="button_add_wallet_background">#444b77f3</color>
     <color name="button_cancel_add_wallet_background">#44E7AA41</color>
     <color name="button_add_wallet_text">#4b77f3</color>
     <color name="button_cancel_add_wallet_text">#E7AA41</color>
     <color name="text_total_assets_label">#bfffffff</color>
-    <color name="pin_pad_delete">#FF548D</color>
+    <color name="pin_pad_delete">@color/white</color>
     <color name="pin_dot_filled_dark">#FF5193</color>
     <color name="pin_dot_filled_light">#F29500</color>
     <color name="create_new_wallet_button_dark">#29ABE2</color>
@@ -155,17 +155,17 @@
 
 
     <array name="pin_digit_button_colors">
-        <item>#FE5A80</item>
-        <item>#FC6469</item>
-        <item>#FB6B5C</item>
-        <item>#FA714E</item>
-        <item>#FD5E76</item>
-        <item>#FC6568</item>
-        <item>#FB6B5B</item>
-        <item>#FE5A80</item>
-        <item>#FD5F75</item>
-        <item>#FC6667</item>
-        <item>#FF548D</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
     </array>
 
     <color name="ui_accent">#5B6DEE</color>

@@ -11,7 +11,7 @@
     <ImageView
         android:id="@+id/brd_logo"
         android:layout_width="132dp"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:gravity="center_horizontal"

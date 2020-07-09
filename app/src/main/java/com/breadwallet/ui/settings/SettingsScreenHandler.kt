@@ -27,6 +27,9 @@ package com.breadwallet.ui.settings
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.ContextCompat.startActivity
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
@@ -75,6 +78,7 @@ class SettingsScreenHandler(
         when (value) {
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
+            F.ATMWithdrawalRequest -> sendATMWithdrawalRequest()
             F.SendLogs -> launch(Dispatchers.Main) {
                 LogsUtils.shareLogs(activity)
             }
@@ -167,6 +171,11 @@ class SettingsScreenHandler(
 
     private fun getHomeOptions(): List<SettingsItem> {
         return mutableListOf(
+            // SettingsItem(
+            //     context.getString(R.string.Settings_coinsquareAtmMapMenuItemTitle),
+            //     SettingsOption.ATM_WITHDRAWAL,
+            //     R.drawable.ic_atm_finder
+            // ),
             SettingsItem(
                 context.getString(R.string.MenuButton_scan),
                 SettingsOption.SCAN_QR,
@@ -192,11 +201,11 @@ class SettingsScreenHandler(
                 SettingsOption.SUBMIT_REVIEW,
                 R.drawable.ic_review
             ),
-            SettingsItem(
-                context.getString(R.string.Settings_rewards),
-                SettingsOption.REWARDS,
-                R.drawable.ic_reward
-            ),
+            // SettingsItem(
+            //     context.getString(R.string.Settings_rewards),
+            //     SettingsOption.REWARDS,
+            //     R.drawable.ic_reward
+            // ),
             SettingsItem(
                 context.getString(R.string.Settings_about),
                 SettingsOption.ABOUT,
@@ -204,22 +213,22 @@ class SettingsScreenHandler(
             )
         ).apply {
             if (experimentsRepository.isExperimentActive(Experiments.ATM_MAP)) {
-                add(
-                    SettingsItem(
-                        context.getString(R.string.Settings_atmMapMenuItemTitle),
-                        SettingsOption.ATM_FINDER,
-                        R.drawable.ic_atm_finder,
-                        subHeader = context.getString(R.string.Settings_atmMapMenuItemSubtitle)
-                    )
-                )
+                // add(
+                //     SettingsItem(
+                //         context.getString(R.string.Settings_atmMapMenuItemTitle),
+                //         SettingsOption.ATM_FINDER,
+                //         R.drawable.ic_atm_finder,
+                //         subHeader = context.getString(R.string.Settings_atmMapMenuItemSubtitle)
+                //     )
+                // )
             }
             if (BuildConfig.DEBUG) {
-                add(
-                    SettingsItem(
-                        DEVELOPER_OPTIONS_TITLE,
-                        SettingsOption.DEVELOPER_OPTIONS
-                    )
-                )
+                // add(
+                //     SettingsItem(
+                //         DEVELOPER_OPTIONS_TITLE,
+                //         SettingsOption.DEVELOPER_OPTIONS
+                //     )
+                // )
             }
         }
     }
@@ -387,5 +396,13 @@ class SettingsScreenHandler(
             LinkPlugin.BROWSER_PATH
         )
         APIClient.getInstance(context).sendRequest(request, false)
+    }
+
+    private fun sendATMWithdrawalRequest() {
+        val url = "https://secure.just.cash/wac/"
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(context, intent, null)
     }
 }

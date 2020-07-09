@@ -41,12 +41,12 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="30dp"
+                android:layout_marginTop="40dp"
+                android:layout_width="76dp"
+                android:layout_height="47dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="60dp"
                 android:background="@drawable/brd_logo_gradient" />
 
             <com.breadwallet.legacy.presenter.customviews.BaseTextView
@@ -60,7 +60,7 @@
                 android:textColor="@color/text_total_assets_label"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/circular_pro_medium" />
+                android:fontFamily="@font/roboto_medium" />
 
             <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/total_assets_usd"
@@ -71,7 +71,7 @@
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
                 android:textColor="@color/white"
                 android:textSize="28sp"
-                android:fontFamily="@font/circular_pro_medium" />
+                android:fontFamily="@font/roboto_medium" />
         </RelativeLayout>
 
         <LinearLayout
@@ -107,13 +107,70 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:padding="8dp"
-            android:stretchColumns="0,1,2"
+            android:stretchColumns="0,1,2,3"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TableRow>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
+                    android:id="@+id/sweep_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:gravity="bottom"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:src="@drawable/ic_qrcode"
+                        android:tint="@color/white" />
+
+                    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="bottom"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:text="Scan QR Code"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/roboto_regular" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/buy_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="bottom"
+                    android:gravity="bottom"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:src="@drawable/ic_cash_out"
+                        android:tint="@color/white" />
+
+                    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="bottom"
+                        android:text="ATM Cash"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/roboto_regular" />
+                </LinearLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/trade_layout"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="bottom"
@@ -129,7 +186,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_menu_buy_sell"
+                        android:src="@drawable/ic_clipboard_text"
                         android:tint="@color/white"
                         app:layout_constraintBottom_toTopOf="@+id/buy_text_view"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -155,41 +212,16 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
                         android:gravity="bottom"
-                        android:text="@string/HomeScreen.buy"
+                        android:text="Activity"
+                        android:singleLine="true"
+                        android:ellipsize="end"
                         android:textColor="@color/white"
-                        android:fontFamily="@font/circular_pro_book"
+                        android:fontFamily="@font/roboto_regular"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <LinearLayout
-                    android:id="@+id/trade_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="bottom"
-                    android:gravity="bottom"
-                    android:orientation="vertical"
-                    android:paddingBottom="4dp">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        android:src="@drawable/ic_menu_trade"
-                        android:tint="@color/white" />
-
-                    <com.breadwallet.legacy.presenter.customviews.BaseTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="bottom"
-                        android:text="@string/HomeScreen.trade"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/circular_pro_book" />
-                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/menu_layout"

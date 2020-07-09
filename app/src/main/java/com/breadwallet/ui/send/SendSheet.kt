@@ -361,6 +361,7 @@ object SendSheet {
         object OnPasteClicked : E()
         object OnAmountEditClicked : E()
         object OnAmountEditDismissed : E()
+        object ConsumeEvent : E()
 
         object OnToggleCurrencyClicked : E()
 

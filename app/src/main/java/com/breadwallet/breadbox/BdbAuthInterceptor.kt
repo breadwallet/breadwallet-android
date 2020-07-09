@@ -24,6 +24,7 @@
  */
 package com.breadwallet.breadbox
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Base64
 import com.breadwallet.BuildConfig
@@ -55,6 +56,7 @@ private const val JWT_EXP_DAYS = 7L
 private const val MAX_TOKEN_RETRIES = 3
 private const val JWT_EXP_PADDING_MS = 10_000L
 
+@Suppress("ComplexMethod")
 class BdbAuthInterceptor(
     private val context: Context,
     private val httpClient: OkHttpClient
@@ -142,6 +144,7 @@ class BdbAuthInterceptor(
         }
     }
 
+    @Suppress("MagicNumber")
     private suspend fun createAccountJwt(): Pair<String?, Long> = mutex.withLock {
         // Lock acquired after successful jwt creation
         if (jwtString != null) return@withLock null to 0

@@ -1,0 +1,93 @@
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "$jacocoVersion"
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
+
+task jacocoTestReport(type: JacocoReport) {
+
+    group "Reporting"
+    description "Generate Jacoco coverage reports."
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def javaClasses = []
+    def kotlinClasses = []
+    def javaSrc = []
+    def kotlinSrc = []
+    def execution = []
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+
+
+        additionalClassDirs     fileTree(dir: "$project.buildDir/intermediates/javac/debug", excludes: fileFilter)
+        additionalClassDirs     fileTree(dir: "$project.buildDir/intermediates/javac/brdTestnetDebug", excludes: fileFilter)
+        additionalClassDirs  fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)
+        additionalClassDirs  fileTree(dir: "$project.buildDir/tmp/kotlin-classes/brdTestnetDebug", excludes: fileFilter)
+        additionalSourceDirs       files("$project.projectDir/src/main/java")
+        execution     << fileTree(dir: project.buildDir,
+                includes: ['jacoco/testDebugUnitTest.exec', 'jacoco/testBrdTestnetDebugUnitTest.exec',
+                           'outputs/code_coverage/debugAndroidTest/connected/**/*.ec'])
+
+
+
+
+    print execution
+    executionData{
+        files(execution)
+    }
+
+
+
+}
+
+task jacocoTestReportAll(type: JacocoReport) {
+
+    group "Reporting"
+    description "Generate Jacoco coverage reports."
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        html.destination file("${rootProject.buildDir}/reports/jacoco/all/html")
+        xml.destination file("${rootProject.buildDir}/reports/jacoco/all.xml")
+    }
+
+    def javaClasses = []
+    def kotlinClasses = []
+    def javaSrc = []
+    def kotlinSrc = []
+    def execution = []
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+
+    rootProject.subprojects.each { proj ->
+        additionalClassDirs     fileTree(dir: "$proj.buildDir/intermediates/javac/debug", excludes: fileFilter)
+        additionalClassDirs     fileTree(dir: "$proj.buildDir/intermediates/javac/brdTestnetDebug", excludes: fileFilter)
+        additionalClassDirs  fileTree(dir: "$proj.buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)
+        additionalClassDirs  fileTree(dir: "$proj.buildDir/tmp/kotlin-classes/brdTestnetDebug", excludes: fileFilter)
+        additionalSourceDirs       files("$proj.projectDir/src/main/java")
+        execution     << fileTree(dir: proj.buildDir,
+                includes: ['jacoco/testDebugUnitTest.exec', 'jacoco/testBrdTestnetDebugUnitTest.exec',
+                           'outputs/code_coverage/debugAndroidTest/connected/**/*.ec'])
+    }
+
+
+
+    print execution
+    executionData{
+        files(execution)
+    }
+
+
+    doLast() {
+        print "file://${reports.html.destination}/index.html"
+    }
+}

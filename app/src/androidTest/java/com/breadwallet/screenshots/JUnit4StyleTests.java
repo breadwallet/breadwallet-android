@@ -25,6 +25,7 @@
 package com.breadwallet.screenshots;
 
 import android.os.Build;
+
 import androidx.test.espresso.IdlingPolicies;
 import androidx.test.rule.ActivityTestRule;
 
@@ -42,18 +43,15 @@ import org.junit.runners.JUnit4;
 
 import java.util.concurrent.TimeUnit;
 
-import static androidx.test.espresso.Espresso.onData;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.hasToString;
 import tools.fastlane.screengrab.Screengrab;
 import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy;
 import tools.fastlane.screengrab.locale.LocaleTestRule;
 import tools.fastlane.screengrab.locale.LocaleUtil;
+
+import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.Matchers.anything;
 
 @RunWith(JUnit4.class)
 public class JUnit4StyleTests {

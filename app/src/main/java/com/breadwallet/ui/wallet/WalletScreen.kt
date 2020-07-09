@@ -213,8 +213,9 @@ object WalletScreen {
             @Redacted val transactionHashes: List<String>
         ) : F()
 
-        data class LoadTransactionMetaDataSingle(val currencyId: String, @Redacted val transactionHashes: List<String>) :
-            F()
+        data class LoadTransactionMetaDataSingle
+            (val currencyId: String,
+            @Redacted val transactionHashes: List<String>) : F()
 
         data class LoadIsTokenSupported(val currencyCode: String) : F()
 

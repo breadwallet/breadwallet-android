@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <!-- App name -->
-    <string name="About.appName.android">BRD</string>
+    <string name="About.appName.android">Coinsquare</string>
     <!-- About screen blog label -->
     <string name="About.blog">블로그</string>
     <!-- About screen footer -->
-    <string name="About.footer">글로벌 BRD 팀 제작. 버전 %1$s 빌드 %2$s</string>
+    <string name="About.footer">글로벌 Coinsquare 팀 제작. 버전 %1$s 빌드 %2$s</string>
     <!-- Privay Policy button label -->
     <string name="About.privacy">개인정보 보호정책</string>
     <!-- About screen reddit label -->
@@ -17,7 +17,7 @@
     <!-- About screen twitter label -->
     <string name="About.twitter">트위터</string>
     <!-- About screen wallet ID label -->
-    <string name="About.walletID">BRD Rewards ID</string>
+    <string name="About.walletID">Coinsquare Rewards ID</string>
     <!-- Close modal button accessibility label -->
     <string name="AccessibilityLabels.close">닫기</string>
     <!-- Support center accessibiliy label -->
@@ -31,7 +31,7 @@
     <!-- Loading Wallet Message -->
     <string name="Account.loadingMessage">지갑 로딩</string>
     <!-- Default wallet name -->
-    <string name="AccountHeader.defaultWalletName">나의 BRD</string>
+    <string name="AccountHeader.defaultWalletName">나의 Coinsquare</string>
     <!-- Third party keyboard warning -->
     <string name="Alert.customKeyboard.android">제3자가 제공한 키보드를 사용하고 계신 것 같습니다, 귀하의 입력을 기록하고 귀하의 페이퍼 키가 도난 당할 수 있습니다. 추가적인 보호를 위해 기본 안드로이드 키보드로 전환해 주세요.</string>
     <!-- Error alert title -->
@@ -41,9 +41,9 @@
     <!-- KeyStore error, keys are invalidated -->
     <string name="Alert.keystore.invalidated.android">귀하의 안드로이드 잠금 화면이 꺼져서 귀하의 암호화 된 데이터가 최근 무효화 되었습니다.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
-    <string name="Alert.keystore.invalidated.uninstall.android">화면 잠금 설정이 변경되어 진행할 수 없습니다 (예: 암호가 비활성화되거나 지문이 변경된 경우). 보안을 위해, 안드로이가 키 입력을 영구적으로 잠갔습니다. 따라서, 당신의 BRD 앱 데이터는 앱을 제거하여 지워야 합니다.\n\n걱정하지 마세요. 고객님의 자금은 매우 안전합니다! 종이 키를 사용하여 앱을 재설치하고 월렛을 복구하십시오.</string>
+    <string name="Alert.keystore.invalidated.uninstall.android">화면 잠금 설정이 변경되어 진행할 수 없습니다 (예: 암호가 비활성화되거나 지문이 변경된 경우). 보안을 위해, 안드로이가 키 입력을 영구적으로 잠갔습니다. 따라서, 당신의 Coinsquare 앱 데이터는 앱을 제거하여 지워야 합니다.\n\n걱정하지 마세요. 고객님의 자금은 매우 안전합니다! 종이 키를 사용하여 앱을 재설치하고 월렛을 복구하십시오.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
-    <string name="Alert.keystore.invalidated.wipe.android">화면 잠금 설정이 변경되어 진행할 수 없습니다 (예: 암호가 비활성화되거나 지문이 변경된 경우). 보안을 위해, 안드로이가 키 입력을 영구적으로 잠갔습니다. 따라서, 당신의 BRD 앱 데이터는 지워야 합니다.\n\n걱정하지 마세요. 고객님의 자금은 매우 안전합니다! 종이 키를 사용하여 월렛을 복구하십시오.</string>
+    <string name="Alert.keystore.invalidated.wipe.android">화면 잠금 설정이 변경되어 진행할 수 없습니다 (예: 암호가 비활성화되거나 지문이 변경된 경우). 보안을 위해, 안드로이가 키 입력을 영구적으로 잠갔습니다. 따라서, 당신의 Coinsquare 앱 데이터는 지워야 합니다.\n\n걱정하지 마세요. 고객님의 자금은 매우 안전합니다! 종이 키를 사용하여 월렛을 복구하십시오.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">안드로이드 키스토어 오류</string>
     <!-- No internet alert message -->
@@ -73,11 +73,11 @@
     <!-- Fingerprint was recognized by the scanner -->
     <string name="Alerts.touchIdSucceeded.android">지문 인식됨</string>
     <!-- Tell the user where they can enable permissions to access device storage. -->
-    <string name="Android.allowFileSystemAccess">단말의 \"설정\" &gt; \"앱\" &gt; \"BRD\" &gt; \"권한\"에서 저장소 접근을 허용해 주세요.</string>
+    <string name="Android.allowFileSystemAccess">단말의 \"설정\" &gt; \"앱\" &gt; \"Coinsquare\" &gt; \"권한\"에서 저장소 접근을 허용해 주세요.</string>
     <!-- The "home" screen is the name of the top level menu for the app. -->
     <string name="Android.BCH.welcome.message">홈 화면을 통해 월렛에 있는 모든 BCH에 액세스할 수 있습니다.</string>
     <!-- Warning about using apps that can alter the screen -->
-    <string name="Android.screenAlteringMessage">BRD는 (Twilight과 같은) 화면 변경 앱을 비활성화하지 않으면 제대로 동작하지 않습니다.</string>
+    <string name="Android.screenAlteringMessage">Coinsquare는 (Twilight과 같은) 화면 변경 앱을 비활성화하지 않으면 제대로 동작하지 않습니다.</string>
     <!-- An app that alters the screen ("screen-altering app") has been detected. -->
     <string name="Android.screenAlteringTitle">화면 변경 앱이 탐지됨</string>
     <!-- JSON Serialization error message -->
@@ -225,7 +225,7 @@
     <!-- Email unavailable alert title -->
     <string name="ErrorMessages.emailUnavailableTitle">이메일 사용불가</string>
     <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-    <string name="ErrorMessages.loopingLockScreen.android">현재 이용 중인 안드로이드 버전의 버그로 인해 BRD가 인증될 수 없습니다. [Please tap here for more information.]</string>
+    <string name="ErrorMessages.loopingLockScreen.android">현재 이용 중인 안드로이드 버전의 버그로 인해 Coinsquare가 인증될 수 없습니다. [Please tap here for more information.]</string>
     <!-- Messaging unavailable alert title -->
     <string name="ErrorMessages.messagingUnavailableMessage">이 장치는 메시지를 보내도록 설정되지 않았습니다.</string>
     <!-- Messaging unavailable alert title -->
@@ -234,13 +234,13 @@
     <string name="ErrorMessages.touchIdFailed.android">지문 인식되지 않음. 다시 시도해 주세요.</string>
     <!-- You can customize your Face ID Spending Limit from the [menu] -->
     <string name="FaceIDSettings.customizeText">%1$s에서 페이스 ID 지출 한도를 사용자 설정할 수 있습니다.</string>
-    <!-- Text describing the purpose of the Face ID settings in the BRD app. -->
-    <string name="FaceIDSettings.explanatoryText">페이스 아이디로 BRD 앱을 잠금 해제하고 송금하세요.</string>
+    <!-- Text describing the purpose of the Face ID settings in the Coinsquare app. -->
+    <string name="FaceIDSettings.explanatoryText">페이스 아이디로 Coinsquare 앱을 잠금 해제하고 송금하세요.</string>
     <!-- Face Id screen label -->
     <string name="FaceIDSettings.label">얼굴을 사용하여 브레드의 잠금을 해제하고 설정 한도까지 돈을 보내세요.</string>
     <!-- Title of the screen for setting the Face ID Spending Limit -->
     <string name="FaceIDSettings.linkText">페이스 ID 지출 한도 화면</string>
-    <!-- Setting to turn on Face ID for BRD -->
+    <!-- Setting to turn on Face ID for Coinsquare -->
     <string name="FaceIDSettings.switchLabel">브레드에 페이스 ID 사용하기</string>
     <!-- Face ID settings view title -->
     <string name="FaceIDSettings.title">페이스 ID</string>
@@ -250,8 +250,8 @@
     <string name="FaceIDSettings.unavailableAlertMessage">이 장치에 페이스 ID를 설정하지 않았습니다. 설정 -&gt; 페이스 ID 및 패스코드로 가서 지금 설정하세요.</string>
     <!-- Face ID unavailable alert title -->
     <string name="FaceIDSettings.unavailableAlertTitle">페이스 ID가 설정되지 않음</string>
-    <!-- Text label for a toggle that enables Face ID for unlocking the BRD app. -->
-    <string name="FaceIDSettings.unlockTitleText">페이스 아이디로 BRD 잠금 해제</string>
+    <!-- Text label for a toggle that enables Face ID for unlocking the Coinsquare app. -->
+    <string name="FaceIDSettings.unlockTitleText">페이스 아이디로 Coinsquare 잠금 해제</string>
     <!-- Face Id spending limit screen title -->
     <string name="FaceIDSpendingLimit.title">페이스 ID 지출 한도</string>
     <!-- Economy fee -->
@@ -282,8 +282,8 @@
     <string name="FingerprintSettings.sendMoney">지문을 사용하여 송금</string>
     <!-- Fingerprint authentication settings sceen title -->
     <string name="FingerprintSettings.title">지문</string>
-    <!-- Switch label to enable fingerprint authentication to unlock BRD app -->
-    <string name="FingerprintSettings.unlockApp">지문을 사용하여 BRD 잠금 해제</string>
+    <!-- Switch label to enable fingerprint authentication to unlock Coinsquare app -->
+    <string name="FingerprintSettings.unlockApp">지문을 사용하여 Coinsquare 잠금 해제</string>
     <!-- This is the section that allows administration of the user's wallet -->
     <string name="HomeScreen.admin">관리</string>
     <!-- Home screen menu button to buy some bitcoin -->
@@ -319,13 +319,13 @@
     <!-- Caption for graphics -->
     <string name="Import.leftCaption">개인 키</string>
     <!-- Import wallet intro screen message -->
-    <string name="Import.message">개인 키는 QR코드로 종이에 출력되기도 하며, 오프라인에서자금을 적립하기 위해 사용됩니다. 개인 키 교환으로 한 번의 거래를 이용해 자신의 BRD로 모든 돈을 이전하세요.</string>
+    <string name="Import.message">개인 키는 QR코드로 종이에 출력되기도 하며, 오프라인에서자금을 적립하기 위해 사용됩니다. 개인 키 교환으로 한 번의 거래를 이용해 자신의 Coinsquare로 모든 돈을 이전하세요.</string>
     <!-- Enter password alert view title -->
     <string name="Import.password">이 개인 열쇠는 비밀번호로 보호됩니다.</string>
     <!-- password textfield placeholder -->
     <string name="Import.passwordPlaceholder">비밀번호</string>
     <!-- Caption for graphics -->
-    <string name="Import.rightCaption">귀하의 BRD 지갑</string>
+    <string name="Import.rightCaption">귀하의 Coinsquare 지갑</string>
     <!-- Scan Private key button label -->
     <string name="Import.scan">개인 열쇠 스캔</string>
     <!-- Import wallet success alert title -->
@@ -345,9 +345,9 @@
     <!-- Ignore jailbreak warning button -->
     <string name="JailbreakWarnings.ignore">무시</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 BRD의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
+    <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Coinsquare의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
     <!-- Jailbreak warning message -->
-    <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 BRD의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! BRD를 비-jailbroken 장치에서만 사용해 주세요.</string>
+    <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Coinsquare의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Coinsquare를 비-jailbroken 장치에서만 사용해 주세요.</string>
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">경고</string>
     <!-- Wipe wallet button -->
@@ -369,7 +369,7 @@
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">위치 서비스가 꺼졌습니다.</string>
     <!-- No permissions for location services -->
-    <string name="LocationPlugin.notAuthorized">BRD가 위치 서비스 접속 권한이 없습니다.</string>
+    <string name="LocationPlugin.notAuthorized">Coinsquare가 위치 서비스 접속 권한이 없습니다.</string>
     <!-- Wallet creation date prefix -->
     <string name="ManageWallet.creationDatePrefix">귀하께서는 %1$s 에 지갑을 만들었습니다</string>
     <!-- Manage wallet description text -->
@@ -447,13 +447,13 @@
     <!-- Onboarding screen Page 1 title -->
     <string name="OnboardingPageOne.title">새로운 글로벌 월렛에 오신 것을 환영합니다!</string>
     <!-- Onboarding screen Page 3 subtitle -->
-    <string name="OnboardingPageThree.subtitle">BRD와 함께 쉽고 안전하게 투자하고 다양하게 분산시키세요.</string>
+    <string name="OnboardingPageThree.subtitle">Coinsquare와 함께 쉽고 안전하게 투자하고 다양하게 분산시키세요.</string>
     <!-- Onboarding screen Page 3 title -->
     <string name="OnboardingPageThree.title">비트코인, 토큰, 그리고 그 외 다른 가상 화폐들을 구매하고 거래하세요.</string>
     <!-- Onboarding screen Page 2 subtitle -->
     <string name="OnboardingPageTwo.subtitle">저희는 60억 달러 넘는 가치의 자산을 안전하게 보유하고 있습니다.</string>
     <!-- Onboarding screen Page 2 title -->
-    <string name="OnboardingPageTwo.title">BRD를 신뢰하는 전 세계 수백만 명과 함께 하십시오.</string>
+    <string name="OnboardingPageTwo.title">Coinsquare를 신뢰하는 전 세계 수백만 명과 함께 하십시오.</string>
     <!-- Eg. Send 1.0Eth to purchase CCC -->
     <string name="PaymentConfirmation.amountText">%2$s 구매를 위해 %1$s 전송</string>
     <!-- Payment confirmation view title -->
@@ -511,7 +511,7 @@
     <!-- Transaction rejected prompt title -->
     <string name="Prompts.RecommendRescan.title">거래 거절됨</string>
     <!-- Share data prompt body -->
-    <string name="Prompts.ShareData.body">BRD가 발전할 수 있도록 익명 데이터를 공유해주십시오</string>
+    <string name="Prompts.ShareData.body">Coinsquare가 발전할 수 있도록 익명 데이터를 공유해주십시오</string>
     <!-- Share data prompt title -->
     <string name="Prompts.ShareData.title">익명 데이터 공유</string>
     <!-- Enable touch ID prompt body -->
@@ -533,11 +533,11 @@
     <!-- Push notifications are disabled alert title" -->
     <string name="PushNotifications.disabled">알림 비활성</string>
     <!-- Body text when push notifications are disabled. -->
-    <string name="PushNotifications.disabledBody">알림을 켜서 BRD로터 특가 판매와 업데이트를 받으십시오.</string>
+    <string name="PushNotifications.disabledBody">알림을 켜서 Coinsquare로터 특가 판매와 업데이트를 받으십시오.</string>
     <!-- Body text when push notifications are enabled. -->
-    <string name="PushNotifications.enabledBody">귀하는 BRD로부터 특가 판매 및 업데이트를 받고 있습니다.</string>
-    <!-- Instructions to enable push notifications for BRD in the phone's system settings. -->
-    <string name="PushNotifications.enableInstructions">알림이 꺼진 것 같습니다. 설정으로 가서 BRD 알림 받기를 활성화하십시오.</string>
+    <string name="PushNotifications.enabledBody">귀하는 Coinsquare로부터 특가 판매 및 업데이트를 받고 있습니다.</string>
+    <!-- Instructions to enable push notifications for Coinsquare in the phone's system settings. -->
+    <string name="PushNotifications.enableInstructions">알림이 꺼진 것 같습니다. 설정으로 가서 Coinsquare 알림 받기를 활성화하십시오.</string>
     <!-- Push notifications toggle switch label -->
     <string name="PushNotifications.label">푸시 알림 받기</string>
     <!-- Push notifications are off label -->
@@ -553,9 +553,9 @@
     <!-- Google play review prompt, revivew button -->
     <string name="RateAppPrompt.Button.Dismiss.Android">아니요, 괜찮아요</string>
     <!-- Google play review prompt, dismiss button -->
-    <string name="RateAppPrompt.Button.RateApp.Android">BRD 평가하기</string>
+    <string name="RateAppPrompt.Button.RateApp.Android">Coinsquare 평가하기</string>
     <!-- Google play review prompt title -->
-    <string name="RateAppPrompt.Title.Android">BRD 평가하기</string>
+    <string name="RateAppPrompt.Title.Android">Coinsquare 평가하기</string>
     <!-- Address copied message. -->
     <string name="Receive.copied">클립보드에 복사되었습니다.</string>
     <!-- Share via email button label -->
@@ -636,14 +636,14 @@
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">이 단어들을 잊지 말고 적어 두세요. 잊으셨다면 가볍게 밀어 뒤로 가세요.</string>
     <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
     <string name="RecoveryKeyFlow.resetPINInstruction">PIN을 초기화하려면 복구 키를 입력해 주세요.</string>
-    <!-- Assures the user that BRD will keep the user's funds secure. -->
+    <!-- Assures the user that Coinsquare will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">비즈니스 최고의 보안과 개인정보 보호정책으로 자금이 보호받는다는 사실을 인지하며 구매하고 거래하세요.</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
-    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">안전한 장소에 키를 보관하세요. 지갑을 복구할 유일한 방법입니다. BRD는 복사본을 보관하지 않습니다.</string>
+    <string name="RecoveryKeyFlow.storeSecurelyRecommendation">안전한 장소에 키를 보관하세요. 지갑을 복구할 유일한 방법입니다. Coinsquare는 복사본을 보관하지 않습니다.</string>
     <!-- Title for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successHeading">축하합니다! 복구 키 설정이 완료되었습니다.</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successSubheading">BRD 지갑에서 암호화화폐를 예금하고 거래하고 구매할 준비가 끝났습니다.</string>
+    <string name="RecoveryKeyFlow.successSubheading">Coinsquare 지갑에서 암호화화폐를 예금하고 거래하고 구매할 준비가 끝났습니다.</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
     <string name="RecoveryKeyFlow.unlinkWallet">이 기기에서 지갑 연결을 해제합니다.</string>
     <!-- Subtitle displayed to the user on the intro screen when unlinking a wallet. -->
@@ -693,7 +693,7 @@
     <!-- Rewards view expanded body. -->
     <string name="RewardsView.expandedBody">거래 수수료를 절약하고 미래의 보상을 얻을 수 있는 방법을 배우십시오.</string>
     <!-- Rewards view expanded title. -->
-    <string name="RewardsView.expandedTitle">BRD 리워즈를 소개합니다.</string>
+    <string name="RewardsView.expandedTitle">Coinsquare 리워즈를 소개합니다.</string>
     <!-- Rewards view title -->
     <string name="RewardsView.normalTitle">리워즈</string>
     <!-- Scan bitcoin address camera flash toggle -->
@@ -744,9 +744,9 @@
     <!-- Balance: $4.00 -->
     <string name="Send.balance">잔액: %1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
-    <string name="Send.cameraUnavailabeMessage.android">\"설정\" &gt; \"앱\" &gt; \"BRD\" &gt; \"허용\"에서 카메라 접속을 허용해 주세요</string>
+    <string name="Send.cameraUnavailabeMessage.android">\"설정\" &gt; \"앱\" &gt; \"Coinsquare\" &gt; \"허용\"에서 카메라 접속을 허용해 주세요</string>
     <!-- Permission required to access camera -->
-    <string name="Send.cameraUnavailabeTitle.android">BRD의 카메라 접속이 허용되지 않았습니다</string>
+    <string name="Send.cameraUnavailabeTitle.android">Coinsquare의 카메라 접속이 허용되지 않았습니다</string>
     <!-- Camera not allowed message -->
     <string name="Send.cameraunavailableMessage">설정에서 카메라 액세스를 허가해 주세요.</string>
     <!-- Camera not allowed alert title -->
@@ -886,7 +886,7 @@
     <!-- Paper key explanation text. -->
     <string name="StartPaperPhrase.body">페이퍼 키는 핸드폰을 분실하거나, 도난당하거나, 망가지거나, 업그레이드한 경우 브레드를 다시 살릴 수 있는 유일한 방법입니다.\n\n저희가 제시하는 단어 목록을 잘 적어서 안전하게 보관해 주세요.</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">당신의 종이 열쇠는 휴대폰 분실, 도난, 파손 또는 업그레이드 시, BRD 복구를 위한 유일한 수단입니다.\n\n기기의 보안설정 후에도 당신의 종이 열쇠는 반드시 필요합니다.\n\n단어 리스트를 보여드릴 테니, 종이에 기입 후 안전하게 보관하세요.</string>
+    <string name="StartPaperPhrase.Body.Android">당신의 종이 열쇠는 휴대폰 분실, 도난, 파손 또는 업그레이드 시, Coinsquare 복구를 위한 유일한 수단입니다.\n\n기기의 보안설정 후에도 당신의 종이 열쇠는 반드시 필요합니다.\n\n단어 리스트를 보여드릴 테니, 종이에 기입 후 안전하게 보관하세요.</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">페이퍼 키 작성하기</string>
     <!-- Argument is date; date should be on a new line -->
@@ -939,8 +939,8 @@
     <string name="TouchIdSettings.disabledWarning.body.android">귀하께서는 이 장치에 지문 본인확인 기능을 켜지 않으셨습니다. 설정 -&gt; 보안으로 가셔서 지문 본인확인을 설정하세요.</string>
     <!-- Fingerprint Is Not Setup -->
     <string name="TouchIdSettings.disabledWarning.title.android">지문 본인확인이 켜지지 않음</string>
-    <!-- Text that describes the purpose of the Touch ID settings in the BRD app. -->
-    <string name="TouchIdSettings.explanatoryText">터치 아이디로 BRD 앱을 잠금 해제하고 송금하세요.</string>
+    <!-- Text that describes the purpose of the Touch ID settings in the Coinsquare app. -->
+    <string name="TouchIdSettings.explanatoryText">터치 아이디로 Coinsquare 앱을 잠금 해제하고 송금하세요.</string>
     <!-- Touch Id screen label -->
     <string name="TouchIdSettings.label">지문을 사용하여 브레드의 보안을 해제하고 설정된 금액으로 송금할 수 있습니다.</string>
     <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -961,8 +961,8 @@
     <string name="TouchIdSettings.unavailableAlertMessage">이 기기에서 Touch ID가 설정되어 있지 않습니다. 지금 설정 -&gt; Touch ID 및 암호로 이동하여 설정해 주세요.</string>
     <!-- Touch ID unavailable alert title -->
     <string name="TouchIdSettings.unavailableAlertTitle">Touch ID가 설정되지 않음</string>
-    <!-- Text label for the toggle that enables Touch ID for unlocking the BRD app. -->
-    <string name="TouchIdSettings.unlockTitleText">터치 아이디로 BRD 잠금 해제</string>
+    <!-- Text label for the toggle that enables Touch ID for unlocking the Coinsquare app. -->
+    <string name="TouchIdSettings.unlockTitleText">터치 아이디로 Coinsquare 잠금 해제</string>
     <!-- Always require passcode option -->
     <string name="TouchIdSpendingLimit">항상 비밀번호 요구</string>
     <!-- Touch ID spending limit screen body -->
@@ -1003,7 +1003,7 @@
     <string name="Transaction.sentTo">%1$s으로 전송되었습니다</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">기초 잔액: %1$s</string>
-    <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+    <!-- e.g. "[The money you paid was a] Fee for token transfer: Coinsquare" (Coinsquare is the token that was transfered) -->
     <string name="Transaction.tokenTransfer">토큰 송금 수수료: %1$s</string>
     <!-- Waiting to be confirmed string -->
     <string name="Transaction.waiting">확인 대기 중. 일부 판매자는 트랜잭션을 완료하기 위해 확인을 요구합니다. 예상 소요 시간: 1~2시간.</string>
@@ -1117,7 +1117,7 @@
     <!-- Instruction to touch the sensor for fingerprint authentication -->
     <string name="UnlockScreen.touchIdInstructions.android">터치 센서</string>
     <!-- TouchID prompt text -->
-    <string name="UnlockScreen.touchIdPrompt">BRD의 잠금을 해제하세요.</string>
+    <string name="UnlockScreen.touchIdPrompt">Coinsquare의 잠금을 해제하세요.</string>
     <!-- Device authentication body -->
     <string name="UnlockScreen.touchIdPrompt.android">계속하시려면 귀하의 안드로이드 장치 잠금을 해제해 주세요.</string>
     <!-- Unlock with TouchID accessibility label -->
@@ -1127,7 +1127,7 @@
     <!-- Update PIN caption text -->
     <string name="UpdatePin.caption">이 PIN 코드를 기억하세요. PIN 코드를 잊어버리면 자신의 비트코인을 사용할 수 없게 됩니다.</string>
     <!-- PIN creation info. -->
-    <string name="UpdatePin.createInstruction">귀하의 PIN 코드는 BRD의 잠금을 해제하고 돈을 송금하는 데 사용됩니다.</string>
+    <string name="UpdatePin.createInstruction">귀하의 PIN 코드는 Coinsquare의 잠금을 해제하고 돈을 송금하는 데 사용됩니다.</string>
     <!-- Update PIN title -->
     <string name="UpdatePin.createTitle">PIN 설정</string>
     <!-- Update PIN title -->
@@ -1178,7 +1178,7 @@
     <!-- Wallet connection settings view title -->
     <string name="WalletConnectionSettings.viewTitle">Fastsync</string>
     <!-- 'No wallet' warning for watch app -->
-    <string name="Watch.noWalletWarning">귀하의 월렛을 설정하려면 BRD 앱을 열어 주세요.</string>
+    <string name="Watch.noWalletWarning">귀하의 월렛을 설정하려면 Coinsquare 앱을 열어 주세요.</string>
     <!-- Dismiss button label -->
     <string name="Webview.dismiss">무시</string>
     <!-- Webview loading error message -->
@@ -1186,9 +1186,9 @@
     <!-- Updating webview message -->
     <string name="Webview.updating">업데이트 중...</string>
     <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-    <string name="Welcome.body">Breadwallet이 이름을 BRD로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
+    <string name="Welcome.body">Breadwallet이 이름을 Coinsquare로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
     <!-- Top title of welcome screen -->
-    <string name="Welcome.title">BRD에 환영합니다!</string>
+    <string name="Welcome.title">Coinsquare에 환영합니다!</string>
     <!-- Wipe wallet alert message -->
     <string name="WipeWallet.alertMessage">정말 이 월렛을 삭제할까요?</string>
     <!-- Wipe wallet alert title -->
@@ -1202,7 +1202,7 @@
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">지갑의 연결을 해제하여 이 기기에서 제거하세요. 이 지갑의 연결이 해제되면, 새로운 지갑을 시작하거나 이 기기에 다른 지갑을 복구할 수 있습니다.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">이장치에서 현재 BRD 지갑을 더는 이용할 수 없게 됩니다. 잔고는 남아 있게 됩니다.</string>
+    <string name="WipeWallet.startWarning">이장치에서 현재 Coinsquare 지갑을 더는 이용할 수 없게 됩니다. 잔고는 남아 있게 됩니다.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">지갑 연결 해제</string>
     <!-- Wipe wallet button title -->

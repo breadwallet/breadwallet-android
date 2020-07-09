@@ -60,7 +60,7 @@ class SettingsAdapter(
         private val icon: ImageButton get() = itemView.setting_icon
         private val addon: TextView get() = itemView.item_addon
         private val subHeader: TextView get() = itemView.item_sub_header
-
+        private val rootView:View = view
         fun bindView(item: SettingsItem) {
             title.text = item.title
             icon.isVisible = item.iconResId != null
