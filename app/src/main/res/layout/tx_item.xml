@@ -15,7 +15,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="12dp"
-        android:fontFamily="@font/circular_pro_bold"
+        android:fontFamily="@font/roboto_bold"
         android:textColor="@color/total_assets_usd_color"
         android:textSize="16sp"
         tools:text="Dec 2" />
@@ -42,7 +42,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="12dp"
-        android:fontFamily="@font/circular_pro_bold"
+        android:fontFamily="@font/roboto_bold"
         android:textSize="18sp"
         tools:text="-$839.30" />
 
