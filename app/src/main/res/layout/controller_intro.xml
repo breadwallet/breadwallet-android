@@ -65,7 +65,7 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/roboto_regular"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo_view" />

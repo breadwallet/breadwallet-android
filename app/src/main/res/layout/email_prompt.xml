@@ -43,7 +43,7 @@
         android:text="@string/Prompts.PaperKey.body"
         android:textColor="@color/text_secondary"
         android:textSize="16sp"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/roboto_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/prompt_title"
         app:layout_constraintTop_toBottomOf="@+id/prompt_title" />
@@ -59,7 +59,7 @@
         android:textColor="@color/text_secondary"
         android:textSize="16sp"
         android:visibility="gone"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/roboto_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/prompt_title"
         app:layout_constraintTop_toBottomOf="@+id/prompt_description" />
@@ -72,7 +72,7 @@
         android:text="@string/Prompts.PaperKey.title"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/roboto_regular"
         app:layout_constraintEnd_toStartOf="@+id/close_button"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toTopOf="@+id/imageView3" />
@@ -87,7 +87,7 @@
         android:text="@string/Button.submit"
         android:textAllCaps="false"
         android:textColor="@color/prompt_action_button"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/roboto_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/prompt_description" />
 

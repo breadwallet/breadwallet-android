@@ -60,7 +60,7 @@
                 android:textColor="@color/text_total_assets_label"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/circular_pro_medium" />
+                android:fontFamily="@font/roboto_medium" />
 
             <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/total_assets_usd"
@@ -71,7 +71,7 @@
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
                 android:textColor="@color/white"
                 android:textSize="28sp"
-                android:fontFamily="@font/circular_pro_medium" />
+                android:fontFamily="@font/roboto_medium" />
         </RelativeLayout>
 
         <LinearLayout
@@ -138,7 +138,7 @@
                         android:ellipsize="end"
                         android:text="Scan QR Code"
                         android:textColor="@color/white"
-                        android:fontFamily="@font/circular_pro_book" />
+                        android:fontFamily="@font/roboto_regular" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -167,7 +167,7 @@
                         android:singleLine="true"
                         android:ellipsize="end"
                         android:textColor="@color/white"
-                        android:fontFamily="@font/circular_pro_book" />
+                        android:fontFamily="@font/roboto_regular" />
                 </LinearLayout>
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/trade_layout"
@@ -216,7 +216,7 @@
                         android:singleLine="true"
                         android:ellipsize="end"
                         android:textColor="@color/white"
-                        android:fontFamily="@font/circular_pro_book"
+                        android:fontFamily="@font/roboto_regular"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />

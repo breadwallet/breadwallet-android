@@ -24,7 +24,7 @@
         android:text="@string/WalletConnectionSettings.viewTitle"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:fontFamily="@font/circular_pro_bold"
+        android:fontFamily="@font/roboto_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -61,7 +61,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="24sp"
-            android:fontFamily="@font/circular_pro_bold"
+            android:fontFamily="@font/roboto_bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView5" />
@@ -80,7 +80,7 @@
             android:textColor="@color/text_secondary"
             android:textColorLink="@color/ui_accent"
             android:textSize="16sp"
-            android:fontFamily="@font/circular_pro_bold"
+            android:fontFamily="@font/roboto_bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />

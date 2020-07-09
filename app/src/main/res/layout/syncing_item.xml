@@ -28,7 +28,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
             android:textSize="@dimen/paragraph"
-            android:fontFamily="@font/circular_pro_book"
+            android:fontFamily="@font/roboto_regular"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/syncing_label"
             app:layout_constraintTop_toBottomOf="@+id/sync_progress" />
@@ -42,7 +42,7 @@
             android:text="@string/SyncingView.header"
             android:textColor="@color/almost_black"
             android:textSize="@dimen/sub_header"
-            android:fontFamily="@font/circular_pro_bold"
+            android:fontFamily="@font/roboto_bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

@@ -76,7 +76,7 @@
             android:text="@string/Send.title"
             android:textColor="@color/almost_black"
             android:textSize="@dimen/header"
-            android:fontFamily="@font/circular_pro_bold"
+            android:fontFamily="@font/roboto_bold"
             app:layout_constraintBottom_toTopOf="@+id/separator0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -269,7 +269,7 @@
             app:layout_constraintVertical_bias="0.0"
             tools:text="Current Balance: 1.2345 BTC"
             tools:visibility="visible"
-            android:fontFamily="@font/circular_pro_book" />
+            android:fontFamily="@font/roboto_regular" />
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/labelNetworkFee"
@@ -279,7 +279,7 @@
             android:layout_marginBottom="16dp"
             android:textColor="@color/light_gray"
             android:visibility="gone"
-            android:fontFamily="@font/circular_pro_book"
+            android:fontFamily="@font/roboto_regular"
             app:layout_constraintBottom_toTopOf="@+id/layoutFeeOption"
             app:layout_constraintEnd_toEndOf="@+id/inputLayoutAmount"
             app:layout_constraintHorizontal_bias="0.0"
@@ -335,7 +335,7 @@
                 android:text="@string/FeeSelector.title"
                 android:textColor="@color/almost_black"
                 android:textSize="@dimen/sub_header"
-                android:fontFamily="@font/circular_pro_book" />
+                android:fontFamily="@font/roboto_regular" />
 
             <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/labelFeeDescription"
@@ -343,7 +343,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:textColor="@color/light_gray"
-                android:fontFamily="@font/circular_pro_book" />
+                android:fontFamily="@font/roboto_regular" />
 
             <LinearLayout
                 android:id="@+id/layoutFeeButtons"
@@ -366,7 +366,7 @@
                     android:text="@string/FeeSelector.economy"
                     android:textColor="@color/dark_blue"
                     android:textSize="14sp"
-                    android:fontFamily="@font/circular_pro_medium"
+                    android:fontFamily="@font/roboto_medium"
                     app:isBreadButton="false" />
 
                 <com.breadwallet.legacy.presenter.customviews.BRButton
@@ -375,7 +375,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1.0"
                     android:background="@drawable/b_blue_square"
-                    android:fontFamily="@font/circular_pro_medium"
+                    android:fontFamily="@font/roboto_medium"
                     android:padding="0dp"
                     android:text="@string/FeeSelector.regular"
                     android:textColor="@color/white"
@@ -392,7 +392,7 @@
                     android:text="@string/FeeSelector.priority"
                     android:textColor="@color/dark_blue"
                     android:textSize="14sp"
-                    android:fontFamily="@font/circular_pro_medium"
+                    android:fontFamily="@font/roboto_medium"
                     app:isBreadButton="false" />
             </LinearLayout>
 
