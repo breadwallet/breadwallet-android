@@ -7,6 +7,7 @@
     android:layout_height="wrap_content"
     android:filterTouchesWhenObscured="true"
     android:foreground="?android:attr/selectableItemBackground"
+    android:background="?attr/secondary_background"
     android:orientation="horizontal">
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView

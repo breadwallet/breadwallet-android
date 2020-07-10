@@ -110,7 +110,6 @@ class MetaDataEffectHandler(
 
     override fun accept(effect: MetaDataEffect) {
         when (effect) {
-            MetaDataEffect.RecoverMetaData -> recoverMetaData()
             is MetaDataEffect.LoadTransactionMetaData ->
                 loadTransactionMetaData(effect.currencyCode, effect.transactionHashes)
             is MetaDataEffect.LoadTransactionMetaDataSingle ->
@@ -136,12 +135,6 @@ class MetaDataEffectHandler(
     override fun dispose() {
         coroutineContext.cancel()
     }
-
-    private fun recoverMetaData() =
-        metaDataProvider
-            .recoverAll()
-            .flowOn(Dispatchers.IO)
-            .launchIn(BreadApp.applicationScope)
 
     private fun loadTransactionMetaData(currencyCode: String, transactionHashes: List<String>) {
         loadMetaDataChannel.offer(

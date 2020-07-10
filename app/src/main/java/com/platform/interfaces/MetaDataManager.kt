@@ -85,7 +85,7 @@ class MetaDataManager(
         logInfo("MetaDataManager created successfully")
     }
 
-    override fun recoverAll(migrate: Boolean) = flow {
+    override suspend fun recoverAll(migrate: Boolean): Boolean {
         // Sync essential metadata first, migrate enabled wallets ASAP
         storeProvider.sync(KEY_WALLET_INFO)
         storeProvider.sync(KEY_ASSET_INDEX)
@@ -103,7 +103,7 @@ class MetaDataManager(
                 enabledWalletsToJSON(BreadApp.getDefaultEnabledWallets())
             )
         }
-        emit(syncResult)
+        return syncResult
     }
 
     override fun walletInfo(): Flow<WalletInfoData> =
