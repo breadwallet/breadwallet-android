@@ -49,7 +49,8 @@ public class NewKeyStoreTests {
 
     @Before
     public void setup() {
-        BRKeyStore.resetWalletKeyStore(mActivityRule.getActivity());
+        BRKeyStore.provideContext(mActivityRule.getActivity());
+        BRKeyStore.resetWalletKeyStore();
     }
 
     @Test
@@ -57,13 +58,12 @@ public class NewKeyStoreTests {
         Activity app = mActivityRule.getActivity();
         String temp = "here is some data to encrypt! @#$%^&*";
         byte[] phrase = temp.getBytes();
-        BRKeyStore.storeEncryptedData(app, phrase, "phrase");
-        byte[] retrievedPhrase = BRKeyStore.retrieveEncryptedData(app, "phrase");
+        BRKeyStore.storeEncryptedData(app, phrase, "BASE64_TEST");
+        byte[] retrievedPhrase = BRKeyStore.retrieveEncryptedData(app, "BASE64_TEST");
         Assert.assertNotNull(retrievedPhrase);
-        Assert.assertArrayEquals("Oh no", phrase, retrievedPhrase);
+        Assert.assertArrayEquals(phrase, retrievedPhrase);
         String newTemp = new String(retrievedPhrase);
         Assert.assertEquals(temp, newTemp);
-
     }
 
     @Test

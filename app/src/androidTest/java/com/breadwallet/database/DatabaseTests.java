@@ -10,8 +10,6 @@ import androidx.test.runner.AndroidJUnit4;
 import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
 import com.breadwallet.legacy.presenter.entities.BRTransactionEntity;
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
-import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBchManager;
-import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.RatesDataSource;
@@ -73,14 +71,13 @@ public class DatabaseTests {
 //        BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey("cat circle quick rotate arena primary walnut mask record smile violin state".getBytes(), true);
 //        BRKeyStore.putMasterPublicKey(pubKey.serialize(), app);
         cleanUp();
-
     }
 
     private void cleanUp() {
         Activity app = mActivityRule.getActivity();
 
-        PeerDataSource.getInstance(app).deleteAllPeers(app, WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
-        PeerDataSource.getInstance(app).deleteAllPeers(app, WalletBchManager.BITCASH_CURRENCY_CODE);
+        PeerDataSource.getInstance(app).deleteAllPeers(app, "BTC");
+        PeerDataSource.getInstance(app).deleteAllPeers(app, "BCH");
     }
 
     @After
@@ -96,44 +93,46 @@ public class DatabaseTests {
         // Test inserting OMG as a currency
         RatesDataSource cds = RatesDataSource.getInstance(mActivityRule.getActivity());
         List<CurrencyEntity> toInsert = new ArrayList<>();
-        CurrencyEntity ent = new CurrencyEntity();
-        ent.code = "OMG";
-        ent.name = "OmiseGo";
-        ent.rate = 8.43f;
-        ent.iso = WalletBitcoinManager.BITCOIN_CURRENCY_CODE;
+        CurrencyEntity ent = new CurrencyEntity(
+ "OMG",
+        "OmiseGo",
+        8.43f,
+         "BTC"
+        );
         toInsert.add(ent);
-        cds.putCurrencies(app,  toInsert);
-        List<CurrencyEntity> cs = cds.getAllCurrencies(app, WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+        cds.putCurrencies(toInsert);
+        List<CurrencyEntity> cs = cds.getAllCurrencies(app, "BTC");
         Assert.assertNotNull(cs);
         Assert.assertEquals(cs.size(), 1);
-        Assert.assertEquals(cs.get(0).name, "OmiseGo");
-        Assert.assertEquals(cs.get(0).code, "OMG");
-        Assert.assertEquals(cs.get(0).rate, 8.43f, 0);
+        Assert.assertEquals(cs.get(0).getName(), "OmiseGo");
+        Assert.assertEquals(cs.get(0).getCode(), "OMG");
+        Assert.assertEquals(cs.get(0).getRate(), 8.43f, 0);
 
         // Test inserting BTC as a currency
         toInsert = new ArrayList<>();
 
-        CurrencyEntity btcEntity = new CurrencyEntity();
-        btcEntity.code = "ETH";
-        btcEntity.name = "Ether";
-        btcEntity.rate = 6f;
-        btcEntity.iso = WalletBchManager.BITCASH_CURRENCY_CODE;
+        CurrencyEntity btcEntity = new CurrencyEntity(
+                "ETH",
+                "Ether",
+                6f,
+                "BCH"
+        );
         toInsert.add(btcEntity);
-        cds.putCurrencies(app,  toInsert);
+        cds.putCurrencies(toInsert);
 
-        List<CurrencyEntity> btcCurs = cds.getAllCurrencies(app, WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
-        List<CurrencyEntity> bchCurs = cds.getAllCurrencies(app, WalletBchManager.BITCASH_CURRENCY_CODE);
+        List<CurrencyEntity> btcCurs = cds.getAllCurrencies(app, "BTC");
+        List<CurrencyEntity> bchCurs = cds.getAllCurrencies(app, "BCH");
         Assert.assertNotNull(btcCurs);
         Assert.assertNotNull(bchCurs);
         Assert.assertEquals(btcCurs.size(), 1);
         Assert.assertEquals(bchCurs.size(), 1);
-        Assert.assertEquals(bchCurs.get(0).name, "Ether");
-        Assert.assertEquals(bchCurs.get(0).code, "ETH");
-        Assert.assertEquals(bchCurs.get(0).rate, 6f, 0);
+        Assert.assertEquals(bchCurs.get(0).getName(), "Ether");
+        Assert.assertEquals(bchCurs.get(0).getCode(), "ETH");
+        Assert.assertEquals(bchCurs.get(0).getRate(), 6f, 0);
 
-        Assert.assertEquals(btcCurs.get(0).name, "OmiseGo");
-        Assert.assertEquals(btcCurs.get(0).code, "OMG");
-        Assert.assertEquals(btcCurs.get(0).rate, 8.43f, 0);
+        Assert.assertEquals(btcCurs.get(0).getName(), "OmiseGo");
+        Assert.assertEquals(btcCurs.get(0).getCode(), "OMG");
+        Assert.assertEquals(btcCurs.get(0).getRate(), 8.43f, 0);
     }
 
     private synchronized void done() {

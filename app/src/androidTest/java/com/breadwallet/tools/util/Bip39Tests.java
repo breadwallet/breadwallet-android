@@ -56,7 +56,8 @@ public class Bip39Tests {
 
     @Before
     public void setup() {
-        BRKeyStore.resetWalletKeyStore(mActivityRule.getActivity());
+        BRKeyStore.provideContext(mActivityRule.getActivity());
+        BRKeyStore.resetWalletKeyStore();
     }
 
     @Test

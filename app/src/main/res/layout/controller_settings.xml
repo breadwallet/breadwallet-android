@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_intro_set_pit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -57,11 +59,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/settings_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         android:layout_marginTop="2dp"
-        android:background="?attr/secondary_background"
         android:footerDividersEnabled="true"
-        android:headerDividersEnabled="true" />
+        android:headerDividersEnabled="true"
+        tools:listitem="@layout/settings_list_item"/>
 
 </RelativeLayout>

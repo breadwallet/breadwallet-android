@@ -38,7 +38,6 @@ android {
         brdInternalVersionName = "$brdMarketingVersion.$brdProductVersion.$ext.brdEngineeringVersion.$ext.brdBuildVersion"
     }
     defaultConfig {
-        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
         applicationId = 'com.breadwallet'
         minSdkVersion 23
         targetSdkVersion 29
@@ -47,13 +46,11 @@ android {
         versionName "$brdMarketingVersion.$brdProductVersion.$brdEngineeringVersion"
         buildConfigField "int", "BUILD_VERSION", "$brdBuildVersion"
 
-        multiDexEnabled true
-
-        // Core Library
-        missingDimensionStrategy 'network', 'onMainnet'
-
         buildConfigField "String", "BDB_CLIENT_TOKEN", BDB_CLIENT_TOKEN
         buildConfigField "Boolean", "USE_REMOTE_CONFIG", useGoogleServices.toString()
+
+        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
     signingConfigs {
         FakeSigningConfig {
@@ -65,6 +62,8 @@ android {
     }
     testOptions {
         unitTests.returnDefaultValues = true
+        animationsDisabled = true
+        // TODO: execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
     packagingOptions {
         pickFirst 'protobuf.meta'
@@ -254,14 +253,18 @@ dependencies {
     implementation "androidx.camera:camera-camera2:$camerax_version"
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
     implementation "androidx.camera:camera-view:$camerax_view_version"
-    testImplementation "androidx.test.espresso:espresso-core:$ax_espresso"
-    testImplementation "androidx.test:runner:$ax_test_runner"
-    testImplementation "androidx.test:rules:$ax_test_rules"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$ax_espresso"
+    androidTestImplementation "androidx.test:runner:$ax_test_runner"
+    androidTestImplementation "androidx.test:rules:$ax_test_rules"
+    androidTestImplementation "androidx.test.ext:junit-ktx:$ax_junit_ext"
     androidTestImplementation "androidx.work:work-testing:$ax_workmanager"
+    androidTestUtil "com.android.support.test:orchestrator:$ax_test_orchestrator"
 
     // Test infrastructure
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "org.mockito:mockito-android:$mockito_version"
+    androidTestImplementation "com.kaspersky.android-components:kaspresso:$kaspresso_version"
+    androidTestImplementation "com.agoda.kakao:kakao:$kakao_version"
 
     // Google/Firebase
     implementation "com.google.android.material:material:$material_components_version"

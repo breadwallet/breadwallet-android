@@ -1,6 +1,7 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layoutBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -49,11 +50,10 @@
             android:id="@+id/dialog_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center_vertical"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
+            tools:text="Hello!"
             android:fontFamily="@font/circular_pro_bold" android:textAlignment="center"
             android:textColor="?attr/secondary_text_color" android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/dialog_text" app:layout_constraintEnd_toEndOf="parent"
@@ -70,6 +70,7 @@
             android:gravity="center_horizontal|center_vertical"
             android:textColor="?attr/secondary_text_color"
             android:textSize="16sp"
+            tools:text="I am a message!"
             app:layout_constraintBottom_toTopOf="@+id/neg_button" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/dialog_title"/>
         <com.breadwallet.legacy.presenter.customviews.BRButton

@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     private val userManager by instance<BrdUserManager>()
 
-    private lateinit var router: Router
+    lateinit var router: Router
     private var trackingListener: ControllerTrackingListener? = null
 
     // NOTE: Used only to centralize deep link navigation handling.

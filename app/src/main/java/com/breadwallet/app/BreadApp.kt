@@ -34,8 +34,10 @@ import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.CameraXConfig
+import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.security.crypto.EncryptedSharedPreferences
@@ -80,6 +82,9 @@ import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.KVStoreProvider
 import com.platform.interfaces.MetaDataManager
 import com.platform.interfaces.WalletProvider
+import com.platform.kvstore.RemoteKVStore
+import com.platform.kvstore.ReplicatedKVStore
+import com.platform.sqlite.PlatformSqliteHelper
 import com.platform.tools.KVStoreManager
 import drewcarlson.coingecko.CoinGeckoService
 import io.ktor.client.HttpClient
@@ -89,15 +94,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
@@ -400,14 +410,16 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         setDelayServerShutdown(false, -1)
 
         val breadBox = getBreadBox()
-        startedScope.launch {
-            userManager
-                .stateChanges()
-                .first { it is BrdUserState.Enabled }
-            if (!userManager.isMigrationRequired()) {
-                startWithInitializedWallet(breadBox)
+        userManager
+            .stateChanges()
+            .distinctUntilChanged()
+            .filterIsInstance<BrdUserState.Enabled>()
+            .onEach {
+                if (!userManager.isMigrationRequired()) {
+                    startWithInitializedWallet(breadBox)
+                }
             }
-        }
+            .launchIn(startedScope)
     }
 
     private fun handleOnStop() {
@@ -459,6 +471,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         }
 
         getBreadBox().apply { if (isOpen) close() }
+        applicationScope.cancel()
     }
 
     fun startWithInitializedWallet(breadBox: BreadBox, migrate: Boolean = false) {
@@ -482,9 +495,9 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
             UserMetricsUtil.makeUserMetricsRequest(context)
         }
 
-        accountMetaData
-            .recoverAll(migrate)
-            .launchIn(startedScope)
+        startedScope.launch {
+            accountMetaData.recoverAll(migrate)
+        }
 
         ratesFetcher.start(startedScope)
 
@@ -551,5 +564,28 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
     override fun getCameraXConfig(): CameraXConfig {
         return Camera2Config.defaultConfig()
+    }
+
+    @VisibleForTesting
+    fun clearApplicationData() {
+        runCatching {
+            startedScope.coroutineContext.cancelChildren()
+            applicationScope.coroutineContext.cancelChildren()
+            val breadBox = direct.instance<BreadBox>()
+            if (breadBox.isOpen) {
+                breadBox.close()
+            }
+            (userManager as CryptoUserManager).wipeAccount()
+
+            getStorageDir(this).deleteRecursively()
+
+            PlatformSqliteHelper.getInstance(this)
+                .writableDatabase
+                .delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, null)
+
+            getSharedPreferences(BRSharedPrefs.PREFS_NAME, Context.MODE_PRIVATE).edit { clear() }
+        }.onFailure { e ->
+            logError("Failed to clear application data", e)
+        }
     }
 }
