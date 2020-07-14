@@ -126,7 +126,9 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                 finish()
                 return@launch
             }
-            if (userManager.getState() is BrdUserState.KeyStoreInvalid) {
+            val userState = userManager.getState()
+            if (userState is BrdUserState.KeyStoreInvalid) {
+                processUserState(userState)
                 return@launch
             }
 
