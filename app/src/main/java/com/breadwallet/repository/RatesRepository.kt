@@ -63,11 +63,10 @@ class RatesRepository private constructor(private val mContext: Context) {
         if (fromCurrency.isNullOrBlank() || toCurrency.isNullOrBlank()) {
             return null
         }
-        val fromCurrencyCode = TokenUtil.getExchangeRateCode(fromCurrency)
-        val cacheKey = getCacheKey(fromCurrencyCode, toCurrency)
+        val cacheKey = getCacheKey(fromCurrency, toCurrency)
         var currencyEntity = mCache[cacheKey]
         if (currencyEntity == null && cacheKey != null) {
-            currencyEntity = dataSource.getCurrencyByCode(mContext, fromCurrency, toCurrency)
+            currencyEntity = dataSource.getCurrencyByCode(fromCurrency, toCurrency)
             if (currencyEntity != null) {
                 mCache[cacheKey] = currencyEntity
             }
@@ -97,7 +96,7 @@ class RatesRepository private constructor(private val mContext: Context) {
      * them, returns an empty list if no rates are found for the specified currency
      */
     fun getAllRatesForCurrency(currencyCode: String): List<CurrencyEntity> {
-        return dataSource.getAllCurrencies(mContext, currencyCode)
+        return dataSource.getAllCurrencies(currencyCode)
     }
 
     /**
@@ -139,9 +138,7 @@ class RatesRepository private constructor(private val mContext: Context) {
         return if (fromCurrency.isNullOrBlank() || toCurrency.isNullOrBlank()) {
             null
         } else {
-            fromCurrency.toLowerCase(Locale.ROOT) + CACHE_KEY_DELIMITER + toCurrency.toLowerCase(
-                Locale.ROOT
-            )
+            "$fromCurrency${CACHE_KEY_DELIMITER}$toCurrency".toLowerCase(Locale.ROOT)
         }
     }
 
@@ -184,16 +181,14 @@ class RatesRepository private constructor(private val mContext: Context) {
      * @return the price change.
      */
     fun getPriceChange(currencyCode: String): PriceChange? {
-        val actualCurrencyCode =
-            TokenUtil.getExchangeRateCode(currencyCode).toUpperCase(Locale.ROOT)
-        return mPriceChanges[actualCurrencyCode]
+        return mPriceChanges[currencyCode.toUpperCase(Locale.ROOT)]
     }
 
     @get:Synchronized
     val allCurrencyCodesPossible: List<String>
         get() {
             return TokenUtil.getTokenItems()
-                .map(TokenItem::exchangeRateCurrencyCode)
+                .map(TokenItem::symbol)
         }
 
     fun changes(): Flow<Unit> = changeEventChannel.asFlow()

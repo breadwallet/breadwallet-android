@@ -169,7 +169,7 @@ fun createHomeScreenHandler(
             .mapLatest { wallets ->
                 val fiatIso = BRSharedPrefs.getPreferredFiatIso()
                 E.OnWalletsUpdated(wallets.map {
-                    val name = TokenUtil.getTokenItemByCurrencyCode(it.currency.code)?.name
+                    val name = TokenUtil.tokenForCode(it.currency.code)?.name
                     it.asWallet(name, fiatIso, ratesRepo)
                 })
             }
@@ -253,7 +253,7 @@ private fun CryptoWallet.asWallet(
     fiatIso: String,
     ratesRepo: RatesRepository
 ): Wallet {
-    val tokenItem = TokenUtil.getTokenItemByCurrencyCode(currency.code)
+    val tokenItem = TokenUtil.tokenForCode(currency.code)
     val balanceBig = balance.toBigDecimal()
     return Wallet(
         currencyId = currencyId,

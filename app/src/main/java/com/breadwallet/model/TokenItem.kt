@@ -40,17 +40,8 @@ data class TokenItem(
     val type: String = "",
     val startColor: String? = null,
     val endColor: String? = null,
-    val cryptocompareAlias: String? = null
+    val coingeckoId: String? = null
 ) {
-
-    val exchangeRateCurrencyCode: String
-        get() {
-            return if (cryptocompareAlias.isNullOrBlank()) {
-                symbol
-            } else {
-                cryptocompareAlias
-            }
-        }
 
     val isNative: Boolean = type.isBlank()
 

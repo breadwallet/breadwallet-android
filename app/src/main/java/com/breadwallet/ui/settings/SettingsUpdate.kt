@@ -136,6 +136,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.FAST_SYNC_BTC -> F.GoToFastSync(btc)
                     SettingsOption.RESET_DEFAULT_CURRENCIES -> F.ResetDefaultCurrencies
                     SettingsOption.WIPE_NO_PROMPT -> F.WipeNoPrompt
+                    SettingsOption.ENABLE_ALL_WALLETS -> F.EnableAllWallets
                 }
             )
         )
