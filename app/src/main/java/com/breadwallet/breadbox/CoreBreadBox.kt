@@ -266,7 +266,7 @@ internal class CoreBreadBox(
             enabledWallets
                 .associateWith { wallets.findByCurrencyId(it) }
                 .mapValues { (currencyId, wallet) ->
-                    wallet?.currency?.code ?: TokenUtil.getTokenItemForCurrencyId(currencyId)
+                    wallet?.currency?.code ?: TokenUtil.tokenForCurrencyId(currencyId)
                         ?.symbol?.toLowerCase(Locale.ROOT)
                 }.values
                 .filterNotNull()
@@ -340,7 +340,7 @@ internal class CoreBreadBox(
         system()
             .map { system -> system.networks.find { it.containsCurrencyCode(currencyCode) } }
             .mapNotNull { network ->
-                network?.currency?.uids ?: TokenUtil.getTokenItemByCurrencyCode(currencyCode)?.currencyId
+                network?.currency?.uids ?: TokenUtil.tokenForCode(currencyCode)?.currencyId
             }
             .take(1)
             .flatMapLatest { uids ->

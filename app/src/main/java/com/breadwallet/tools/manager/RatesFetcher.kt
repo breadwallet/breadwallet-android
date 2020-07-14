@@ -30,16 +30,14 @@ import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.model.PriceChange
 import com.breadwallet.model.PriceDataPoint
-import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.wallet.Interval
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.platform.interfaces.AccountMetaDataProvider
-import drewcarlson.coingecko.CoinGeckoService
-import drewcarlson.coingecko.models.coins.CoinPrice
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -50,6 +48,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
 import java.util.Date
 import java.util.Locale
 
@@ -68,18 +70,17 @@ private const val EUR_AVM_CURRENCY_CODE = "eur.avm"
 private const val AVM_TO_EUR_KEY = "AVM_TO_EUR"
 private const val EUR_AVM_TO_EUR_KEY = "EUR_AVM_TO_EUR"
 
+private const val COINGECKO_API_URL = "https://api.coingecko.com/api/v3/"
+
 class RatesFetcher(
     private val accountMetaData: AccountMetaDataProvider,
-    private val coinGeckoService: CoinGeckoService,
+    private val okhttp: OkHttpClient,
     private val context: Context
 ) {
-    private var currencyCodeToGeckoIdMap: Map<String, String>? = null
-
     /** Updates the token and exchange rate data for the current list of currency ids. */
     fun start(scope: CoroutineScope) {
         accountMetaData.enabledWallets()
             .onStart {
-                getCoinGeckoIdMap()
                 updateRates()
             }
             .filter { it.isNotEmpty() }
@@ -91,7 +92,7 @@ class RatesFetcher(
             }
             .map { currencyIds ->
                 currencyIds.mapNotNull {
-                    TokenUtil.getTokenItemForCurrencyId(it)?.symbol
+                    TokenUtil.tokenForCurrencyId(it)?.symbol
                 }
             }
             // Repeat the latest list every 60 seconds
@@ -114,55 +115,35 @@ class RatesFetcher(
             .launchIn(scope)
     }
 
-    private suspend fun getCoinGeckoIdMap(): Map<String, String> {
-        val coinList = coinGeckoService.getCoinList()
-        return currencyCodeToGeckoIdMap
-            ?: TokenUtil.getTokenItems()
-                .filter(TokenItem::isSupported)
-                .map(TokenItem::symbol)
-                .associateWith { symbol ->
-                    coinList.firstOrNull { coin ->
-                        coin.symbol.equals(symbol, true)
-                    }?.id ?: ""
-                }
-                .filter { (_, id) -> id.isNotBlank() }
-                .also { currencyCodeToGeckoIdMap = it }
-    }
-
     private suspend fun updateRates(codes: List<String>? = null) {
         val ratesRepo = RatesRepository.getInstance(context)
         val codeList = codes ?: ratesRepo.allCurrencyCodesPossible
 
         val preferredFiat = BRSharedPrefs.getPreferredFiatIso()
-        val fetchFiats = if (DEFAULT_FIATS.contains(preferredFiat.toUpperCase(Locale.ROOT))) {
-            DEFAULT_FIATS
-        } else {
-            DEFAULT_FIATS + preferredFiat
-        }
+        val fetchFiats = (DEFAULT_FIATS + preferredFiat.toUpperCase(Locale.ROOT)).distinct()
 
         val rates = fetchRates(codeList, fetchFiats)
 
         val currencyEntities = mutableSetOf<CurrencyEntity>()
         val priceChanges = mutableMapOf<String, PriceChange>()
 
-        rates.entries.forEach { (currencyCode, coinPrice) ->
+        rates.forEach { (currencyCode, coinPrice) ->
             if (currencyCode.isEmpty()) return@forEach
 
             fetchFiats.forEach { fiat ->
+                val cryptoSymbol = currencyCode.toUpperCase(Locale.ROOT)
+                val rate = coinPrice.optDouble(fiat.toLowerCase(Locale.ROOT), 0.0).toFloat()
                 currencyEntities.add(
                     CurrencyEntity(
                         name = fiat,
-                        code = fiat,
-                        rate = coinPrice.getPrice(fiat).toFloat(),
-                        iso = currencyCode
+                        code = fiat.toUpperCase(Locale.ROOT),
+                        rate = rate,
+                        iso = cryptoSymbol
                     )
                 )
-                val changePct = coinPrice.get24hrChangeOrNull(fiat)
-
-                if (changePct != null) {
-                    val changeAmount = coinPrice.getPrice(fiat) * changePct * 0.01
-                    priceChanges[currencyCode] = PriceChange(changePct, changeAmount)
-                }
+                val changePct = coinPrice.optDouble("${fiat}_24h_change".toLowerCase(Locale.ROOT), 0.0)
+                val changeAmount = rate * changePct * 0.01
+                priceChanges[cryptoSymbol] = PriceChange(changePct, changeAmount)
             }
         }
 
@@ -198,21 +179,50 @@ class RatesFetcher(
     private suspend fun fetchRates(
         codes: List<String>,
         fiats: List<String>
-    ): Map<String, CoinPrice> {
-        val coinGeckoIds = getCoinGeckoIdMap()
-        val geckoIdToCurrencyCodeMap =
-            coinGeckoIds.entries.associate { it.value to it.key }
+    ): Map<String, JSONObject> {
+        val ids = codes.mapNotNull { currencyCode ->
+            TokenUtil.coingeckoIdForCode(currencyCode)
+        }
 
-        val ids = codes.mapNotNull { coinGeckoIds[it.toUpperCase(Locale.ROOT)] }
-        val prices = coinGeckoService.getPrice(
-            ids.joinToString(","),
-            fiats.joinToString(","),
-            include24hrChange = true
-        )
+        val url = buildString {
+            append(COINGECKO_API_URL)
+            append("simple/price")
+            append("?ids=${ids.joinToString(",")}")
+            append("&vs_currencies=${fiats.joinToString(",")}")
+            append("&include_24hr_change=true")
+        }
+        val request = Request.Builder()
+            .get()
+            .url(url)
+            .build()
+        val res = withContext(Dispatchers.IO) {
+            runCatching {
+                okhttp.newCall(request).execute()
+            }.onFailure { e ->
+                logError("Failed to fetch data", e)
+            }
+        }.getOrNull()
 
-        check(prices.isNotEmpty() && prices.entries.isNotEmpty())
+        return if (res == null || !res.isSuccessful) {
+            emptyMap()
+        } else {
+            val json = runCatching {
+                val bodyString = checkNotNull(res.body).string()
+                JSONObject(bodyString)
+            }.onFailure { e ->
+                logError("Failed to parse response body", e)
+            }.getOrNull()
 
-        return prices.entries.associate { geckoIdToCurrencyCodeMap[it.key].orEmpty() to it.value }
+            if (json == null) {
+                emptyMap()
+            } else {
+                ids.associateWith { json.getJSONObject(it) }
+                    .mapKeys { (key, _) ->
+                        TokenUtil.tokenForCoingeckoId(key)?.symbol ?: ""
+                    }
+                    .filterKeys { it.isNotBlank() }
+            }
+        }
     }
 
     suspend fun getHistoricalData(
@@ -220,21 +230,51 @@ class RatesFetcher(
         toCurrency: String,
         interval: Interval
     ): List<PriceDataPoint> {
-        val id = getCoinGeckoIdMap()
-            .filterKeys { it.equals(fromCurrency, true) }
-            .values
-            .singleOrNull() ?: return emptyList()
-        return coinGeckoService.getCoinMarketChartById(id, toCurrency, interval.days)
-            .prices
-            .map { p ->
-                PriceDataPoint(
-                    time = Date(p.first().toLong()),
-                    closePrice = p.last().toDouble()
-                )
+        val id = TokenUtil.coingeckoIdForCode(fromCurrency) ?: return emptyList()
+
+        val url = buildString {
+            append(COINGECKO_API_URL)
+            append("coins/$id/market_chart")
+            append("?vs_currency=$toCurrency")
+            append("&days=${interval.days}")
+        }
+        val request = Request.Builder()
+            .get()
+            .url(url)
+            .build()
+        val res = withContext(Dispatchers.IO) {
+            runCatching {
+                okhttp.newCall(request).execute()
+            }.onFailure { e ->
+                logError("Failed to fetch data", e)
             }
-            .filterIndexed { index, _ ->
-                interval.keepEvery == 0 || index % interval.keepEvery == 0
+        }.getOrNull()
+
+        return if (res == null || !res.isSuccessful) {
+            emptyList()
+        } else {
+            val json = runCatching {
+                val bodyString = checkNotNull(res.body).string()
+                JSONObject(bodyString)
+            }.onFailure { e ->
+                logError("Failed to parse response body", e)
+            }.getOrNull()
+
+            if (json == null) {
+                emptyList()
+            } else {
+                val prices = json.getJSONArray("prices")
+                (0 until prices.length())
+                    .filter { interval.keepEvery == 0 || it % interval.keepEvery == 0 }
+                    .map { i ->
+                        val data = prices.getJSONArray(i)
+                        PriceDataPoint(
+                            time = Date(data.getLong(0)),
+                            closePrice = data.getDouble(1)
+                        )
+                    }
             }
+        }
     }
 }
 

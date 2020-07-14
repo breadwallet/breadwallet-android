@@ -198,7 +198,7 @@ class WalletJs(
         val currenciesJSON = JSONArray()
         wallets.forEach { currencyId ->
             val wallet = system.wallets.firstOrNull { it.currencyId.equals(currencyId, true) }
-            val tokenItem = TokenUtil.getTokenItemForCurrencyId(currencyId)
+            val tokenItem = TokenUtil.tokenForCurrencyId(currencyId)
             val currencyCode =
                 wallet?.currency?.code?.toUpperCase() ?: tokenItem?.symbol
 
@@ -363,7 +363,7 @@ class WalletJs(
     @JavascriptInterface
     fun enableCurrency(currencyCode: String) = promise.create {
         val system = checkNotNull(breadBox.system().first())
-        val currencyId = TokenUtil.getTokenItemByCurrencyCode(currencyCode)?.currencyId.orEmpty()
+        val currencyId = TokenUtil.tokenForCode(currencyCode)?.currencyId.orEmpty()
         check(currencyId.isNotEmpty()) { ERR_CURRENCY_NOT_SUPPORTED }
 
         val network = system.networks.find { it.containsCurrency(currencyId) }

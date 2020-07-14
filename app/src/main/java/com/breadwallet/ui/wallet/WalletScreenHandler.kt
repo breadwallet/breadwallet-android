@@ -217,7 +217,7 @@ object WalletScreenHandler {
         flowTransformer<F.LoadCurrencyName, E> { effects ->
             effects
                 .map { effect ->
-                    TokenUtil.getTokenItemByCurrencyCode(effect.currencyCode)?.name
+                    TokenUtil.tokenForCode(effect.currencyCode)?.name
                         ?: breadBox.wallet(effect.currencyCode).first().currency.name
                 }
                 .map { E.OnCurrencyNameUpdated(it) }

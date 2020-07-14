@@ -56,6 +56,7 @@ enum class SettingsOption {
     TOKEN_BUNDLE,
     NATIVE_API_EXPLORER,
     WIPE_NO_PROMPT,
+    ENABLE_ALL_WALLETS,
     // BTC
     REDEEM_PRIVATE_KEY,
     SYNC_BLOCKCHAIN_BTC,

@@ -25,12 +25,9 @@
 package com.breadwallet.tools.util
 
 import com.breadwallet.logger.logDebug
-import com.breadwallet.logger.logError
 import com.breadwallet.logger.logWarning
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
-import java.io.IOException
 
 /** Default timeout in milliseconds to wait for a network request. */
 private const val DEFAULT_TIMEOUT_MS = -1L
@@ -55,7 +52,6 @@ private const val DEFAULT_MAX_DELAY_MS = 15_000L
  * Retry attempts are delayed by [delayMs] multiplied be the
  * current attempt index with a max of [maxDelayMs].
  */
-@Suppress("ThrowsCount", "TooGenericExceptionCaught")
 suspend fun <R> netRetry(
     retryAttempts: Int,
     timeoutMs: Long = DEFAULT_TIMEOUT_MS,
@@ -66,15 +62,13 @@ suspend fun <R> netRetry(
     repeat(retryAttempts - 1) { retryIndex ->
         logDebug("Retry attempt $retryIndex")
 
-        try {
+        runCatching {
             return when (timeoutMs) {
                 -1L -> block()
                 else -> withTimeout(timeoutMs) { block() }
             }
-        } catch (e: IOException) {
-            logError("Network response error.", e)
-        } catch (e: TimeoutCancellationException) {
-            logWarning("Network timed out.", e)
+        }.onFailure { e ->
+            logWarning("Network call attempt failed", e)
         }
         val nextDelay = delayMs * (retryIndex + 1)
         delay(nextDelay.coerceAtMost(maxDelayMs))

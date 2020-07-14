@@ -63,6 +63,8 @@ interface AccountMetaDataProvider {
     /** Enables the wallet for this Account. */
     fun enableWallet(currencyId: String)
 
+    fun enableWallets(currencyIds: List<String>)
+
     /** Disables the wallet for this Account. */
     fun disableWallet(currencyId: String)
 
