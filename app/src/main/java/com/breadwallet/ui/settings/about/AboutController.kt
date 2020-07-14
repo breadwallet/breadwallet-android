@@ -34,7 +34,7 @@ import com.breadwallet.R
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.tools.util.LogsUtils
+import com.breadwallet.tools.util.SupportUtils
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.home.HomeController
 import kotlinx.android.synthetic.main.controller_about.*
@@ -69,7 +69,11 @@ class AboutController(args: Bundle? = null) : BaseController(args) {
             versionClickedCount++
             if (versionClickedCount >= VERSION_CLICK_COUNT_FOR_BACKDOOR) {
                 versionClickedCount = 0
-                LogsUtils.shareLogs(checkNotNull(activity), direct.instance(), direct.instance())
+                SupportUtils.submitEmailRequest(
+                    checkNotNull(activity),
+                    direct.instance(),
+                    direct.instance()
+                )
             }
         }
 
@@ -87,7 +91,7 @@ class AboutController(args: Bundle? = null) : BaseController(args) {
         }
 
         brd_rewards_id.text = BRSharedPrefs.getWalletRewardId()
-        brd_copy.setOnClickListener  {
+        brd_copy.setOnClickListener {
             BRClipboardManager.putClipboard(activity, brd_rewards_id.text.toString())
             toast(R.string.Receive_copied)
         }

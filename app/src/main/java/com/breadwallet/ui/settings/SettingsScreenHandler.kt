@@ -38,7 +38,7 @@ import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
-import com.breadwallet.tools.util.LogsUtils
+import com.breadwallet.tools.util.SupportUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.btc
@@ -76,7 +76,7 @@ class SettingsScreenHandler(
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
             F.SendLogs -> launch(Dispatchers.Main) {
-                LogsUtils.shareLogs(context, breadBox, userManager)
+                SupportUtils.submitEmailRequest(context, breadBox, userManager)
             }
             is F.SetApiServer -> {
                 if (BuildConfig.DEBUG) {
@@ -113,11 +113,11 @@ class SettingsScreenHandler(
                     ?.clearApplicationUserData()
             }
             F.GetPaperKey -> launch {
-                 try {
+                try {
                     val phrase = checkNotNull(userManager.getPhrase()).toString(UTF_8)
-                     output.accept(E.ShowPhrase(phrase.split(" ")))
+                    output.accept(E.ShowPhrase(phrase.split(" ")))
                 } catch (e: UserNotAuthenticatedException) {
-                     // User denied confirmation, ignored
+                    // User denied confirmation, ignored
                 }
             }
         }
@@ -358,7 +358,7 @@ class SettingsScreenHandler(
         val mapPath = mapExperiment?.meta.orEmpty().replace("\\/", "/")
         val mapJsonObj = JSONObject(mapPath)
         val url = mapJsonObj.getString("url")
-        
+
         output.accept(E.OnATMMapClicked(url, mapPath))
     }
 }
