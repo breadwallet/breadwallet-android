@@ -137,6 +137,15 @@
         </p>
         <textarea id="apiOutput" style="width: 100%;overflow-y: scroll;height: 300px;"></textarea>
     </fieldset>
+    <fieldset>
+        <p>
+            <textarea id="debugData" placeholder="{ /* JSON request body */ }"
+                      style="width: 100%;overflow-y: scroll;height: 75px;"></textarea>
+        </p>
+        <p>
+            <button onclick="submitSupportRequest(); return false;">Submit Support Request</button>
+        </p>
+    </fieldset>
 </form>
 
 <script type="application/javascript">
@@ -326,6 +335,10 @@
         return JSON.stringify(string, undefined, 4)
     }
 
+   function submitSupportRequest() {
+        SupportJs.submitRequest(debugData.value)
+            .then((result) => {})
+   }
 
 
 </script>

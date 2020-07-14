@@ -72,6 +72,7 @@ import com.platform.jsbridge.LinkJs
 import com.platform.jsbridge.LocationJs
 import com.platform.jsbridge.NativeApisJs
 import com.platform.jsbridge.NativePromiseFactory
+import com.platform.jsbridge.SupportJs
 import com.platform.jsbridge.WalletJs
 import com.platform.middlewares.plugins.LinkPlugin
 import com.platform.util.getStringOrNull
@@ -218,6 +219,12 @@ class WebController(
                 direct.instance(),
                 direct.instance()
             )
+            val supportJs = SupportJs(
+                nativePromiseFactory,
+                direct.instance(),
+                direct.instance(),
+                direct.instance()
+            )
             val nativeApis = if (BuildConfig.DEBUG) {
                 NativeApisJs.with(
                     cameraJs,
@@ -225,10 +232,11 @@ class WebController(
                     kvStoreJs,
                     linkJs,
                     walletJs,
-                    brdApiJs
+                    brdApiJs,
+                    supportJs
                 )
             } else {
-                NativeApisJs.with(walletJs, linkJs)
+                NativeApisJs.with(walletJs, linkJs, supportJs)
             }
 
             nativeApis.attachToWebView(web_view)

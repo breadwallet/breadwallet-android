@@ -65,6 +65,11 @@ class NativePromiseFactory(webView: WebView) {
             binderMap[promise.jsName] = promise
         }
 
+    fun createForUnit(executor: suspend () -> Unit) =
+        NativePromiseJs(scope, executor, evaluateJs).also { promise ->
+            binderMap[promise.jsName] = promise
+        }
+
     fun dispose() {
         scope.cancel()
         binderMap.clear()

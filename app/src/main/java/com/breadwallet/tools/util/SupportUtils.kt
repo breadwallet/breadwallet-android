@@ -49,7 +49,7 @@ import java.io.IOException
 import java.util.Locale
 import java.util.TimeZone
 
-object LogsUtils {
+object SupportUtils {
     // Filters out our apps events at log level = verbose
     private const val LOGCAT_COMMAND = "logcat -d ${BuildConfig.APPLICATION_ID}:V"
 
@@ -73,7 +73,8 @@ object LogsUtils {
     private fun buildInfoString(
         context: Context,
         breadBox: BreadBox,
-        userManager: BrdUserManager
+        userManager: BrdUserManager,
+        debugData: Map<String, String> = emptyMap()
     ) = buildString {
         addFeedbackBlock()
         appendln()
@@ -82,6 +83,8 @@ object LogsUtils {
         addDeviceBlock()
         appendln()
         addWalletBlock(breadBox, userManager)
+        appendln()
+        addDebugBlock(debugData)
     }
 
     private fun StringBuilder.addFeedbackBlock() {
@@ -180,7 +183,21 @@ object LogsUtils {
         }
     }
 
-    fun shareLogs(context: Context, breadBox: BreadBox, userManager: BrdUserManager) {
+    private fun StringBuilder.addDebugBlock(debugData: Map<String, String>) {
+        if (debugData.isEmpty()) return
+        appendln("Debug")
+        appendln("------------")
+        debugData.entries.forEach {
+            appendln("${it.key} : ${it.value}")
+        }
+    }
+
+    fun submitEmailRequest(
+        context: Context,
+        breadBox: BreadBox,
+        userManager: BrdUserManager,
+        debugData: Map<String, String> = emptyMap()
+    ) {
         val file = FileHelper.saveToExternalStorage(context, LOGS_FILE_NAME, getLogs(context))
         val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID, file)
         val emailIntent = Intent(Intent.ACTION_SEND).apply {
@@ -192,7 +209,7 @@ object LogsUtils {
                 Intent.EXTRA_SUBJECT,
                 String.format(LOGS_EMAIL_SUBJECT, getDeviceId())
             )
-            putExtra(Intent.EXTRA_TEXT, buildInfoString(context, breadBox, userManager))
+            putExtra(Intent.EXTRA_TEXT, buildInfoString(context, breadBox, userManager, debugData))
         }
         try {
             context.startActivity(
