@@ -59,7 +59,7 @@ fun createAddWalletsHandler(
 
 fun List<String>.toTokenItems(): List<TokenItem> {
     return this.mapNotNull {
-        TokenUtil.getTokenItemForCurrencyId(it)
+        TokenUtil.tokenForCurrencyId(it)
     }
 }
 
@@ -92,7 +92,7 @@ private fun searchTokens(
                         enabled = trackedWallets.contains(currencyId),
                         removable = isRemovable(
                             availableWallets.findByCurrencyId(currencyId),
-                            availableWallets
+                            trackedWallets
                         )
                     )
                 }
@@ -136,14 +136,14 @@ private fun removeWallet(
  * Returns true if the [Wallet] exists, it's not the last remaining enabled [Wallet], and
  * it's not a [Wallet] another enabled [Wallet] depends on.
  */
-private fun isRemovable(wallet: Wallet?, trackedWallets: List<Wallet>) =
+private fun isRemovable(wallet: Wallet?, trackedWallets: List<String>) =
     trackedWallets.size > 1 && (wallet?.let { !walletIsNeeded(it, trackedWallets) } ?: true)
 
-private fun walletIsNeeded(wallet: Wallet, trackedWallets: List<Wallet>) =
+private fun walletIsNeeded(wallet: Wallet, trackedWallets: List<String>) =
     wallet.currency.isNative() &&
-        trackedWallets.filter { !it.currencyId.equals(wallet.currencyId, true) }
+        trackedWallets.filter { !it.equals(wallet.currencyId, true) }
             .any {
-                wallet.walletManager.networkContainsCurrency(it.currencyId)
+                wallet.walletManager.networkContainsCurrency(it)
             }
 
 private fun List<TokenItem>.applyFilter(query: String) =

@@ -79,6 +79,7 @@ object SettingsScreen {
         object ResetDefaultCurrencies : F()
         object WipeNoPrompt : F()
         object GetPaperKey : F()
+        object EnableAllWallets : F()
 
         data class SetApiServer(val host: String) : F()
         data class SetPlatformDebugUrl(val url: String) : F()

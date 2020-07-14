@@ -199,7 +199,9 @@ object LogsUtils {
                 Intent.createChooser(
                     emailIntent,
                     context.getString(R.string.Receive_share)
-                )
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
             )
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(context, NO_EMAIL_APP_ERROR_MESSAGE, Toast.LENGTH_LONG).show()

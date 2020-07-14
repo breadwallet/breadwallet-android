@@ -32,6 +32,7 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.R
+import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.logger.logError
 import com.breadwallet.protocols.messageexchange.MessageExchangeService
@@ -75,17 +76,33 @@ import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
+import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.isBrd
 import com.platform.HTTPServer
 import com.platform.util.AppReviewPromptManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.erased.instance
 import java.util.Locale
 
 @Suppress("TooManyFunctions")
 class RouterNavigator(
     private val routerProvider: () -> Router
-) : NavigationTargetHandlerSpec {
+) : NavigationTargetHandlerSpec, KodeinAware {
 
     private val router get() = routerProvider()
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+    override val kodein by closestKodein {
+        checkNotNull(router.activity?.applicationContext)
+    }
+
+    private val breadBox by instance<BreadBox>()
+    private val uriParser by instance<CryptoUriParser>()
 
     fun navigateTo(target: NavigationTarget) = patch(target)
 
@@ -203,97 +220,13 @@ class RouterNavigator(
     }
 
     override fun deepLink(effect: NavigationTarget.DeepLink) {
-        val link = effect.url?.asLink() ?: effect.link
-        if (link == null) {
-            logError("Failed to parse url, ${effect.url}")
-            showLaunchScreen(effect.authenticated)
-            return
-        }
-        val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
-        if (isTopLogin && effect.authenticated) {
-            router.popCurrentController()
-        }
-        when (link) {
-            is Link.CryptoRequestUrl -> {
-                val sendController = SendSheetController(link).asTransaction()
-                router.pushWithStackIfEmpty(sendController, effect.authenticated) {
-                    listOf(
-                        HomeController().asTransaction(),
-                        WalletController(link.currencyCode).asTransaction(
-                            popChangeHandler = HorizontalChangeHandler(),
-                            pushChangeHandler = HorizontalChangeHandler()
-                        ),
-                        sendController
-                    )
-                }
-            }
-            is Link.BreadUrl.ScanQR -> {
-                val controller = ScannerController().asTransaction()
-                router.pushWithStackIfEmpty(controller, effect.authenticated) {
-                    listOf(
-                        HomeController().asTransaction(),
-                        controller
-                    )
-                }
-            }
-            is Link.ImportWallet -> {
-                val controller = ImportController(
-                    privateKey = link.privateKey,
-                    isPasswordProtected = link.passwordProtected
-                ).asTransaction()
-                router.pushWithStackIfEmpty(controller, effect.authenticated) {
-                    listOf(
-                        HomeController().asTransaction(),
-                        controller
-                    )
-                }
-            }
-            is Link.PlatformUrl -> {
-                val controller = WebController(link.url).asTransaction()
-                router.pushWithStackIfEmpty(controller, effect.authenticated) {
-                    listOf(
-                        HomeController().asTransaction(),
-                        controller
-                    )
-                }
-            }
-            is Link.PlatformDebugUrl -> {
-                val context = router.activity!!.applicationContext
-                if (!link.webBundleUrl.isNullOrBlank()) {
-                    ServerBundlesHelper.setWebPlatformDebugURL(link.webBundleUrl)
-                } else if (!link.webBundle.isNullOrBlank()) {
-                    ServerBundlesHelper.setDebugBundle(
-                        context,
-                        ServerBundlesHelper.Type.WEB,
-                        link.webBundle
-                    )
-                }
-
+        scope.launch(Dispatchers.Main) {
+            val link = effect.url?.asLink(breadBox, uriParser) ?: effect.link
+            if (link == null) {
+                logError("Failed to parse url, ${effect.url}")
                 showLaunchScreen(effect.authenticated)
-            }
-            Link.BreadUrl.ScanQR -> {
-                val controller = ScannerController().asTransaction()
-                router.pushWithStackIfEmpty(controller, effect.authenticated) {
-                    listOf(
-                        HomeController().asTransaction(),
-                        controller
-                    )
-                }
-            }
-            is Link.WalletPairUrl -> {
-                val context = router.activity!!.applicationContext
-                MessageExchangeService.enqueueWork(
-                    context, MessageExchangeService.createIntent(
-                        context,
-                        MessageExchangeService.ACTION_REQUEST_TO_PAIR,
-                        link.pairingMetaData
-                    )
-                )
-                showLaunchScreen(effect.authenticated)
-            }
-            else -> {
-                logError("Failed to route deeplink, going Home.")
-                showLaunchScreen(effect.authenticated)
+            } else {
+                processDeepLink(effect, link)
             }
         }
     }
@@ -579,6 +512,96 @@ class RouterNavigator(
             pushController(topTransaction)
             if (!isAuthenticated) {
                 pushController(LoginController(showHome = false).asTransaction())
+            }
+        }
+    }
+
+    private fun processDeepLink(effect: NavigationTarget.DeepLink, link: Link) {
+        val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
+        if (isTopLogin && effect.authenticated) {
+            router.popCurrentController()
+        }
+        when (link) {
+            is Link.CryptoRequestUrl -> {
+                val sendController = SendSheetController(link).asTransaction()
+                router.pushWithStackIfEmpty(sendController, effect.authenticated) {
+                    listOf(
+                        HomeController().asTransaction(),
+                        WalletController(link.currencyCode).asTransaction(
+                            popChangeHandler = HorizontalChangeHandler(),
+                            pushChangeHandler = HorizontalChangeHandler()
+                        ),
+                        sendController
+                    )
+                }
+            }
+            is Link.BreadUrl.ScanQR -> {
+                val controller = ScannerController().asTransaction()
+                router.pushWithStackIfEmpty(controller, effect.authenticated) {
+                    listOf(
+                        HomeController().asTransaction(),
+                        controller
+                    )
+                }
+            }
+            is Link.ImportWallet -> {
+                val controller = ImportController(
+                    privateKey = link.privateKey,
+                    isPasswordProtected = link.passwordProtected
+                ).asTransaction()
+                router.pushWithStackIfEmpty(controller, effect.authenticated) {
+                    listOf(
+                        HomeController().asTransaction(),
+                        controller
+                    )
+                }
+            }
+            is Link.PlatformUrl -> {
+                val controller = WebController(link.url).asTransaction()
+                router.pushWithStackIfEmpty(controller, effect.authenticated) {
+                    listOf(
+                        HomeController().asTransaction(),
+                        controller
+                    )
+                }
+            }
+            is Link.PlatformDebugUrl -> {
+                val context = router.activity!!.applicationContext
+                if (!link.webBundleUrl.isNullOrBlank()) {
+                    ServerBundlesHelper.setWebPlatformDebugURL(link.webBundleUrl)
+                } else if (!link.webBundle.isNullOrBlank()) {
+                    ServerBundlesHelper.setDebugBundle(
+                        context,
+                        ServerBundlesHelper.Type.WEB,
+                        link.webBundle
+                    )
+                }
+
+                showLaunchScreen(effect.authenticated)
+            }
+            Link.BreadUrl.ScanQR -> {
+                val controller = ScannerController().asTransaction()
+                router.pushWithStackIfEmpty(controller, effect.authenticated) {
+                    listOf(
+                        HomeController().asTransaction(),
+                        controller
+                    )
+                }
+            }
+            is Link.WalletPairUrl -> {
+                val context = router.activity!!.applicationContext
+                MessageExchangeService.enqueueWork(
+                    context, MessageExchangeService.createIntent(
+                        context,
+                        MessageExchangeService.ACTION_REQUEST_TO_PAIR,
+                        link.pairingMetaData
+                    )
+                )
+                showLaunchScreen(effect.authenticated)
+            }
+            else -> {
+                logError("Failed to route deeplink, going Home.")
+                showLaunchScreen(effect.authenticated)
             }
         }
     }

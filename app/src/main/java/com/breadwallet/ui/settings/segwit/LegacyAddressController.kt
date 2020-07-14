@@ -25,11 +25,12 @@
 package com.breadwallet.ui.settings.segwit
 
 import android.os.Bundle
-import android.os.Handler
 import android.text.format.DateUtils
 import android.view.View
+import androidx.core.view.contains
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.logger.logError
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.qrcode.QRUtils
@@ -43,10 +44,12 @@ import com.breadwallet.ui.settings.segwit.LegacyAddress.M
 import com.breadwallet.util.CryptoUriParser
 import com.spotify.mobius.Connectable
 import kotlinx.android.synthetic.main.controller_legacy_address.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -56,7 +59,6 @@ class LegacyAddressController(
 
     private val cryptoUriParser by instance<CryptoUriParser>()
     private lateinit var copiedLayout: View
-    private val copyHandler = Handler()
 
     init {
         overridePushHandler(BottomSheetChangeHandler())
@@ -86,17 +88,24 @@ class LegacyAddressController(
         signal_layout.removeView(copiedLayout)
     }
 
-    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+    override fun onAttach(view: View) {
+        super.onAttach(view)
         signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
+    }
+
+    override fun onDetach(view: View) {
+        super.onDetach(view)
+        signal_layout.setOnTouchListener(null)
+    }
+
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
         return merge(
             close_button.clicks().map { E.OnCloseClicked },
             background_layout.clicks().map { E.OnCloseClicked },
             share_button.clicks().map { E.OnShareClicked },
-            address_text.clicks().map { E.OnAddressClicked }
-        ).onCompletion {
-            copyHandler.removeCallbacksAndMessages(null)
-            signal_layout.setOnTouchListener(null)
-        }
+            address_text.clicks().map { E.OnAddressClicked },
+            qr_image.clicks().map { E.OnAddressClicked }
+        )
     }
 
     override fun M.render() {
@@ -105,23 +114,26 @@ class LegacyAddressController(
             val request = CryptoRequest.Builder()
                 .setAddress(receiveAddress)
                 .build()
-            val uri = cryptoUriParser.createUrl(btc, request)
-            if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
-                error("failed to generate qr image for address")
+            viewAttachScope.launch(Dispatchers.Main) {
+                cryptoUriParser.createUrl(btc, request)?.let { uri ->
+                    if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
+                        logError("failed to generate qr image for address")
+                        router.popCurrentController()
+                    }
+                }
             }
         }
     }
 
     private fun showAddressCopied() {
-        if (signal_layout.indexOfChild(copiedLayout) == -1) {
-            signal_layout.addView(copiedLayout, signal_layout.indexOfChild(share_button))
-            copyHandler.postDelayed(
-                { signal_layout.removeView(copiedLayout) },
-                DateUtils.SECOND_IN_MILLIS * 2
-            )
-        } else {
-            copyHandler.removeCallbacksAndMessages(null)
-            signal_layout.removeView(copiedLayout)
+        if (signal_layout.contains(copiedLayout)) return
+
+        signal_layout.addView(copiedLayout, signal_layout.indexOfChild(share_button))
+        viewAttachScope.launch(Dispatchers.Main) {
+            delay(DateUtils.SECOND_IN_MILLIS * 2)
+            if (signal_layout.contains(copiedLayout)) {
+                signal_layout.removeView(copiedLayout)
+            }
         }
     }
 }

@@ -44,8 +44,6 @@ import androidx.work.WorkerParameters
 import com.breadwallet.R
 import com.breadwallet.model.PriceAlert
 import com.breadwallet.repository.PriceAlertRepository
-import com.breadwallet.tools.manager.BRApiManager
-import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.filterLeft
 import com.breadwallet.tools.util.mapLeft
 import java.math.RoundingMode
@@ -59,8 +57,8 @@ import kotlin.math.absoluteValue
  * their state, and dispatch notifications to the user.
  */
 class PriceAlertWorker(
-        context: Context,
-        workParams: WorkerParameters
+    context: Context,
+    workParams: WorkerParameters
 ) : Worker(context, workParams) {
 
     companion object {
@@ -80,19 +78,25 @@ class PriceAlertWorker(
          */
         fun scheduleWork(interval: Int = 15, updateRates: Boolean = true) {
             WorkManager.getInstance().enqueueUniquePeriodicWork(
-                    uniqueWorkName,
-                    ExistingPeriodicWorkPolicy.KEEP,
-                    PeriodicWorkRequestBuilder<PriceAlertWorker>(
-                            interval.toLong(), TimeUnit.MINUTES,
-                            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS)
-                            .setInputData(Data.Builder()
-                                    .putBoolean(INPUT_UPDATE_RATES, updateRates)
-                                    .build())
-                            .setConstraints(Constraints.Builder()
-                                    // TODO: Maybe UNMETERED, maybe user preference, maybe not at all?
-                                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                                    .build())
-                            .build())
+                uniqueWorkName,
+                ExistingPeriodicWorkPolicy.KEEP,
+                PeriodicWorkRequestBuilder<PriceAlertWorker>(
+                    interval.toLong(), TimeUnit.MINUTES,
+                    PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS
+                )
+                    .setInputData(
+                        Data.Builder()
+                            .putBoolean(INPUT_UPDATE_RATES, updateRates)
+                            .build()
+                    )
+                    .setConstraints(
+                        Constraints.Builder()
+                            // TODO: Maybe UNMETERED, maybe user preference, maybe not at all?
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build()
+                    )
+                    .build()
+            )
         }
 
         fun cancelWork() {
@@ -103,9 +107,12 @@ class PriceAlertWorker(
         fun setupNotificationChannel(context: Context) {
             val title = context.getString(R.string.PriceAlertNotification_channelTitle)
             val notificationManager = context.getSystemService(NotificationManager::class.java)
-            val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, title,
-                    NotificationManager.IMPORTANCE_DEFAULT)
-            channel.description = context.getString(R.string.PriceAlertNotification_channelDescription)
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID, title,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            channel.description =
+                context.getString(R.string.PriceAlertNotification_channelDescription)
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -133,11 +140,11 @@ class PriceAlertWorker(
         // List all triggered alerts and their latest price
         val time = Date().time
         val triggered = alertsWithCurrentPrice
-                .filterLeft(PriceAlert::hasNotBeenTriggered)
-                .onEach { Log.d(TAG, it.toString()) }
-                .filter { (alert, currentPrice) ->
-                    alert.isTriggerMet(currentPrice, time)
-                }
+            .filterLeft(PriceAlert::hasNotBeenTriggered)
+            .onEach { Log.d(TAG, it.toString()) }
+            .filter { (alert, currentPrice) ->
+                alert.isTriggerMet(currentPrice, time)
+            }
 
         Log.d(TAG, "Triggered Alerts: ${triggered.size}")
 
@@ -148,92 +155,98 @@ class PriceAlertWorker(
         PriceAlertRepository.batch {
             // Update pinnedPrice for alerts that hit the inverse of their threshold or expire
             alertsWithCurrentPrice
-                    .filterLeft(PriceAlert::isPercentageChangeType)
-                    .filter { (alert, currentPrice) ->
-                        alert.isTriggerUnmet(currentPrice, time)
-                    }
-                    .map { (alert, currentPrice) ->
-                        updatePinnedPrice(alert, currentPrice)
-                        alert.copy(pinnedPrice = currentPrice)
-                    }
-                    .forEach { alert ->
-                        updateStartTime(alert, time)
-                    }
+                .filterLeft(PriceAlert::isPercentageChangeType)
+                .filter { (alert, currentPrice) ->
+                    alert.isTriggerUnmet(currentPrice, time)
+                }
+                .map { (alert, currentPrice) ->
+                    updatePinnedPrice(alert, currentPrice)
+                    alert.copy(pinnedPrice = currentPrice)
+                }
+                .forEach { alert ->
+                    updateStartTime(alert, time)
+                }
 
             // Update pinnedPrice and startTime to the current rate and time
             triggered.filterLeft(PriceAlert::isPercentageChangeType)
-                    .map { (alert, currentPrice) ->
-                        updatePinnedPrice(alert, currentPrice)
-                        alert.copy(pinnedPrice = currentPrice)
-                    }
-                    .forEach { alert ->
-                        updateStartTime(alert, time)
-                    }
+                .map { (alert, currentPrice) ->
+                    updatePinnedPrice(alert, currentPrice)
+                    alert.copy(pinnedPrice = currentPrice)
+                }
+                .forEach { alert ->
+                    updateStartTime(alert, time)
+                }
 
             // List alerts that are stale until returned below their threshold
             val staleAlerts = triggered.mapLeft()
-                    .filter(PriceAlert::isPriceTargetType)
+                .filter(PriceAlert::isPriceTargetType)
 
             // List stale alerts that are now fresh
             val refreshedAlerts = alertsWithCurrentPrice
-                    .filterLeft(PriceAlert::hasBeenTriggered)
-                    .filter { (alert, currentPrice) ->
-                        alert.isTriggerUnmet(currentPrice)
-                    }
-                    .mapLeft()
+                .filterLeft(PriceAlert::hasBeenTriggered)
+                .filter { (alert, currentPrice) ->
+                    alert.isTriggerUnmet(currentPrice)
+                }
+                .mapLeft()
 
             (staleAlerts + refreshedAlerts).forEach(::toggleHasBeenTriggered)
         }
 
         // Dispatch notifications for each triggered alert
         triggered.filterLeft(PriceAlert::isPercentageChangeType)
-                .forEach { (alert, currentPrice) ->
-                    val pinnedPrice = getFormattedAmount(alert.toCurrencyCode, alert.pinnedPrice)
-                    val exchangeRate = getFormattedAmount(alert.toCurrencyCode, currentPrice)
-                    val stringId = when {
-                        alert.pinnedPrice < currentPrice ->
-                            R.string.PriceAlertNotification_percentChangeUp
-                        else -> R.string.PriceAlertNotification_percentChangeDown
-                    }
-
-                    val diffPercent = when {
-                        alert.pinnedPrice < currentPrice ->
-                            (currentPrice - alert.pinnedPrice) / alert.pinnedPrice * 100f
-                        else ->
-                            (alert.pinnedPrice - currentPrice) / currentPrice * 100f
-                    }.toBigDecimal()
-                            .setScale(2, RoundingMode.HALF_EVEN)
-                            .toString()
-                    val message = applicationContext.getString(stringId, alert.forCurrencyCode,
-                            diffPercent, pinnedPrice, exchangeRate)
-                    dispatchNotification(alert.hashCode(), message)
+            .forEach { (alert, currentPrice) ->
+                val pinnedPrice = getFormattedAmount(alert.toCurrencyCode, alert.pinnedPrice)
+                val exchangeRate = getFormattedAmount(alert.toCurrencyCode, currentPrice)
+                val stringId = when {
+                    alert.pinnedPrice < currentPrice ->
+                        R.string.PriceAlertNotification_percentChangeUp
+                    else -> R.string.PriceAlertNotification_percentChangeDown
                 }
+
+                val diffPercent = when {
+                    alert.pinnedPrice < currentPrice ->
+                        (currentPrice - alert.pinnedPrice) / alert.pinnedPrice * 100f
+                    else ->
+                        (alert.pinnedPrice - currentPrice) / currentPrice * 100f
+                }.toBigDecimal()
+                    .setScale(2, RoundingMode.HALF_EVEN)
+                    .toString()
+                val message = applicationContext.getString(
+                    stringId, alert.forCurrencyCode,
+                    diffPercent, pinnedPrice, exchangeRate
+                )
+                dispatchNotification(alert.hashCode(), message)
+            }
 
         triggered.filterLeft(PriceAlert::isPriceTargetType)
-                .forEach { (alert, currentPrice) ->
-                    val rateDifference = getFormattedAmount(alert.toCurrencyCode,
-                            (alert.pinnedPrice - currentPrice).absoluteValue)
-                    val exchangeRate = getFormattedAmount(alert.toCurrencyCode, currentPrice)
-                    val stringId = when {
-                        alert.pinnedPrice < currentPrice ->
-                            R.string.PriceAlertNotification_priceTargetUp
-                        else -> R.string.PriceAlertNotification_priceTargetDown
-                    }
-
-                    val message = applicationContext.getString(stringId,
-                            alert.forCurrencyCode, rateDifference, exchangeRate)
-                    dispatchNotification(alert.hashCode(), message)
+            .forEach { (alert, currentPrice) ->
+                val rateDifference = getFormattedAmount(
+                    alert.toCurrencyCode,
+                    (alert.pinnedPrice - currentPrice).absoluteValue
+                )
+                val exchangeRate = getFormattedAmount(alert.toCurrencyCode, currentPrice)
+                val stringId = when {
+                    alert.pinnedPrice < currentPrice ->
+                        R.string.PriceAlertNotification_priceTargetUp
+                    else -> R.string.PriceAlertNotification_priceTargetDown
                 }
+
+                val message = applicationContext.getString(
+                    stringId,
+                    alert.forCurrencyCode, rateDifference, exchangeRate
+                )
+                dispatchNotification(alert.hashCode(), message)
+            }
 
         return Result.success()
     }
 
     private fun dispatchNotification(notificationId: Int, message: String) {
         val notification = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-                .setContentTitle(applicationContext.getString(R.string.PriceAlertNotification_title))
-                .setContentText(message)
-                .setSmallIcon(R.drawable.notification_icon)
-                .build()
+            .setContentTitle(applicationContext.getString(R.string.PriceAlertNotification_title))
+            .setContentText(message)
+            .setSmallIcon(R.drawable.notification_icon)
+            .build()
         notificationManager.notify(notificationId, notification)
     }
 
@@ -243,14 +256,14 @@ class PriceAlertWorker(
      * to [PriceAlert.toCurrencyCode].
      */
     private fun List<PriceAlert>.mapToCurrentPrice(): List<Pair<PriceAlert, Float>> =
-            map { alert ->
-                /*alert to RatesRepository.getInstance(applicationContext)
-                        .getFiatForCrypto(BigDecimal.ONE, alert.forCurrencyCode, alert.toCurrencyCode)
-                        .setScale(2, RoundingMode.HALF_EVEN)
-                        .toFloat()*/
-                TODO("Not implemented")
-            }
+        map { alert ->
+            /*alert to RatesRepository.getInstance(applicationContext)
+                    .getFiatForCrypto(BigDecimal.ONE, alert.forCurrencyCode, alert.toCurrencyCode)
+                    .setScale(2, RoundingMode.HALF_EVEN)
+                    .toFloat()*/
+            TODO("Not implemented")
+        }
 
     private fun getFormattedAmount(iso: String, amount: Float): String = ""
-            // TODO : CurrencyUtils.getFormattedAmount(applicationContext, iso, amount.toBigDecimal())
+    // TODO : CurrencyUtils.getFormattedAmount(applicationContext, iso, amount.toBigDecimal())
 }

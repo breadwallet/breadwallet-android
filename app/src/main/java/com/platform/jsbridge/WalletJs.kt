@@ -125,6 +125,7 @@ class WalletJs(
         private const val BASE_10 = 10
 
         private const val FORMAT_DELIMITER = "?format="
+        private const val FORMAT_LEGACY = "legacy"
         private const val FORMAT_SEGWIT = "segwit"
     }
 
@@ -197,7 +198,7 @@ class WalletJs(
         val currenciesJSON = JSONArray()
         wallets.forEach { currencyId ->
             val wallet = system.wallets.firstOrNull { it.currencyId.equals(currencyId, true) }
-            val tokenItem = TokenUtil.getTokenItemForCurrencyId(currencyId)
+            val tokenItem = TokenUtil.tokenForCurrencyId(currencyId)
             val currencyCode =
                 wallet?.currency?.code?.toUpperCase() ?: tokenItem?.symbol
 
@@ -362,7 +363,7 @@ class WalletJs(
     @JavascriptInterface
     fun enableCurrency(currencyCode: String) = promise.create {
         val system = checkNotNull(breadBox.system().first())
-        val currencyId = TokenUtil.getTokenItemByCurrencyCode(currencyCode)?.currencyId.orEmpty()
+        val currencyId = TokenUtil.tokenForCode(currencyCode)?.currencyId.orEmpty()
         check(currencyId.isNotEmpty()) { ERR_CURRENCY_NOT_SUPPORTED }
 
         val network = system.networks.find { it.containsCurrency(currencyId) }
@@ -379,8 +380,14 @@ class WalletJs(
 
         metaDataProvider.enableWallet(currencyId)
 
+        // Suspend until the wallet exists, i.e. an address is available.
+        val wallet = breadBox.wallet(currencyCode).first()
         JSONObject().apply {
             put(KEY_CURRENCY, currencyCode)
+            put(KEY_ADDRESS, getAddress(wallet, FORMAT_LEGACY))
+            if (wallet.currency.isBitcoin()) {
+                put("${KEY_ADDRESS}_${FORMAT_SEGWIT}", getAddress(wallet, FORMAT_SEGWIT))
+            }
         }
     }
 

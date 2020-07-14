@@ -34,6 +34,7 @@ import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.customviews.BRKeyboard
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -59,7 +60,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -121,8 +121,17 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
         keyboard.setBRKeyboardColor(R.color.white)
     }
 
-    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+    override fun onAttach(view: View) {
+        super.onAttach(view)
         signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
+    }
+
+    override fun onDetach(view: View) {
+        signal_layout.setOnTouchListener(null)
+        super.onDetach(view)
+    }
+
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
         return merge(
             faq_button.clicks().map { E.OnFaqClicked },
             share_button.clicks().map { E.OnShareClicked },
@@ -133,9 +142,7 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
             address_text.clicks().map { E.OnCopyAddressClicked },
             iso_button.clicks().map { E.OnToggleCurrencyClicked },
             keyboard.bindInput()
-        ).onCompletion {
-            signal_layout.setOnTouchListener(null)
-        }
+        )
     }
 
     private fun BRKeyboard.bindInput() = callbackFlow<E> {
@@ -199,9 +206,12 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
                     .setAddress(receiveAddress)
                     .setAmount(amount)
                     .build()
-                val uri = cryptoUriParser.createUrl(currencyCode, request)
-                if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
-                    error("failed to generate qr image for address")
+                viewAttachScope.launch(Dispatchers.Main) {
+                    cryptoUriParser.createUrl(currencyCode, request)?.let { uri ->
+                        if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
+                            logError("failed to generate qr image for address")
+                        }
+                    }
                 }
             } else {
                 qr_image.setImageDrawable(null)
@@ -259,13 +269,17 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
                 .setAddress(effect.address)
                 .setAmount(effect.amount)
                 .build()
-            val cryptoUri = cryptoUriParser.createUrl(currencyCode, cryptoRequest)
-            QRUtils.sendShareIntent(
-                context,
-                cryptoUri.toString(),
-                effect.address,
-                effect.walletName
-            )?.run(::startActivity)
+            viewAttachScope.launch(Dispatchers.Main) {
+                cryptoUriParser.createUrl(currencyCode, cryptoRequest)
+                    ?.let { cryptoUri ->
+                        QRUtils.sendShareIntent(
+                            context,
+                            cryptoUri.toString(),
+                            effect.address,
+                            effect.walletName
+                        )
+                    }?.run(::startActivity)
+            }
         } else {
             requestPermissions(
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),

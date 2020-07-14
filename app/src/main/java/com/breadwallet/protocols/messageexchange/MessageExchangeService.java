@@ -26,6 +26,7 @@ import com.google.common.base.Optional;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.platform.interfaces.AccountMetaDataProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -95,12 +96,13 @@ public final class MessageExchangeService extends JobIntentService {
      * @param intent The intent specifying the work that needs to be completed.
      */
     @Override
-    protected void onHandleWork(Intent intent) {
+    protected void onHandleWork(@NotNull Intent intent) {
         Log.d(TAG, "onHandleWork()");
-        if (intent != null) {
-            Log.d(TAG, "Intent Action -> " + intent.getAction());
+        final String action = intent.getAction();
+        if (action != null) {
+            Log.d(TAG, "Intent Action -> " + action);
 
-            switch (intent.getAction()) {
+            switch (action) {
                 case ACTION_REQUEST_TO_PAIR:
                     // User scanned QR, to initiate pairing with a remote wallet,
                     savePairingMetaDataToKvStore((PairingMetaData) intent.getParcelableExtra(EXTRA_METADATA));

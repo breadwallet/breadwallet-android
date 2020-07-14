@@ -84,6 +84,11 @@ class NetworkManager(
      * Initializes a [Network].
      */
     fun initializeNetwork(network: Network) {
+        if (system.walletManagers.any { it.network == network }) {
+            logDebug("WalletManager for network (${network.uids}) already exists.")
+            networkState[network.currency.uids] = NetworkState.Initialized
+            return
+        }
         scope.launch {
             // TODO(DROID-1658): Restore migration
             //if (systemEvt.migrateRequired(event.network)) {

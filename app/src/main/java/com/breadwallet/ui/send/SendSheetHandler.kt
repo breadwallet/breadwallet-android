@@ -53,6 +53,7 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.send.SendSheet.E
 import com.breadwallet.ui.send.SendSheet.F
+import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.HEADER_BITPAY_PARTNER
 import com.breadwallet.util.HEADER_BITPAY_PARTNER_KEY
@@ -91,6 +92,7 @@ object SendSheetHandler {
     fun create(
         context: Context,
         breadBox: BreadBox,
+        uriParser: CryptoUriParser,
         userManager: BrdUserManager,
         apiClient: APIClient,
         ratesRepository: RatesRepository,
@@ -99,15 +101,15 @@ object SendSheetHandler {
     ) = subtypeEffectHandler<F, E> {
         addTransformer(pollExchangeRate(breadBox, ratesRepository))
         addTransformer(handleLoadBalance(breadBox, ratesRepository))
-        addTransformer(validateAddress(breadBox))
+        addTransformer(validateAddress(breadBox, uriParser))
         addTransformer(handleEstimateFee(breadBox))
         addTransformer(handleSendTransaction(breadBox, userManager))
         addTransformer(handleAddTransactionMetadata(metaDataEffectHandler))
         addTransformer(handleLoadCryptoRequestData(breadBox, apiClient, context))
         addTransformer(handleContinueWithPayment(userManager, breadBox))
         addTransformer(handlePostPayment(apiClient))
-        addFunction(handleResolvePayId(breadBox, payIdService))
-        addFunction(parseClipboard(context, breadBox))
+        addFunction(handleResolvePayId(breadBox, payIdService, uriParser))
+        addFunction(parseClipboard(context, breadBox, uriParser))
         addFunction(handleGetTransferFields(breadBox))
         addFunction(handleValidateTransferFields(breadBox))
 
@@ -245,11 +247,13 @@ object SendSheetHandler {
     }
 
     private fun validateAddress(
-        breadBox: BreadBox
+        breadBox: BreadBox,
+        uriParser: CryptoUriParser
     ) = flowTransformer<F.ValidateAddress, E> { effects ->
         effects.mapLatest { effect ->
             validateTargetString(
                 breadBox,
+                uriParser,
                 effect.currencyCode,
                 effect.address
             )
@@ -258,17 +262,19 @@ object SendSheetHandler {
 
     private fun handleResolvePayId(
         breadBox: BreadBox,
-        payIdService: PayIdService
+        payIdService: PayIdService,
+        uriParser: CryptoUriParser
     ): suspend (F.ResolvePayId) -> E = { effect ->
         when (val result = payIdService.getAddress(effect.payId, effect.currencyCode)) {
             PayIdResult.NoAddress -> E.OnAddressValidated.PayId.NoAddress
             PayIdResult.InvalidPayId -> E.OnAddressValidated.PayId.InvalidPayId
             PayIdResult.ExternalError -> E.OnAddressValidated.PayId.RetrievalError
             is Success -> when (val validateResult =
-                validateTargetString(breadBox, effect.currencyCode, result.address)) {
+                validateTargetString(breadBox, uriParser, effect.currencyCode, result.address)) {
                 is E.OnAddressValidated.Address.ValidAddress -> E.OnAddressValidated.PayId.ValidAddress(
                     effect.payId,
-                    validateResult.address
+                    validateResult.address,
+                    result.destinationTag
                 )
                 is E.OnAddressValidated.Address.PayIdString -> E.OnAddressValidated.PayId.InvalidPayId
                 is E.OnAddressValidated.Address.InvalidAddress -> E.OnAddressValidated.PayId.InvalidPayId
@@ -279,21 +285,23 @@ object SendSheetHandler {
 
     private fun parseClipboard(
         context: Context,
-        breadBox: BreadBox
+        breadBox: BreadBox,
+        uriParser: CryptoUriParser
     ): suspend (F.ParseClipboardData) -> E = { effect ->
         val text = withContext(Dispatchers.Main) {
             BRClipboardManager.getClipboard(context)
         }
-        validateTargetString(breadBox, effect.currencyCode, text, true)
+        validateTargetString(breadBox, uriParser, effect.currencyCode, text, true)
     }
 
     private suspend fun validateTargetString(
         breadBox: BreadBox,
+        uriParser: CryptoUriParser,
         currencyCode: CurrencyCode,
         target: String,
         fromClipboard: Boolean = false
     ): E.OnAddressValidated.Address {
-        val cryptoRequest = (target.asLink() as? Link.CryptoRequestUrl)
+        val cryptoRequest = (target.asLink(breadBox, uriParser) as? Link.CryptoRequestUrl)
         val reqAddress = cryptoRequest?.address ?: target
 
         return when {

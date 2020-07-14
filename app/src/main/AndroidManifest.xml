@@ -126,22 +126,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.breadwallet.legacy.pricealert.PriceAlertListActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.breadwallet.legacy.pricealert.SelectAlertCryptoActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.breadwallet.legacy.pricealert.NewPriceAlertActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.breadwallet.legacy.pricealert.SelectForCurrencyActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".legacy.presenter.activities.settings.TestActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />

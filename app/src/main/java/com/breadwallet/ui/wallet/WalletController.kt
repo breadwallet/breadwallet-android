@@ -116,7 +116,8 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             direct.instance(),
             Connectable { output ->
                 MetaDataEffectHandler(output, direct.instance(), direct.instance())
-            }
+            },
+            direct.instance()
         )
 
     private var fastAdapter: GenericFastAdapter? = null
@@ -469,6 +470,10 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             mPriceDataAdapter.notifyDataSetChanged()
         }
 
+        ifChanged(M::priceChartIsLoading) {
+            if (!it && priceChartDataPoints.isEmpty()) toolbar_layout.isVisible = false
+        }
+
         ifChanged(M::priceChartInterval) {
             val deselectedColor = resources.getColor(R.color.trans_white)
             val selectedColor = resources.getColor(R.color.white)
@@ -525,7 +530,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
 
     private fun updateUi() {
         val resources = checkNotNull(resources)
-        val token = TokenUtil.getTokenItemByCurrencyCode(currencyCode) ?: return
+        val token = TokenUtil.tokenForCode(currencyCode) ?: return
 
         val startColor = token.startColor
         val endColor = token.endColor

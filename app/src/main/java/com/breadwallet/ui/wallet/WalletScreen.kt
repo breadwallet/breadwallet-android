@@ -65,6 +65,7 @@ object WalletScreen {
         val syncingThroughMillis: Long = 0,
         val isSyncing: Boolean = false,
         val hasInternet: Boolean = true,
+        val priceChartIsLoading: Boolean = true,
         val priceChartInterval: Interval = Interval.ONE_YEAR,
         @Redacted val priceChartDataPoints: List<PriceDataPoint> = emptyList(),
         val selectedPriceDataPoint: PriceDataPoint? = null,
@@ -262,6 +263,7 @@ object WalletScreen {
                 dialogId = DIALOG_CREATE_ACCOUNT
             )
         }
+
         object ShowCreateAccountErrorDialog : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.AlertDialog(
                 titleResId = R.string.AccountCreation_title,
@@ -269,6 +271,7 @@ object WalletScreen {
                 positiveButtonResId = R.string.AccessibilityLabels_close
             )
         }
+
         data class CreateAccount(val currencyCode: String) : F()
     }
 }

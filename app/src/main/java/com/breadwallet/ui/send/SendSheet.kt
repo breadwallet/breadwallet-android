@@ -369,7 +369,8 @@ object SendSheet {
             sealed class PayId : OnAddressValidated() {
                 data class ValidAddress(
                     val payId: String,
-                    @Redacted val address: String
+                    @Redacted val address: String,
+                    @Redacted val destinationTag: String?
                 ) : PayId()
 
                 object InvalidPayId : PayId()

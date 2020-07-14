@@ -34,6 +34,8 @@ import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.camera.camera2.Camera2Config
+import androidx.camera.core.CameraXConfig
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.security.crypto.EncryptedSharedPreferences
@@ -57,7 +59,7 @@ import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.InternetManager
-import com.breadwallet.tools.manager.updateRatesForCurrencies
+import com.breadwallet.tools.manager.RatesFetcher
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.BrdUserState
@@ -111,7 +113,7 @@ private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val ENCRYPTED_PREFS_FILE = "crypto_shared_prefs"
 
 @Suppress("TooManyFunctions")
-class BreadApp : Application(), KodeinAware {
+class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
     companion object {
         private val TAG = BreadApp::class.java.name
@@ -148,7 +150,6 @@ class BreadApp : Application(), KodeinAware {
         )
 
         fun getBreadBox(): BreadBox = mInstance.direct.instance()
-        fun getAccountMetaDataProvider(): AccountMetaDataProvider = mInstance.direct.instance()
 
         // TODO: For code organization only, to be removed
         fun getStorageDir(context: Context): File {
@@ -301,9 +302,10 @@ class BreadApp : Application(), KodeinAware {
 
         bind<AccountMetaDataProvider>() with singleton { metaDataManager }
 
-        val httpClient = OkHttpClient()
+        bind<OkHttpClient>() with singleton { OkHttpClient() }
 
         bind<BlockchainDb>() with singleton {
+            val httpClient = instance<OkHttpClient>()
             val authInterceptor = BdbAuthInterceptor(httpClient, direct.instance())
             BlockchainDb(
                 httpClient.newBuilder()
@@ -313,7 +315,7 @@ class BreadApp : Application(), KodeinAware {
         }
 
         bind<PayIdService>() with singleton {
-            PayIdService(httpClient)
+            PayIdService(instance())
         }
 
         bind<BreadBox>() with singleton {
@@ -329,6 +331,14 @@ class BreadApp : Application(), KodeinAware {
         bind<ExperimentsRepository>() with singleton { ExperimentsRepositoryImpl }
 
         bind<RatesRepository>() with singleton { RatesRepository.getInstance(this@BreadApp) }
+
+        bind<RatesFetcher>() with singleton {
+            RatesFetcher(
+                instance(),
+                instance(),
+                this@BreadApp
+            )
+        }
     }
 
     private var mDelayServerShutdownCode = -1
@@ -338,8 +348,10 @@ class BreadApp : Application(), KodeinAware {
 
     private var accountLockJob: Job? = null
 
-    private val userManager: BrdUserManager by instance()
-    private val apiClient: APIClient by instance()
+    private val apiClient by instance<APIClient>()
+    private val userManager by instance<BrdUserManager>()
+    private val ratesFetcher by instance<RatesFetcher>()
+    private val accountMetaData by instance<AccountMetaDataProvider>()
 
     override fun onCreate() {
         super.onCreate()
@@ -466,13 +478,11 @@ class BreadApp : Application(), KodeinAware {
             UserMetricsUtil.makeUserMetricsRequest(context)
         }
 
-        getAccountMetaDataProvider()
+        accountMetaData
             .recoverAll(migrate)
             .launchIn(startedScope)
 
-        breadBox.currencyCodes()
-            .updateRatesForCurrencies(context)
-            .launchIn(startedScope)
+        ratesFetcher.start(startedScope)
 
         applicationScope.launch {
             trackAddressMismatch(breadBox)
@@ -533,5 +543,9 @@ class BreadApp : Application(), KodeinAware {
         }.onFailure { e ->
             BRReportsManager.error("Failed to create Encrypted Shared Preferences", e)
         }.getOrNull()
+    }
+
+    override fun getCameraXConfig(): CameraXConfig {
+        return Camera2Config.defaultConfig()
     }
 }

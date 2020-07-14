@@ -26,12 +26,14 @@ package com.breadwallet.ui.settings
 
 import android.app.ActivityManager
 import android.content.Context
+import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.model.Experiments
+import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -112,8 +114,19 @@ class SettingsScreenHandler(
                     ?.clearApplicationUserData()
             }
             F.GetPaperKey -> launch {
-                val phrase = checkNotNull(userManager.getPhrase()).toString(UTF_8)
-                output.accept(E.ShowPhrase(phrase.split(" ")))
+                 try {
+                    val phrase = checkNotNull(userManager.getPhrase()).toString(UTF_8)
+                     output.accept(E.ShowPhrase(phrase.split(" ")))
+                } catch (e: UserNotAuthenticatedException) {
+                     // User denied confirmation, ignored
+                }
+            }
+            F.EnableAllWallets -> {
+                TokenUtil.getTokenItems()
+                    .filter(TokenItem::isSupported)
+                    .forEach { token ->
+                        metaDataManager.enableWallet(token.currencyId)
+                    }
             }
         }
     }
@@ -285,6 +298,10 @@ class SettingsScreenHandler(
                 subHeader = ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.TOKEN)
             ),
             SettingsItem(
+                "Enable All Wallets",
+                SettingsOption.ENABLE_ALL_WALLETS
+            ),
+            SettingsItem(
                 "Native API Explorer",
                 SettingsOption.NATIVE_API_EXPLORER
             ),
@@ -312,7 +329,7 @@ class SettingsScreenHandler(
         ).apply {
             launch {
                 val modeMap = metaDataManager.walletModes().first()
-                val btcCurrencyId = TokenUtil.getTokenItemByCurrencyCode(btc)?.currencyId ?: ""
+                val btcCurrencyId = TokenUtil.tokenForCode(btc)?.currencyId ?: ""
                 if (modeMap[btcCurrencyId] != WalletManagerMode.API_ONLY) {
                     add(
                         SettingsItem(
