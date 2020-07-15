@@ -146,7 +146,11 @@ class MapController(
 
         fastAdapter.onClickListener = { _, _, item, _ ->
             // Handle click here
-            moveToVerification(item.atmMachine)
+            if (item.atmMachine.redemption == 1) {
+                moveToVerification(item.atmMachine)
+            } else {
+                Toast.makeText(router.activity, "This ATM is purchase only.", Toast.LENGTH_SHORT).show()
+            }
             false
         }
 
