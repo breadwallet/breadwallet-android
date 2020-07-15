@@ -37,7 +37,7 @@
         android:text="@string/Disabled.title"
         android:textColor="@color/white"
         android:textSize="@dimen/header"
-
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -52,7 +52,7 @@
         android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
         android:textColor="@color/white"
-
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintHorizontal_bias="0.506"
         app:layout_constraintLeft_toLeftOf="@+id/disabled"
         app:layout_constraintRight_toRightOf="@+id/disabled"
@@ -65,7 +65,7 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
-
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintLeft_toLeftOf="@+id/disabled"
         app:layout_constraintRight_toRightOf="@+id/disabled"
         app:layout_constraintTop_toBottomOf="@+id/until_label" />

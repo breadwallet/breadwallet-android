@@ -46,7 +46,7 @@
                 android:layout_marginEnd="@dimen/bread_margin"
                 android:text="@string/NewPriceAlert.title"
                 android:textSize="20sp"
-                 />
+                android:fontFamily="@font/circular_pro_bold" />
         </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
@@ -73,7 +73,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toTopOf="@+id/separator2"
         app:layout_constraintEnd_toStartOf="@+id/select_crypto_button"
         app:layout_constraintHorizontal_bias="1.0"
@@ -90,7 +90,7 @@
         android:layout_marginBottom="8dp"
         android:text="@string/NewPriceAlert.selectCrypto"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toTopOf="@+id/separator2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/separator" />
@@ -103,7 +103,7 @@
         android:background="@null"
         android:text="@string/NewPriceAlert.select"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
+        android:fontFamily="@font/circular_pro_bold"
         app:hasShadow="false"
         app:isBreadButton="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -130,7 +130,7 @@
         android:background="@null"
         android:text="@string/NewPriceAlert.select"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
+        android:fontFamily="@font/circular_pro_bold"
         app:hasShadow="false"
         app:isBreadButton="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -143,7 +143,7 @@
         android:layout_marginStart="16dp"
         android:text="@string/NewPriceAlert.selectToCurrency"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toBottomOf="@+id/select_to_currency"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/select_to_currency" />
@@ -168,7 +168,7 @@
         android:layout_marginStart="16dp"
         android:text="@string/NewPriceAlert.alertWhen"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toBottomOf="@+id/select_alert_when"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/select_alert_when"
@@ -182,7 +182,7 @@
         android:background="@null"
         android:text="@string/NewPriceAlert.priceChangedByValue"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
+        android:fontFamily="@font/circular_pro_bold"
         app:hasShadow="false"
         app:isBreadButton="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -209,7 +209,7 @@
         android:layout_marginEnd="8dp"
         android:text="@string/NewPriceAlert.value"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toBottomOf="@+id/value_input"
         app:layout_constraintEnd_toStartOf="@+id/value_input"
         app:layout_constraintHorizontal_bias="0.0"
@@ -253,7 +253,7 @@
         android:background="@null"
         android:text="@string/NewPriceAlert.windowAnytime"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
+        android:fontFamily="@font/circular_pro_bold"
         app:hasShadow="false"
         app:isBreadButton="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -266,7 +266,7 @@
         android:layout_marginStart="16dp"
         android:text="@string/NewPriceAlert.window"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
+        android:fontFamily="@font/circular_pro_book"
         app:layout_constraintBottom_toBottomOf="@+id/select_window_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/select_window_button" />

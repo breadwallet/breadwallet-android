@@ -27,7 +27,7 @@
             android:text="Manage Wallet"
             android:textColor="@color/almost_black"
             android:textSize="22sp"
-             />
+            android:fontFamily="@font/circular_pro_bold" />
 
         <View
             android:id="@+id/view"
@@ -69,7 +69,7 @@
             android:text="Your wallet name only appears in your account transaction history and cannot be seen by anyone you pay or receive money from."
             android:textColor="@color/gray"
             android:textSize="16sp"
-             />
+            android:fontFamily="@font/circular_pro_book" />
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/wallet_creation_label"
@@ -81,7 +81,7 @@
             android:text="You created your wallet on ..."
             android:textColor="@color/gray"
             android:textSize="16sp"
-             />
+            android:fontFamily="@font/circular_pro_book" />
 
     </LinearLayout>
 

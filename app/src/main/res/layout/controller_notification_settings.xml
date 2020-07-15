@@ -13,7 +13,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-
+        android:fontFamily="@font/circular_pro_book"
         android:lineSpacingMultiplier="1.3"
         android:text="@string/PushNotifications.enabledBody"
         android:textSize="@dimen/sub_header"
@@ -48,7 +48,7 @@
                 android:layout_centerInParent="true"
                 android:layout_marginStart="@dimen/bread_margin"
                 android:layout_marginEnd="@dimen/bread_margin"
-
+                android:fontFamily="@font/circular_pro_bold"
                 android:text="@string/Settings.notifications"
                 android:textSize="20sp" />
 
@@ -76,7 +76,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-
+        android:fontFamily="@font/circular_pro_bold"
         android:text="@string/PushNotifications.label"
         android:textSize="@dimen/sub_header"
         app:layout_constraintEnd_toStartOf="@+id/toggle_button"

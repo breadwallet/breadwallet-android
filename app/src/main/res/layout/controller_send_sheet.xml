@@ -72,7 +72,7 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/bread_margin"
-
+            android:fontFamily="@font/circular_pro_bold"
             android:text="@string/Send.title"
             android:textColor="@color/almost_black"
             android:textSize="@dimen/header"
@@ -305,7 +305,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="8dp"
-
+            android:fontFamily="@font/circular_pro_book"
             android:textColor="@color/light_gray"
             app:layout_constraintBottom_toTopOf="@+id/labelNetworkFee"
             app:layout_constraintEnd_toEndOf="@+id/inputLayoutAmount"
@@ -322,7 +322,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
-
+            android:fontFamily="@font/circular_pro_book"
             android:textColor="@color/light_gray"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/layoutFeeOption"
@@ -378,7 +378,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-
+                android:fontFamily="@font/circular_pro_book"
                 android:text="@string/FeeSelector.title"
                 android:textColor="@color/almost_black"
                 android:textSize="@dimen/sub_header" />
@@ -388,7 +388,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-
+                android:fontFamily="@font/circular_pro_book"
                 android:textColor="@color/light_gray" />
 
             <LinearLayout
@@ -408,7 +408,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:background="@drawable/b_half_left_blue_stroke"
-
+                    android:fontFamily="@font/circular_pro_medium"
                     android:padding="0dp"
                     android:text="@string/FeeSelector.economy"
                     android:textColor="@color/dark_blue"
@@ -421,7 +421,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:background="@drawable/b_blue_square"
-
+                    android:fontFamily="@font/circular_pro_medium"
                     android:padding="0dp"
                     android:text="@string/FeeSelector.regular"
                     android:textColor="@color/white"
@@ -434,7 +434,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:background="@drawable/b_half_right_blue_stroke"
-
+                    android:fontFamily="@font/circular_pro_medium"
                     android:padding="0dp"
                     android:text="@string/FeeSelector.priority"
                     android:textColor="@color/dark_blue"

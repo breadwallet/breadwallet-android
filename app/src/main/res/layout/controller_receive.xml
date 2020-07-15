@@ -35,7 +35,7 @@
                     android:text="@string/Receive.title"
                     android:textColor="@color/almost_black"
                     android:textSize="@dimen/header"
-
+                    android:fontFamily="@font/circular_pro_bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintHorizontal_bias="0.498"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -97,7 +97,7 @@
                 android:textColor="@color/black"
                 tools:text="----------------------------------"
                 android:textSize="14sp"
-                />
+                android:fontFamily="@font/circular_pro_book"/>
 
             <com.breadwallet.legacy.presenter.customviews.BRLinearLayoutWithCaret
                 android:id="@+id/copied_layout"
@@ -118,7 +118,7 @@
                     android:text="@string/Receive.copied"
                     android:textColor="@color/white"
                     android:textSize="@dimen/paragraph"
-                    />
+                    android:fontFamily="@font/circular_pro_book"/>
             </com.breadwallet.legacy.presenter.customviews.BRLinearLayoutWithCaret>
 
             <com.breadwallet.legacy.presenter.customviews.BRButton
