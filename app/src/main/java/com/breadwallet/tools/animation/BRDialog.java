@@ -40,15 +40,10 @@ public class BRDialog {
     private static final String TAG = BRDialog.class.getName();
     private static BRDialogView dialog;
 
-    /**
-     * Safe from any threads
-     *
-     * @param context needs to be activity
-     */
     // TODO: This method was moved to DialogActivity. This can be removed once all the callers have been moved to DialogActivity.
-    public static void showCustomDialog(@NonNull final Context context, @NonNull final String title, @NonNull final String message,
-                                        @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
-                                        final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener) {
+    public static void cancellableShowCustomDialog(@NonNull final Context context, @NonNull final String title, @NonNull final String message,
+                                                   @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
+                                                   final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final Boolean cancellable) {
         final Activity activity = (context instanceof Activity) ? (Activity) context : (Activity) BreadApp.getBreadContext();
         if (activity.isDestroyed()) {
             Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
@@ -60,6 +55,7 @@ public class BRDialog {
             public void run() {
                 dialog = new BRDialogView();
                 dialog.setTitle(title);
+                dialog.setCancelable(cancellable);
                 dialog.setMessage(message);
                 dialog.setPosButton(posButton);
                 dialog.setNegButton(negButton);
@@ -71,6 +67,19 @@ public class BRDialog {
                 }
             }
         });
+
+    }
+
+    /**
+     * Safe from any threads
+     *
+     * @param context needs to be activity
+     */
+    // TODO: This method was moved to DialogActivity. This can be removed once all the callers have been moved to DialogActivity.
+    public static void showCustomDialog(@NonNull final Context context, @NonNull final String title, @NonNull final String message,
+                                        @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
+                                        final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener) {
+        cancellableShowCustomDialog(context, title, message, posButton, negButton, posListener, negListener, dismissListener, true);
 
     }
 
@@ -105,7 +114,7 @@ public class BRDialog {
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismissWithAnimation();
             }
-        }, null, null);
+        }, null, null, true);
     }
 
     //same but with a SpannableString as message to be able to click on a portion of the text with a listener

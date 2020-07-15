@@ -2,7 +2,6 @@ package com.breadwallet.ui.atm
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
@@ -261,7 +260,7 @@ class RequestCashCodeController(
 
     private fun showDialog(context: Context, secureCode: String, cashStatus: CashStatus) {
 
-        BRDialog.showCustomDialog(
+        BRDialog.cancellableShowCustomDialog(
             context, "Withdrawal requested",
             "Please send the amount of ${cashStatus.btc_amount} BTC to the ATM",
             "Send", "Details", { dialog ->
@@ -271,7 +270,7 @@ class RequestCashCodeController(
             { dialog ->
                 goToDetails(secureCode, cashStatus)
                 dialog.dismissWithAnimation()
-            }, { router.popCurrentController() }
+            }, { router.popCurrentController() }, false
         )
     }
 

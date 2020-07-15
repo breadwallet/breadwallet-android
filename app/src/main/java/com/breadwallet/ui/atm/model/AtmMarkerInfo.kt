@@ -8,6 +8,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import cash.just.sdk.model.AtmMachine
 import com.breadwallet.R
+import com.breadwallet.ui.atm.utils.getFullAddress
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -78,19 +79,11 @@ class AtmMarkerInfo(val atm: AtmMachine) {
         return LatLng(atm.latitude.toDouble(), atm.longitude.toDouble())
     }
 
-    fun getSnippet(): String {
-        return if (atm.addressDesc.contains(atm.city)) {
-            atm.addressDesc
-        } else {
-            atm.addressDesc + " " + atm.city
-        }
-    }
-
     fun toMarkerOptions(context:Context): MarkerOptions {
         return MarkerOptions()
             .position(getPosition())
             .title(getTitle())
-            .snippet(getSnippet())
+            .snippet(atm.getFullAddress())
             .icon(getBitmapDescription(context, atm.redemption ==1))
     }
 }
