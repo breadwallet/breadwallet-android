@@ -1,0 +1,19 @@
+afterEvaluate {
+    def fontResDir = rootProject.file("app/src/main/res/font")
+    def needsFontFiles = fontResDir.listFiles().length == 1 // mobile_font.xml
+    if (needsFontFiles) {
+        def fontFolderName = "mobile-font-default"
+        def isFontCheckedOut = rootProject.file('mobile-font/README.md').exists()
+        if (isFontCheckedOut) {
+            fontFolderName = "mobile-font"
+        }
+
+        copy {
+            from(rootProject.file(fontFolderName)) {
+                include '**/*.ttf'
+                include '**/*.otf'
+            }
+            into fontResDir
+        }
+    }
+}

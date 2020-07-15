@@ -9,6 +9,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'io.sweers.redacted.redacted-plugin'
 apply from: file("../gradle/google-services.gradle")
+apply from: file("../gradle/copy-font-files.gradle")
 
 redactedPlugin {
     replacementString = '***'

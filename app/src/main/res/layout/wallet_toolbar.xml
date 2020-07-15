@@ -13,7 +13,7 @@
         android:layout_marginTop="16dp"
         android:textColor="@color/white"
         android:textSize="@dimen/header"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/mobile_font_book"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
