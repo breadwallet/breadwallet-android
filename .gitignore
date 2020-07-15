@@ -66,3 +66,6 @@ Release_checklist
 
 # Fabric config
 /app/fabric.properties
+
+/app/src/main/res/font/*.otf
+/app/src/main/res/font/*.ttf
