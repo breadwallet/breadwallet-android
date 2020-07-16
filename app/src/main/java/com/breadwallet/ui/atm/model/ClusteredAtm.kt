@@ -1,5 +1,6 @@
 package com.breadwallet.ui.atm.model
 
+import com.breadwallet.ui.atm.utils.getFullAddress
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 
@@ -14,7 +15,7 @@ data class ClusteredAtm(val atmMarkerInfo: AtmMarkerInfo) : ClusterItem {
     }
 
     override fun getSnippet(): String? {
-        return atmMarkerInfo.getSnippet()
+        return atmMarkerInfo.atm.getFullAddress()
     }
 
     fun getMarkerInfo(): AtmMarkerInfo {

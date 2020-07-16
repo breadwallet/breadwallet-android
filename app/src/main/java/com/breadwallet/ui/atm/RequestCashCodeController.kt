@@ -259,17 +259,18 @@ class RequestCashCodeController(
     }
 
     private fun showDialog(context: Context, secureCode: String, cashStatus: CashStatus) {
-        BRDialog.showCustomDialog(
+
+        BRDialog.cancellableShowCustomDialog(
             context, "Withdrawal requested",
             "Please send the amount of ${cashStatus.btc_amount} BTC to the ATM",
             "Send", "Details", { dialog ->
-                goToSend(cashStatus.btc_amount, cashStatus.address)
                 dialog.dismissWithAnimation()
+                goToSend(cashStatus.btc_amount, cashStatus.address)
             },
             { dialog ->
-                goToDetails(secureCode, cashStatus)
                 dialog.dismissWithAnimation()
-            }, null
+                goToDetails(secureCode, cashStatus)
+            }, null, false
         )
     }
 

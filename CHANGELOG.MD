@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [4.4.7]
+## Fixed
+- Create recovery button in still says paper key
+- Title of recovery says recovery phrase, should it say recovery key?
+- Dismissing dialog after atm cash out request [Details][Send], goes back to verification.
+- Location link from awaiting screen does not work
+- Purchase only atm are able to be selected using list
+- Purchase only item in the list should should be grayout
+- Keyboard should be numeric in the verification form
+- Enable the security flags to prevent screenshots
+- Change `Redeem Private Key` to `Sweep Private key`
+
 ## [4.4.6]
 ## Update
 - Removing circle_pro font.

@@ -150,7 +150,7 @@ class RecoveryKeyController(
             null,
             DialogInterface.OnDismissListener {
                 eventConsumer.accept(E.OnPhraseSaveFailed)
-            }
+            }, true
         )
     }
 

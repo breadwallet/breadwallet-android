@@ -505,7 +505,7 @@
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Screen lock disabled</string>
     <!-- Warning about recovery key (formerly paper key). -->
-    <string name="Prompts.PaperKey.body">Your recovery key must be saved in case you lose or change your phone.</string>
+    <string name="Prompts.PaperKey.body">Your recovery phrase must be saved in case you lose or change your phone.</string>
     <!-- Warning about paper key (Android-version) -->
     <string name="Prompts.PaperKey.Body.Android">Set up your recovery phrase in case you ever lose or replace your phone. Your key is also required if you change your phone\'s security settings.</string>
     <!-- An action is required (You must do this action). -->
@@ -615,13 +615,13 @@
     <!-- Subtext for the recovery key landing page. -->
     <string name="RecoveryKeyFlow.generateKeyExplanation">This key is required to recover your money if you upgrade or lose your phone.</string>
     <!-- Default title for the recovery key landing page -->
-    <string name="RecoveryKeyFlow.generateKeyTitle">Generate your private recovery key</string>
+    <string name="RecoveryKeyFlow.generateKeyTitle">Generate your private recovery phrase</string>
     <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
     <string name="RecoveryKeyFlow.goToWalletButtonTitle">Go to Wallet</string>
     <!-- Hint text for recovery key intro page, e.g., Step 2 -->
     <string name="RecoveryKeyFlow.howItWorksStep">How it works - Step %1$@</string>
     <!-- Error text displayed when the user enters an incorrect recovery key -->
-    <string name="RecoveryKeyFlow.invalidPhrase">Some of the words you entered do not match your recovery key. Please try again.</string>
+    <string name="RecoveryKeyFlow.invalidPhrase">Some of the words you entered do not match your recovery phrase. Please try again.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.keepSecure">Keep it secure</string>
     <!-- Informs the user that the recovery is only required for recovering a wallet. -->
@@ -661,7 +661,7 @@
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">Write down your key</string>
     <!-- Title for the recovery key landing page if the key has already been generated. -->
-    <string name="RecoveryKeyFlow.writeKeyAgain">Write down your recovery key again</string>
+    <string name="RecoveryKeyFlow.writeKeyAgain">Write down your recovery phrase again</string>
     <!-- Subtitle for the write recovery key screen -->
     <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Write down the following words in order.</string>
     <!-- Title for the write recovery key screen -->
@@ -843,7 +843,7 @@
     <!-- Face ID spending limit label -->
     <string name="Settings.faceIdLimit">Face ID Spending Limit</string>
     <!-- Redeem the funds stored on this private key. -->
-    <string name="Settings.importTitle">Redeem Private Key</string>
+    <string name="Settings.importTitle">Sweep Private Key</string>
     <!-- Manage settings section header -->
     <string name="Settings.manage">Manage</string>
     <!-- Notifications label -->
@@ -887,13 +887,13 @@
     <!-- Share data switch label. -->
     <string name="ShareData.toggleLabel">Share Anonymous Data?</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.againButtonTitle">Write Down Paper Key Again</string>
+    <string name="StartPaperPhrase.againButtonTitle">Write Recovery Phrase Again</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Your recovery key is the only way to restore your Coinsquare if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+    <string name="StartPaperPhrase.body">Your recovery phrase is the only way to restore your Coinsquare if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">Your recovery key is the only way to restore your Coinsquare if your phone is lost, stolen, broken, or upgraded.\n\nYour paper key is also required if you change the security settings on your device.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+    <string name="StartPaperPhrase.Body.Android">Your recovery phrase is the only way to restore your Coinsquare if your phone is lost, stolen, broken, or upgraded.\n\nYour paper key is also required if you change the security settings on your device.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.buttonTitle">Write Down Paper Key</string>
+    <string name="StartPaperPhrase.buttonTitle">Write Recovery Phrase</string>
     <!-- Argument is date; date should be on a new line -->
     <string name="StartPaperPhrase.date">Last written down on\n %1$@</string>
     <!-- button label -->
@@ -1203,17 +1203,17 @@
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">Failed</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">Please enter your recovery key to wipe this wallet from your device.</string>
+    <string name="WipeWallet.instruction">Please enter your recovery phrase to wipe this wallet from your device.</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different Coinsquare wallet on this device.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your recovery key.</string>
+    <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your recovery phrase.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Start or Recover Another Wallet</string>
     <!-- Wipe wallet button title -->
     <string name="WipeWallet.wipe">Wipe</string>
     <!-- Wiping activity message -->
-    <string name="WipeWallet.wiping">Wiping...</string>
+    <string name="WipeWallet.wiping">Wiping…</string>
     <!-- Paper key instructions. -->
     <string name="WritePaperPhrase.instruction">Write down each word in order and store it in a safe place.</string>
     <!-- button label -->

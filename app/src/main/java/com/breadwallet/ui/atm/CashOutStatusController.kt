@@ -1,5 +1,6 @@
 package com.breadwallet.ui.atm
 
+import android.R.attr.label
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.Context
@@ -11,6 +12,7 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import cash.just.sdk.CashSDK
 import cash.just.sdk.model.CashCodeStatusResponse
+import cash.just.sdk.model.CashStatus
 import cash.just.sdk.model.CodeStatus
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
@@ -26,7 +28,6 @@ import com.breadwallet.util.CryptoUriParser
 import com.platform.PlatformTransactionBus
 import kotlinx.android.synthetic.main.controller_receive.qr_image
 import kotlinx.android.synthetic.main.fragment_request_cash_out_status.*
-import kotlinx.android.synthetic.main.fragment_request_cash_out_status.loadingView
 import kotlinx.android.synthetic.main.request_status_awaiting.*
 import kotlinx.android.synthetic.main.request_status_funded.*
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.net.HttpURLConnection.HTTP_OK
+import java.util.Locale
 
 class CashOutStatusController(args: Bundle) : BaseController(args) {
 
@@ -90,8 +92,7 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
             safeCode = it.secureCode
             val cashStatus = it.cashStatus
             if (CodeStatus.resolve(cashStatus.status) == CodeStatus.NEW_CODE) {
-                populateAwaitingView(context, cashStatus.address, cashStatus.description,
-                    cashStatus.usdAmount, cashStatus.btc_amount)
+                populateAwaitingView(context, cashStatus)
             } else if (CodeStatus.resolve(it.cashStatus.status) == CodeStatus.FUNDED) {
                 refreshCodeStatus(safeCode, context)
             }
@@ -112,11 +113,9 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
                         val cashStatus = it.data!!.items[0]
 
                         if (CodeStatus.resolve(cashStatus.status) == CodeStatus.NEW_CODE) {
-                            populateAwaitingView(context, cashStatus.address, cashStatus.description,
-                                cashStatus.usdAmount, cashStatus.btc_amount)
+                            populateAwaitingView(context, cashStatus)
                         } else if (CodeStatus.resolve(cashStatus.status) == CodeStatus.FUNDED) {
-                            populateFundedView(context, cashStatus.code!!,
-                                cashStatus.usdAmount, cashStatus.description)
+                            populateFundedView(context, cashStatus)
                         }
                     }
                 }
@@ -155,13 +154,12 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
         }
     }
 
-    private fun populateAwaitingView(context:Context, address:String,
-        details:String, usdAmount:String, btcAmount:String) {
+    private fun populateAwaitingView(context:Context, cashStatus: CashStatus) {
 
         changeUiState(ViewState.AWAITING)
 
         sendAction.setOnClickListener {
-            goToSend(btcAmount, address)
+            goToSend(cashStatus.btc_amount, cashStatus.address)
         }
 
         refreshAction.setOnClickListener {
@@ -169,31 +167,31 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
             refreshCodeStatus(safeCode, it.context)
         }
 
-        awaitingAddress.text = address
+        awaitingAddress.text = cashStatus.address
         awaitingAddress.isSelected = true
         awaitingAddress.setOnClickListener {
-            copyToClipboard(context, address)
+            copyToClipboard(context, cashStatus.address)
         }
-        awaitingBTCAmount.text = "Amount: $btcAmount BTC"
+        awaitingBTCAmount.text = "Amount: ${cashStatus.btc_amount} BTC"
         awaitingBTCAmount.setOnClickListener {
-            copyToClipboard(context, btcAmount)
+            copyToClipboard(context, cashStatus.btc_amount)
         }
 
-        awaitingLocationAddress.text = "Location: $details"
+        awaitingLocationAddress.text = "Location: ${cashStatus.description}"
 
         awaitingLocationAddress.setOnClickListener {
-            openMaps(context, details)
+            openMaps(context, cashStatus)
         }
 
-        awaitingUSDAmount.text = "Amount (USD): $$usdAmount"
+        awaitingUSDAmount.text = "Amount (USD): $${cashStatus.usdAmount}"
 
         qr_image.setOnClickListener {
-            copyToClipboard(context, address)
+            copyToClipboard(context, cashStatus.address)
         }
 
         val request = CryptoRequest.Builder()
-            .setAddress(address)
-            .setAmount(btcAmount.toFloat().toBigDecimal())
+            .setAddress(cashStatus.address)
+            .setAmount(cashStatus.btc_amount.toFloat().toBigDecimal())
             .build()
 
         val uri = cryptoUriParser.createUrl("BTC", request)
@@ -212,17 +210,17 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
         router.pushController(RouterTransaction.with(SendSheetController(request)))
     }
 
-    private fun populateFundedView(context: Context, code:String, usdAmount:String, address:String){
+    private fun populateFundedView(context: Context, cashStatus: CashStatus){
         changeUiState(ViewState.FUNDED)
 
-        cashCode.text = code
+        cashCode.text = cashStatus.code!!
         cashCode.setOnClickListener {
-            copyToClipboard(context, code)
+            copyToClipboard(context, cashStatus.code!!)
         }
-        amountFunded.text = "Amount (USD):  \$$usdAmount"
-        locationFunded.text = "Location: $address"
+        amountFunded.text = "Amount (USD):  \$${cashStatus.usdAmount}"
+        locationFunded.text = "Location: ${cashStatus.description}"
         locationFunded.setOnClickListener {
-            openMaps(context, address)
+            openMaps(context, cashStatus)
         }
     }
 
@@ -232,9 +230,12 @@ class CashOutStatusController(args: Bundle) : BaseController(args) {
         Toast.makeText(context, "Copied to the clipboard!", Toast.LENGTH_SHORT).show()
     }
 
-    private fun openMaps(context:Context, address:String) {
-        val geoUri = "http://maps.google.com/maps?q=loc:$address"
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(geoUri))
+    private fun openMaps(context:Context, cashStatus: CashStatus) {
+        val uri: String = java.lang.String.format(
+            Locale.ENGLISH, "geo:%f,%f?z=%d&q=%f,%f (%s)",
+            cashStatus.latitude, cashStatus.longitude, 15, cashStatus.latitude, cashStatus.longitude, cashStatus.description
+        )
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         context.startActivity(intent)
     }
 }
