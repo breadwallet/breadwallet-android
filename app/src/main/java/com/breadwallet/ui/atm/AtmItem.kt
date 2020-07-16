@@ -1,5 +1,6 @@
 package com.breadwallet.ui.atm
 
+import android.graphics.Color
 import android.view.View
 import android.widget.TextView
 import cash.just.sdk.model.AtmMachine
@@ -22,8 +23,11 @@ open class AtmItem(var atmMachine: AtmMachine) : AbstractItem<AtmItem.ViewHolder
     }
 
     class ViewHolder(view: View) : FastAdapter.ViewHolder<AtmItem>(view) {
+        var root: View = view.findViewById(R.id.root_view)
         var name: TextView = view.findViewById(R.id.item_date)
         var description: TextView = view.findViewById(R.id.item_description)
+        var btc: View = view.findViewById(R.id.btcIcon)
+        var cash: View = view.findViewById(R.id.cashIcon)
 
         override fun unbindView(item: AtmItem) {
             name.text = null
@@ -33,6 +37,14 @@ open class AtmItem(var atmMachine: AtmMachine) : AbstractItem<AtmItem.ViewHolder
         override fun bindView(item: AtmItem, payloads: MutableList<Any>) {
             name.text = item.atmMachine.addressDesc
             description.text = "${item.atmMachine.city} ${item.atmMachine.zip}"
+
+            if (item.atmMachine.redemption == 0) {
+                cash.visibility = View.GONE
+                root.setBackgroundColor(Color.parseColor("#f0eeee"))
+            } else {
+                root.setBackgroundColor(Color.WHITE)
+                cash.visibility = View.VISIBLE
+            }
         }
     }
 }

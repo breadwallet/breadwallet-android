@@ -264,13 +264,13 @@ class RequestCashCodeController(
             context, "Withdrawal requested",
             "Please send the amount of ${cashStatus.btc_amount} BTC to the ATM",
             "Send", "Details", { dialog ->
-                goToSend(cashStatus.btc_amount, cashStatus.address)
                 dialog.dismissWithAnimation()
+                goToSend(cashStatus.btc_amount, cashStatus.address)
             },
             { dialog ->
-                goToDetails(secureCode, cashStatus)
                 dialog.dismissWithAnimation()
-            }, { router.popCurrentController() }, false
+                goToDetails(secureCode, cashStatus)
+            }, null, false
         )
     }
 

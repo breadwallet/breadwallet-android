@@ -1213,7 +1213,7 @@
     <!-- Wipe wallet button title -->
     <string name="WipeWallet.wipe">Wipe</string>
     <!-- Wiping activity message -->
-    <string name="WipeWallet.wiping">Wiping...</string>
+    <string name="WipeWallet.wiping">Wiping…</string>
     <!-- Paper key instructions. -->
     <string name="WritePaperPhrase.instruction">Write down each word in order and store it in a safe place.</string>
     <!-- button label -->
