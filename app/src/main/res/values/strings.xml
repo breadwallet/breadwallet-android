@@ -843,7 +843,7 @@
     <!-- Face ID spending limit label -->
     <string name="Settings.faceIdLimit">Face ID Spending Limit</string>
     <!-- Redeem the funds stored on this private key. -->
-    <string name="Settings.importTitle">Redeem Private Key</string>
+    <string name="Settings.importTitle">Sweep Private Key</string>
     <!-- Manage settings section header -->
     <string name="Settings.manage">Manage</string>
     <!-- Notifications label -->
