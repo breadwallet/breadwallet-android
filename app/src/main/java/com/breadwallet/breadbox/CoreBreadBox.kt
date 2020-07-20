@@ -161,7 +161,7 @@ internal class CoreBreadBox(
         system = (system ?: newSystem()).also { system ->
             logDebug("Dispatching initial System values")
 
-            system.connectAll()
+            system.resume()
 
             networkManager = NetworkManager(
                 system,
@@ -214,7 +214,7 @@ internal class CoreBreadBox(
             SupervisorJob() + Dispatchers.Default + errorHandler("openScope")
         )
 
-        checkNotNull(system).disconnectAll()
+        checkNotNull(system).pause()
 
         isOpen = false
 
