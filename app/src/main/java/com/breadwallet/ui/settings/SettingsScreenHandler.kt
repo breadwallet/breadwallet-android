@@ -31,7 +31,10 @@ import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.crypto.System
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.crypto.WalletManagerSyncDepth
+import com.breadwallet.logger.logDebug
 import com.breadwallet.model.Experiments
 import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.ExperimentsRepository
@@ -53,6 +56,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -128,6 +132,14 @@ class SettingsScreenHandler(
                         metaDataManager.enableWallet(token.currencyId)
                     }
             }
+            F.ClearBlockchainData -> launch {
+                logDebug("Clearing blockchain data")
+                breadBox.run {
+                    close(true)
+                    open(checkNotNull(userManager.getAccount()))
+                }
+                output.accept(E.OnBlockchainDataCleared)
+            }
         }
     }
 
@@ -143,8 +155,18 @@ class SettingsScreenHandler(
             SettingsSection.DEVELOPER_OPTION -> getDeveloperOptions()
             SettingsSection.BTC_SETTINGS -> btcOptions
             SettingsSection.BCH_SETTINGS -> bchOptions
+            SettingsSection.HIDDEN -> getHiddenOptions()
         }
         output.accept(E.OnOptionsLoaded(items))
+    }
+
+    private fun getHiddenOptions(): List<SettingsItem> {
+        return listOf(
+            SettingsItem(
+                "Clear Blockchain Data",
+                SettingsOption.CLEAR_BLOCKCHAIN_DATA
+            )
+        )
     }
 
     private fun getHomeOptions(): List<SettingsItem> {

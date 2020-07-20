@@ -43,7 +43,7 @@ interface BreadBox {
     fun open(account: Account)
 
     /** Cleanup [System] and stop emitting events. */
-    fun close()
+    fun close(wipe: Boolean = false)
 
     /** Emits the [System] objects produced when calling [open]. */
     fun system(): Flow<System>
