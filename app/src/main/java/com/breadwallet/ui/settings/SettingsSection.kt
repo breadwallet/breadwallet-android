@@ -24,4 +24,12 @@
  */
 package com.breadwallet.ui.settings
 
-enum class SettingsSection { HOME, PREFERENCES, DEVELOPER_OPTION, SECURITY, BTC_SETTINGS, BCH_SETTINGS }
+enum class SettingsSection {
+    HOME,
+    HIDDEN,
+    SECURITY,
+    PREFERENCES,
+    BTC_SETTINGS,
+    BCH_SETTINGS,
+    DEVELOPER_OPTION
+}

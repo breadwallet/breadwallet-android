@@ -49,10 +49,14 @@ import com.breadwallet.ui.settings.SettingsScreen.M
 import com.spotify.mobius.Connectable
 import kotlinx.android.synthetic.main.controller_settings.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
+
+private const val HIDDEN_MENU_CLICKS = 5
 
 class SettingsController(
     args: Bundle? = null
@@ -109,7 +113,11 @@ class SettingsController(
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
         return merge(
             close_button.clicks().map { E.OnCloseClicked },
-            back_button.clicks().map { E.OnBackClicked }
+            back_button.clicks().map { E.OnBackClicked },
+            title.clicks()
+                .dropWhile { currentModel.section != SettingsSection.HOME }
+                .drop(HIDDEN_MENU_CLICKS)
+                .map { E.ShowHiddenOptions }
         )
     }
 
@@ -119,6 +127,7 @@ class SettingsController(
             title.text = when (section) {
                 SettingsSection.HOME -> act.getString(R.string.Settings_title)
                 SettingsSection.PREFERENCES -> act.getString(R.string.Settings_preferences)
+                SettingsSection.HIDDEN,
                 SettingsSection.DEVELOPER_OPTION -> "Developer Options"
                 SettingsSection.SECURITY -> act.getString(R.string.MenuButton_security)
                 SettingsSection.BTC_SETTINGS -> "Bitcoin ${act.getString(R.string.Settings_title)}"

@@ -204,7 +204,7 @@ internal class CoreBreadBox(
     }
 
     @Synchronized
-    override fun close() {
+    override fun close(wipe: Boolean) {
         logDebug("Closing BreadBox")
 
         check(isOpen) { "BreadBox must be opened before calling close()." }
@@ -215,6 +215,11 @@ internal class CoreBreadBox(
         )
 
         checkNotNull(system).disconnectAll()
+
+        if (wipe) {
+            System.wipe(system)
+            system = null
+        }
 
         isOpen = false
 
