@@ -146,12 +146,12 @@ class SendSheetController(args: Bundle? = null) :
 
         textInputAmount.showSoftInputOnFocus = false
 
-        layoutSignal.layoutTransition = UiUtils.getDefaultTransition()
-        layoutSignal.setOnTouchListener(SlideDetector(router, layoutSignal))
+        layoutSheetBody.layoutTransition = UiUtils.getDefaultTransition()
+        layoutSheetBody.setOnTouchListener(SlideDetector(router, layoutSheetBody))
     }
 
     override fun onDestroyView(view: View) {
-        layoutSignal.setOnTouchListener(null)
+        layoutSheetBody.setOnTouchListener(null)
         super.onDestroyView(view)
     }
 
@@ -188,7 +188,7 @@ class SendSheetController(args: Bundle? = null) :
             buttonSend.clicks().map { E.OnSendClicked },
             buttonClose.clicks().map { E.OnCloseClicked },
             buttonPaste.clicks().map { E.OnPasteClicked },
-            layoutBackground.clicks().map { E.OnCloseClicked },
+            layoutSendSheet.clicks().map { E.OnCloseClicked },
             textInputAmount.clicks().map { E.OnAmountEditClicked },
             textInputAmount.focusChanges().map { hasFocus ->
                 if (hasFocus) {

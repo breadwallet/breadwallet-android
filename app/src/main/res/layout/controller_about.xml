@@ -24,7 +24,7 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/divider4"
         app:layout_constraintLeft_toLeftOf="@id/divider4"
-        android:fontFamily="@font/circular_pro_book" />
+        android:fontFamily="@font/mobile_font_book" />
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/brd_rewards_id"
@@ -34,7 +34,7 @@
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="@id/divider4"
         app:layout_constraintTop_toBottomOf="@+id/brd_rewards"
-        android:fontFamily="@font/circular_pro_book" />
+        android:fontFamily="@font/mobile_font_book" />
 
     <View
         android:id="@+id/divider4"
@@ -61,7 +61,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/brd_rewards"
-        android:fontFamily="@font/circular_pro_book" />
+        android:fontFamily="@font/mobile_font_book" />
 
     <ImageView
         android:id="@+id/brd_logo"
@@ -86,7 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/circular_pro_bold"
+        android:fontFamily="@font/mobile_font_bold"
         android:text="@string/About.title"
         android:textSize="@dimen/header"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -144,7 +144,7 @@
         android:layout_marginBottom="24dp"
         android:text="@string/About.twitter"
         android:textSize="18sp"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/mobile_font_book"
         app:layout_constraintBottom_toTopOf="@+id/view4"
         app:layout_constraintLeft_toLeftOf="@+id/divider1" />
 
@@ -156,7 +156,7 @@
         android:layout_marginBottom="24dp"
         android:text="@string/About.blog"
         android:textSize="18sp"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/mobile_font_book"
         app:layout_constraintBottom_toTopOf="@+id/view5"
         app:layout_constraintLeft_toLeftOf="@+id/divider1" />
 
@@ -193,7 +193,7 @@
         android:text="@string/About.privacy"
         android:textColor="@color/dark_blue"
         android:textSize="16sp"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/mobile_font_book"
         app:layout_constraintBottom_toTopOf="@+id/info_text"
         app:layout_constraintHorizontal_bias="0.525"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -209,7 +209,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="40dp"
         android:text="@string/About.footer"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/mobile_font_book"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
@@ -221,7 +221,7 @@
         android:layout_marginBottom="24dp"
         android:text="@string/About.reddit"
         android:textSize="18sp"
-        android:fontFamily="@font/circular_pro_book"
+        android:fontFamily="@font/mobile_font_book"
         app:layout_constraintBottom_toTopOf="@+id/divider1"
         app:layout_constraintLeft_toLeftOf="@+id/divider1" />
 

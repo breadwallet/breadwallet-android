@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     private val userManager by instance<BrdUserManager>()
 
-    private lateinit var router: Router
+    lateinit var router: Router
     private var trackingListener: ControllerTrackingListener? = null
 
     // NOTE: Used only to centralize deep link navigation handling.
@@ -126,7 +126,9 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                 finish()
                 return@launch
             }
-            if (userManager.getState() is BrdUserState.KeyStoreInvalid) {
+            val userState = userManager.getState()
+            if (userState is BrdUserState.KeyStoreInvalid) {
+                processUserState(userState)
                 return@launch
             }
 

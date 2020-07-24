@@ -30,8 +30,6 @@ import java.math.BigDecimal
 
 sealed class MetaDataEffect {
 
-    object RecoverMetaData : MetaDataEffect()
-
     data class LoadTransactionMetaData(
         val currencyCode: String,
         val transactionHashes: List<String>

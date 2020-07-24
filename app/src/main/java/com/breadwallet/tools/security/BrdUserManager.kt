@@ -32,6 +32,7 @@ import android.os.Build
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.UserNotAuthenticatedException
 import android.text.format.DateUtils
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
@@ -59,6 +60,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -580,16 +582,17 @@ class CryptoUserManager(
 
     private suspend fun recoverCreationDate(): Date {
         BreadApp.applicationScope.launch {
-            metaDataProvider.recoverAll(true).first()
+            metaDataProvider.recoverAll(true)
         }
-        return metaDataProvider.walletInfo()
-            .onStart {
-                // Poll for wallet-info metadata
-                // This is a work-around to avoid blocking until recoverAll(migrate)
-                // recovers *all* metadata
-                for (i in 1..POLL_ATTEMPTS_MAX) {
-                    metaDataProvider.getWalletInfoUnsafe()
-                        ?.let { emit(it) }
+        // Poll for wallet-info metadata
+        // This is a work-around to avoid blocking until recoverAll(migrate)
+        // recovers *all* metadata
+        return flow {
+                while (true) {
+                    metaDataProvider.getWalletInfoUnsafe()?.let {
+                        emit(it)
+                        return@flow
+                    }
                     delay(POLL_TIMEOUT_MS)
                 }
             }
@@ -622,13 +625,16 @@ class CryptoUserManager(
             getWalletCreationTime() == creationTime
     }
 
-    private suspend fun wipeAccount() {
-        BRKeyStore.deletePhrase(getActivity())
+    @VisibleForTesting
+    fun wipeAccount() {
         checkNotNull(store).edit {
+            putString(KEY_PHRASE, null)
             putString(KEY_ACCOUNT, null)
             putString(KEY_AUTH_KEY, null)
+            putString(KEY_PIN_CODE, null)
             putLong(KEY_CREATION_TIME, 0)
         }
+        BRKeyStore.wipeKeyStore(true)
     }
 
     private suspend fun getActivity(): Activity {

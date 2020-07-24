@@ -40,7 +40,7 @@
                 android:layout_centerHorizontal="true"
                 android:text="Simplex Checkout"
                 android:textColor="@color/black"
-                android:fontFamily="@font/circular_pro_bold" />
+                android:fontFamily="@font/mobile_font_bold" />
 
 
             <com.breadwallet.legacy.presenter.customviews.BaseTextView
@@ -52,7 +52,7 @@
                 android:paddingEnd="8dp"
                 android:text="@string/AccessibilityLabels.close"
                 android:textColor="@color/button_primary_normal"
-                android:fontFamily="@font/circular_pro_bold" />
+                android:fontFamily="@font/mobile_font_bold" />
 
 
         </RelativeLayout>

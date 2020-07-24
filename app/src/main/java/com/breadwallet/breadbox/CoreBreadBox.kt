@@ -62,7 +62,7 @@ import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
@@ -111,7 +111,7 @@ internal class CoreBreadBox(
     private var system: System? = null
     private val systemExecutor = Executors.newSingleThreadScheduledExecutor()
 
-    private val openScope = CoroutineScope(
+    private var openScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Default + errorHandler("openScope")
     )
 
@@ -159,14 +159,9 @@ internal class CoreBreadBox(
         }
 
         system = (system ?: newSystem()).also { system ->
-            check(system.account.serialize()!!.contentEquals(account.serialize())) {
-                "Provided Account does not match existing System Account, " +
-                    "CoreBreadBox does not support swapping accounts at runtime."
-            }
-
             logDebug("Dispatching initial System values")
 
-            system.connectAll()
+            system.resume()
 
             networkManager = NetworkManager(
                 system,
@@ -209,14 +204,22 @@ internal class CoreBreadBox(
     }
 
     @Synchronized
-    override fun close() {
+    override fun close(wipe: Boolean) {
         logDebug("Closing BreadBox")
 
         check(isOpen) { "BreadBox must be opened before calling close()." }
 
-        openScope.coroutineContext.cancelChildren()
+        openScope.cancel()
+        openScope = CoroutineScope(
+            SupervisorJob() + Dispatchers.Default + errorHandler("openScope")
+        )
 
-        checkNotNull(system).disconnectAll()
+        checkNotNull(system).pause()
+
+        if (wipe) {
+            System.wipe(system)
+            system = null
+        }
 
         isOpen = false
 

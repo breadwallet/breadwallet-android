@@ -31,7 +31,10 @@ import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.crypto.System
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.crypto.WalletManagerSyncDepth
+import com.breadwallet.logger.logDebug
 import com.breadwallet.model.Experiments
 import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.ExperimentsRepository
@@ -39,7 +42,7 @@ import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
-import com.breadwallet.tools.util.LogsUtils
+import com.breadwallet.tools.util.SupportUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.btc
@@ -53,6 +56,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -77,7 +81,7 @@ class SettingsScreenHandler(
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
             F.SendLogs -> launch(Dispatchers.Main) {
-                LogsUtils.shareLogs(context, breadBox, userManager)
+                SupportUtils.submitEmailRequest(context, breadBox, userManager)
             }
             is F.SetApiServer -> {
                 if (BuildConfig.DEBUG) {
@@ -114,11 +118,11 @@ class SettingsScreenHandler(
                     ?.clearApplicationUserData()
             }
             F.GetPaperKey -> launch {
-                 try {
+                try {
                     val phrase = checkNotNull(userManager.getPhrase()).toString(UTF_8)
-                     output.accept(E.ShowPhrase(phrase.split(" ")))
+                    output.accept(E.ShowPhrase(phrase.split(" ")))
                 } catch (e: UserNotAuthenticatedException) {
-                     // User denied confirmation, ignored
+                    // User denied confirmation, ignored
                 }
             }
             F.EnableAllWallets -> {
@@ -127,6 +131,14 @@ class SettingsScreenHandler(
                     .forEach { token ->
                         metaDataManager.enableWallet(token.currencyId)
                     }
+            }
+            F.ClearBlockchainData -> launch {
+                logDebug("Clearing blockchain data")
+                breadBox.run {
+                    close(true)
+                    open(checkNotNull(userManager.getAccount()))
+                }
+                output.accept(E.OnBlockchainDataCleared)
             }
         }
     }
@@ -143,8 +155,18 @@ class SettingsScreenHandler(
             SettingsSection.DEVELOPER_OPTION -> getDeveloperOptions()
             SettingsSection.BTC_SETTINGS -> btcOptions
             SettingsSection.BCH_SETTINGS -> bchOptions
+            SettingsSection.HIDDEN -> getHiddenOptions()
         }
         output.accept(E.OnOptionsLoaded(items))
+    }
+
+    private fun getHiddenOptions(): List<SettingsItem> {
+        return listOf(
+            SettingsItem(
+                "Clear Blockchain Data",
+                SettingsOption.CLEAR_BLOCKCHAIN_DATA
+            )
+        )
     }
 
     private fun getHomeOptions(): List<SettingsItem> {
@@ -370,7 +392,7 @@ class SettingsScreenHandler(
         val mapPath = mapExperiment?.meta.orEmpty().replace("\\/", "/")
         val mapJsonObj = JSONObject(mapPath)
         val url = mapJsonObj.getString("url")
-        
+
         output.accept(E.OnATMMapClicked(url, mapPath))
     }
 }

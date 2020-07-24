@@ -46,7 +46,7 @@ interface AccountMetaDataProvider {
      * Recovers all metadata for a recovered [Account] and returns true if successful.
      * If [migrate] is true, any metadata migrations to the latest schema will be performed.
      */
-    fun recoverAll(migrate: Boolean = false): Flow<Boolean>
+    suspend fun recoverAll(migrate: Boolean = false): Boolean
 
     /** Returns a [Flow] of enabled wallet currency ids (addresses), will recover them if necessary. */
     fun enabledWallets(): Flow<List<String>>

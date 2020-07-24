@@ -20,9 +20,6 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
-    <!-- Allows unlocking your device and activating its screen so UI tests can succeed -->
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-
     <uses-feature
         android:name="android.hardware.location.gps"
         android:required="false" />

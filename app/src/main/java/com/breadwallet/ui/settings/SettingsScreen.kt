@@ -65,6 +65,8 @@ object SettingsScreen {
         data class SetPlatformBundle(val bundle: String) : E()
         data class SetTokenBundle(val bundle: String) : E()
         object OnWalletsUpdated : E()
+        object ShowHiddenOptions : E()
+        object OnBlockchainDataCleared : E()
 
         data class OnATMMapClicked(val url: String, val mapJson: String) : E()
     }
@@ -80,6 +82,7 @@ object SettingsScreen {
         object WipeNoPrompt : F()
         object GetPaperKey : F()
         object EnableAllWallets : F()
+        object ClearBlockchainData : F()
 
         data class SetApiServer(val host: String) : F()
         data class SetPlatformDebugUrl(val url: String) : F()
@@ -179,6 +182,10 @@ object SettingsScreen {
 
         data class GoToATMMap(val url: String, val mapJson: String) : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.ATMMap(url, mapJson)
+        }
+
+        object RelaunchHomeScreen : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Home
         }
     }
 }
