@@ -40,6 +40,7 @@ import com.breadwallet.R
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.util.BRConstants.FAQ_IMPORT_WALLET
+import com.breadwallet.tools.util.BRConstants.FAQ_PAPER_KEY
 import com.breadwallet.tools.util.BRConstants.FAQ_SET_PIN
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
@@ -309,6 +310,10 @@ class RouterNavigationEffectHandler(
             }
             FAQ_IMPORT_WALLET -> {
                 CashSupport.Builder().detail(GeneralSupportPage.IMPORT_WALLET).build()
+                    .createDialogFragment().show(fragmentManager, "tag")
+            }
+            FAQ_PAPER_KEY -> {
+                CashSupport.Builder().detail(GeneralSupportPage.RECOVERY_KEY).build()
                     .createDialogFragment().show(fragmentManager, "tag")
             } else -> {
                 CashSupport.Builder().build()
