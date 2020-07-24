@@ -171,19 +171,20 @@ object SendSheetHandler {
     ) = flowTransformer<F.LoadBalance, E> { effects ->
         effects.map { effect ->
             val wallet = breadBox.wallet(effect.currencyCode).first()
+            val feeCurrencyCode = wallet.unitForFee.currency.code
             val balanceMin = wallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
             val balanceBig =
                 (wallet.balance.toBigDecimal() - balanceMin).coerceAtLeast(BigDecimal.ZERO)
             val fiatBig = getBalanceInFiat(balanceBig, wallet.balance, rates)
-            val feeCurrencyBalance = if (effect.currencyCode.equals(effect.feeCurrencyCode, true)) {
+            val feeCurrencyBalance = if (effect.currencyCode.equals(feeCurrencyCode, true)) {
                 balanceBig
             } else {
-                val feeWallet = breadBox.wallet(effect.feeCurrencyCode).first()
+                val feeWallet = breadBox.wallet(feeCurrencyCode).first()
                 val feeBalanceMin =
                     feeWallet.balanceMinimum.orNull()?.toBigDecimal() ?: BigDecimal.ZERO
                 (feeWallet.balance.toBigDecimal() - feeBalanceMin).coerceAtLeast(BigDecimal.ZERO)
             }
-            E.OnBalanceUpdated(balanceBig, fiatBig, feeCurrencyBalance)
+            E.OnBalanceUpdated(balanceBig, fiatBig, feeCurrencyCode, feeCurrencyBalance)
         }
     }
 
