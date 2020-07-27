@@ -82,8 +82,6 @@ import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.KVStoreProvider
 import com.platform.interfaces.MetaDataManager
 import com.platform.interfaces.WalletProvider
-import com.platform.kvstore.RemoteKVStore
-import com.platform.kvstore.ReplicatedKVStore
 import com.platform.sqlite.PlatformSqliteHelper
 import com.platform.tools.KVStoreManager
 import kotlinx.coroutines.CoroutineScope
@@ -104,7 +102,6 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
@@ -349,6 +346,10 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
                 this@BreadApp
             )
         }
+
+        bind<ConversionTracker>() with singleton {
+            ConversionTracker(instance())
+        }
     }
 
     private var mDelayServerShutdownCode = -1
@@ -362,6 +363,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
     private val userManager by instance<BrdUserManager>()
     private val ratesFetcher by instance<RatesFetcher>()
     private val accountMetaData by instance<AccountMetaDataProvider>()
+    private val conversionTracker by instance<ConversionTracker>()
 
     override fun onCreate() {
         super.onCreate()
@@ -369,7 +371,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         mInstance = this
 
         BRKeyStore.provideContext(this)
-        BRSharedPrefs.provideContext(this)
+        BRSharedPrefs.initialize(this)
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(ApplicationLifecycleObserver())
         ApplicationLifecycleObserver.addApplicationLifecycleListener { event ->
@@ -404,7 +406,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
     private fun handleOnStart() {
         accountLockJob?.cancel()
         setDelayServerShutdown(false, -1)
-
         val breadBox = getBreadBox()
         userManager
             .stateChanges()
@@ -500,6 +501,8 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         applicationScope.launch {
             trackAddressMismatch(breadBox)
         }
+        
+        conversionTracker.start(startedScope)
     }
 
     private fun incrementAppForegroundedCounter() {

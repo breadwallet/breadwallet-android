@@ -429,42 +429,6 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             }
         }
 
-        /* TODO: Make review prompt a controller
-        // Show Review Prompt Dialog
-        if (model.showReviewPrompt && !model.isShowingReviewPrompt) {
-            if (!isFragmentOnTop) {
-                // Show dialog
-                BRDialog.showCustomDialog(
-                    this@WalletController,
-                    getString(R.string.RateAppPrompt_Title_Android),
-                    getString(R.string.RateAppPrompt_Body_Android),
-                    getString(R.string.RateAppPrompt_Button_RateApp_Android),
-                    getString(R.string.RateAppPrompt_Button_Dismiss_Android),
-                    { // positiveButton
-                            brDialogView ->
-                        output.accept(WalletScreen.E.OnReviewPromptAccepted)
-                        // NOTE: This causes us to over-count dismisses, as each positive button
-                        // click also calls dismiss handler (known issue)
-                        brDialogView.dismiss()
-                    },
-                    { // negativeButton
-                            brDialogView ->
-                        output.accept(WalletScreen.E.OnHideReviewPrompt(false))
-                        brDialogView.dismiss() // NOTE: see above comment about over-counting
-                    },
-                    { // onDismiss
-                            brDialogView ->
-                        output.accept(WalletScreen.E.OnHideReviewPrompt(true))
-                    },
-                    0
-                )
-
-                output.accept(WalletScreen.E.OnIsShowingReviewPrompt)
-            } else {
-                // dispatch showReviewPrompt not shown evt (turn both showReviewPrompt and isShowing == false)
-            }
-        }*/
-
         ifChanged(M::priceChartDataPoints) {
             mPriceDataAdapter.dataSet = it
             mPriceDataAdapter.notifyDataSetChanged()
@@ -515,7 +479,11 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
         }
     }
 
-    override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onPositiveClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         if (dialogId == DIALOG_CREATE_ACCOUNT) {
             eventConsumer.accept(E.OnCreateAccountConfirmationClicked)
         }

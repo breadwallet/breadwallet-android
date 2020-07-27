@@ -134,15 +134,27 @@ class FastSyncController(
         )
     }
 
-    override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onPositiveClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         eventConsumer.accept(E.OnDisableFastSyncConfirmed)
     }
 
-    override fun onNegativeClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onNegativeClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         eventConsumer.accept(E.OnDisableFastSyncCanceled)
     }
 
-    override fun onDismissed(dialogId: String, controller: AlertDialogController) {
+    override fun onDismissed(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         eventConsumer.accept(E.OnDisableFastSyncCanceled)
     }
 

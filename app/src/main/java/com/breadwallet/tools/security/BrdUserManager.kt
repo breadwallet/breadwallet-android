@@ -162,7 +162,7 @@ class CryptoUserManager(
     private val stateChangeChannel = BroadcastChannel<Unit>(CONFLATED)
 
     private val accountInvalidated = AtomicBoolean()
-    private val locked = AtomicBoolean(false)
+    private val locked = AtomicBoolean(true)
     private val disabledSeconds = AtomicInteger(0)
     private var token: String? = null
     private var jwt: String? = null
@@ -588,14 +588,14 @@ class CryptoUserManager(
         // This is a work-around to avoid blocking until recoverAll(migrate)
         // recovers *all* metadata
         return flow {
-                while (true) {
-                    metaDataProvider.getWalletInfoUnsafe()?.let {
-                        emit(it)
-                        return@flow
-                    }
-                    delay(POLL_TIMEOUT_MS)
+            while (true) {
+                metaDataProvider.getWalletInfoUnsafe()?.let {
+                    emit(it)
+                    return@flow
                 }
+                delay(POLL_TIMEOUT_MS)
             }
+        }
             .first()
             .creationDate
             .run(::Date)

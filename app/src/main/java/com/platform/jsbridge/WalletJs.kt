@@ -29,6 +29,10 @@ import android.security.keystore.UserNotAuthenticatedException
 import android.webkit.JavascriptInterface
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
+import com.breadwallet.app.Buy
+import com.breadwallet.app.Conversion
+import com.breadwallet.app.ConversionTracker
+import com.breadwallet.app.Trade
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.addressFor
@@ -89,7 +93,8 @@ class WalletJs(
     private val metaDataProvider: AccountMetaDataProvider,
     private val breadBox: BreadBox,
     private val ratesRepository: RatesRepository,
-    private val userManager: BrdUserManager
+    private val userManager: BrdUserManager,
+    private val conversionTracker: ConversionTracker
 ) : JsApi {
     companion object {
         private const val KEY_BTC_DENOMINATION_DIGITS = "btc_denomination_digits"
@@ -354,6 +359,8 @@ class WalletJs(
             TxMetaDataValue(comment = description)
         )
 
+        conversionTracker.track(Trade(currency, transaction.hashString()))
+
         JSONObject().apply {
             put(KEY_HASH, transaction.hashString())
             put(KEY_TRANSMITTED, true)
@@ -432,6 +439,14 @@ class WalletJs(
                 handler
             )
         }
+    }
+
+    @JavascriptInterface
+    fun trackBuy(
+        currencyCode: String,
+        amount: String
+    ) = promise.createForUnit {
+        conversionTracker.track(Buy(currencyCode, amount.toDouble(), System.currentTimeMillis()))
     }
 
     private suspend fun estimateFee(

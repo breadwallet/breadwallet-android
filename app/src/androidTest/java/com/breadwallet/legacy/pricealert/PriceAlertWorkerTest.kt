@@ -61,12 +61,12 @@ class PriceAlertWorkerTest {
     fun setup() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val config = Configuration.Builder()
-                .setMinimumLoggingLevel(Log.DEBUG)
-                .setExecutor(SynchronousExecutor())
-                .build()
+            .setMinimumLoggingLevel(Log.DEBUG)
+            .setExecutor(SynchronousExecutor())
+            .build()
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context, config)
-        BRSharedPrefs.provideContext(context)
+        BRSharedPrefs.initialize(context)
     }
 
     @After
@@ -143,7 +143,6 @@ class PriceAlertWorkerTest {
         assertTrue { processedAlert.hasBeenTriggered }
     }
 
-
     @Test
     @Throws(Exception::class)
     fun testDoesNotToggleHasBeenTriggeredWhenNotTriggered() {
@@ -217,14 +216,15 @@ class PriceAlertWorkerTest {
     }
 
     private fun WorkManager.getCryptoPriceAlertWorkerInfo() =
-            getWorkInfosForUniqueWork(PriceAlertWorker.uniqueWorkName).get().single()
+        getWorkInfosForUniqueWork(PriceAlertWorker.uniqueWorkName).get().single()
 
     private fun putAlerts(vararg priceAlerts: PriceAlert) {
         PriceAlertRepository.setAlerts(priceAlerts.asList())
     }
 
     private fun putRates(vararg currencyEntity: CurrencyEntity) {
-        val ratesRepo = RatesRepository.getInstance(InstrumentationRegistry.getInstrumentation().context)
+        val ratesRepo =
+            RatesRepository.getInstance(InstrumentationRegistry.getInstrumentation().context)
         ratesRepo.putCurrencyRates(currencyEntity.asList())
     }
 

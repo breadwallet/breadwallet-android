@@ -68,7 +68,7 @@ android {
     }
     packagingOptions {
         pickFirst 'protobuf.meta'
-        exclude("META-INF/*.kotlin_module") 
+        exclude("META-INF/*.kotlin_module")
     }
     // Specifies two flavor dimensions.
     flavorDimensions "mode"

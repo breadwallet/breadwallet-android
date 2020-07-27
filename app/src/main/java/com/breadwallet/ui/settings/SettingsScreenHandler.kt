@@ -31,9 +31,7 @@ import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
-import com.breadwallet.crypto.System
 import com.breadwallet.crypto.WalletManagerMode
-import com.breadwallet.crypto.WalletManagerSyncDepth
 import com.breadwallet.logger.logDebug
 import com.breadwallet.model.Experiments
 import com.breadwallet.model.TokenItem
@@ -56,7 +54,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -81,7 +78,12 @@ class SettingsScreenHandler(
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
             F.SendLogs -> launch(Dispatchers.Main) {
-                SupportUtils.submitEmailRequest(context, breadBox, userManager)
+                SupportUtils.submitEmailRequest(
+                    context,
+                    breadBox,
+                    userManager,
+                    sendToAndroidTeam = true
+                )
             }
             is F.SetApiServer -> {
                 if (BuildConfig.DEBUG) {
@@ -139,6 +141,10 @@ class SettingsScreenHandler(
                     open(checkNotNull(userManager.getAccount()))
                 }
                 output.accept(E.OnBlockchainDataCleared)
+            }
+            F.ToggleRateAppPrompt -> {
+                BRSharedPrefs.appRatePromptShouldPromptDebug =
+                    !BRSharedPrefs.appRatePromptShouldPromptDebug
             }
         }
     }
@@ -289,6 +295,7 @@ class SettingsScreenHandler(
         } else {
             ""
         }
+        val toggleRateAppPromptAddOn = BRSharedPrefs.appRatePromptShouldPromptDebug
         return listOf(
             SettingsItem(
                 "Send Logs",
@@ -330,6 +337,11 @@ class SettingsScreenHandler(
             SettingsItem(
                 "Wipe Wallet (no prompt)",
                 SettingsOption.WIPE_NO_PROMPT
+            ),
+            SettingsItem(
+                "Toggle Rate App Prompt",
+                SettingsOption.TOGGLE_RATE_APP_PROMPT,
+                addOn = "show=$toggleRateAppPromptAddOn"
             )
         )
     }

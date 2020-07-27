@@ -305,7 +305,9 @@ class RouterNavigator(
             message = message,
             title = effect.title ?: effect.titleResId?.run(res::getString) ?: "",
             positiveText = effect.positiveButtonResId?.run(res::getString),
-            negativeText = effect.negativeButtonResId?.run(res::getString)
+            negativeText = effect.negativeButtonResId?.run(res::getString),
+            textInputPlaceholder = effect.textInputPlaceholder
+                ?: effect.textInputPlaceholderResId?.run(res::getString)
         )
         router.pushController(RouterTransaction.with(controller))
     }

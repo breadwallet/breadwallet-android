@@ -53,9 +53,11 @@ object SupportUtils {
     // Filters out our apps events at log level = verbose
     private const val LOGCAT_COMMAND = "logcat -d ${BuildConfig.APPLICATION_ID}:V"
 
+    private const val ANDROID_TEAM_EMAIL = "android@brd.com"
+    private const val SUPPORT_TEAM_EMAIL = "support@brd.com"
+
     private const val DEFAULT_LOG_ATTACHMENT_BODY = "No logs."
     private const val FAILED_ERROR_MESSAGE = "Failed to get logs."
-    private const val DEFAULT_LOGS_EMAIL = "android@brd.com"
     private const val NO_EMAIL_APP_ERROR_MESSAGE = "No email app found."
     private const val LOGS_EMAIL_SUBJECT =
         "BRD Android App Feedback [ID:%s]" // Placeholder is for a unique id.
@@ -74,9 +76,10 @@ object SupportUtils {
         context: Context,
         breadBox: BreadBox,
         userManager: BrdUserManager,
-        debugData: Map<String, String> = emptyMap()
+        debugData: Map<String, String> = emptyMap(),
+        feedback: String? = null
     ) = buildString {
-        addFeedbackBlock()
+        addFeedbackBlock(feedback)
         appendln()
         addApplicationBlock(context)
         appendln()
@@ -87,10 +90,10 @@ object SupportUtils {
         addDebugBlock(debugData)
     }
 
-    private fun StringBuilder.addFeedbackBlock() {
+    private fun StringBuilder.addFeedbackBlock(feedback: String?) {
         appendln("Feedback")
         appendln("------------")
-        appendln("[Please add your feedback.]")
+        appendln(feedback ?: "[Please add your feedback.]")
     }
 
     private fun StringBuilder.addApplicationBlock(context: Context) {
@@ -196,20 +199,30 @@ object SupportUtils {
         context: Context,
         breadBox: BreadBox,
         userManager: BrdUserManager,
-        debugData: Map<String, String> = emptyMap()
+        debugData: Map<String, String> = emptyMap(),
+        feedback: String? = null,
+        sendToAndroidTeam: Boolean = false
     ) {
         val file = FileHelper.saveToExternalStorage(context, LOGS_FILE_NAME, getLogs(context))
         val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID, file)
+        val emailAddress = if (sendToAndroidTeam) {
+            ANDROID_TEAM_EMAIL
+        } else {
+            SUPPORT_TEAM_EMAIL
+        }
         val emailIntent = Intent(Intent.ACTION_SEND).apply {
             type = MIME_TYPE
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(DEFAULT_LOGS_EMAIL))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(emailAddress))
             putExtra(
                 Intent.EXTRA_SUBJECT,
                 String.format(LOGS_EMAIL_SUBJECT, getDeviceId())
             )
-            putExtra(Intent.EXTRA_TEXT, buildInfoString(context, breadBox, userManager, debugData))
+            putExtra(
+                Intent.EXTRA_TEXT,
+                buildInfoString(context, breadBox, userManager, debugData, feedback)
+            )
         }
         try {
             context.startActivity(

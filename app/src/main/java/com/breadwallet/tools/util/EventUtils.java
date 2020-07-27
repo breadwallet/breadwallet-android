@@ -53,7 +53,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public final class EventUtils {
-    private static final String TAG = EventUtils.class.getName();
     public static final String EVENT_REACHABLE = "reachability.isReachble";
     public static final String EVENT_NOT_REACHABLE = "reachability.isNotReachable";
     public static final String EVENT_WALLET_DID_USE_DEFAULT_FEE_PER_KB = "wallet.didUseDefaultFeePerKB";
@@ -120,15 +119,12 @@ public final class EventUtils {
     public static final String EVENT_FINAL_PAGE_BROWSE_FIRST = "onboarding.finalPage.browseFirst";
     public static final String EVENT_SKIP_BUTTON = "onboarding.skipButton";
     public static final String EVENT_BACK_BUTTON = "onboarding.backButton";
-
     public static final String EVENT_REWARDS_OPEN_WALLET = "rewards.openwallet";
     public static final String EVENT_REWARDS_BANNER = "rewards.banner";
     public static final String EVENT_ATTRIBUTE_CURRENCY = "currency";
-
     public static final String EVENT_PUB_KEY_MISMATCH = "publicKeyMismatch";
     public static final String EVENT_ATTRIBUTE_REWARDS_ID_HASH = "rewards_id_hash";
     public static final String EVENT_ATTRIBUTE_ADDRESS_HASH = "address_hash";
-
     // In-app messages
     public static final String EVENT_IN_APP_NOTIFICATION_RECEIVED = "inAppNotifications.receivedNotification";
     public static final String EVENT_IN_APP_NOTIFICATION_APPEARED = "inAppNotifications.inAppNotification.appeared";
@@ -137,12 +133,10 @@ public final class EventUtils {
     public static final String EVENT_ATTRIBUTE_NOTIFICATION_ID = "id";
     public static final String EVENT_ATTRIBUTE_NOTIFICATION_CTA_URL = "cta_url";
     public static final String EVENT_ATTRIBUTE_MESSAGE_ID = "message_id";
-
     // Google Play review prompt
     public static final String EVENT_REVIEW_PROMPT_DISPLAYED = "prompt.playstoreRate.displayed";
     public static final String EVENT_REVIEW_PROMPT_GOOGLE_PLAY_TRIGGERED = "prompt.playstoreRate.trigger";
     public static final String EVENT_REVIEW_PROMPT_DISMISSED = "prompt.playstoreRate.dismissed";
-
     // Push notifications
     public static final String EVENT_PUSH_NOTIFICATIONS_OPEN_APP_SETTINGS = "pushNotifications.pushNotificationSettings.appeared";
     public static final String EVENT_PUSH_NOTIFICATIONS_SETTING_TOGGLE_ON = "pushNotifications.pushNotificationSettings.pushNotificationsToggleOn";
@@ -153,10 +147,8 @@ public final class EventUtils {
     // Used for campaign analysis
     public static final String EVENT_MIXPANEL_APP_OPEN = "$app_open";
     public static final String EVENT_ATTRIBUTE_CAMPAIGN_ID = "campaign_id";
-
     // Experiment events
     public static final String EVENT_EXPERIMENT_BUY_SELL_MENU_BUTTON = "experiment.buySellMenuButton";
-
     public static final String EVENT_ATTRIBUTE_BUY_AND_SELL = "buyAndSell";
     public static final String EVENT_ATTRIBUTE_SHOW = "show";
     // Wallet events
@@ -166,14 +158,14 @@ public final class EventUtils {
     public static final String EVENT_WALLET_CHART_AXIS_TOGGLE = "wallet.%s.axisToggle";
     // wallet.{currencyCode}.scrubbed
     public static final String EVENT_WALLET_CHART_SCRUBBED = "wallet.%s.scrubbed";
-
     // Home screen prompts events
     public static final String PROMPT_TOUCH_ID = EventUtils.EVENT_PROMPT_PREFIX + "touchIdPrompt";
     public static final String PROMPT_PAPER_KEY = EventUtils.EVENT_PROMPT_PREFIX + "paperKeyPrompt";
     public static final String PROMPT_UPGRADE_PIN = EventUtils.EVENT_PROMPT_PREFIX + "upgradePinPrompt";
     public static final String PROMPT_RECOMMEND_RESCAN = EventUtils.EVENT_PROMPT_PREFIX + "recommendRescanPrompt";
     public static final String PROMPT_EMAIL = EventUtils.EVENT_PROMPT_PREFIX + "emailPrompt";
-
+    public static final String PROMPT_RATE_APP = EventUtils.EVENT_PROMPT_PREFIX + "rateAppPrompt";
+    private static final String TAG = EventUtils.class.getName();
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";
     private static final String TIME = "time";

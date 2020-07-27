@@ -72,7 +72,8 @@ class AboutController(args: Bundle? = null) : BaseController(args) {
                 SupportUtils.submitEmailRequest(
                     checkNotNull(activity),
                     direct.instance(),
-                    direct.instance()
+                    direct.instance(),
+                    sendToAndroidTeam = true
                 )
             }
         }

@@ -27,6 +27,7 @@ package com.breadwallet.ui.home
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.core.view.isGone
@@ -43,6 +44,7 @@ import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.ui.BaseMobiusController
+import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
 import com.breadwallet.ui.home.HomeScreen.M
@@ -77,7 +79,7 @@ private const val NETWORK_MAINNET = "MAINNET"
 
 class HomeController(
     args: Bundle? = null
-) : BaseMobiusController<M, E, F>(args) {
+) : BaseMobiusController<M, E, F>(args), AlertDialogController.Listener {
 
     override val layoutId = R.layout.controller_home
     override val defaultModel = M.createDefault()
@@ -242,6 +244,7 @@ class HomeController(
             PromptItem.EMAIL_COLLECTION -> {
                 return getEmailPrompt()
             }
+            PromptItem.RATE_APP -> return getRateAppPrompt()
         }
         return baseLayout
     }
@@ -283,6 +286,29 @@ class HomeController(
         return customLayout
     }
 
+    private fun getRateAppPrompt(): View {
+        val act = checkNotNull(activity)
+        val customLayout = act.layoutInflater.inflate(R.layout.rate_app_prompt, null)
+        val negativeButton = customLayout.findViewById<BRButton>(R.id.negative_button)
+        val positiveButton = customLayout.findViewById<BRButton>(R.id.submit_button)
+        val closeButton = customLayout.findViewById<ImageView>(R.id.close_button)
+        val dontShowCheckBox = customLayout.findViewById<CheckBox>(R.id.dont_show_checkbox)
+        closeButton.setOnClickListener {
+            eventConsumer.accept(E.OnPromptDismissed(PromptItem.RATE_APP))
+        }
+        negativeButton.setOnClickListener {
+            eventConsumer.accept(E.OnPromptDismissed(PromptItem.RATE_APP))
+            eventConsumer.accept(E.OnRateAppPromptNoThanksClicked)
+        }
+        positiveButton.setOnClickListener {
+            eventConsumer.accept(E.OnRateAppPromptClicked)
+        }
+        dontShowCheckBox.setOnClickListener {
+            eventConsumer.accept(E.OnRateAppPromptDontShowClicked((it as CheckBox).isChecked))
+        }
+        return customLayout
+    }
+
     private class DragEventHandler(
         private val fastAdapter: GenericFastAdapter,
         private val output: Consumer<E>
@@ -308,6 +334,14 @@ class HomeController(
         }
 
         override fun itemTouchDropped(oldPosition: Int, newPosition: Int) = Unit
+    }
+
+    override fun onPositiveClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
+        eventConsumer.accept(E.OnSupportFormSubmitted(result.inputText))
     }
 }
 

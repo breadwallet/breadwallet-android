@@ -84,7 +84,8 @@ val HomeScreenUpdate = Update<M, E, F> { model, event ->
             event.wallets.forEach { wallet ->
                 val previousState = wallets[wallet.currencyCode]
                 wallets[wallet.currencyCode] = wallet.copy(
-                    syncingThroughMillis = previousState?.syncingThroughMillis ?: wallet.syncingThroughMillis,
+                    syncingThroughMillis = previousState?.syncingThroughMillis
+                        ?: wallet.syncingThroughMillis,
                     isSyncing = previousState?.isSyncing ?: wallet.isSyncing,
                     syncProgress = previousState?.syncProgress ?: wallet.syncProgress
                 )
@@ -149,14 +150,14 @@ val HomeScreenUpdate = Update<M, E, F> { model, event ->
                 PromptItem.PAPER_KEY -> EventUtils.PROMPT_PAPER_KEY
                 PromptItem.UPGRADE_PIN -> EventUtils.PROMPT_UPGRADE_PIN
                 PromptItem.RECOMMEND_RESCAN -> EventUtils.PROMPT_RECOMMEND_RESCAN
+                PromptItem.RATE_APP -> EventUtils.PROMPT_RATE_APP
             }
             val eventName = promptName + EventUtils.EVENT_PROMPT_SUFFIX_DISMISSED
+            val effects = mutableSetOf(F.DismissPrompt(event.promptId), F.TrackEvent(eventName))
+            if (event.promptId == PromptItem.RATE_APP) effects.add(F.ClearRateAppPrompt)
             next(
                 model.copy(promptId = null),
-                effects(
-                    F.DismissPrompt(event.promptId),
-                    F.TrackEvent(eventName)
-                )
+                effects
             )
         }
         is E.CheckForPrompt -> dispatch(setOf<F>(F.LoadPrompt))
@@ -202,6 +203,24 @@ val HomeScreenUpdate = Update<M, E, F> { model, event ->
                 )
             )
         }
+        E.OnRateAppPromptClicked -> {
+            next(
+                model.copy(promptId = null),
+                effects(
+                    F.GoToGooglePlay
+                )
+            )
+        }
+        is E.OnRateAppPromptDontShowClicked -> {
+            next(model.copy(rateAppPromptDontShowMeAgain = event.checked))
+        }
+        E.OnRateAppPromptNoThanksClicked -> {
+            val effects = mutableSetOf<F>(F.GoToSupportForm)
+            if (model.rateAppPromptDontShowMeAgain) {
+                effects.add(F.SaveDontShowMeRateAppPrompt)
+            }
+            dispatch(effects)
+        }
         is E.OnEmailPromptClicked -> {
             val eventName = EventUtils.PROMPT_EMAIL + EventUtils.EVENT_PROMPT_SUFFIX_TRIGGER
             dispatch(
@@ -211,5 +230,8 @@ val HomeScreenUpdate = Update<M, E, F> { model, event ->
                 )
             )
         }
+        is E.OnSupportFormSubmitted -> dispatch(
+            effects(F.SubmitSupportForm(event.feedback))
+        )
     }
 }

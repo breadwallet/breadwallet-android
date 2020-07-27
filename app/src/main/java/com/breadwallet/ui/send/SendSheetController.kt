@@ -497,7 +497,11 @@ class SendSheetController(args: Bundle? = null) :
         eventConsumer.accept(E.OnAuthCancelled)
     }
 
-    override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onPositiveClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         when (dialogId) {
             DIALOG_NO_ETH_FOR_TOKEN_TRANSFER -> {
                 eventConsumer.accept(E.GoToEthWallet)

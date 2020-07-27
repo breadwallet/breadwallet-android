@@ -40,11 +40,28 @@ class AlertDialogController(
 ) : BaseController(args) {
 
     interface Listener {
-        fun onPositiveClicked(dialogId: String, controller: AlertDialogController) = Unit
-        fun onNegativeClicked(dialogId: String, controller: AlertDialogController) = Unit
-        fun onDismissed(dialogId: String, controller: AlertDialogController) = Unit
+        fun onPositiveClicked(
+            dialogId: String,
+            controller: AlertDialogController,
+            result: DialogInputResult
+        ) = Unit
+
+        fun onNegativeClicked(
+            dialogId: String,
+            controller: AlertDialogController,
+            result: DialogInputResult
+        ) = Unit
+
+        fun onDismissed(
+            dialogId: String,
+            controller: AlertDialogController,
+            result: DialogInputResult
+        ) = Unit
+
         fun onHelpClicked(dialogId: String, controller: AlertDialogController) = Unit
     }
+
+    data class DialogInputResult(val inputText: String)
 
     companion object {
         private const val KEY_DIALOG_ID = "id"
@@ -55,6 +72,7 @@ class AlertDialogController(
         private const val KEY_ICON_RES_ID = "icon_res_id"
         private const val KEY_SHOW_HELP = "show_help"
         private const val KEY_DISMISSIBLE = "dismissible"
+        private const val KEY_TEXT_INPUT_PLACEHOLDER = "text_input_placeholder"
     }
 
     constructor(
@@ -65,7 +83,8 @@ class AlertDialogController(
         iconResId: Int? = null,
         showHelp: Boolean = false,
         dialogId: String = "",
-        dismissible: Boolean = true
+        dismissible: Boolean = true,
+        textInputPlaceholder: String? = null
     ) : this(
         bundleOf(
             KEY_DIALOG_ID to dialogId,
@@ -75,7 +94,8 @@ class AlertDialogController(
             KEY_NEGATIVE_TEXT to negativeText,
             KEY_ICON_RES_ID to iconResId,
             KEY_SHOW_HELP to showHelp,
-            KEY_DISMISSIBLE to dismissible
+            KEY_DISMISSIBLE to dismissible,
+            KEY_TEXT_INPUT_PLACEHOLDER to textInputPlaceholder
         )
     )
 
@@ -93,19 +113,31 @@ class AlertDialogController(
         val dismissible = arg<Boolean>(KEY_DISMISSIBLE)
         layoutBackground.setOnClickListener {
             if (dismissible) {
-                findListener<Listener>()?.onDismissed(dialogId, this)
+                findListener<Listener>()?.onDismissed(
+                    dialogId,
+                    this,
+                    DialogInputResult(textInput.text.toString())
+                )
                 router.popCurrentController()
             }
         }
         pos_button.setOnClickListener {
-            findListener<Listener>()?.onPositiveClicked(dialogId, this)
+            findListener<Listener>()?.onPositiveClicked(
+                dialogId,
+                this,
+                DialogInputResult(textInput.text.toString())
+            )
             if (dismissible) {
                 router.popCurrentController()
             }
         }
         neg_button.setOnClickListener {
-            findListener<Listener>()?.onNegativeClicked(dialogId, this)
-            if  (dismissible) {
+            findListener<Listener>()?.onNegativeClicked(
+                dialogId,
+                this,
+                DialogInputResult(textInput.text.toString())
+            )
+            if (dismissible) {
                 router.popCurrentController()
             }
         }
@@ -127,11 +159,19 @@ class AlertDialogController(
         val negativeText = argOptional<String>(KEY_NEGATIVE_TEXT)
         neg_button.isGone = negativeText.isNullOrBlank()
         neg_button.text = negativeText
+
+        val textInputPlaceholder = argOptional<String>(KEY_TEXT_INPUT_PLACEHOLDER)
+        textInput.isGone = textInputPlaceholder.isNullOrBlank()
+        textInput.hint = textInputPlaceholder
     }
 
     override fun handleBack(): Boolean {
         return if (arg(KEY_DISMISSIBLE)) {
-            findListener<Listener>()?.onDismissed(arg(KEY_DIALOG_ID), this)
+            findListener<Listener>()?.onDismissed(
+                arg(KEY_DIALOG_ID),
+                this,
+                DialogInputResult(textInput.text.toString())
+            )
             super.handleBack()
         } else true
     }
