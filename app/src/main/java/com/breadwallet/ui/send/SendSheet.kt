@@ -315,6 +315,7 @@ object SendSheet {
         data class OnBalanceUpdated(
             val balance: BigDecimal,
             val fiatBalance: BigDecimal,
+            val feeCurrencyCode: CurrencyCode,
             val feeCurrencyBalance: BigDecimal
         ) : E()
 
@@ -467,8 +468,7 @@ object SendSheet {
         }
 
         data class LoadBalance(
-            val currencyCode: CurrencyCode,
-            val feeCurrencyCode: CurrencyCode
+            val currencyCode: CurrencyCode
         ) : F()
 
         data class LoadExchangeRate(
