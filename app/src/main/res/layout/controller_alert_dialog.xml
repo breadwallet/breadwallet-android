@@ -1,9 +1,9 @@
-<FrameLayout
-    android:id="@+id/layoutBackground"
+<FrameLayout android:id="@+id/layoutBackground"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
     <LinearLayout
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
@@ -54,6 +54,7 @@
             android:textAlignment="center"
             android:textColor="?attr/secondary_text_color"
             android:textSize="18sp"
+            tools:text="Error Title"
             android:fontFamily="@font/roboto_bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -69,6 +70,7 @@
             android:gravity="center_horizontal|center_vertical"
             android:textColor="?attr/secondary_text_color"
             android:textSize="16sp"
+            tools:text="Error Text"
             android:fontFamily="@font/roboto_regular"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -100,6 +102,7 @@
                 android:layout_weight="1.0"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/roboto_bold"
+                tools:text="Negative"
                 app:buttonType="1"
                 app:hasShadow="false"
                 app:isBreadButton="true"/>
@@ -115,6 +118,7 @@
                 android:textColor="@color/white"
                 android:fontFamily="@font/roboto_bold"
                 app:buttonType="1"
+                tools:text="Positive"
                 app:hasShadow="false"
                 app:isBreadButton="true"/>
 
