@@ -1308,4 +1308,15 @@
     <string name="Confirmation.destinationTag">Destination Tag</string>
     <string name="Confirmation.destinationTag_EmptyHint">(empty)</string>
     <string name="Send.destinationTag_required_error">A valid Destination Tag is required for the target address.</string>
+
+    <string name="Prompts.RateApp.enjoyingBrd">Enjoying BRD?</string>
+    <string name="Prompts.RateApp.googlePlayReview">Your review helps grow the BRD community.</string>
+    <string name="Prompts.RateApp.noThanks">No thanks</string>
+    <string name="Prompts.RateApp.rateUs">Review us</string>
+    <string name="Prompts.RateApp.dontShow">Don\'t ask again</string>
+
+    <string name="SupportForm.helpUsImprove">Help us improve</string>
+    <string name="SupportForm.notNow">Not now</string>
+    <string name="SupportForm.feedbackAppreciated">We would love your feedback</string>
+    <string name="SupportForm.pleaseDescribe">Please describe your experience</string>
 </resources>

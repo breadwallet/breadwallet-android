@@ -152,7 +152,11 @@ class ImportController(
         }
     }
 
-    override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onPositiveClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         when (dialogId) {
             CONFIRM_IMPORT_DIALOG -> E.OnImportConfirm
             IMPORT_SUCCESS_DIALOG -> E.OnCloseClicked
@@ -160,7 +164,11 @@ class ImportController(
         }?.run(eventConsumer::accept)
     }
 
-    override fun onDismissed(dialogId: String, controller: AlertDialogController) {
+    override fun onDismissed(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         when (dialogId) {
             CONFIRM_IMPORT_DIALOG -> E.OnImportCancel
             IMPORT_SUCCESS_DIALOG -> E.OnCloseClicked

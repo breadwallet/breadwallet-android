@@ -88,7 +88,9 @@ sealed class NavigationTarget {
         val messageResId: Int? = null,
         val messageArgs: List<Any> = emptyList(),
         val positiveButtonResId: Int? = null,
-        val negativeButtonResId: Int? = null
+        val negativeButtonResId: Int? = null,
+        val textInputPlaceholder: String? = null,
+        val textInputPlaceholderResId: Int? = null
     ) : NavigationTarget()
 
     object BrdLogin : NavigationTarget()
@@ -97,6 +99,7 @@ sealed class NavigationTarget {
         val titleResId: Int? = null,
         val messageResId: Int? = null
     ) : NavigationTarget()
+
     object Home : NavigationTarget()
     object Buy : NavigationTarget()
     object Trade : NavigationTarget()

@@ -69,7 +69,11 @@ class SyncBlockchainController(
         )
     }
 
-    override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onPositiveClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         eventConsumer.accept(E.OnConfirmSyncClicked)
     }
 }

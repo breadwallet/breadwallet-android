@@ -41,6 +41,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -281,7 +282,7 @@ class BdbAuthInterceptor(
 
     private suspend fun waitForUserReady() {
         userManager.stateChanges()
-            .filterIsInstance<BrdUserState.Enabled>()
+            .filter { it is BrdUserState.Enabled || it is BrdUserState.Locked }
             .first()
     }
 }

@@ -43,7 +43,7 @@ class PriceAlertRepositoryTest {
 
     @Before
     fun setup() {
-        BRSharedPrefs.provideContext(InstrumentationRegistry.getInstrumentation().context)
+        BRSharedPrefs.initialize(InstrumentationRegistry.getInstrumentation().context)
     }
 
     @After
@@ -55,8 +55,8 @@ class PriceAlertRepositoryTest {
     @Test
     fun testGetsAlertsFromSharedPrefsWhenCacheEmpty() {
         val alertsOnDisk = setOf(
-                percentageChanged("ETH", 10f, "USD", 300f),
-                priceTargetIncrease("ETH", 500f, "USD")
+            percentageChanged("ETH", 10f, "USD", 300f),
+            priceTargetIncrease("ETH", 500f, "USD")
         )
 
         BRSharedPrefs.putPriceAlerts(alertsOnDisk)
@@ -69,8 +69,8 @@ class PriceAlertRepositoryTest {
     @Test
     fun testGetsAlertsFromCacheWhenNotEmpty() {
         val alerts = setOf(
-                percentageChanged("ETH", 10f, "USD", 300f),
-                priceTargetIncrease("ETH", 500f, "USD")
+            percentageChanged("ETH", 10f, "USD", 300f),
+            priceTargetIncrease("ETH", 500f, "USD")
         )
 
         BRSharedPrefs.putPriceAlerts(alerts)
@@ -87,8 +87,8 @@ class PriceAlertRepositoryTest {
     @Test
     fun testSetAlertsWritesToCache() {
         val alerts = listOf(
-                percentageChanged("ETH", 10f, "USD", 300f),
-                priceTargetIncrease("ETH", 500f, "USD")
+            percentageChanged("ETH", 10f, "USD", 300f),
+            priceTargetIncrease("ETH", 500f, "USD")
         )
 
         PriceAlertRepository.setAlerts(alerts)
@@ -101,8 +101,8 @@ class PriceAlertRepositoryTest {
     @Test
     fun testSetAlertsWritesToDisk() {
         val alerts = setOf(
-                percentageChanged("ETH", 10f, "USD", 300f),
-                priceTargetIncrease("ETH", 500f, "USD")
+            percentageChanged("ETH", 10f, "USD", 300f),
+            priceTargetIncrease("ETH", 500f, "USD")
         )
 
         PriceAlertRepository.setAlerts(alerts.toList())
@@ -115,8 +115,8 @@ class PriceAlertRepositoryTest {
     @Test
     fun testPutAlertWritesToCache() {
         val alerts = listOf(
-                percentageChanged("ETH", 10f, "USD", 300f),
-                priceTargetIncrease("ETH", 500f, "USD")
+            percentageChanged("ETH", 10f, "USD", 300f),
+            priceTargetIncrease("ETH", 500f, "USD")
         )
         PriceAlertRepository.setAlerts(alerts)
 
@@ -133,8 +133,8 @@ class PriceAlertRepositoryTest {
     fun testPutAlertWritesToDisk() {
         val newAlert = percentageChanged("BCH", 10f, "USD", 200f)
         val alerts = listOf(
-                percentageChanged("ETH", 10f, "USD", 300f),
-                priceTargetIncrease("ETH", 500f, "USD")
+            percentageChanged("ETH", 10f, "USD", 300f),
+            priceTargetIncrease("ETH", 500f, "USD")
         )
 
         PriceAlertRepository.setAlerts(alerts)
@@ -174,9 +174,9 @@ class PriceAlertRepositoryTest {
     @Test
     fun testToggleHasBeenTriggeredWritesToCache() {
         val alerts = listOf(
-                priceTargetIncrease("BTC", 50f, "USD"),
-                priceTargetIncrease("ETH", 500f, "USD")
-                        .copy(hasBeenTriggered = true)
+            priceTargetIncrease("BTC", 50f, "USD"),
+            priceTargetIncrease("ETH", 500f, "USD")
+                .copy(hasBeenTriggered = true)
         )
         PriceAlertRepository.setAlerts(alerts)
 
@@ -192,15 +192,15 @@ class PriceAlertRepositoryTest {
     @Test
     fun testToggleHasBeenTriggeredWritesToDisk() {
         val alerts = listOf(
-                priceTargetIncrease("BTC", 50f, "USD"),
-                priceTargetIncrease("ETH", 500f, "USD")
-                        .copy(hasBeenTriggered = true)
+            priceTargetIncrease("BTC", 50f, "USD"),
+            priceTargetIncrease("ETH", 500f, "USD")
+                .copy(hasBeenTriggered = true)
         )
         PriceAlertRepository.setAlerts(alerts)
 
         val expected = alerts
-                .onEach { PriceAlertRepository.toggleHasBeenTriggered(it) }
-                .map { it.copy(hasBeenTriggered = !it.hasBeenTriggered) }
+            .onEach { PriceAlertRepository.toggleHasBeenTriggered(it) }
+            .map { it.copy(hasBeenTriggered = !it.hasBeenTriggered) }
 
         val newAlerts = BRSharedPrefs.getPriceAlerts().reversed()
 
@@ -211,8 +211,8 @@ class PriceAlertRepositoryTest {
     @Test
     fun testUpdatePinnedPriceWritesToCache() {
         val alerts = listOf(
-                percentageChanged("BCH", 10f, "USD", 300f),
-                percentageChanged("ETH", 10f, "USD", 200f)
+            percentageChanged("BCH", 10f, "USD", 300f),
+            percentageChanged("ETH", 10f, "USD", 200f)
         )
         PriceAlertRepository.setAlerts(alerts)
 
@@ -228,8 +228,8 @@ class PriceAlertRepositoryTest {
     @Test
     fun testUpdatePinnedPriceWritesToDisk() {
         val alerts = listOf(
-                percentageChanged("BCH", 10f, "USD", 300f),
-                percentageChanged("ETH", 10f, "USD", 200f)
+            percentageChanged("BCH", 10f, "USD", 300f),
+            percentageChanged("ETH", 10f, "USD", 200f)
         )
         PriceAlertRepository.setAlerts(alerts)
 
@@ -245,8 +245,8 @@ class PriceAlertRepositoryTest {
     @Test
     fun testUpdateStartTimeWritesToCache() {
         val alerts = listOf(
-                percentageDecreasedInDay("BCH", 10f, "USD", 1, 300f),
-                percentageDecreasedInDay("ETH", 10f, "USD", 1, 200f)
+            percentageDecreasedInDay("BCH", 10f, "USD", 1, 300f),
+            percentageDecreasedInDay("ETH", 10f, "USD", 1, 200f)
         )
         PriceAlertRepository.setAlerts(alerts)
 
@@ -262,8 +262,8 @@ class PriceAlertRepositoryTest {
     @Test
     fun testUpdateStartTimeWritesToDisk() {
         val alerts = listOf(
-                percentageDecreasedInDay("BCH", 10f, "USD", 1, 300f),
-                percentageDecreasedInDay("ETH", 10f, "USD", 1, 200f)
+            percentageDecreasedInDay("BCH", 10f, "USD", 1, 300f),
+            percentageDecreasedInDay("ETH", 10f, "USD", 1, 200f)
         )
         PriceAlertRepository.setAlerts(alerts)
 

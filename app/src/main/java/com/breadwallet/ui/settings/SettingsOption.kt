@@ -35,6 +35,7 @@ enum class SettingsOption {
     ABOUT,
     ATM_FINDER,
     DEVELOPER_OPTIONS,
+
     // PREFERENCES
     CURRENCY,
     BTC_MENU,
@@ -42,11 +43,13 @@ enum class SettingsOption {
     SHARE_ANONYMOUS_DATA,
     RESET_DEFAULT_CURRENCIES,
     NOTIFICATIONS,
+
     // SECURITY SETTINGS
     FINGERPRINT_AUTH,
     UPDATE_PIN,
     PAPER_KEY,
     WIPE,
+
     // DEVELOPER OPTIONS
     SEND_LOGS,
     API_SERVER,
@@ -57,6 +60,8 @@ enum class SettingsOption {
     NATIVE_API_EXPLORER,
     WIPE_NO_PROMPT,
     ENABLE_ALL_WALLETS,
+    TOGGLE_RATE_APP_PROMPT,
+
     // BTC
     REDEEM_PRIVATE_KEY,
     SYNC_BLOCKCHAIN_BTC,
