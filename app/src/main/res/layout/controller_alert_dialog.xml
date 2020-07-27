@@ -19,16 +19,16 @@
             android:id="@+id/dialog_header"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@drawable/bch_dialog_gradient"
+            android:background="@drawable/cs_dialog_gradient"
             android:orientation="vertical">
 
             <ImageButton
                 android:id="@+id/brd_logo"
-                android:layout_width="38dp"
-                android:layout_height="14dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/brd_logo_white_svg"/>
+                android:background="@drawable/ic_cs_title"/>
 
             <ImageButton
                 android:id="@+id/help_icon"
@@ -100,7 +100,7 @@
                 android:layout_weight="1.0"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/roboto_bold"
-                app:buttonType="4"
+                app:buttonType="1"
                 app:hasShadow="false"
                 app:isBreadButton="true"/>
 
@@ -114,7 +114,7 @@
                 android:background="@android:color/transparent"
                 android:textColor="@color/white"
                 android:fontFamily="@font/roboto_bold"
-                app:buttonType="4"
+                app:buttonType="1"
                 app:hasShadow="false"
                 app:isBreadButton="true"/>
 
