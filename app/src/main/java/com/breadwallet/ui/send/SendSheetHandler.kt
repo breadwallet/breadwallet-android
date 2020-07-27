@@ -511,6 +511,7 @@ object SendSheetHandler {
         val controller = AlertDialogController(
             dialogId = SendSheetController.DIALOG_PAYMENT_ERROR,
             title = res.getString(R.string.Alert_error),
+            showHelp = true,
             message = effect.message,
             positiveText = res.getString(R.string.Button_ok)
         )

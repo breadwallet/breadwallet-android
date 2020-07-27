@@ -26,7 +26,6 @@ package com.breadwallet.ui.send
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -38,6 +37,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import cash.just.support.CashSupport
 import cash.just.support.pages.GeneralSupportPage
+import cash.just.support.pages.TroubleShootingPage
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
@@ -175,8 +175,17 @@ class SendSheetController(args: Bundle? = null) :
         Utils.hideKeyboard(activity)
     }
 
+    override fun onHelpClicked(dialogId: String, controller: AlertDialogController) {
+        if (dialogId == DIALOG_PAYMENT_ERROR) {
+            // check if fastsync is off to show error: could not publish transaction
+            CashSupport.Builder()
+                .detail(TroubleShootingPage.ERROR_PUBLISH_TRANSACTION_P2P)
+                .build()
+                .createDialogFragment().showIn(activity)
+        }
+    }
+
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        Log.d("atm", "bindView")
         return merge(
             keyboard.bindInput(),
             textInputMemo.bindFocusChanged(),
@@ -273,7 +282,6 @@ class SendSheetController(args: Bundle? = null) :
 
     @Suppress("ComplexMethod", "LongMethod")
     override fun M.render() {
-        Log.d("atm", "render")
         val res = checkNotNull(resources)
 
         ifChanged(M::targetInputError) {
