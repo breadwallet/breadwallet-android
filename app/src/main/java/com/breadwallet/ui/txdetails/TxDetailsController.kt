@@ -46,6 +46,7 @@ import com.breadwallet.ui.models.TransactionState
 import com.breadwallet.ui.txdetails.TxDetails.E
 import com.breadwallet.ui.txdetails.TxDetails.F
 import com.breadwallet.ui.txdetails.TxDetails.M
+import com.breadwallet.util.isBitcoinLike
 import drewcarlson.mobius.flow.FlowTransformer
 import kotlinx.android.synthetic.main.transaction_details.*
 import kotlinx.coroutines.flow.Flow
@@ -180,7 +181,11 @@ class TxDetailsController(
 
             tx_to_from.setText(
                 when {
-                    isReceived -> R.string.TransactionDetails_addressViaHeader
+                    isReceived -> if (currencyCode.isBitcoinLike()) {
+                        R.string.TransactionDetails_addressViaHeader
+                    } else {
+                        R.string.TransactionDetails_addressFromHeader
+                    }
                     else -> R.string.TransactionDetails_addressToHeader
                 }
             )
