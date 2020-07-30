@@ -26,7 +26,6 @@ package com.breadwallet.ui.navigation
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import cash.just.support.CashSupport
 import cash.just.support.pages.GeneralSupportPage
 import com.bluelinelabs.conductor.Controller
@@ -61,6 +60,7 @@ import com.breadwallet.ui.provekey.PaperKeyProveController
 import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
+import com.breadwallet.ui.send.showIn
 import com.breadwallet.ui.settings.SettingsController
 import com.breadwallet.ui.settings.about.AboutController
 import com.breadwallet.ui.settings.analytics.ShareDataController
@@ -147,7 +147,7 @@ class RouterNavigationEffectHandler(
         AppReviewPromptManager.openGooglePlay(checkNotNull(router.activity))
     }
 
-    fun goToMap() {
+    private fun goToMap() {
         // val url = String.format(
         //     BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
         //     HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
@@ -302,23 +302,22 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
-        val fragmentManager = (router.activity!! as AppCompatActivity).supportFragmentManager
         when(effect.articleId) {
             FAQ_SET_PIN -> {
                 CashSupport.Builder().detail(GeneralSupportPage.PIN).build()
-                    .createDialogFragment().show(fragmentManager, "tag")
+                    .createDialogFragment().showIn(router.activity)
             }
             FAQ_IMPORT_WALLET -> {
                 CashSupport.Builder().detail(GeneralSupportPage.IMPORT_WALLET).build()
-                    .createDialogFragment().show(fragmentManager, "tag")
+                    .createDialogFragment().showIn(router.activity)
             }
             FAQ_PAPER_KEY -> {
                 CashSupport.Builder().detail(GeneralSupportPage.RECOVERY_KEY).build()
-                    .createDialogFragment().show(fragmentManager, "tag")
+                    .createDialogFragment().showIn(router.activity)
             } else -> {
                 CashSupport.Builder().build()
                     .createDialogFragment()
-                    .show(fragmentManager, "tag")
+                    .showIn(router.activity)
             }
         }
     }

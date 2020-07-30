@@ -27,7 +27,6 @@ package com.breadwallet.ui.receive
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import cash.just.support.CashSupport
@@ -51,6 +50,7 @@ import com.breadwallet.ui.receive.ReceiveScreen.E
 import com.breadwallet.ui.receive.ReceiveScreen.F
 import com.breadwallet.ui.receive.ReceiveScreen.M
 import com.breadwallet.ui.send.formatFiatForInputUi
+import com.breadwallet.ui.send.showIn
 import com.breadwallet.ui.view
 import com.breadwallet.util.CurrencyCode
 import com.spotify.mobius.Connectable
@@ -142,13 +142,9 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
 
     override fun bindView(output: Consumer<E>) = output.view {
         faq_button.setOnClickListener {
-            activity?.let {
-                if (it is AppCompatActivity) {
-                    val fragment = CashSupport.Builder().detail(GeneralSupportPage.RECEIVE).build()
-                        .createDialogFragment()
-                    fragment.show(it.supportFragmentManager, "tag")
-                }
-            }
+            val fragment = CashSupport.Builder().detail(GeneralSupportPage.RECEIVE).build()
+                .createDialogFragment()
+            fragment.showIn(activity)
         }
         share_button.onClick(E.OnShareClicked)
         close_button.onClick(E.OnCloseClicked)

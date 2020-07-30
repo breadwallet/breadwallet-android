@@ -1,9 +1,9 @@
-<FrameLayout
-    android:id="@+id/layoutBackground"
+<FrameLayout android:id="@+id/layoutBackground"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
     <LinearLayout
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
@@ -19,16 +19,16 @@
             android:id="@+id/dialog_header"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@drawable/bch_dialog_gradient"
+            android:background="@drawable/cs_dialog_gradient"
             android:orientation="vertical">
 
             <ImageButton
+                android:layout_width="62dp"
+                android:layout_height="12dp"
                 android:id="@+id/brd_logo"
-                android:layout_width="38dp"
-                android:layout_height="14dp"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/brd_logo_white_svg"/>
+                android:background="@drawable/ic_cs_title"/>
 
             <ImageButton
                 android:id="@+id/help_icon"
@@ -54,6 +54,7 @@
             android:textAlignment="center"
             android:textColor="?attr/secondary_text_color"
             android:textSize="18sp"
+            tools:text="Error Title"
             android:fontFamily="@font/roboto_bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -69,6 +70,7 @@
             android:gravity="center_horizontal|center_vertical"
             android:textColor="?attr/secondary_text_color"
             android:textSize="16sp"
+            tools:text="Error Text"
             android:fontFamily="@font/roboto_regular"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -100,7 +102,8 @@
                 android:layout_weight="1.0"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/roboto_bold"
-                app:buttonType="4"
+                tools:text="Negative"
+                app:buttonType="1"
                 app:hasShadow="false"
                 app:isBreadButton="true"/>
 
@@ -114,7 +117,8 @@
                 android:background="@android:color/transparent"
                 android:textColor="@color/white"
                 android:fontFamily="@font/roboto_bold"
-                app:buttonType="4"
+                app:buttonType="1"
+                tools:text="Positive"
                 app:hasShadow="false"
                 app:isBreadButton="true"/>
 
