@@ -405,6 +405,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
      */
     private fun handleOnStart() {
         accountLockJob?.cancel()
+        BreadBoxCloseWorker.cancelEnqueuedWork()
         setDelayServerShutdown(false, -1)
         val breadBox = getBreadBox()
         userManager
@@ -473,7 +474,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
     fun startWithInitializedWallet(breadBox: BreadBox, migrate: Boolean = false) {
         val context = mInstance.applicationContext
-        BreadBoxCloseWorker.cancelEnqueuedWork()
         incrementAppForegroundedCounter()
 
         if (!breadBox.isOpen) {
