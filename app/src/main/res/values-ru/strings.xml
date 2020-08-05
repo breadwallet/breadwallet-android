@@ -522,6 +522,11 @@
     <string name="Prompts.PaperKey.Body.Android">Создайте бумажный ключ на случай, если вы потеряете или смените ваш телефон. Ключ будет также необходим, если вы измените настройки безопасности на вашем телефоне.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Необходимо совершить действие</string>
+    <string name="Prompts.RateApp.dontShow">Не спрашивай снова</string>
+    <string name="Prompts.RateApp.enjoyingBrd">Наслаждаешься BRD?</string>
+    <string name="Prompts.RateApp.googlePlayReview">Ваш отзыв помогает развивать сообщество BRD.</string>
+    <string name="Prompts.RateApp.noThanks">Нет, спасибо</string>
+    <string name="Prompts.RateApp.rateUs">Обзор нас</string>
     <!-- Transaction rejected prompt body -->
     <string name="Prompts.RecommendRescan.body">Ваш кошелек, возможно, дал сбой. Зачастую это можно исправить, повторно просканировав цепочку ключей.</string>
     <!-- Transaction rejected prompt title -->
@@ -733,7 +738,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">Единственный способ получения доступа к вашим биткойнам в случае потери или изменения вашего телефона.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
-   * to not break existing client code. -->
+ * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Бумажный ключ</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">Бумажный ключ</string>
@@ -931,6 +936,10 @@
     <string name="StartViewController.message">Самый надежный и безопасный способ использования биткойна.</string>
     <!-- Recover your wallet from a backup -->
     <string name="StartViewController.recoverButton">Восстановить кошелек</string>
+    <string name="SupportForm.feedbackAppreciated">Будем рады вашему отзыву</string>
+    <string name="SupportForm.helpUsImprove">Помогите нам улучшить</string>
+    <string name="SupportForm.notNow">Не сейчас</string>
+    <string name="SupportForm.pleaseDescribe">Пожалуйста, опишите ваш опыт</string>
     <!-- Syncing view done syncing state header text -->
     <string name="SyncingView.activity">Активность</string>
     <!-- Syncing view connectiong state header text -->

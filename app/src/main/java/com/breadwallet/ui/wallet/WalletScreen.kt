@@ -155,11 +155,6 @@ object WalletScreen {
 
         object OnBrdRewardsClicked : E()
 
-        object OnShowReviewPrompt : E()
-        object OnIsShowingReviewPrompt : E()
-        data class OnHideReviewPrompt(val isDismissed: Boolean) : E()
-        object OnReviewPromptAccepted : E()
-
         data class OnIsCryptoPreferredLoaded(val isCryptoPreferred: Boolean) : E()
 
         data class OnChartIntervalSelected(val interval: Interval) : E()
@@ -233,15 +228,6 @@ object WalletScreen {
         data class ConvertCryptoTransactions(
             @Redacted val transactions: List<Transfer>
         ) : F()
-
-        data class CheckReviewPrompt(
-            val currencyCode: String,
-            @Redacted val transactions: List<WalletTransaction>
-        ) : F()
-
-        object RecordReviewPrompt : F()
-        object RecordReviewPromptDismissed : F()
-        object GoToReview : F()
 
         data class LoadChartInterval(
             val interval: Interval,

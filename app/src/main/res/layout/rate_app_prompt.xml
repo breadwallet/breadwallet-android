@@ -1,0 +1,105 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/prompt_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="16dp"
+    android:background="@color/secondary_background"
+    android:padding="8dp"
+    app:cardCornerRadius="4dp">
+
+    <com.breadwallet.legacy.presenter.customviews.BRButton
+        android:id="@+id/negative_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/submit_button"
+        android:layout_alignBottom="@+id/submit_button"
+        android:layout_toEndOf="@+id/close_button"
+        android:fontFamily="@font/mobile_font_book"
+        android:text="@string/Prompts.RateApp.noThanks"
+        android:textAllCaps="false"
+        android:textColor="@color/prompt_action_button"
+        app:layout_constraintBottom_toBottomOf="@+id/submit_button"
+        app:layout_constraintStart_toStartOf="@+id/prompt_description"
+        app:layout_constraintTop_toTopOf="@+id/submit_button" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/prompt_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/prompt_title"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/mobile_font_book"
+        android:text="@string/Prompts.RateApp.googlePlayReview"
+        android:textColor="@color/text_secondary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/prompt_title"
+        app:layout_constraintTop_toBottomOf="@+id/prompt_title" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/prompt_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:fontFamily="@font/mobile_font_book"
+        android:text="@string/Prompts.RateApp.enjoyingBrd"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/close_button"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+    <com.breadwallet.legacy.presenter.customviews.BRButton
+        android:id="@+id/submit_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/mobile_font_book"
+        android:text="@string/Prompts.RateApp.rateUs"
+        android:textAllCaps="false"
+        android:textColor="@color/prompt_action_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/prompt_description" />
+
+    <ImageButton
+        android:id="@+id/close_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="16dp"
+        android:background="@null"
+        android:src="@drawable/ic_close_black_24dp"
+        android:tint="@color/text_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/prompt_title" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/action_icon_background"
+        android:src="@drawable/ic_brd_logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/dont_show_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/mobile_font_book"
+        android:text="@string/Prompts.RateApp.dontShow"
+        android:textColor="@color/text_secondary"
+        app:layout_constraintStart_toStartOf="@+id/negative_button"
+        app:layout_constraintTop_toBottomOf="@+id/negative_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -31,6 +31,7 @@ import com.breadwallet.tools.util.hbar
 
 typealias CurrencyCode = String
 
+fun CurrencyCode.isBitcoinLike(): Boolean = isBitcoin() || isBitcoinCash()
 fun CurrencyCode.isBitcoin(): Boolean = equals(btc, true)
 fun CurrencyCode.isBitcoinCash(): Boolean = equals(bch, true)
 fun CurrencyCode.isEthereum(): Boolean = equals(eth, true)

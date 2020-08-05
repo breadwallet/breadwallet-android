@@ -1,10 +1,10 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layoutBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
@@ -20,8 +20,10 @@
             android:id="@+id/view6"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@drawable/bch_dialog_gradient" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"/>
+            android:background="@drawable/bch_dialog_gradient"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/brd_logo"
@@ -31,8 +33,10 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:background="@drawable/brd_logo_white_svg"
-            app:layout_constraintBottom_toBottomOf="@+id/view6" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/view6" app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="@+id/view6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/view6"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <ImageButton
@@ -41,10 +45,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" android:background="@drawable/faq_question_white"
-            android:visibility="visible" app:layout_constraintBottom_toBottomOf="@+id/view6"
-            app:layout_constraintEnd_toEndOf="@+id/view6" app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/brd_logo" app:layout_constraintTop_toTopOf="parent"/>
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/faq_question_white"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/view6"
+            app:layout_constraintEnd_toEndOf="@+id/view6"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/brd_logo"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/dialog_title"
@@ -53,13 +61,17 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            tools:text="Hello!"
+            android:fontFamily="@font/mobile_font_bold"
+            android:textAlignment="center"
+            android:textColor="?attr/secondary_text_color"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/dialog_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view6"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="packed"
-            android:fontFamily="@font/mobile_font_bold" android:textAlignment="center"
-            android:textColor="?attr/secondary_text_color" android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/dialog_text" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/view6"/>
+            tools:text="Hello!" />
 
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
@@ -72,9 +84,26 @@
             android:gravity="center_horizontal|center_vertical"
             android:textColor="?attr/secondary_text_color"
             android:textSize="16sp"
-            tools:text="I am a message!"
-            app:layout_constraintBottom_toTopOf="@+id/neg_button" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/dialog_title"/>
+            app:layout_constraintBottom_toTopOf="@+id/neg_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_title"
+            tools:text="I am a message!" />
+
+        <EditText
+            android:id="@+id/textInput"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="Please describe your issue here"
+            android:inputType="textMultiLine|textCapSentences"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/neg_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_text" />
+
         <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/neg_button"
             android:layout_width="wrap_content"
@@ -85,11 +114,15 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1.0"
-            android:background="@android:color/transparent" android:fontFamily="@font/mobile_font_bold"
-            app:buttonType="4" app:hasShadow="false"
-            app:isBreadButton="true" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/pos_button" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dialog_text"/>
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/mobile_font_bold"
+            app:buttonType="4"
+            app:hasShadow="false"
+            app:isBreadButton="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/pos_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInput" />
 
         <com.breadwallet.legacy.presenter.customviews.BRButton
             android:id="@+id/pos_button"
@@ -102,11 +135,14 @@
             android:layout_weight="1.0"
             android:background="@android:color/transparent"
             android:fontFamily="@font/mobile_font_bold"
-            android:textColor="@color/white" app:buttonType="1"
-            app:hasShadow="false" app:isBreadButton="true"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/white"
+            app:buttonType="1"
+            app:hasShadow="false"
+            app:isBreadButton="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/neg_button"
-            app:layout_constraintTop_toBottomOf="@+id/dialog_text"/>
+            app:layout_constraintTop_toBottomOf="@+id/textInput" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

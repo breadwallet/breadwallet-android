@@ -217,6 +217,7 @@ class WebController(
                 direct.instance(),
                 direct.instance(),
                 direct.instance(),
+                direct.instance(),
                 direct.instance()
             )
             val supportJs = SupportJs(

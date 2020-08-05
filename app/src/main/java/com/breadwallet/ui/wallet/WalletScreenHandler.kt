@@ -75,7 +75,6 @@ object WalletScreenHandler {
         metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>,
         ratesFetcher: RatesFetcher
     ) = subtypeEffectHandler<F, E> {
-        addTransformer(handleCheckReviewPrompt(context))
         addTransformer(handleLoadPricePerUnit(context))
 
         addTransformer(handleLoadBalance(breadBox))
@@ -87,12 +86,6 @@ object WalletScreenHandler {
 
         addTransformer(handleLoadTransactionMetaData(metadataEffectHandler))
         addTransformer(handleLoadTransactionMetaDataSingle(metadataEffectHandler))
-
-        addActionSync<F.RecordReviewPrompt>(Default, ::handleRecordReviewPrompt)
-        addActionSync<F.RecordReviewPromptDismissed>(
-            Default,
-            ::handleRecordReviewPromptDismissed
-        )
 
         addConsumerSync(Default, ::handleTrackEvent)
         addConsumerSync(Default, ::handleUpdateCryptoPreferred)
@@ -122,25 +115,6 @@ object WalletScreenHandler {
         effect: F.LoadIsTokenSupported
     ) = TokenUtil.isTokenSupported(effect.currencyCode)
         .run(E::OnIsTokenSupportedUpdated)
-
-    private fun handleCheckReviewPrompt(
-        context: Context
-    ) = flowTransformer<F.CheckReviewPrompt, E> { effects ->
-        effects.transformLatest { (currencyCode, transactions) ->
-            if (AppReviewPromptManager.showReview(currencyCode, transactions)) {
-                emit(E.OnShowReviewPrompt)
-            }
-        }
-    }
-
-    private fun handleRecordReviewPrompt() {
-        EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISPLAYED)
-    }
-
-    private fun handleRecordReviewPromptDismissed() {
-        EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISMISSED)
-        AppReviewPromptManager.onReviewPromptDismissed()
-    }
 
     private fun handleTrackEvent(value: F.TrackEvent) {
         EventUtils.pushEvent(value.eventName, value.attributes)

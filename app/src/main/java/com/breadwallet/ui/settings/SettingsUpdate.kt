@@ -144,6 +144,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.WIPE_NO_PROMPT -> F.WipeNoPrompt
                     SettingsOption.ENABLE_ALL_WALLETS -> F.EnableAllWallets
                     SettingsOption.CLEAR_BLOCKCHAIN_DATA -> F.ClearBlockchainData
+                    SettingsOption.TOGGLE_RATE_APP_PROMPT -> F.ToggleRateAppPrompt
                 }
             )
         )

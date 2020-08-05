@@ -291,6 +291,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             model.copy(
                 balance = event.balance,
                 fiatBalance = event.fiatBalance,
+                feeCurrencyCode = event.feeCurrencyCode,
                 feeCurrencyBalance = event.feeCurrencyBalance,
                 isTotalCostOverBalance = isTotalCostOverBalance,
                 amountInputError = if (isTotalCostOverBalance) {
