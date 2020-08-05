@@ -69,6 +69,8 @@ public class FragmentLinkWallet extends Fragment {
 
             TextView domains = new TextView(getContext());
             domains.setText(domainStringBuilder.toString());
+            domains.setTypeface(ResourcesCompat.getFont(getContext(), R.font.mobile_font_bold));
+
             RelativeLayout.LayoutParams domainParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             domainParams.addRule(RelativeLayout.CENTER_HORIZONTAL, domains.getId());
             validDomainsLayout.addView(domains);
@@ -97,6 +99,7 @@ public class FragmentLinkWallet extends Fragment {
             TextView capabilitiesTextView = new TextView(getContext());
             capabilitiesParams.addRule(RelativeLayout.ALIGN_PARENT_START, capabilitiesTextView.getId());
             capabilitiesTextView.setText(capabilityStringBuilder.toString());
+            capabilitiesTextView.setTypeface(ResourcesCompat.getFont(getContext(), R.font.mobile_font_book));
             appPermissionsLayout.addView(capabilitiesTextView);
             capabilitiesParams.setMargins(Utils.getPixelsFromDps(getContext(), 26), 0, 0, Utils.getPixelsFromDps(getContext(), 20));
             capabilitiesTextView.setLayoutParams(capabilitiesParams);

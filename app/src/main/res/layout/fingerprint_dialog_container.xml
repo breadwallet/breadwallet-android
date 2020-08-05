@@ -44,7 +44,7 @@
             android:textAppearance="@android:style/TextAppearance.Material.Subhead"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="20sp"
-             />
+            android:fontFamily="@font/mobile_font_bold" />
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/fingerprint_description"

@@ -59,15 +59,17 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
             database!!.beginTransaction()
             var failed = 0
             for (c in currencyEntities) {
+                val code = c.code.toUpperCase(Locale.ROOT)
+                val iso = c.iso.toUpperCase(Locale.ROOT)
                 val values = ContentValues()
-                if (Utils.isNullOrEmpty(c.code) || c.rate <= 0) {
+                if (Utils.isNullOrEmpty(code) || c.rate <= 0) {
                     failed++
                     continue
                 }
-                values.put(BRSQLiteHelper.CURRENCY_CODE, c.code)
+                values.put(BRSQLiteHelper.CURRENCY_CODE, code)
                 values.put(BRSQLiteHelper.CURRENCY_NAME, c.name)
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate)
-                values.put(BRSQLiteHelper.CURRENCY_ISO, c.iso)
+                values.put(BRSQLiteHelper.CURRENCY_ISO, iso)
                 database!!.insertWithOnConflict(
                     BRSQLiteHelper.CURRENCY_TABLE_NAME,
                     null,
@@ -105,7 +107,7 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
         }
     }
 
-    fun getAllCurrencies(app: Context?, iso: String): List<CurrencyEntity> {
+    fun getAllCurrencies(iso: String): List<CurrencyEntity> {
         val currencies: MutableList<CurrencyEntity> = ArrayList()
         var cursor: Cursor? = null
         try {
@@ -167,7 +169,7 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
     }
 
     @Synchronized
-    fun getCurrencyByCode(app: Context?, iso: String, code: String): CurrencyEntity? {
+    fun getCurrencyByCode(iso: String, code: String): CurrencyEntity? {
         var cursor: Cursor? = null
         var result: CurrencyEntity? = null
         return try {

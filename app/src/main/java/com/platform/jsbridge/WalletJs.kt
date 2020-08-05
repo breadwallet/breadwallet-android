@@ -29,6 +29,10 @@ import android.security.keystore.UserNotAuthenticatedException
 import android.webkit.JavascriptInterface
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
+import com.breadwallet.app.Buy
+import com.breadwallet.app.Conversion
+import com.breadwallet.app.ConversionTracker
+import com.breadwallet.app.Trade
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.addressFor
@@ -89,7 +93,8 @@ class WalletJs(
     private val metaDataProvider: AccountMetaDataProvider,
     private val breadBox: BreadBox,
     private val ratesRepository: RatesRepository,
-    private val userManager: BrdUserManager
+    private val userManager: BrdUserManager,
+    private val conversionTracker: ConversionTracker
 ) : JsApi {
     companion object {
         private const val KEY_BTC_DENOMINATION_DIGITS = "btc_denomination_digits"
@@ -125,6 +130,7 @@ class WalletJs(
         private const val BASE_10 = 10
 
         private const val FORMAT_DELIMITER = "?format="
+        private const val FORMAT_LEGACY = "legacy"
         private const val FORMAT_SEGWIT = "segwit"
     }
 
@@ -197,7 +203,7 @@ class WalletJs(
         val currenciesJSON = JSONArray()
         wallets.forEach { currencyId ->
             val wallet = system.wallets.firstOrNull { it.currencyId.equals(currencyId, true) }
-            val tokenItem = TokenUtil.getTokenItemForCurrencyId(currencyId)
+            val tokenItem = TokenUtil.tokenForCurrencyId(currencyId)
             val currencyCode =
                 wallet?.currency?.code?.toUpperCase() ?: tokenItem?.symbol
 
@@ -353,6 +359,8 @@ class WalletJs(
             TxMetaDataValue(comment = description)
         )
 
+        conversionTracker.track(Trade(currency, transaction.hashString()))
+
         JSONObject().apply {
             put(KEY_HASH, transaction.hashString())
             put(KEY_TRANSMITTED, true)
@@ -362,7 +370,7 @@ class WalletJs(
     @JavascriptInterface
     fun enableCurrency(currencyCode: String) = promise.create {
         val system = checkNotNull(breadBox.system().first())
-        val currencyId = TokenUtil.getTokenItemByCurrencyCode(currencyCode)?.currencyId.orEmpty()
+        val currencyId = TokenUtil.tokenForCode(currencyCode)?.currencyId.orEmpty()
         check(currencyId.isNotEmpty()) { ERR_CURRENCY_NOT_SUPPORTED }
 
         val network = system.networks.find { it.containsCurrency(currencyId) }
@@ -379,8 +387,14 @@ class WalletJs(
 
         metaDataProvider.enableWallet(currencyId)
 
+        // Suspend until the wallet exists, i.e. an address is available.
+        val wallet = breadBox.wallet(currencyCode).first()
         JSONObject().apply {
             put(KEY_CURRENCY, currencyCode)
+            put(KEY_ADDRESS, getAddress(wallet, FORMAT_LEGACY))
+            if (wallet.currency.isBitcoin()) {
+                put("${KEY_ADDRESS}_${FORMAT_SEGWIT}", getAddress(wallet, FORMAT_SEGWIT))
+            }
         }
     }
 
@@ -425,6 +439,14 @@ class WalletJs(
                 handler
             )
         }
+    }
+
+    @JavascriptInterface
+    fun trackBuy(
+        currencyCode: String,
+        amount: String
+    ) = promise.createForUnit {
+        conversionTracker.track(Buy(currencyCode, amount.toDouble(), System.currentTimeMillis()))
     }
 
     private suspend fun estimateFee(

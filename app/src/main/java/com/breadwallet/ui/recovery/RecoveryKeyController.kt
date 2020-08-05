@@ -236,19 +236,31 @@ class RecoveryKeyController(
         }
     }
 
-    override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onPositiveClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         when (dialogId) {
             RecoveryKey.DIALOG_WIPE -> eventConsumer.accept(E.OnWipeWalletConfirmed)
         }
     }
 
-    override fun onNegativeClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onNegativeClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         when (dialogId) {
             RecoveryKey.DIALOG_WIPE -> eventConsumer.accept(E.OnWipeWalletCancelled)
         }
     }
 
-    override fun onDismissed(dialogId: String, controller: AlertDialogController) {
+    override fun onDismissed(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         when (dialogId) {
             RecoveryKey.DIALOG_WIPE -> eventConsumer.accept(E.OnWipeWalletCancelled)
         }

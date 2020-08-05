@@ -25,6 +25,7 @@
 package com.breadwallet.breadbox
 
 import com.breadwallet.crypto.Account
+import com.breadwallet.crypto.Network
 
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.System
@@ -42,7 +43,7 @@ interface BreadBox {
     fun open(account: Account)
 
     /** Cleanup [System] and stop emitting events. */
-    fun close()
+    fun close(wipe: Boolean = false)
 
     /** Emits the [System] objects produced when calling [open]. */
     fun system(): Flow<System>
@@ -73,6 +74,14 @@ interface BreadBox {
 
     /** Emits the [WalletState] for the [Wallet] of [currencyCode]. */
     fun walletState(currencyCode: String): Flow<WalletState>
+
+    /**
+     * Emits the [Network]s discovered by [System].
+     *
+     * Setting [whenDiscoveryComplete] to true delays the first
+     * emission until network discovery is complete.
+     */
+    fun networks(whenDiscoveryComplete: Boolean = false): Flow<List<Network>>
 
     /** Returns [System] when [isOpen] or null when it is not. */
     fun getSystemUnsafe(): System?

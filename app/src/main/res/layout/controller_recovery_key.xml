@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   android:id="@+id/activity_intro_set_pit"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutRecoverWallet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/title"
@@ -14,10 +15,10 @@
         android:layout_marginTop="@dimen/bread_margin"
         android:text="@string/RecoverWallet.header"
         android:textSize="@dimen/header"
-
+        android:fontFamily="@font/mobile_font_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
 
     <ImageButton
@@ -28,7 +29,7 @@
         android:background="?attr/faq_button_primary_color"
         android:layout_marginEnd="@dimen/bread_margin"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/description"
@@ -41,11 +42,11 @@
         android:text="@string/RecoverWallet.subheader"
         android:textAlignment="center"
         android:textSize="@dimen/sub_header"
-
+        android:fontFamily="@font/mobile_font_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintTop_toBottomOf="@+id/title"/>
 
     <com.breadwallet.legacy.presenter.customviews.BRButton
         android:id="@+id/send_button"
@@ -63,7 +64,7 @@
         app:isBreadButton="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <GridLayout
         android:id="@+id/gridLayout"
@@ -107,7 +108,7 @@
                     android:nextFocusForward="@+id/word2"
                     android:textAlignment="center"
                     android:textCursorDrawable="@null"
-                     />
+                    android:fontFamily="@font/mobile_font_medium"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -116,7 +117,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="1"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
             <LinearLayout
@@ -126,7 +127,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word2"
@@ -139,7 +140,7 @@
                     android:maxLines="1"
                     android:inputType="text"
                     android:nextFocusForward="@+id/word3"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -148,7 +149,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="2"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
             <LinearLayout
@@ -158,7 +159,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word3"
@@ -171,7 +172,7 @@
                     android:maxLines="1"
                     android:inputType="text"
                     android:nextFocusForward="@+id/word4"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -180,7 +181,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="3"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -197,7 +198,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word4"
@@ -210,7 +211,7 @@
                     android:maxLines="1"
                     android:inputType="text"
                     android:nextFocusForward="@+id/word5"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -219,7 +220,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="4"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
             <LinearLayout
@@ -229,7 +230,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word5"
@@ -242,7 +243,7 @@
                     android:maxLines="1"
                     android:inputType="text"
                     android:nextFocusForward="@+id/word6"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -251,7 +252,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="5"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
             <LinearLayout
@@ -261,7 +262,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word6"
@@ -274,7 +275,7 @@
                     android:maxLines="1"
                     android:inputType="text"
                     android:nextFocusForward="@+id/word7"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -283,7 +284,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="6"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -300,7 +301,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word7"
@@ -313,7 +314,7 @@
                     android:maxLines="1"
                     android:inputType="text"
                     android:nextFocusForward="@+id/word8"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -322,7 +323,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="7"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
             <LinearLayout
@@ -332,7 +333,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word8"
@@ -345,7 +346,7 @@
                     android:maxLines="1"
                     android:inputType="text"
                     android:nextFocusForward="@+id/word9"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -354,7 +355,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="8"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
             <LinearLayout
@@ -364,7 +365,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word9"
@@ -377,7 +378,7 @@
                     android:maxLines="1"
                     android:inputType="text"
                     android:nextFocusForward="@+id/word10"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -386,7 +387,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="9"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -405,7 +406,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word10"
@@ -418,7 +419,7 @@
                     android:maxLines="1"
                     android:inputType="text"
                     android:nextFocusForward="@+id/word11"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -427,7 +428,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="10"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
             <LinearLayout
@@ -438,7 +439,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word11"
@@ -451,7 +452,7 @@
                     android:maxLines="1"
                     android:inputType="text"
                     android:nextFocusForward="@+id/word12"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -460,7 +461,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="11"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
             <LinearLayout
@@ -471,7 +472,7 @@
                 android:orientation="vertical"
                 android:weightSum="2"
 
-                >
+            >
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word12"
@@ -483,7 +484,7 @@
                     android:imeOptions="actionDone|flagNoPersonalizedLearning"
                     android:maxLines="1"
                     android:inputType="text"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -492,7 +493,7 @@
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="12"
-                    android:textColor="@color/light_gray" />
+                    android:textColor="@color/light_gray"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -510,6 +511,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

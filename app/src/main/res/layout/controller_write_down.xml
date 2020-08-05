@@ -23,7 +23,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="@dimen/header"
-             />
+            android:fontFamily="@font/mobile_font_bold" />
 
         <ImageView
             android:layout_width="wrap_content"

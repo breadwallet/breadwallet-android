@@ -23,7 +23,7 @@
         android:layout_marginTop="20dp"
         android:text="BRD now supports Bitcoin Cash!"
         android:textSize="18sp"
-         />
+        android:fontFamily="@font/mobile_font_book" />
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/bch_dialog_message"
@@ -35,7 +35,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="8dp"
         android:text="Any BCH in your wallet can be accessed through the home screen."
-         />
+        android:fontFamily="@font/mobile_font_book" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,7 +52,7 @@
             android:layout_height="65dp"
             android:layout_weight="1"
             android:text="@string/Button.Home"
-
+            android:fontFamily="@font/mobile_font_bold"
             app:buttonType="4"
             app:hasShadow="false"
             app:isBreadButton="true" />
@@ -64,7 +64,7 @@
             android:layout_height="65dp"
             android:layout_weight="1"
             android:text="@string/Webview.dismiss"
-
+            android:fontFamily="@font/mobile_font_bold"
             app:buttonType="4"
             app:hasShadow="false"
             app:isBreadButton="true" />

@@ -184,32 +184,6 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
             dispatch(effects(F.Nav.GoToBrdRewards))
         else noChange()
 
-    override fun onShowReviewPrompt(
-        model: M
-    ): Next<M, F> =
-        next(
-            model.copy(
-                showReviewPrompt = true
-            )
-        )
-
-    override fun onIsShowingReviewPrompt(
-        model: M
-    ): Next<M, F> =
-        next(
-            model.copy(isShowingReviewPrompt = true),
-            effects(F.RecordReviewPrompt)
-        )
-
-    override fun onReviewPromptAccepted(
-        model: M
-    ): Next<M, F> =
-        dispatch(
-            effects(
-                F.GoToReview
-            )
-        )
-
     override fun onChartDataPointReleased(
         model: M
     ): Next<M, F> =
@@ -331,7 +305,6 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
             next(
                 model.copy(transactions = event.walletTransactions),
                 effects(
-                    F.CheckReviewPrompt(model.currencyCode, event.walletTransactions),
                     F.LoadTransactionMetaData(model.currencyCode, txHashes),
                     F.LoadTransactionMetaDataSingle(
                         model.currencyCode,
@@ -407,13 +380,7 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
     ): Next<M, F> =
         if (model.transactions.isNullOrEmpty())
             next(
-                model.copy(transactions = listOf(event.walletTransaction) + model.transactions),
-                effects(
-                    F.CheckReviewPrompt(
-                        model.currencyCode,
-                        model.transactions + event.walletTransaction
-                    )
-                )
+                model.copy(transactions = listOf(event.walletTransaction) + model.transactions)
             )
         else
             next(
@@ -468,27 +435,6 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
             )
         )
 
-    override fun onHideReviewPrompt(
-        model: M,
-        event: E.OnHideReviewPrompt
-    ): Next<M, F> =
-        if (event.isDismissed) {
-            next(
-                model.copy(
-                    isShowingReviewPrompt = false,
-                    showReviewPrompt = false
-                ),
-                effects(F.RecordReviewPromptDismissed)
-            )
-        } else {
-            next(
-                model.copy(
-                    isShowingReviewPrompt = false,
-                    showReviewPrompt = false
-                )
-            )
-        }
-
     override fun onIsCryptoPreferredLoaded(
         model: M,
         event: E.OnIsCryptoPreferredLoaded
@@ -519,7 +465,10 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
         event: E.OnMarketChartDataUpdated
     ): Next<M, F> =
         next(
-            model.copy(priceChartDataPoints = event.priceDataPoints)
+            model.copy(
+                priceChartIsLoading = false,
+                priceChartDataPoints = event.priceDataPoints
+            )
         )
 
     override fun onChartDataPointSelected(

@@ -94,6 +94,12 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
     override fun onATMMapClicked(model: M, event: E.OnATMMapClicked): Next<M, F> =
         dispatch(setOf(F.GoToATMMap(event.url, event.mapJson)))
 
+    override fun showHiddenOptions(model: M): Next<M, F> =
+        dispatch(setOf(F.GoToSection(SettingsSection.HIDDEN)))
+
+    override fun onBlockchainDataCleared(model: M): Next<M, F> =
+        dispatch(setOf(F.RelaunchHomeScreen))
+
     @Suppress("ComplexMethod")
     override fun onOptionClicked(
         model: M,
@@ -136,6 +142,9 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.FAST_SYNC_BTC -> F.GoToFastSync(btc)
                     SettingsOption.RESET_DEFAULT_CURRENCIES -> F.ResetDefaultCurrencies
                     SettingsOption.WIPE_NO_PROMPT -> F.WipeNoPrompt
+                    SettingsOption.ENABLE_ALL_WALLETS -> F.EnableAllWallets
+                    SettingsOption.CLEAR_BLOCKCHAIN_DATA -> F.ClearBlockchainData
+                    SettingsOption.TOGGLE_RATE_APP_PROMPT -> F.ToggleRateAppPrompt
                 }
             )
         )

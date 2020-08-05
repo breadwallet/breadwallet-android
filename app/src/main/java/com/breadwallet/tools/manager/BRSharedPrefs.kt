@@ -27,20 +27,25 @@ package com.breadwallet.tools.manager
 import android.content.Context
 import android.content.SharedPreferences
 import android.text.format.DateUtils
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
-import com.breadwallet.model.FeeOption
+import com.breadwallet.app.Conversion
 import com.breadwallet.model.PriceAlert
 import com.breadwallet.repository.asJsonArrayString
 import com.breadwallet.repository.fromJsonArrayString
-import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.tools.util.ServerBundlesHelper
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.callbackFlow
-import org.json.JSONArray
-import java.math.BigDecimal
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import java.util.Currency
 import java.util.Locale
 import java.util.UUID
@@ -103,19 +108,26 @@ object BRSharedPrefs {
     private const val LANGUAGE = "language"
     private const val UNLOCK_WITH_FINGERPRINT = "unlock-with-fingerprint"
     private const val CONFIRM_SEND_WITH_FINGERPRINT = "confirm-send-with-fingerprint"
+    private const val TRACKED_TRANSACTIONS = "tracked-transactions"
+    private const val APP_RATE_PROMPT_DONT_ASK_AGAIN = "app-rate-prompt-dont-ask-again"
+    private const val APP_RATE_PROMPT_SHOULD_PROMPT = "app-rate-prompt-should-prompt"
+    private const val APP_RATE_PROMPT_SHOULD_PROMPT_DEBUG = "app-rate-prompt-should-prompt-debug"
     const val APP_FOREGROUNDED_COUNT = "appForegroundedCount"
     const val APP_RATE_PROMPT_HAS_RATED = "appReviewPromptHasRated"
-    const val APP_RATE_PROMPT_HAS_DISMISSED = "appReviewPromptHasDismissed"
 
     /**
      * Call when Application is initialized to setup [brdPrefs].
      * This removes the need for a context parameter.
      */
-    fun provideContext(context: Context) {
+    fun initialize(context: Context) {
         brdPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        GlobalScope.launch {
+            _trackedConversionChanges.value = getTrackedConversions()
+        }
     }
 
     private lateinit var brdPrefs: SharedPreferences
+    private val promptChangeChannel = BroadcastChannel<Unit>(Channel.CONFLATED)
 
     @JvmStatic
     fun getPreferredFiatIso(): String =
@@ -540,4 +552,62 @@ object BRSharedPrefs {
             brdPrefs.unregisterOnSharedPreferenceChangeListener(listener)
         }
     }
+
+    private val _trackedConversionChanges = MutableStateFlow<Map<String, List<Conversion>>?>(null)
+    val trackedConversionChanges: Flow<Map<String, List<Conversion>>>
+        get() = _trackedConversionChanges
+            .filterNotNull()
+            .onStart {
+                _trackedConversionChanges.value?.let { emit(it) }
+            }
+
+    fun getTrackedConversions(): Map<String, List<Conversion>> =
+        brdPrefs.getStringSet(TRACKED_TRANSACTIONS, emptySet())!!
+            .map { Conversion.deserialize(it) }
+            .groupBy(Conversion::currencyCode)
+
+    fun putTrackedConversion(conversion: Conversion) {
+        brdPrefs.edit {
+            putStringSet(
+                TRACKED_TRANSACTIONS,
+                brdPrefs.getStringSet(TRACKED_TRANSACTIONS, emptySet())!! + conversion.serialize()
+            )
+        }
+        _trackedConversionChanges.value = getTrackedConversions()
+    }
+
+    fun removeTrackedConversion(conversion: Conversion) {
+        brdPrefs.edit {
+            val conversionStr = conversion.serialize()
+            putStringSet(
+                TRACKED_TRANSACTIONS,
+                brdPrefs.getStringSet(TRACKED_TRANSACTIONS, emptySet())!! - conversionStr
+            )
+        }
+        _trackedConversionChanges.value = getTrackedConversions()
+    }
+
+    var appRatePromptShouldPrompt: Boolean
+        get() = brdPrefs.getBoolean(APP_RATE_PROMPT_SHOULD_PROMPT, false)
+        set(value) = brdPrefs.edit { putBoolean(APP_RATE_PROMPT_SHOULD_PROMPT, value) }
+            .also { promptChangeChannel.offer(Unit) }
+
+    var appRatePromptShouldPromptDebug: Boolean
+        get() = brdPrefs.getBoolean(APP_RATE_PROMPT_SHOULD_PROMPT_DEBUG, false)
+        set(value) = brdPrefs.edit { putBoolean(APP_RATE_PROMPT_SHOULD_PROMPT_DEBUG, value) }
+            .also { promptChangeChannel.offer(Unit) }
+
+    var appRatePromptHasRated: Boolean
+        get() = brdPrefs.getBoolean(APP_RATE_PROMPT_HAS_RATED, false)
+        set(value) = brdPrefs.edit { putBoolean(APP_RATE_PROMPT_HAS_RATED, value) }
+            .also { promptChangeChannel.offer(Unit) }
+
+    var appRatePromptDontAskAgain: Boolean
+        get() = brdPrefs.getBoolean(APP_RATE_PROMPT_DONT_ASK_AGAIN, false)
+        set(value) = brdPrefs.edit { putBoolean(APP_RATE_PROMPT_DONT_ASK_AGAIN, value) }
+            .also { promptChangeChannel.offer(Unit) }
+
+    fun promptChanges(): Flow<Unit> =
+        promptChangeChannel.asFlow()
+            .onStart { emit(Unit) }
 }

@@ -35,6 +35,7 @@ import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.blockchaindb.BlockchainDb
 import com.breadwallet.crypto.events.network.NetworkEvent
+import com.breadwallet.crypto.events.system.SystemDiscoveredNetworksEvent
 import com.breadwallet.crypto.events.system.SystemEvent
 import com.breadwallet.crypto.events.system.SystemListener
 import com.breadwallet.crypto.events.system.SystemNetworkAddedEvent
@@ -61,7 +62,7 @@ import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
@@ -79,6 +80,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Locale
@@ -109,7 +111,7 @@ internal class CoreBreadBox(
     private var system: System? = null
     private val systemExecutor = Executors.newSingleThreadScheduledExecutor()
 
-    private val openScope = CoroutineScope(
+    private var openScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Default + errorHandler("openScope")
     )
 
@@ -122,6 +124,7 @@ internal class CoreBreadBox(
 
     private var networkManager: NetworkManager? = null
 
+    private val isDiscoveryComplete = AtomicBoolean(false)
     private val _isOpen = AtomicBoolean(false)
     override var isOpen: Boolean
         get() = _isOpen.get()
@@ -156,14 +159,9 @@ internal class CoreBreadBox(
         }
 
         system = (system ?: newSystem()).also { system ->
-            check(system.account.serialize()!!.contentEquals(account.serialize())) {
-                "Provided Account does not match existing System Account, " +
-                    "CoreBreadBox does not support swapping accounts at runtime."
-            }
-
             logDebug("Dispatching initial System values")
 
-            system.connectAll()
+            system.resume()
 
             networkManager = NetworkManager(
                 system,
@@ -206,14 +204,22 @@ internal class CoreBreadBox(
     }
 
     @Synchronized
-    override fun close() {
+    override fun close(wipe: Boolean) {
         logDebug("Closing BreadBox")
 
         check(isOpen) { "BreadBox must be opened before calling close()." }
 
-        openScope.coroutineContext.cancelChildren()
+        openScope.cancel()
+        openScope = CoroutineScope(
+            SupervisorJob() + Dispatchers.Default + errorHandler("openScope")
+        )
 
-        checkNotNull(system).disconnectAll()
+        checkNotNull(system).pause()
+
+        if (wipe) {
+            System.wipe(system)
+            system = null
+        }
 
         isOpen = false
 
@@ -265,7 +271,7 @@ internal class CoreBreadBox(
             enabledWallets
                 .associateWith { wallets.findByCurrencyId(it) }
                 .mapValues { (currencyId, wallet) ->
-                    wallet?.currency?.code ?: TokenUtil.getTokenItemForCurrencyId(currencyId)
+                    wallet?.currency?.code ?: TokenUtil.tokenForCurrencyId(currencyId)
                         ?.symbol?.toLowerCase(Locale.ROOT)
                 }.values
                 .filterNotNull()
@@ -339,7 +345,7 @@ internal class CoreBreadBox(
         system()
             .map { system -> system.networks.find { it.containsCurrencyCode(currencyCode) } }
             .mapNotNull { network ->
-                network?.currency?.uids ?: TokenUtil.getTokenItemByCurrencyCode(currencyCode)?.currencyId
+                network?.currency?.uids ?: TokenUtil.tokenForCode(currencyCode)?.currencyId
             }
             .take(1)
             .flatMapLatest { uids ->
@@ -352,6 +358,17 @@ internal class CoreBreadBox(
                     }
                 }
             }
+
+    override fun networks(whenDiscoveryComplete: Boolean): Flow<List<Network>> =
+        system().transform {
+            if (whenDiscoveryComplete) {
+                if (isDiscoveryComplete.get()) {
+                    emit(it.networks)
+                }
+            } else {
+                emit(it.networks)
+            }
+        }
 
     override fun getSystemUnsafe(): System? = system
 
@@ -450,11 +467,16 @@ internal class CoreBreadBox(
     override fun handleNetworkEvent(system: System, network: Network, event: NetworkEvent) = Unit
 
     override fun handleSystemEvent(system: System, event: SystemEvent) {
-        systemChannel.offer(Unit)
-        if (event is SystemNetworkAddedEvent) {
-            logDebug("Network '${event.network.name}' added.")
-            networkManager?.initializeNetwork(event.network)
+        when (event) {
+            is SystemNetworkAddedEvent -> {
+                logDebug("Network '${event.network.name}' added.")
+                networkManager?.initializeNetwork(event.network)
+            }
+            is SystemDiscoveredNetworksEvent -> {
+                isDiscoveryComplete.set(true)
+            }
         }
+        systemChannel.offer(Unit)
     }
 
     override fun handleTransferEvent(

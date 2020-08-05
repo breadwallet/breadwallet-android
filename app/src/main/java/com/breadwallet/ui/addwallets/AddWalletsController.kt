@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.addwallets
 
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.breadwallet.R
 import com.breadwallet.tools.util.Utils
@@ -40,7 +41,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onCompletion
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -58,6 +58,11 @@ class AddWalletsController : BaseMobiusController<M, E, F>() {
             direct.instance()
         )
 
+    override fun onDetach(view: View) {
+        super.onDetach(view)
+        Utils.hideKeyboard(activity)
+    }
+
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
         token_list.layoutManager = LinearLayoutManager(checkNotNull(activity))
         search_edit.setOnFocusChangeListener { _, hasFocus ->
@@ -70,9 +75,7 @@ class AddWalletsController : BaseMobiusController<M, E, F>() {
             search_edit.textChanges().map { E.OnSearchQueryChanged(it) },
             back_arrow.clicks().map { E.OnBackClicked },
             bindTokenList(modelFlow)
-        ).onCompletion {
-            Utils.hideKeyboard(activity)
-        }
+        )
     }
 
     private fun bindTokenList(

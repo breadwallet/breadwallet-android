@@ -27,67 +27,47 @@ package com.platform.util
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.text.format.DateUtils
 import com.breadwallet.R
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.ui.wallet.WalletTransaction
-
 
 /**
  * Responsible of handling the rules for showing the dialog to request to user to submit
  */
 object AppReviewPromptManager {
 
-    private const val MIN_FOREGROUNDED_TIMES_FOR_FEEDBACK = 10
     private const val GOOGLE_PLAY_APP_URI = "market://details?id=com.breadwallet"
-    private const val GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=com.breadwallet"
+    private const val GOOGLE_PLAY_URI =
+        "https://play.google.com/store/apps/details?id=com.breadwallet"
     private const val GOOGLE_PLAY_PACKAGE = "com.android.vending"
-
-    /**
-     * Check if the rules to display the review prompt are met.
-     *
-     * Rules:
-     * - App foregrounded more than [MIN_FOREGROUNDED_TIMES_FOR_FEEDBACK].
-     * - Dialog hasn't been shown.
-     * - There is at least one transaction in the [transactionsList] from the [currencyCode] that
-     * has been received and completed in the last 24 hours.
-     */
-    fun showReview(currencyCode: String, transactionsList: List<WalletTransaction>): Boolean {
-        val foregroundedTimes = BRSharedPrefs.getInt(BRSharedPrefs.APP_FOREGROUNDED_COUNT, 0)
-        return if (foregroundedTimes >= MIN_FOREGROUNDED_TIMES_FOR_FEEDBACK
-                // check if we didn't already show the prompt
-                && !BRSharedPrefs.getBoolean(BRSharedPrefs.APP_RATE_PROMPT_HAS_RATED, false)
-                && !BRSharedPrefs.getBoolean(BRSharedPrefs.APP_RATE_PROMPT_HAS_DISMISSED, false)) {
-            // Check if it has received a transaction in the last 24 hours.
-            val tx = transactionsList.firstOrNull {
-                it.isReceived && it.isComplete
-                        && (System.currentTimeMillis() - it.timeStamp * DateUtils.SECOND_IN_MILLIS) < DateUtils.DAY_IN_MILLIS
-            }
-            return tx != null
-        } else {
-            false
-        }
-    }
-
-    /**
-     * Save that the user dismissed the review prompt to avoid showing the prompt again.
-     */
-    fun onReviewPromptDismissed() =
-            BRSharedPrefs.putBoolean(BRSharedPrefs.APP_RATE_PROMPT_HAS_DISMISSED, true)
 
     /**
      * Open Google Play from [activity] for the user to submit a review of the app.
      */
     fun openGooglePlay(activity: Activity) {
-        BRSharedPrefs.putBoolean(BRSharedPrefs.APP_RATE_PROMPT_HAS_RATED, true)
+        BRSharedPrefs.appRatePromptHasRated = true
         // Try to send an intent to google play and if that fails open google play in the browser.
         try {
             val googlePlayIntent = Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_APP_URI))
-                    .setPackage(GOOGLE_PLAY_PACKAGE)
+                .setPackage(GOOGLE_PLAY_PACKAGE)
             activity.startActivity(googlePlayIntent)
         } catch (exception: android.content.ActivityNotFoundException) {
             activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_URI)))
         }
         activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    fun shouldPrompt(): Boolean =
+        BRSharedPrefs.appRatePromptShouldPrompt && !BRSharedPrefs.appRatePromptDontAskAgain && !BRSharedPrefs.appRatePromptHasRated
+
+    fun shouldTrackConversions(): Boolean =
+        !BRSharedPrefs.appRatePromptHasRated && !BRSharedPrefs.appRatePromptDontAskAgain
+
+    fun dismissPrompt() {
+        BRSharedPrefs.appRatePromptShouldPrompt = false
+        BRSharedPrefs.appRatePromptShouldPromptDebug = false
+    }
+
+    fun neverAskAgain() {
+        BRSharedPrefs.appRatePromptDontAskAgain = true
     }
 }

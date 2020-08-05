@@ -51,7 +51,7 @@ object SendSheetInit : Init<M, F> {
         return First.first(
             model.copy(isFetchingPayment = isPaymentProtocolRequest),
             effects + setOf(
-                F.LoadBalance(model.currencyCode, model.feeCurrencyCode),
+                F.LoadBalance(model.currencyCode),
                 F.LoadExchangeRate(model.currencyCode, model.fiatCode),
                 F.LoadAuthenticationSettings,
                 F.GetTransferFields(model.currencyCode, model.targetAddress)

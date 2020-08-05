@@ -34,6 +34,10 @@ import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.annotation.VisibleForTesting
+import androidx.camera.camera2.Camera2Config
+import androidx.camera.core.CameraXConfig
+import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.security.crypto.EncryptedSharedPreferences
@@ -57,7 +61,7 @@ import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.InternetManager
-import com.breadwallet.tools.manager.updateRatesForCurrencies
+import com.breadwallet.tools.manager.RatesFetcher
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.BrdUserState
@@ -78,19 +82,24 @@ import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.KVStoreProvider
 import com.platform.interfaces.MetaDataManager
 import com.platform.interfaces.WalletProvider
+import com.platform.sqlite.PlatformSqliteHelper
 import com.platform.tools.KVStoreManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
@@ -111,7 +120,7 @@ private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val ENCRYPTED_PREFS_FILE = "crypto_shared_prefs"
 
 @Suppress("TooManyFunctions")
-class BreadApp : Application(), KodeinAware {
+class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
     companion object {
         private val TAG = BreadApp::class.java.name
@@ -148,7 +157,6 @@ class BreadApp : Application(), KodeinAware {
         )
 
         fun getBreadBox(): BreadBox = mInstance.direct.instance()
-        fun getAccountMetaDataProvider(): AccountMetaDataProvider = mInstance.direct.instance()
 
         // TODO: For code organization only, to be removed
         fun getStorageDir(context: Context): File {
@@ -301,9 +309,10 @@ class BreadApp : Application(), KodeinAware {
 
         bind<AccountMetaDataProvider>() with singleton { metaDataManager }
 
-        val httpClient = OkHttpClient()
+        bind<OkHttpClient>() with singleton { OkHttpClient() }
 
         bind<BlockchainDb>() with singleton {
+            val httpClient = instance<OkHttpClient>()
             val authInterceptor = BdbAuthInterceptor(httpClient, direct.instance())
             BlockchainDb(
                 httpClient.newBuilder()
@@ -313,7 +322,7 @@ class BreadApp : Application(), KodeinAware {
         }
 
         bind<PayIdService>() with singleton {
-            PayIdService(httpClient)
+            PayIdService(instance())
         }
 
         bind<BreadBox>() with singleton {
@@ -329,6 +338,18 @@ class BreadApp : Application(), KodeinAware {
         bind<ExperimentsRepository>() with singleton { ExperimentsRepositoryImpl }
 
         bind<RatesRepository>() with singleton { RatesRepository.getInstance(this@BreadApp) }
+
+        bind<RatesFetcher>() with singleton {
+            RatesFetcher(
+                instance(),
+                instance(),
+                this@BreadApp
+            )
+        }
+
+        bind<ConversionTracker>() with singleton {
+            ConversionTracker(instance())
+        }
     }
 
     private var mDelayServerShutdownCode = -1
@@ -338,8 +359,11 @@ class BreadApp : Application(), KodeinAware {
 
     private var accountLockJob: Job? = null
 
-    private val userManager: BrdUserManager by instance()
-    private val apiClient: APIClient by instance()
+    private val apiClient by instance<APIClient>()
+    private val userManager by instance<BrdUserManager>()
+    private val ratesFetcher by instance<RatesFetcher>()
+    private val accountMetaData by instance<AccountMetaDataProvider>()
+    private val conversionTracker by instance<ConversionTracker>()
 
     override fun onCreate() {
         super.onCreate()
@@ -347,7 +371,7 @@ class BreadApp : Application(), KodeinAware {
         mInstance = this
 
         BRKeyStore.provideContext(this)
-        BRSharedPrefs.provideContext(this)
+        BRSharedPrefs.initialize(this)
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(ApplicationLifecycleObserver())
         ApplicationLifecycleObserver.addApplicationLifecycleListener { event ->
@@ -382,16 +406,17 @@ class BreadApp : Application(), KodeinAware {
     private fun handleOnStart() {
         accountLockJob?.cancel()
         setDelayServerShutdown(false, -1)
-
         val breadBox = getBreadBox()
-        startedScope.launch {
-            userManager
-                .stateChanges()
-                .first { it is BrdUserState.Enabled }
-            if (!userManager.isMigrationRequired()) {
-                startWithInitializedWallet(breadBox)
+        userManager
+            .stateChanges()
+            .distinctUntilChanged()
+            .filterIsInstance<BrdUserState.Enabled>()
+            .onEach {
+                if (!userManager.isMigrationRequired()) {
+                    startWithInitializedWallet(breadBox)
+                }
             }
-        }
+            .launchIn(startedScope)
     }
 
     private fun handleOnStop() {
@@ -443,6 +468,7 @@ class BreadApp : Application(), KodeinAware {
         }
 
         getBreadBox().apply { if (isOpen) close() }
+        applicationScope.cancel()
     }
 
     fun startWithInitializedWallet(breadBox: BreadBox, migrate: Boolean = false) {
@@ -466,17 +492,17 @@ class BreadApp : Application(), KodeinAware {
             UserMetricsUtil.makeUserMetricsRequest(context)
         }
 
-        getAccountMetaDataProvider()
-            .recoverAll(migrate)
-            .launchIn(startedScope)
+        startedScope.launch {
+            accountMetaData.recoverAll(migrate)
+        }
 
-        breadBox.currencyCodes()
-            .updateRatesForCurrencies(context)
-            .launchIn(startedScope)
+        ratesFetcher.start(startedScope)
 
         applicationScope.launch {
             trackAddressMismatch(breadBox)
         }
+        
+        conversionTracker.start(startedScope)
     }
 
     private fun incrementAppForegroundedCounter() {
@@ -533,5 +559,32 @@ class BreadApp : Application(), KodeinAware {
         }.onFailure { e ->
             BRReportsManager.error("Failed to create Encrypted Shared Preferences", e)
         }.getOrNull()
+    }
+
+    override fun getCameraXConfig(): CameraXConfig {
+        return Camera2Config.defaultConfig()
+    }
+
+    @VisibleForTesting
+    fun clearApplicationData() {
+        runCatching {
+            startedScope.coroutineContext.cancelChildren()
+            applicationScope.coroutineContext.cancelChildren()
+            val breadBox = direct.instance<BreadBox>()
+            if (breadBox.isOpen) {
+                breadBox.close()
+            }
+            (userManager as CryptoUserManager).wipeAccount()
+
+            getStorageDir(this).deleteRecursively()
+
+            PlatformSqliteHelper.getInstance(this)
+                .writableDatabase
+                .delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, null)
+
+            getSharedPreferences(BRSharedPrefs.PREFS_NAME, Context.MODE_PRIVATE).edit { clear() }
+        }.onFailure { e ->
+            logError("Failed to clear application data", e)
+        }
     }
 }

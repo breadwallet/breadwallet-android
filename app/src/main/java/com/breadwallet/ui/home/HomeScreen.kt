@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.home
 
+import com.breadwallet.R
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.model.PriceChange
 import com.breadwallet.ui.navigation.NavigationEffect
@@ -40,7 +41,8 @@ object HomeScreen {
         val promptId: PromptItem? = null,
         val hasInternet: Boolean = true,
         val isBuyBellNeeded: Boolean = false,
-        val showBuyAndSell: Boolean = false
+        val showBuyAndSell: Boolean = false,
+        val rateAppPromptDontShowMeAgain: Boolean = false
     ) {
 
         companion object {
@@ -103,7 +105,11 @@ object HomeScreen {
         object OnPaperKeyPromptClicked : E()
         object OnUpgradePinPromptClicked : E()
         object OnRescanPromptClicked : E()
+        object OnRateAppPromptClicked : E()
+        data class OnRateAppPromptDontShowClicked(val checked: Boolean) : E()
+        object OnRateAppPromptNoThanksClicked : E()
         data class OnEmailPromptClicked(@Redacted val email: String) : E()
+        data class OnSupportFormSubmitted(val feedback: String) : E()
     }
 
     sealed class F {
@@ -119,12 +125,15 @@ object HomeScreen {
         data class GoToDeepLink(val url: String) : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.DeepLink(url, true)
         }
+
         data class GoToInappMessage(val inAppMessage: InAppMessage) : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.GoToInAppMessage(inAppMessage)
         }
+
         data class GoToWallet(val currencyCode: String) : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Wallet(currencyCode)
         }
+
         object GoToAddWallet : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.AddWallet
         }
@@ -132,22 +141,41 @@ object HomeScreen {
         object GoToBuy : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Buy
         }
+
         object GoToTrade : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Trade
         }
+
         object GoToMenu : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Menu(SettingsSection.HOME)
         }
+
         object GoToFingerprintSettings : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.FingerprintSettings
         }
+
         object GoToWriteDownKey : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.WriteDownKey(
                 OnCompleteAction.GO_HOME
             )
         }
+
         object GoToUpgradePin : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.SetPin()
+        }
+
+        object GoToGooglePlay : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.ReviewBrd
+        }
+
+        object GoToSupportForm : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
+                titleResId = R.string.SupportForm_helpUsImprove,
+                messageResId = R.string.SupportForm_feedbackAppreciated,
+                positiveButtonResId = R.string.Button_submit,
+                negativeButtonResId = R.string.SupportForm_notNow,
+                textInputPlaceholderResId = R.string.SupportForm_pleaseDescribe
+            )
         }
 
         data class RecordPushNotificationOpened(val campaignId: String) : F()
@@ -166,6 +194,11 @@ object HomeScreen {
         object StartRescan : F()
 
         data class SaveEmail(@Redacted val email: String) : F()
+
+        object ClearRateAppPrompt : F()
+        object SaveDontShowMeRateAppPrompt : F()
+
+        data class SubmitSupportForm(val feedback: String) : F()
     }
 }
 
@@ -199,5 +232,6 @@ enum class PromptItem {
     FINGER_PRINT,
     PAPER_KEY,
     UPGRADE_PIN,
-    RECOMMEND_RESCAN
+    RECOMMEND_RESCAN,
+    RATE_APP
 }

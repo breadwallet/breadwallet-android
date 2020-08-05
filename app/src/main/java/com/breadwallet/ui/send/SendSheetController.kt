@@ -125,6 +125,7 @@ class SendSheetController(args: Bundle? = null) :
         get() = SendSheetHandler.create(
             checkNotNull(applicationContext),
             breadBox = direct.instance(),
+            uriParser = direct.instance(),
             userManager = direct.instance(),
             apiClient = direct.instance(),
             ratesRepository = direct.instance(),
@@ -145,12 +146,12 @@ class SendSheetController(args: Bundle? = null) :
 
         textInputAmount.showSoftInputOnFocus = false
 
-        layoutSignal.layoutTransition = UiUtils.getDefaultTransition()
-        layoutSignal.setOnTouchListener(SlideDetector(router, layoutSignal))
+        layoutSheetBody.layoutTransition = UiUtils.getDefaultTransition()
+        layoutSheetBody.setOnTouchListener(SlideDetector(router, layoutSheetBody))
     }
 
     override fun onDestroyView(view: View) {
-        layoutSignal.setOnTouchListener(null)
+        layoutSheetBody.setOnTouchListener(null)
         super.onDestroyView(view)
     }
 
@@ -187,7 +188,7 @@ class SendSheetController(args: Bundle? = null) :
             buttonSend.clicks().map { E.OnSendClicked },
             buttonClose.clicks().map { E.OnCloseClicked },
             buttonPaste.clicks().map { E.OnPasteClicked },
-            layoutBackground.clicks().map { E.OnCloseClicked },
+            layoutSendSheet.clicks().map { E.OnCloseClicked },
             textInputAmount.clicks().map { E.OnAmountEditClicked },
             textInputAmount.focusChanges().map { hasFocus ->
                 if (hasFocus) {
@@ -496,7 +497,11 @@ class SendSheetController(args: Bundle? = null) :
         eventConsumer.accept(E.OnAuthCancelled)
     }
 
-    override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onPositiveClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         when (dialogId) {
             DIALOG_NO_ETH_FOR_TOKEN_TRANSFER -> {
                 eventConsumer.accept(E.GoToEthWallet)

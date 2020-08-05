@@ -47,7 +47,7 @@
         android:textAlignment="center"
         android:textColor="?attr/secondary_text_color"
         android:textSize="18sp"
-
+        android:fontFamily="@font/mobile_font_bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_header" />
@@ -91,7 +91,7 @@
             android:layout_marginEnd="16dp"
             android:layout_weight="1.0"
             android:background="@android:color/transparent"
-
+            android:fontFamily="@font/mobile_font_bold"
             app:buttonType="4"
             app:hasShadow="false"
             app:isBreadButton="true" />
@@ -105,7 +105,7 @@
             android:layout_weight="1.0"
             android:background="@android:color/transparent"
             android:textColor="@color/white"
-
+            android:fontFamily="@font/mobile_font_bold"
             app:buttonType="4"
             app:hasShadow="false"
             app:isBreadButton="true" />

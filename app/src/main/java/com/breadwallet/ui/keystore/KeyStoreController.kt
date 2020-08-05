@@ -78,7 +78,11 @@ class KeyStoreController(
             .launchIn(viewAttachScope)
     }
 
-    override fun onPositiveClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onPositiveClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         when (dialogId) {
             DIALOG_WIPE -> wipeDevice()
             DIALOG_LOCK -> devicePassword()
@@ -86,7 +90,11 @@ class KeyStoreController(
         }
     }
 
-    override fun onNegativeClicked(dialogId: String, controller: AlertDialogController) {
+    override fun onNegativeClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
         when (dialogId) {
             DIALOG_UNINSTALL, DIALOG_WIPE -> contactSupport()
             DIALOG_LOCK -> checkNotNull(activity).finish()

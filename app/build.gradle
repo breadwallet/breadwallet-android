@@ -9,6 +9,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'io.sweers.redacted.redacted-plugin'
 apply from: file("../gradle/google-services.gradle")
+apply from: file("../gradle/copy-font-files.gradle")
 
 redactedPlugin {
     replacementString = '***'
@@ -25,8 +26,8 @@ android {
     ext {
         brdMarketingVersion = 4   // Major version. Usually affected by marketing. Maximum value: 99
         brdProductVersion = 4    // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 0 // Hot fix version. Usually affected by engineering. Maximum value: 9
-        brdBuildVersion = 3       // Build version. Increase for each new build. Maximum value: 999
+        brdEngineeringVersion = 3 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdBuildVersion = 1       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
         // relationship between builds with a max value of 2 100 000 000.
@@ -38,22 +39,19 @@ android {
         brdInternalVersionName = "$brdMarketingVersion.$brdProductVersion.$ext.brdEngineeringVersion.$ext.brdBuildVersion"
     }
     defaultConfig {
-        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
         applicationId = 'com.breadwallet'
         minSdkVersion 23
-        targetSdkVersion 28
+        targetSdkVersion 29
 
         versionCode brdVersionCode
         versionName "$brdMarketingVersion.$brdProductVersion.$brdEngineeringVersion"
         buildConfigField "int", "BUILD_VERSION", "$brdBuildVersion"
 
-        multiDexEnabled true
-
-        // Core Library
-        missingDimensionStrategy 'network', 'onMainnet'
-
         buildConfigField "String", "BDB_CLIENT_TOKEN", BDB_CLIENT_TOKEN
         buildConfigField "Boolean", "USE_REMOTE_CONFIG", useGoogleServices.toString()
+
+        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
     signingConfigs {
         FakeSigningConfig {
@@ -65,9 +63,12 @@ android {
     }
     testOptions {
         unitTests.returnDefaultValues = true
+        animationsDisabled = true
+        // TODO: execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
     packagingOptions {
         pickFirst 'protobuf.meta'
+        exclude("META-INF/*.kotlin_module")
     }
     // Specifies two flavor dimensions.
     flavorDimensions "mode"
@@ -253,14 +254,18 @@ dependencies {
     implementation "androidx.camera:camera-camera2:$camerax_version"
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
     implementation "androidx.camera:camera-view:$camerax_view_version"
-    testImplementation "androidx.test.espresso:espresso-core:$ax_espresso"
-    testImplementation "androidx.test:runner:$ax_test_runner"
-    testImplementation "androidx.test:rules:$ax_test_rules"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$ax_espresso"
+    androidTestImplementation "androidx.test:runner:$ax_test_runner"
+    androidTestImplementation "androidx.test:rules:$ax_test_rules"
+    androidTestImplementation "androidx.test.ext:junit-ktx:$ax_junit_ext"
     androidTestImplementation "androidx.work:work-testing:$ax_workmanager"
+    androidTestUtil "com.android.support.test:orchestrator:$ax_test_orchestrator"
 
     // Test infrastructure
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "org.mockito:mockito-android:$mockito_version"
+    androidTestImplementation "com.kaspersky.android-components:kaspresso:$kaspresso_version"
+    androidTestImplementation "com.agoda.kakao:kakao:$kakao_version"
 
     // Google/Firebase
     implementation "com.google.android.material:material:$material_components_version"
@@ -278,8 +283,6 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     androidTestImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
-    implementation "com.squareup.moshi:moshi:$moshi_version"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
 
     // Webserver/Platform
     implementation "commons-io:commons-io:$commons_io_version"

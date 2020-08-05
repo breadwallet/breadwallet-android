@@ -41,6 +41,7 @@ import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.model.PriceChange
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.manager.RatesFetcher
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.models.TransactionState
@@ -71,9 +72,9 @@ object WalletScreenHandler {
     fun createEffectHandler(
         context: Context,
         breadBox: BreadBox,
-        metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>
+        metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>,
+        ratesFetcher: RatesFetcher
     ) = subtypeEffectHandler<F, E> {
-        addTransformer(handleCheckReviewPrompt(context))
         addTransformer(handleLoadPricePerUnit(context))
 
         addTransformer(handleLoadBalance(breadBox))
@@ -86,17 +87,11 @@ object WalletScreenHandler {
         addTransformer(handleLoadTransactionMetaData(metadataEffectHandler))
         addTransformer(handleLoadTransactionMetaDataSingle(metadataEffectHandler))
 
-        addActionSync<F.RecordReviewPrompt>(Default, ::handleRecordReviewPrompt)
-        addActionSync<F.RecordReviewPromptDismissed>(
-            Default,
-            ::handleRecordReviewPromptDismissed
-        )
-
         addConsumerSync(Default, ::handleTrackEvent)
         addConsumerSync(Default, ::handleUpdateCryptoPreferred)
         addFunctionSync(Default, ::handleLoadIsTokenSupported)
         addFunctionSync(Default, ::handleConvertCryptoTransactions)
-        addFunctionSync(Default, handleLoadChartInterval(RatesRepository.getInstance(context)))
+        addFunction(handleLoadChartInterval(ratesFetcher))
         addFunctionSync<F.LoadCryptoPreferred>(Default) {
             E.OnIsCryptoPreferredLoaded(BRSharedPrefs.isCryptoPreferred())
         }
@@ -121,25 +116,6 @@ object WalletScreenHandler {
     ) = TokenUtil.isTokenSupported(effect.currencyCode)
         .run(E::OnIsTokenSupportedUpdated)
 
-    private fun handleCheckReviewPrompt(
-        context: Context
-    ) = flowTransformer<F.CheckReviewPrompt, E> { effects ->
-        effects.transformLatest { (currencyCode, transactions) ->
-            if (AppReviewPromptManager.showReview(currencyCode, transactions)) {
-                emit(E.OnShowReviewPrompt)
-            }
-        }
-    }
-
-    private fun handleRecordReviewPrompt() {
-        EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISPLAYED)
-    }
-
-    private fun handleRecordReviewPromptDismissed() {
-        EventUtils.pushEvent(EventUtils.EVENT_REVIEW_PROMPT_DISMISSED)
-        AppReviewPromptManager.onReviewPromptDismissed()
-    }
-
     private fun handleTrackEvent(value: F.TrackEvent) {
         EventUtils.pushEvent(value.eventName, value.attributes)
     }
@@ -154,7 +130,8 @@ object WalletScreenHandler {
                 ratesRepository.changes().map { effect }
             }
             .mapLatest { effect ->
-                val exchangeRate = ratesRepository.getFiatPerCryptoUnit(effect.currencyCode, fiatIso)
+                val exchangeRate =
+                    ratesRepository.getFiatPerCryptoUnit(effect.currencyCode, fiatIso)
                 val fiatPricePerUnit = exchangeRate.formatFiatForUi(fiatIso)
                 val priceChange: PriceChange? = ratesRepository.getPriceChange(effect.currencyCode)
                 E.OnFiatPricePerUpdated(fiatPricePerUnit, priceChange)
@@ -162,9 +139,9 @@ object WalletScreenHandler {
     }
 
     private fun handleLoadChartInterval(
-        ratesRepository: RatesRepository
-    ): (F.LoadChartInterval) -> E = { effect ->
-        val dataPoints = ratesRepository.getHistoricalData(
+        ratesFetcher: RatesFetcher
+    ): suspend (F.LoadChartInterval) -> E = { effect ->
+        val dataPoints = ratesFetcher.getHistoricalData(
             effect.currencyCode,
             BRSharedPrefs.getPreferredFiatIso(),
             effect.interval
@@ -214,8 +191,8 @@ object WalletScreenHandler {
         flowTransformer<F.LoadCurrencyName, E> { effects ->
             effects
                 .map { effect ->
-                    TokenUtil.getTokenItemByCurrencyCode(effect.currencyCode)?.name ?:
-                        breadBox.wallet(effect.currencyCode).first().currency.name
+                    TokenUtil.tokenForCode(effect.currencyCode)?.name
+                        ?: breadBox.wallet(effect.currencyCode).first().currency.name
                 }
                 .map { E.OnCurrencyNameUpdated(it) }
         }

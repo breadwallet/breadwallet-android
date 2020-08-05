@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutTransactionDetails"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
@@ -70,7 +71,7 @@
                     android:layout_below="@id/tx_amount"
                     android:layout_centerHorizontal="true"
                     android:layout_marginStart="2dp"
-
+                    android:fontFamily="@font/mobile_font_bold"
                     android:textColor="@color/settings_chevron_right"
                     tools:text="X" />
 

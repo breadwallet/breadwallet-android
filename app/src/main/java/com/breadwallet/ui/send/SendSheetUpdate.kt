@@ -291,6 +291,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             model.copy(
                 balance = event.balance,
                 fiatBalance = event.fiatBalance,
+                feeCurrencyCode = event.feeCurrencyCode,
                 feeCurrencyBalance = event.feeCurrencyBalance,
                 isTotalCostOverBalance = isTotalCostOverBalance,
                 amountInputError = if (isTotalCostOverBalance) {
@@ -470,7 +471,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                     )
                 )
                 is PayId.ValidAddress -> {
-                    processValidAddress(model, event.address, event.payId)
+                    processValidAddress(model, event.address, event.payId, event.destinationTag)
                 }
                 PayId.InvalidPayId -> next(
                     model.copy(
@@ -501,7 +502,8 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
     private fun processValidAddress(
         model: M,
         address: String,
-        payId: String? = null
+        payId: String? = null,
+        destinationTag: String? = null
     ): Next<M, F> {
         val effects = mutableSetOf<F>()
         if (model.canEstimateFee) {
@@ -513,13 +515,21 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             ).run(effects::add)
         }
 
+        val transferFields = if (destinationTag != null) {
+            model.transferFields.filter { it.key != TransferField.DESTINATION_TAG } +
+                TransferField(TransferField.DESTINATION_TAG, false, false, destinationTag)
+        } else {
+            model.transferFields
+        }
+
         return next(
             model.copy(
                 targetAddress = address,
                 targetString = payId ?: address, // Handle paste
                 targetInputError = null,
                 isPayId = payId != null,
-                isResolvingAddress = false
+                isResolvingAddress = false,
+                transferFields = transferFields
             ),
             effects + F.GetTransferFields(model.currencyCode, address)
         )
