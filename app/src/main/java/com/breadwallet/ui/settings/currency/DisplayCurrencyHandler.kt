@@ -26,20 +26,15 @@ package com.breadwallet.ui.settings.currency
 
 import android.content.Context
 import com.breadwallet.R
-import com.breadwallet.app.BreadApp
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.BRSharedPrefs.putPreferredFiatIso
 import com.breadwallet.ui.settings.currency.DisplayCurrency.E
 import com.breadwallet.ui.settings.currency.DisplayCurrency.F
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import drewcarlson.mobius.flow.subtypeEffectHandler
+import org.json.JSONArray
 
-private val adapter = Moshi.Builder()
-    .build()
-    .adapter<List<FiatCurrency>>(
-        Types.newParameterizedType(List::class.java, FiatCurrency::class.java)
-    )
+private const val NAME = "name"
+private const val CODE = "code"
 
 fun createDisplayCurrencyHandler(
     context: Context
@@ -52,7 +47,18 @@ fun createDisplayCurrencyHandler(
         val selectedCurrency = BRSharedPrefs.getPreferredFiatIso()
         val inputStream = context.resources.openRawResource(R.raw.fiatcurrencies)
         val fiatCurrenciesString = inputStream.bufferedReader().use { it.readText() }
-        val fiatCurrencies = adapter.fromJson(fiatCurrenciesString).orEmpty()
+
+        val jsonArray = runCatching { JSONArray(fiatCurrenciesString) }
+            .getOrElse { JSONArray() }
+        val fiatCurrencies = List(jsonArray.length()) { i ->
+            runCatching {
+                val obj = jsonArray.getJSONObject(i)
+                FiatCurrency(
+                    obj.getString(CODE),
+                    obj.getString(NAME)
+                )
+            }.getOrNull()
+        }.filterNotNull()
 
         E.OnCurrenciesLoaded(selectedCurrency, fiatCurrencies)
     }

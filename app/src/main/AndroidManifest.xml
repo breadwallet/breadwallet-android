@@ -20,9 +20,6 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
-    <!-- Allows unlocking your device and activating its screen so UI tests can succeed -->
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-
     <uses-feature
         android:name="android.hardware.location.gps"
         android:required="false" />
@@ -123,22 +120,6 @@
         </activity>
         <activity
             android:name=".legacy.presenter.activities.settings.NotificationActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.breadwallet.legacy.pricealert.PriceAlertListActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.breadwallet.legacy.pricealert.SelectAlertCryptoActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.breadwallet.legacy.pricealert.NewPriceAlertActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.breadwallet.legacy.pricealert.SelectForCurrencyActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity

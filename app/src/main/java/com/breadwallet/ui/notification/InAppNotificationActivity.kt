@@ -29,18 +29,27 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import com.breadwallet.R
+import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.ext.viewModel
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
+import com.breadwallet.util.CryptoUriParser
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_in_app_notification.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.erased.instance
 
 /**
  * Screen used to display an in-app notification.
  */
-class InAppNotificationActivity : BRActivity() {
+class InAppNotificationActivity : BRActivity(), KodeinAware {
 
     companion object {
         private const val EXT_NOTIFICATION = "com.breadwallet.ui.notification.EXT_NOTIFICATION"
@@ -53,12 +62,21 @@ class InAppNotificationActivity : BRActivity() {
         }
     }
 
+    override val kodein by closestKodein()
+
+    private val breadBox by instance<BreadBox>()
+    private val uriParser by instance<CryptoUriParser>()
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val viewModel by viewModel {
         InAppNotificationViewModel(intent.getParcelableExtra(EXT_NOTIFICATION))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!intent.hasExtra(EXT_NOTIFICATION)) {
+            finish()
+            return
+        }
         setContentView(R.layout.activity_in_app_notification)
 
         close_button.setOnClickListener {
@@ -68,16 +86,20 @@ class InAppNotificationActivity : BRActivity() {
             viewModel.markAsRead(true)
             val actionUrl = viewModel.notification.actionButtonUrl
             if (!actionUrl.isNullOrEmpty()) {
-                if (actionUrl.asLink() != null) {
-                    Intent(this, MainActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                        .putExtra(MainActivity.EXTRA_DATA, actionUrl)
-                        .run(this::startActivity)
-                } else {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(actionUrl)))
+                scope.launch(Dispatchers.Main) {
+                    if (actionUrl.asLink(breadBox, uriParser) != null) {
+                        Intent(this@InAppNotificationActivity, MainActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                            .putExtra(MainActivity.EXTRA_DATA, actionUrl)
+                            .run(this@InAppNotificationActivity::startActivity)
+                    } else {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(actionUrl)))
+                    }
+                    finish()
                 }
+            } else {
+                finish()
             }
-            finish()
         }
 
         notification_title.text = viewModel.notification.title
@@ -90,6 +112,8 @@ class InAppNotificationActivity : BRActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        viewModel.markAsRead(false)
+        if (!isFinishing) {
+            viewModel.markAsRead(false)
+        }
     }
 }

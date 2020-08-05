@@ -315,6 +315,7 @@ object SendSheet {
         data class OnBalanceUpdated(
             val balance: BigDecimal,
             val fiatBalance: BigDecimal,
+            val feeCurrencyCode: CurrencyCode,
             val feeCurrencyBalance: BigDecimal
         ) : E()
 
@@ -369,7 +370,8 @@ object SendSheet {
             sealed class PayId : OnAddressValidated() {
                 data class ValidAddress(
                     val payId: String,
-                    @Redacted val address: String
+                    @Redacted val address: String,
+                    @Redacted val destinationTag: String?
                 ) : PayId()
 
                 object InvalidPayId : PayId()
@@ -466,8 +468,7 @@ object SendSheet {
         }
 
         data class LoadBalance(
-            val currencyCode: CurrencyCode,
-            val feeCurrencyCode: CurrencyCode
+            val currencyCode: CurrencyCode
         ) : F()
 
         data class LoadExchangeRate(

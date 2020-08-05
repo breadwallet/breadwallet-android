@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.CameraX
+import androidx.camera.core.CameraXConfig
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
 import com.breadwallet.R
 import com.breadwallet.ui.BaseController
+import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.android.synthetic.main.controller_camera.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
@@ -26,14 +29,15 @@ class CameraController(
     }
 
     private val executor = Dispatchers.Main.asExecutor()
+    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
 
     override val layoutId = R.layout.controller_camera
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        val activity = activity as AppCompatActivity
+        cameraProviderFuture = ProcessCameraProvider.getInstance(applicationContext!!)
         cameraView.cameraLensFacing = CameraSelector.LENS_FACING_BACK
-        cameraView.bindToLifecycle(activity)
+        cameraView.bindToLifecycle(activity as LifecycleOwner)
         buttonShutter.setOnClickListener {
             takePicture()
         }
@@ -41,12 +45,14 @@ class CameraController(
 
     override fun onDetach(view: View) {
         buttonShutter.setOnClickListener(null)
-        CameraX.unbindAll()
+        cameraProviderFuture.addListener(Runnable {
+            cameraProviderFuture.get().unbindAll()
+        }, executor)
         super.onDetach(view)
     }
 
     override fun handleBack(): Boolean {
-        getListener()?.onCameraClosed()
+        findListener<Listener>()?.onCameraClosed()
         return super.handleBack()
     }
 
@@ -55,23 +61,19 @@ class CameraController(
         progressBar.isVisible = true
         buttonShutter.isClickable = false
         val file = File.createTempFile(UUID.randomUUID().toString(), ".jpg")
-        cameraView.takePicture(file, executor, object : ImageCapture.OnImageSavedCallback {
+        val options = ImageCapture.OutputFileOptions.Builder(file).build()
+        cameraView.takePicture(options, executor, object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                 if (!isAttached) return
-                getListener()?.onCameraSuccess(file)
+                findListener<Listener>()?.onCameraSuccess(file)
                 router.popController(this@CameraController)
             }
 
             override fun onError(exception: ImageCaptureException) {
                 if (!isAttached) return
-                getListener()?.onCameraClosed()
+                findListener<Listener>()?.onCameraClosed()
                 router.popController(this@CameraController)
             }
         })
     }
-
-    private fun getListener(): Listener? =
-        (targetController as? Listener)
-            ?: (parentController as? Listener)
-            ?: (router.backstack.dropLast(1).lastOrNull()?.controller() as? Listener)
 }

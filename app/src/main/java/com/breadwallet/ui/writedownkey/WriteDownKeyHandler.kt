@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.writedownkey
 
+import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.ui.writedownkey.WriteDownKey.E
 import com.breadwallet.ui.writedownkey.WriteDownKey.F
@@ -33,7 +34,11 @@ fun createWriteDownKeyHandler(
     userManager: BrdUserManager
 ) = subtypeEffectHandler<F, E> {
     addFunction<F.GetPhrase> {
-        val rawPhrase = userManager.getPhrase()
+        val rawPhrase = try {
+            userManager.getPhrase()
+        } catch (e: UserNotAuthenticatedException) {
+            null
+        }
         if (rawPhrase == null || rawPhrase.isEmpty()) {
             E.OnGetPhraseFailed
         } else {

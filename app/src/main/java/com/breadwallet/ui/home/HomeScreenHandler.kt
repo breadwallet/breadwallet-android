@@ -42,6 +42,7 @@ import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.tools.util.SupportUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.home.HomeScreen.E
@@ -49,6 +50,7 @@ import com.breadwallet.ui.home.HomeScreen.F
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.WalletProvider
+import com.platform.util.AppReviewPromptManager
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import drewcarlson.mobius.flow.subtypeEffectHandler
@@ -91,26 +93,31 @@ fun createHomeScreenHandler(
         }
         E.CheckForPrompt
     }
-    addFunction<F.LoadPrompt> {
-        val promptId = when {
-            !BRSharedPrefs.getEmailOptIn()
-                && !BRSharedPrefs.getEmailOptInDismissed() -> {
-                PromptItem.EMAIL_COLLECTION
+    addTransformer<F.LoadPrompt> {
+        // TODO: Move this logic elsewhere, a generic PromptManager
+        BRSharedPrefs.promptChanges().mapLatest {
+            val promptId = when {
+                BRSharedPrefs.appRatePromptShouldPromptDebug -> PromptItem.RATE_APP
+                !BRSharedPrefs.getEmailOptIn()
+                    && !BRSharedPrefs.getEmailOptInDismissed() -> {
+                    PromptItem.EMAIL_COLLECTION
+                }
+                brdUser.pinCodeNeedsUpgrade() -> PromptItem.UPGRADE_PIN
+                !BRSharedPrefs.getPhraseWroteDown() -> PromptItem.PAPER_KEY
+                AppReviewPromptManager.shouldPrompt() -> PromptItem.RATE_APP
+                (!BRSharedPrefs.unlockWithFingerprint
+                    && Utils.isFingerprintAvailable(context)
+                    && !BRSharedPrefs.getPromptDismissed(PROMPT_DISMISSED_FINGERPRINT)) -> {
+                    PromptItem.FINGER_PRINT
+                }
+                // BRSharedPrefs.getScanRecommended(iso = "BTC") -> PromptItem.RECOMMEND_RESCAN
+                else -> null
             }
-            brdUser.pinCodeNeedsUpgrade() -> PromptItem.UPGRADE_PIN
-            !BRSharedPrefs.getPhraseWroteDown() -> PromptItem.PAPER_KEY
-            (!BRSharedPrefs.unlockWithFingerprint
-                && Utils.isFingerprintAvailable(context)
-                && !BRSharedPrefs.getPromptDismissed(PROMPT_DISMISSED_FINGERPRINT)) -> {
-                PromptItem.FINGER_PRINT
+            if (promptId != null) {
+                EventUtils.pushEvent(getPromptName(promptId) + EventUtils.EVENT_PROMPT_SUFFIX_DISPLAYED)
             }
-            // BRSharedPrefs.getScanRecommended(iso = "BTC") -> PromptItem.RECOMMEND_RESCAN
-            else -> null
+            E.OnPromptLoaded(promptId)
         }
-        if (promptId != null) {
-            EventUtils.pushEvent(getPromptName(promptId) + EventUtils.EVENT_PROMPT_SUFFIX_DISPLAYED)
-        }
-        E.OnPromptLoaded(promptId)
     }
     addConsumer<F.TrackEvent> { effect ->
         EventUtils.pushEvent(effect.eventName, effect.attributes)
@@ -169,7 +176,7 @@ fun createHomeScreenHandler(
             .mapLatest { wallets ->
                 val fiatIso = BRSharedPrefs.getPreferredFiatIso()
                 E.OnWalletsUpdated(wallets.map {
-                    val name = TokenUtil.getTokenItemByCurrencyCode(it.currency.code)?.name
+                    val name = TokenUtil.tokenForCode(it.currency.code)?.name
                     it.asWallet(name, fiatIso, ratesRepo)
                 })
             }
@@ -191,6 +198,15 @@ fun createHomeScreenHandler(
                         }
                 }.merge()
             }
+    }
+    addAction<F.ClearRateAppPrompt> {
+        AppReviewPromptManager.dismissPrompt()
+    }
+    addAction<F.SaveDontShowMeRateAppPrompt> {
+        AppReviewPromptManager.neverAskAgain()
+    }
+    addConsumer<F.SubmitSupportForm> { effect ->
+        SupportUtils.submitEmailRequest(context, breadBox, brdUser, feedback = effect.feedback)
     }
 }
 
@@ -225,6 +241,7 @@ private fun getPromptName(prompt: PromptItem): String = when (prompt) {
     PromptItem.UPGRADE_PIN -> EventUtils.PROMPT_UPGRADE_PIN
     PromptItem.RECOMMEND_RESCAN -> EventUtils.PROMPT_RECOMMEND_RESCAN
     PromptItem.EMAIL_COLLECTION -> EventUtils.PROMPT_EMAIL
+    PromptItem.RATE_APP -> EventUtils.PROMPT_RATE_APP
 }
 
 private fun TokenItem.asWallet(
@@ -253,7 +270,7 @@ private fun CryptoWallet.asWallet(
     fiatIso: String,
     ratesRepo: RatesRepository
 ): Wallet {
-    val tokenItem = TokenUtil.getTokenItemByCurrencyCode(currency.code)
+    val tokenItem = TokenUtil.tokenForCode(currency.code)
     val balanceBig = balance.toBigDecimal()
     return Wallet(
         currencyId = currencyId,

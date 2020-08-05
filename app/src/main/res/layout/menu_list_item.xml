@@ -15,7 +15,7 @@
         android:lineSpacingMultiplier="1.3"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"
-         />
+        android:fontFamily="@font/mobile_font_book" />
 
     <ImageView
         android:id="@+id/item_icon"

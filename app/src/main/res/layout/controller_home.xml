@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutHome"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
@@ -60,7 +61,7 @@
                 android:textColor="@color/text_total_assets_label"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                 />
+                android:fontFamily="@font/mobile_font_medium" />
 
             <com.breadwallet.legacy.presenter.customviews.BaseTextView
                 android:id="@+id/total_assets_usd"
@@ -71,7 +72,7 @@
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
                 android:textColor="@color/white"
                 android:textSize="28sp"
-                 />
+                android:fontFamily="@font/mobile_font_medium" />
         </RelativeLayout>
 
         <LinearLayout
@@ -157,7 +158,7 @@
                         android:gravity="bottom"
                         android:text="@string/HomeScreen.buy"
                         android:textColor="@color/white"
-
+                        android:fontFamily="@font/mobile_font_book"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -188,7 +189,7 @@
                         android:gravity="bottom"
                         android:text="@string/HomeScreen.trade"
                         android:textColor="@color/white"
-                         />
+                        android:fontFamily="@font/mobile_font_book" />
                 </LinearLayout>
 
                 <LinearLayout

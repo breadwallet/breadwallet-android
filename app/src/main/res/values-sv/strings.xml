@@ -522,6 +522,11 @@
     <string name="Prompts.PaperKey.Body.Android">Ha en skriven nyckel ifall du skulle tappa bort eller byta telefon. Nyckeln krävs också om du ändrar säkerhetsinställningarna på din telefon. </string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Åtgärd krävs</string>
+    <string name="Prompts.RateApp.dontShow">Fråga inte igen</string>
+    <string name="Prompts.RateApp.enjoyingBrd">Njuter BRD?</string>
+    <string name="Prompts.RateApp.googlePlayReview">Din recension hjälper till att växa BRD-gemenskapen.</string>
+    <string name="Prompts.RateApp.noThanks">Nej tack</string>
+    <string name="Prompts.RateApp.rateUs">Granska oss</string>
     <!-- Transaction rejected prompt body -->
     <string name="Prompts.RecommendRescan.body">Din plånbok kan vara osynkroniserad. Detta kan ofta lösas genom att läsa om blockkedjan.</string>
     <!-- Transaction rejected prompt title -->
@@ -733,7 +738,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">Det enda sättet att komma åt dina bitcoin om du förlorar eller uppgraderar din telefon.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
-   * to not break existing client code. -->
+ * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Ordnyckel</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">Ordnyckel</string>
@@ -931,6 +936,10 @@
     <string name="StartViewController.message">Det säkraste och tryggaste sättet att använda bitcoin.</string>
     <!-- Recover your wallet from a backup -->
     <string name="StartViewController.recoverButton">Återställ plånbok</string>
+    <string name="SupportForm.feedbackAppreciated">Vi skulle älska din feedback</string>
+    <string name="SupportForm.helpUsImprove">Hjälp oss att förbättra</string>
+    <string name="SupportForm.notNow">Inte nu</string>
+    <string name="SupportForm.pleaseDescribe">Beskriv din upplevelse</string>
     <!-- Syncing view done syncing state header text -->
     <string name="SyncingView.activity">Aktivitet</string>
     <!-- Syncing view connectiong state header text -->

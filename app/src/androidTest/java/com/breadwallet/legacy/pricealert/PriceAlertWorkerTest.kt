@@ -41,6 +41,7 @@ import com.breadwallet.repository.fromJsonArrayString
 import com.breadwallet.tools.manager.BRSharedPrefs
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Date
@@ -50,6 +51,7 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 @RunWith(AndroidJUnit4::class)
+@Ignore("Not maintained")
 class PriceAlertWorkerTest {
 
     private val workManager: WorkManager
@@ -59,12 +61,12 @@ class PriceAlertWorkerTest {
     fun setup() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val config = Configuration.Builder()
-                .setMinimumLoggingLevel(Log.DEBUG)
-                .setExecutor(SynchronousExecutor())
-                .build()
+            .setMinimumLoggingLevel(Log.DEBUG)
+            .setExecutor(SynchronousExecutor())
+            .build()
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context, config)
-        BRSharedPrefs.provideContext(context)
+        BRSharedPrefs.initialize(context)
     }
 
     @After
@@ -141,7 +143,6 @@ class PriceAlertWorkerTest {
         assertTrue { processedAlert.hasBeenTriggered }
     }
 
-
     @Test
     @Throws(Exception::class)
     fun testDoesNotToggleHasBeenTriggeredWhenNotTriggered() {
@@ -215,20 +216,21 @@ class PriceAlertWorkerTest {
     }
 
     private fun WorkManager.getCryptoPriceAlertWorkerInfo() =
-            getWorkInfosForUniqueWork(PriceAlertWorker.uniqueWorkName).get().single()
+        getWorkInfosForUniqueWork(PriceAlertWorker.uniqueWorkName).get().single()
 
     private fun putAlerts(vararg priceAlerts: PriceAlert) {
         PriceAlertRepository.setAlerts(priceAlerts.asList())
     }
 
     private fun putRates(vararg currencyEntity: CurrencyEntity) {
-        val ratesRepo = RatesRepository.getInstance(InstrumentationRegistry.getInstrumentation().context)
+        val ratesRepo =
+            RatesRepository.getInstance(InstrumentationRegistry.getInstrumentation().context)
         ratesRepo.putCurrencyRates(currencyEntity.asList())
     }
 
     private fun advanceTestDriver() {
         val id = workManager.getCryptoPriceAlertWorkerInfo().id
-        WorkManagerTestInitHelper.getTestDriver().apply {
+        WorkManagerTestInitHelper.getTestDriver()?.apply {
             setPeriodDelayMet(id)
             setAllConstraintsMet(id)
         }

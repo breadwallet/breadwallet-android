@@ -522,6 +522,11 @@
     <string name="Prompts.PaperKey.Body.Android">Richten Sie Ihren Papierschlüssel für den Fall ein, dass Sie Ihr Smartphone einmal verlieren. Sie benötigen den Schlüssel ebenfalls, wenn Sie die Sicherheitseinstellungen Ihre Smartphones ändern.s</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Maßnahme erforderlich</string>
+    <string name="Prompts.RateApp.dontShow">Fragen Sie nicht noch einmal</string>
+    <string name="Prompts.RateApp.enjoyingBrd">BRD genießen?</string>
+    <string name="Prompts.RateApp.googlePlayReview">Ihre Bewertung trägt zum Wachstum der BRD-Community bei.</string>
+    <string name="Prompts.RateApp.noThanks">Nein, Danke</string>
+    <string name="Prompts.RateApp.rateUs">Überprüfen Sie uns</string>
     <!-- Transaction rejected prompt body -->
     <string name="Prompts.RecommendRescan.body">Möglicherweise ist dein Wallet nicht synchronisiert. Dies kann oft durch ein erneutes Einscannen der Blockchain behoben werden.</string>
     <!-- Transaction rejected prompt title -->
@@ -733,7 +738,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">Die einzige Möglichkeit, wie du auf deine Bitcoins zugreifen kannst, falls du dein Smartphone verlierst oder wechselst.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
-   * to not break existing client code. -->
+ * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Offlineschlüssel</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">Offlineschlüssel</string>
@@ -931,6 +936,10 @@
     <string name="StartViewController.message">Die sicherste Option zur Nutzung von Bitcoin.</string>
     <!-- Recover your wallet from a backup -->
     <string name="StartViewController.recoverButton">Geldbörse wiederherstellen</string>
+    <string name="SupportForm.feedbackAppreciated">Wir würden uns über Ihr Feedback freuen</string>
+    <string name="SupportForm.helpUsImprove">Helfen Sie uns, uns zu verbessern</string>
+    <string name="SupportForm.notNow">Nicht jetzt</string>
+    <string name="SupportForm.pleaseDescribe">Bitte beschreiben Sie Ihre Erfahrungen</string>
     <!-- Syncing view done syncing state header text -->
     <string name="SyncingView.activity">Aktivität</string>
     <!-- Syncing view connectiong state header text -->

@@ -36,6 +36,7 @@ import com.breadwallet.ui.send.TransferField
 import com.breadwallet.ui.txdetails.TxDetails.E
 import com.breadwallet.ui.txdetails.TxDetails.F
 import com.breadwallet.ui.txdetails.TxDetails.M
+import com.breadwallet.util.isBitcoinLike
 import com.platform.entities.TxMetaDataEmpty
 import com.platform.entities.TxMetaDataValue
 import com.spotify.mobius.Next
@@ -70,7 +71,7 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
                 isReceived = isReceived(),
                 blockNumber = confirmation.orNull()?.blockNumber?.toInt() ?: 0,
                 toOrFromAddress = when {
-                    isReceived() -> source
+                    isReceived() && !model.currencyCode.isBitcoinLike() -> source
                     else -> target
                 }.orNull()?.toSanitizedString() ?: "",
                 confirmationDate = confirmation

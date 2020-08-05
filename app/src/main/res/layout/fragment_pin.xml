@@ -30,7 +30,7 @@
             android:text="@string/VerifyPin.title"
             android:textColor="@color/almost_black"
             android:textSize="22sp"
-             />
+            android:fontFamily="@font/mobile_font_bold" />
 
         <com.breadwallet.legacy.presenter.customviews.BaseTextView
             android:id="@+id/message"
@@ -42,7 +42,7 @@
             android:text="@string/VerifyPin.authorize"
             android:textColor="@color/almost_black"
             android:textSize="@dimen/paragraph"
-             />
+            android:fontFamily="@font/mobile_font_book" />
 
         <com.breadwallet.legacy.presenter.customviews.PinLayout
             android:id="@+id/pin_digits"

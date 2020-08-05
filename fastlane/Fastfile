@@ -2,6 +2,8 @@
 # can be found here:
 # https://docs.fastlane.tools
 fastlane_version "2.68.0"
+fastlane_require 'json'
+fastlane_require 'uri'
 
 default_platform :android
 
@@ -57,35 +59,75 @@ lane :beta do |options|
   end
 end
 
-lane :appetizeUploadAll do |options|
-  appetizeUpload(flavor: 'brdTestnet', build_type: 'debug', output_path: options[:output_path])
-  appetizeUpload(flavor: 'brdTestnet', build_type: 'release', output_path: options[:output_path])
-  appetizeUpload(flavor: 'brd', build_type: 'debug', output_path: options[:output_path])
-  appetizeUpload(flavor: 'brd', build_type: 'release', output_path: options[:output_path])
-end
-
 lane :appetizeUpload do |options|
-  gradle(
-    task: 'assemble',
-    flavor: options[:flavor],
-    build_type: options[:build_type],
-    flags: options[:flags],
-    properties: {
-      "android.injected.signing.store.file" => ENV['SIGNING_KEY'],
-      "android.injected.signing.store.password" => ENV['SIGNING_PASSWORD'],
-      "android.injected.signing.key.alias" => ENV['SIGNING_ALIAS'],
-      "android.injected.signing.key.password" => ENV['SIGNING_ALIAS_PASSWORD']
-    }
-  )
+  flavor = options[:flavor] || 'brdTestnet'
+  build_type = options[:build_type] || 'debug'
+  apks = Dir["../app/build/outputs/apk/#{flavor}/#{build_type}/**.apk"]
+  path = ""
+  if apks.size > 1
+    UI.user_error!("Before uploading, run `./gradlew clean assemble` (found #{apks.size} apks, expecting 1)")
+    return
+  elsif apks.size == 1
+    path = File.expand_path(apks.first())
+  elsif apks.size == 0
+    gradle(
+      task: 'assemble',
+      flavor: flavor,
+      build_type: build_type,
+      flags: options[:flags],
+      properties: {
+        "android.injected.signing.store.file" => ENV['SIGNING_KEY'],
+        "android.injected.signing.store.password" => ENV['SIGNING_PASSWORD'],
+        "android.injected.signing.key.alias" => ENV['SIGNING_ALIAS'],
+        "android.injected.signing.key.password" => ENV['SIGNING_ALIAS_PASSWORD']
+      }
+    )
+    path = "#{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]}"
+  end
   appetize(
-    path: "#{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]}",
+    path: path,
     api_token: ENV['APPETIZE_TOKEN'],
     platform: 'android'
   )
 
-  fileName = "../app/build/review-#{options[:flavor]}-#{options[:build_type]}.html"
-  reviewUrl = "#{ENV['NATIVE_REVIEW_URL']}?publicKey=#{lane_context[SharedValues::APPETIZE_PUBLIC_KEY]}"
-  fileContents = "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url=#{reviewUrl}\"/></head></html>"
+  rawBody = {
+     appetizeKey: lane_context[SharedValues::APPETIZE_PUBLIC_KEY],
+     buildFlavor: flavor,
+     buildType: build_type
+  }
+  if ENV['CI']
+    rawBody['author'] = ENV['GITLAB_USER_NAME']
+    if ENV['CI_MERGE_REQUEST_SOURCE_BRANCH_NAME']
+      rawBody['type'] = 'merge'
+      rawBody['name'] = ENV['CI_MERGE_REQUEST_SOURCE_BRANCH_NAME']
+    elsif ENV['CI_COMMIT_TAG'] then
+      rawBody['type'] = 'tag'
+      rawBody['name'] = ENV['CI_COMMIT_TAG']
+    end
+  else
+    branch = sh("git branch --show-current").strip!
+    user = sh("git config user.name").strip!
+    rawBody['name'] = "dev-#{URI.escape(user) || branch}"
+    rawBody['author'] = user
+    rawBody['type'] = 'dev'
+  end
+  body = JSON.generate(rawBody)
+  sh("curl -XPOST -H \"Content-type: application/json\" -d '#{body}' '#{ENV['APPETIZE_CALLBACK']}'")
+end
 
-  File.write(fileName, fileContents)
+lane :appetizeRemove do |options|
+  if options[:merge]
+    params = "?name=#{options[:merge]}&type=merge"
+  elsif options[:tag]
+    params = "?name=#{options[:tag]}&type=tag"
+  else
+    branch = sh("git branch --show-current").strip!
+    user = sh("git config user.name").strip!
+    name = "dev-#{URI.escape(user) || branch}"
+    params = "?name=#{name}&type=dev"
+  end
+  flavor = options[:flavor] || 'brdTestnet'
+  build_type = options[:build_type] || 'debug'
+  params += "&flavor=#{flavor}&buildType=#{build_type}"
+  sh("curl -XDELETE '#{ENV['APPETIZE_CALLBACK']}#{params}'")
 end

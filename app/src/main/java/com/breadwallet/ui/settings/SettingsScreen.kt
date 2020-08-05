@@ -65,6 +65,8 @@ object SettingsScreen {
         data class SetPlatformBundle(val bundle: String) : E()
         data class SetTokenBundle(val bundle: String) : E()
         object OnWalletsUpdated : E()
+        object ShowHiddenOptions : E()
+        object OnBlockchainDataCleared : E()
 
         data class OnATMMapClicked(val url: String, val mapJson: String) : E()
     }
@@ -79,6 +81,9 @@ object SettingsScreen {
         object ResetDefaultCurrencies : F()
         object WipeNoPrompt : F()
         object GetPaperKey : F()
+        object EnableAllWallets : F()
+        object ClearBlockchainData : F()
+        object ToggleRateAppPrompt : F()
 
         data class SetApiServer(val host: String) : F()
         data class SetPlatformDebugUrl(val url: String) : F()
@@ -93,33 +98,43 @@ object SettingsScreen {
         object GoBack : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Back
         }
+
         object GoToSupport : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.SupportPage("")
         }
+
         object GoToQrScan : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.QRScanner
         }
+
         object GoToBrdRewards : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.BrdRewards
         }
+
         object GoToGooglePlay : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.ReviewBrd
         }
+
         object GoToAbout : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.About
         }
+
         object GoToDisplayCurrency : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.DisplayCurrency
         }
+
         object GoToNotificationsSettings : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.NotificationsSettings
         }
+
         object GoToShareData : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.ShareDataSettings
         }
+
         object GoToImportWallet : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.ImportWallet
         }
+
         data class GoToSyncBlockchain(
             val currencyCode: CurrencyCode
         ) : F(), NavigationEffect {
@@ -129,33 +144,43 @@ object SettingsScreen {
         object GoToNodeSelector : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.BitcoinNodeSelector
         }
+
         object GoToEnableSegWit : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.EnableSegWit
         }
+
         object GoToLegacyAddress : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.LegacyAddress
         }
+
         object GoToFingerprintAuth : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.FingerprintSettings
         }
+
         object GoToUpdatePin : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.SetPin()
         }
+
         object GoToWipeWallet : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.WipeWallet
         }
+
         object GoToOnboarding : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.OnBoarding
         }
+
         object GoToNativeApiExplorer : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.NativeApiExplorer
         }
+
         object GoToHomeScreen : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Home
         }
+
         object GoToAuthentication : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Authentication()
         }
+
         data class GoToPaperKey(
             @Redacted val phrase: List<String>
         ) : F(), NavigationEffect {
@@ -178,6 +203,10 @@ object SettingsScreen {
 
         data class GoToATMMap(val url: String, val mapJson: String) : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.ATMMap(url, mapJson)
+        }
+
+        object RelaunchHomeScreen : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.Home
         }
     }
 }

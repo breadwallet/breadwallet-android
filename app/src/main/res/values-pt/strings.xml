@@ -522,6 +522,11 @@
     <string name="Prompts.PaperKey.Body.Android">Defina a sua chave de papel para o caso de perder ou substituir o seu telefone. A sua chave também é necessária se alterar as definições de segurança do seu telefone.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Ação Necessária</string>
+    <string name="Prompts.RateApp.dontShow">Não pergunte novamente</string>
+    <string name="Prompts.RateApp.enjoyingBrd">Apreciando o BRD?</string>
+    <string name="Prompts.RateApp.googlePlayReview">Sua análise ajuda a aumentar a comunidade BRD.</string>
+    <string name="Prompts.RateApp.noThanks">Não, obrigado</string>
+    <string name="Prompts.RateApp.rateUs">Revise-nos</string>
     <!-- Transaction rejected prompt body -->
     <string name="Prompts.RecommendRescan.body">A sua carteira pode estar dessincronizada. Isto pode ser frequentemente resolvido ao voltar a digitalizar a blockchain.</string>
     <!-- Transaction rejected prompt title -->
@@ -733,7 +738,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">A única forma de aceder às suas bitcoins se perder ou atualizar o seu telefone.</string>
     <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
-   * to not break existing client code. -->
+ * to not break existing client code. -->
     <string name="SecurityCenter.paperKeyTitle">Chave de Papel</string>
     <!-- Paper Key button title -->
     <string name="SecurityCenter.paperKeyTitle.android">Chave de Papel</string>
@@ -931,6 +936,10 @@
     <string name="StartViewController.message">A forma mais protegida e segura de utilizar a bitcoin.</string>
     <!-- Recover your wallet from a backup -->
     <string name="StartViewController.recoverButton">Recuperar Carteira</string>
+    <string name="SupportForm.feedbackAppreciated">Adoraríamos o seu comentário</string>
+    <string name="SupportForm.helpUsImprove">Ajude-nos a melhorar</string>
+    <string name="SupportForm.notNow">Agora não</string>
+    <string name="SupportForm.pleaseDescribe">Por favor, descreva sua experiência</string>
     <!-- Syncing view done syncing state header text -->
     <string name="SyncingView.activity">Atividade</string>
     <!-- Syncing view connectiong state header text -->

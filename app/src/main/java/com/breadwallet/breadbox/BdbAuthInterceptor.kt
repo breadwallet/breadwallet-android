@@ -35,11 +35,15 @@ import com.breadwallet.tools.crypto.CryptoHelper.signBasicDer
 import com.breadwallet.tools.crypto.CryptoHelper.signJose
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.BrdUserState
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -116,6 +120,12 @@ class BdbAuthInterceptor(
         }
 
         val tokenString = runBlocking {
+            if (BuildConfig.USE_REMOTE_CONFIG) {
+                // Wait for initial remote-config fetch
+                if (mutex.isLocked) mutex.withLock { }
+            } else {
+                waitForUserReady()
+            }
             if (userManager.getBdbJwt() == null) {
                 createAndSetJwt()
             }
@@ -231,6 +241,7 @@ class BdbAuthInterceptor(
                     logDebug("remote-config synced and activated.")
                     val newClientToken = remoteConfig.getString(BDB_TOKEN_KEY)
                     if (clientToken != newClientToken) {
+                        waitForUserReady()
                         userManager.putBdbJwt("", 0)
                     }
                     clientToken = newClientToken
@@ -268,4 +279,10 @@ class BdbAuthInterceptor(
         replace("+", "-")
             .replace("/", "_")
             .replace("=", "")
+
+    private suspend fun waitForUserReady() {
+        userManager.stateChanges()
+            .filter { it is BrdUserState.Enabled || it is BrdUserState.Locked }
+            .first()
+    }
 }

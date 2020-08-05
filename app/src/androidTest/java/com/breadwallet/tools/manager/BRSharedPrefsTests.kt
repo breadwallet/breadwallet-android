@@ -47,7 +47,7 @@ class BRSharedPrefsTests {
         //  in the future this should be a Unit test that
         //  mocks SharedPreferences.
         sharedPrefs = context.getSharedPreferences(BRSharedPrefs.PREFS_NAME, Context.MODE_PRIVATE)
-        BRSharedPrefs.provideContext(context)
+        BRSharedPrefs.initialize(context)
     }
 
     @Test
@@ -55,7 +55,12 @@ class BRSharedPrefsTests {
         val storedAddress = "17EW5WDJ3NScoLP9YvyAXV3onKtkw39aWb"
         val iso = "BTC"
 
-        sharedPrefs.edit { putString(BRSharedPrefs.RECEIVE_ADDRESS + iso.toUpperCase(), storedAddress) }
+        sharedPrefs.edit {
+            putString(
+                BRSharedPrefs.RECEIVE_ADDRESS + iso.toUpperCase(),
+                storedAddress
+            )
+        }
 
         val retrievedAddress = BRSharedPrefs.getReceiveAddress(iso = iso)
 
@@ -68,7 +73,8 @@ class BRSharedPrefsTests {
         val iso = "BTC"
         BRSharedPrefs.putReceiveAddress(tmpAddr = insertedAddress, iso = iso)
 
-        val storedAddress = sharedPrefs.getString(BRSharedPrefs.RECEIVE_ADDRESS + iso.toUpperCase(), "")
+        val storedAddress =
+            sharedPrefs.getString(BRSharedPrefs.RECEIVE_ADDRESS + iso.toUpperCase(), "")
 
         assertEquals(insertedAddress, storedAddress)
     }

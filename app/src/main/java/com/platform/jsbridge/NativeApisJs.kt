@@ -46,10 +46,11 @@ class NativeApisJs(
         }
 
     fun attachToWebView(webView: WebView) {
-        webView.addJavascriptInterface(this, JS_NAME)
+        webView.addJavascriptInterface(PromiseJs(webView, getApiNamesJson()), PromiseJs.JS_NAME)
         apis.forEach { api ->
             val name = "${api::class.java.simpleName}_Native"
             webView.addJavascriptInterface(api, name)
         }
+        webView.addJavascriptInterface(this, JS_NAME)
     }
 }

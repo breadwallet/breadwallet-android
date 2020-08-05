@@ -10,6 +10,7 @@ import com.breadwallet.breadbox.formatFiatForUi
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRDateUtil
 import com.breadwallet.tools.util.Utils
+import com.breadwallet.util.isBitcoinLike
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.ModelAbstractItem
 import kotlinx.android.extensions.LayoutContainer
@@ -86,28 +87,33 @@ class TransactionListItem(
                 showTransactionProgress(transaction.progress)
             }
 
-            val sentTo =
-                mContext.getString(R.string.Transaction_sentTo).format(transaction.toAddress)
-            val receivedVia = mContext.getString(R.string.TransactionDetails_receivedVia)
-                .format(transaction.fromAddress)
 
-            val sendingTo =
-                mContext.getString(R.string.Transaction_sendingTo).format(transaction.toAddress)
-            val receivingVia = mContext.getString(R.string.TransactionDetails_receivingVia)
-                .format(transaction.fromAddress)
 
             tx_description.text = when {
                 commentString == null -> ""
                 commentString.isNotEmpty() -> commentString
-                transaction.isFeeForToken -> mContext.getString(R.string.Transaction_tokenTransfer)
-                    .format(transaction.feeToken)
+                transaction.isFeeForToken ->
+                    mContext.getString(R.string.Transaction_tokenTransfer, transaction.feeToken)
                 received -> {
-                    if (transaction.isComplete) receivedVia
-                    else receivingVia
+                    val (res, address) = if (transaction.isComplete) {
+                        if (transaction.currencyCode.isBitcoinLike()) {
+                            R.string.TransactionDetails_receivedVia to transaction.toAddress
+                        } else {
+                            R.string.TransactionDetails_receivedFrom to transaction.fromAddress
+                        }
+                    } else {
+                        if (transaction.currencyCode.isBitcoinLike()) {
+                            R.string.TransactionDetails_receivingVia to transaction.toAddress
+                        } else {
+                            R.string.TransactionDetails_receivingFrom to transaction.fromAddress
+                        }
+                    }
+                    mContext.getString(res, address)
                 }
-                else -> {
-                    if (transaction.isComplete) sentTo
-                    else sendingTo
+                else -> if (transaction.isComplete) {
+                    mContext.getString(R.string.Transaction_sentTo, transaction.toAddress)
+                } else {
+                    mContext.getString(R.string.Transaction_sendingTo, transaction.toAddress)
                 }
             }
 

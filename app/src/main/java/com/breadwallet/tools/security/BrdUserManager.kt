@@ -32,6 +32,7 @@ import android.os.Build
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.UserNotAuthenticatedException
 import android.text.format.DateUtils
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
@@ -44,6 +45,7 @@ import com.breadwallet.logger.logInfo
 import com.breadwallet.logger.logWarning
 import com.breadwallet.tools.crypto.CryptoHelper.hexDecode
 import com.breadwallet.tools.crypto.CryptoHelper.hexEncode
+import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.Dispatchers
@@ -58,6 +60,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -129,6 +132,7 @@ private const val PUT_PHRASE_RC = 400
 private const val GET_PHRASE_RC = 401
 
 private const val KEY_ACCOUNT = "account"
+private const val KEY_PHRASE = "phrase"
 private const val KEY_AUTH_KEY = "authKey"
 private const val KEY_CREATION_TIME = "creationTimeSeconds"
 private const val KEY_TOKEN = "token"
@@ -158,7 +162,7 @@ class CryptoUserManager(
     private val stateChangeChannel = BroadcastChannel<Unit>(CONFLATED)
 
     private val accountInvalidated = AtomicBoolean()
-    private val locked = AtomicBoolean(false)
+    private val locked = AtomicBoolean(true)
     private val disabledSeconds = AtomicInteger(0)
     private var token: String? = null
     private var jwt: String? = null
@@ -281,8 +285,6 @@ class CryptoUserManager(
             (BRKeyStore.getMasterPublicKey() != null || BRKeyStore.hasAccountBytes())
 
     override fun getState(): BrdUserState = when {
-        // Cannot create/use phrase key, device lock must be enabled
-        !keyguard.isKeyguardSecure -> BrdUserState.KeyStoreInvalid.Lock
         // Account invalidated and phrase not provided or phrase Key invalidated, recovery required
         accountInvalidated.get() || !isPhraseKeyValid() -> if (requiresUninstall()) {
             BrdUserState.KeyStoreInvalid.Uninstall
@@ -316,7 +318,9 @@ class CryptoUserManager(
             .flowOn(Default)
 
     override suspend fun getPhrase(): ByteArray? =
-        executeWithAuth { BRKeyStore.getPhrase(it, GET_PHRASE_RC) }
+        store?.getBytes(KEY_PHRASE, null)
+            ?: executeWithAuth { BRKeyStore.getPhrase(it, GET_PHRASE_RC) }
+                ?.also { bytes -> store?.edit { putBytes(KEY_PHRASE, bytes) } }
 
     override fun getAccount(): Account? =
         store?.getBytes(KEY_ACCOUNT, null)?.run {
@@ -447,9 +451,9 @@ class CryptoUserManager(
             check(getPhrase() == null) { "Phrase already exists." }
 
             try {
-                val storedPhrase = executeWithAuth {
-                    BRKeyStore.putPhrase(phrase, it, PUT_PHRASE_RC)
-                    BRKeyStore.getPhrase(it, GET_PHRASE_RC)
+                val storedPhrase = checkNotNull(store).run {
+                    edit { putBytes(KEY_PHRASE, phrase) }
+                    getBytes(KEY_PHRASE, null)
                 } ?: return@withLock SetupResult.FailedToPersistPhrase
 
                 val account = Account.createFromPhrase(
@@ -578,19 +582,20 @@ class CryptoUserManager(
 
     private suspend fun recoverCreationDate(): Date {
         BreadApp.applicationScope.launch {
-            metaDataProvider.recoverAll(true).first()
+            metaDataProvider.recoverAll(true)
         }
-        return metaDataProvider.walletInfo()
-            .onStart {
-                // Poll for wallet-info metadata
-                // This is a work-around to avoid blocking until recoverAll(migrate)
-                // recovers *all* metadata
-                for (i in 1..POLL_ATTEMPTS_MAX) {
-                    metaDataProvider.getWalletInfoUnsafe()
-                        ?.let { emit(it) }
-                    delay(POLL_TIMEOUT_MS)
+        // Poll for wallet-info metadata
+        // This is a work-around to avoid blocking until recoverAll(migrate)
+        // recovers *all* metadata
+        return flow {
+            while (true) {
+                metaDataProvider.getWalletInfoUnsafe()?.let {
+                    emit(it)
+                    return@flow
                 }
+                delay(POLL_TIMEOUT_MS)
             }
+        }
             .first()
             .creationDate
             .run(::Date)
@@ -620,13 +625,16 @@ class CryptoUserManager(
             getWalletCreationTime() == creationTime
     }
 
-    private suspend fun wipeAccount() {
-        BRKeyStore.deletePhrase(getActivity())
+    @VisibleForTesting
+    fun wipeAccount() {
         checkNotNull(store).edit {
+            putString(KEY_PHRASE, null)
             putString(KEY_ACCOUNT, null)
             putString(KEY_AUTH_KEY, null)
+            putString(KEY_PIN_CODE, null)
             putLong(KEY_CREATION_TIME, 0)
         }
+        BRKeyStore.wipeKeyStore(true)
     }
 
     private suspend fun getActivity(): Activity {
@@ -638,38 +646,37 @@ class CryptoUserManager(
         return context
     }
 
-    private fun isPhraseKeyValid(): Boolean = try {
-        // Attempt to retrieve the key that protects the paper key and initialize an encryption cipher.
-        val key = KeyStore.getInstance(ANDROID_KEY_STORE)
-            .apply { load(null) }
-            .getKey(BRKeyStore.PHRASE_ALIAS, null)
-
-        // If there is no key, then it has not been initialized yet. The key store is still considered valid.
-        if (key != null) {
-            val cipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM)
-            cipher.init(Cipher.ENCRYPT_MODE, key)
+    private fun isPhraseKeyValid(): Boolean {
+        if (store?.getBytes(KEY_PHRASE, null) != null) {
+            // BRKeyStore is not required anymore, phrase key is ignored.
+            return true
         }
-        true
-    } catch (e: KeyPermanentlyInvalidatedException) {
-        // If KeyPermanentlyInvalidatedException
-        //  -> with no cause happens, then the password was disabled. See DROID-1019.
-        // If UnrecoverableKeyException
-        //  -> with cause "Key blob corrupted" happens then the password was disabled & re-enabled. See DROID-1207.
-        //  -> with cause "Key blob corrupted" happens then after DROID-1019 the app was opened again while password is on.
-        //  -> with cause "Key not found" happens then after DROID-1019 the app was opened again while password is off.
-        //  -> with cause "System error" (KeyStoreException) after app wipe on devices that need uninstall to recover.
-        // Note: These exceptions would happen before a UserNotAuthenticatedException, so we don't need to handle that.
-        logError("Phrase key permanently invalidated", e)
-        false
-    } catch (e: UnrecoverableKeyException) {
-        logError("Phrase key is unrecoverable", e)
-        false
-    } catch (e: GeneralSecurityException) {
-        logWarning("Phrase key may still be valid.", e)
-        true
-    } catch (e: IOException) {
-        logWarning("Phrase key may still be valid.", e)
-        true
+
+        return runCatching {
+            // Attempt to retrieve the key that protects the paper key and initialize an encryption cipher.
+            val key = KeyStore.getInstance(ANDROID_KEY_STORE)
+                .apply { load(null) }
+                .getKey(BRKeyStore.PHRASE_ALIAS, null)
+
+            // If there is no key, then it has not been initialized yet. The key store is still considered valid.
+            if (key != null) {
+                val cipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM)
+                cipher.init(Cipher.ENCRYPT_MODE, key)
+            }
+            true
+        }.recoverCatching { e ->
+            // If KeyPermanentlyInvalidatedException
+            //  -> with no cause happens, then the password was disabled. See DROID-1019.
+            // If UnrecoverableKeyException
+            //  -> with cause "Key blob corrupted" happens then the password was disabled & re-enabled. See DROID-1207.
+            //  -> with cause "Key blob corrupted" happens then after DROID-1019 the app was opened again while password is on.
+            //  -> with cause "Key not found" happens then after DROID-1019 the app was opened again while password is off.
+            //  -> with cause "System error" (KeyStoreException) after app wipe on devices that need uninstall to recover.
+            // Note: These exceptions would happen before a UserNotAuthenticatedException, so we don't need to handle that.
+            (e !is KeyPermanentlyInvalidatedException && e !is UnrecoverableKeyException).also { isValid ->
+                if (!isValid) BRReportsManager.error("Phrase key permanently invalidated", e)
+            }
+        }.getOrDefault(false)
     }
 
     private fun requiresUninstall(): Boolean {

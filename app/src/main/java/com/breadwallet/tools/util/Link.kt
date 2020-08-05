@@ -25,7 +25,6 @@
 package com.breadwallet.tools.util
 
 import android.net.Uri
-import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.Key
@@ -38,7 +37,7 @@ import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.CurrencyCode
 import com.platform.HTTPServer
 import io.sweers.redacted.annotation.Redacted
-import org.kodein.di.erased.instance
+import kotlinx.coroutines.flow.first
 import java.io.Serializable
 import java.math.BigDecimal
 import java.net.URLEncoder
@@ -104,22 +103,25 @@ sealed class Link {
 
 /** Turn the url string into a [Link] or null if it is not supported. */
 @Suppress("ComplexMethod")
-fun String.asLink(): Link? {
+suspend fun String.asLink(
+    breadBox: BreadBox,
+    uriParser: CryptoUriParser
+): Link? {
+    if (isBlank()) return null
     val uri = Uri.parse(this)
     val (address, currencyCode) =
-        breadBox.getSystemUnsafe()
-            ?.networks
-            ?.mapNotNull { network ->
+        breadBox.networks(true)
+            .first()
+            .mapNotNull { network ->
                 Address.create(this, network)
                     .orNull()
                     ?.let { address ->
                         address to network.currency.code
                     }
             }
-            ?.firstOrNull() ?: null to null
+            .firstOrNull() ?: null to null
 
     return when {
-        isBlank() -> null
         address != null && currencyCode != null ->
             Link.CryptoRequestUrl(
                 currencyCode = currencyCode,
@@ -141,14 +143,6 @@ fun String.asLink(): Link? {
             }
         }
     }
-}
-
-private val uriParser by lazy {
-    BreadApp.getKodeinInstance().instance<CryptoUriParser>()
-}
-
-private val breadBox by lazy {
-    BreadApp.getKodeinInstance().instance<BreadBox>()
 }
 
 fun CryptoRequest.asCryptoRequestUrl() =

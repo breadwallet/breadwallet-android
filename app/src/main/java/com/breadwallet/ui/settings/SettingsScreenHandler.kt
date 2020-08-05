@@ -26,18 +26,21 @@ package com.breadwallet.ui.settings
 
 import android.app.ActivityManager
 import android.content.Context
+import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.logger.logDebug
 import com.breadwallet.model.Experiments
+import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
-import com.breadwallet.tools.util.LogsUtils
+import com.breadwallet.tools.util.SupportUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.btc
@@ -75,7 +78,12 @@ class SettingsScreenHandler(
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
             F.SendLogs -> launch(Dispatchers.Main) {
-                LogsUtils.shareLogs(context, breadBox, userManager)
+                SupportUtils.submitEmailRequest(
+                    context,
+                    breadBox,
+                    userManager,
+                    sendToAndroidTeam = true
+                )
             }
             is F.SetApiServer -> {
                 if (BuildConfig.DEBUG) {
@@ -112,8 +120,31 @@ class SettingsScreenHandler(
                     ?.clearApplicationUserData()
             }
             F.GetPaperKey -> launch {
-                val phrase = checkNotNull(userManager.getPhrase()).toString(UTF_8)
-                output.accept(E.ShowPhrase(phrase.split(" ")))
+                try {
+                    val phrase = checkNotNull(userManager.getPhrase()).toString(UTF_8)
+                    output.accept(E.ShowPhrase(phrase.split(" ")))
+                } catch (e: UserNotAuthenticatedException) {
+                    // User denied confirmation, ignored
+                }
+            }
+            F.EnableAllWallets -> {
+                TokenUtil.getTokenItems()
+                    .filter(TokenItem::isSupported)
+                    .forEach { token ->
+                        metaDataManager.enableWallet(token.currencyId)
+                    }
+            }
+            F.ClearBlockchainData -> launch {
+                logDebug("Clearing blockchain data")
+                breadBox.run {
+                    close(true)
+                    open(checkNotNull(userManager.getAccount()))
+                }
+                output.accept(E.OnBlockchainDataCleared)
+            }
+            F.ToggleRateAppPrompt -> {
+                BRSharedPrefs.appRatePromptShouldPromptDebug =
+                    !BRSharedPrefs.appRatePromptShouldPromptDebug
             }
         }
     }
@@ -130,8 +161,18 @@ class SettingsScreenHandler(
             SettingsSection.DEVELOPER_OPTION -> getDeveloperOptions()
             SettingsSection.BTC_SETTINGS -> btcOptions
             SettingsSection.BCH_SETTINGS -> bchOptions
+            SettingsSection.HIDDEN -> getHiddenOptions()
         }
         output.accept(E.OnOptionsLoaded(items))
+    }
+
+    private fun getHiddenOptions(): List<SettingsItem> {
+        return listOf(
+            SettingsItem(
+                "Clear Blockchain Data",
+                SettingsOption.CLEAR_BLOCKCHAIN_DATA
+            )
+        )
     }
 
     private fun getHomeOptions(): List<SettingsItem> {
@@ -254,6 +295,7 @@ class SettingsScreenHandler(
         } else {
             ""
         }
+        val toggleRateAppPromptAddOn = BRSharedPrefs.appRatePromptShouldPromptDebug
         return listOf(
             SettingsItem(
                 "Send Logs",
@@ -285,12 +327,21 @@ class SettingsScreenHandler(
                 subHeader = ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.TOKEN)
             ),
             SettingsItem(
+                "Enable All Wallets",
+                SettingsOption.ENABLE_ALL_WALLETS
+            ),
+            SettingsItem(
                 "Native API Explorer",
                 SettingsOption.NATIVE_API_EXPLORER
             ),
             SettingsItem(
                 "Wipe Wallet (no prompt)",
                 SettingsOption.WIPE_NO_PROMPT
+            ),
+            SettingsItem(
+                "Toggle Rate App Prompt",
+                SettingsOption.TOGGLE_RATE_APP_PROMPT,
+                addOn = "show=$toggleRateAppPromptAddOn"
             )
         )
     }
@@ -312,7 +363,7 @@ class SettingsScreenHandler(
         ).apply {
             launch {
                 val modeMap = metaDataManager.walletModes().first()
-                val btcCurrencyId = TokenUtil.getTokenItemByCurrencyCode(btc)?.currencyId ?: ""
+                val btcCurrencyId = TokenUtil.tokenForCode(btc)?.currencyId ?: ""
                 if (modeMap[btcCurrencyId] != WalletManagerMode.API_ONLY) {
                     add(
                         SettingsItem(
@@ -353,7 +404,7 @@ class SettingsScreenHandler(
         val mapPath = mapExperiment?.meta.orEmpty().replace("\\/", "/")
         val mapJsonObj = JSONObject(mapPath)
         val url = mapJsonObj.getString("url")
-        
+
         output.accept(E.OnATMMapClicked(url, mapPath))
     }
 }
