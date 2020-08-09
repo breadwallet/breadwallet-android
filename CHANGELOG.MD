@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 - Added the CS branding to the AlertDialogFragment
 - Added the helper button to open in the alert dialog the CashSupport page (1.5.1) about troubleshooting the error: failed to submit transaction.
+- Added the CashUI and removed all the cash ui from bread wallet.
 
 ## [4.4.7]
 ## Fixed
