@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## Known limitation
+- The theme in the cashUI is not handled properly.
+- Send button at the end of the request and in the status checker is not implemented.
+
 ## [4.4.8-beta]
 ## Added
 - Added the CS branding to the AlertDialogFragment
