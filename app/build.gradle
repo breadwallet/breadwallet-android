@@ -343,7 +343,8 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    implementation project(':cashUI')
+//    implementation project(':cashUI')
+    implementation 'com.github.atmcoin:cash-ui-android:1.7-beta'
 }
 
 apply plugin: 'com.google.gms.google-services'
