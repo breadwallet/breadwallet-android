@@ -246,19 +246,17 @@ class RouterNavigationEffectHandler(
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
         router.fragmentManager()?.let {
-            fragmentManager -> {
-                when(effect.articleId) {
-                    FAQ_SET_PIN -> {
-                        CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.PIN), fragmentManager)
-                    }
-                    FAQ_IMPORT_WALLET -> {
-                        CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.IMPORT_WALLET), fragmentManager)
-                    }
-                    FAQ_PAPER_KEY -> {
-                        CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.RECOVERY_KEY), fragmentManager)
-                    } else -> {
-                        CashUI.showSupportPage(CashSupport.Builder(), fragmentManager)
-                    }
+            when(effect.articleId) {
+                FAQ_SET_PIN -> {
+                    CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.PIN), it)
+                }
+                FAQ_IMPORT_WALLET -> {
+                    CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.IMPORT_WALLET), it)
+                }
+                FAQ_PAPER_KEY -> {
+                    CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.RECOVERY_KEY), it)
+                } else -> {
+                    CashUI.showSupportPage(CashSupport.Builder(), it)
                 }
             }
         }
