@@ -22,6 +22,7 @@ buildscript {
         classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.10"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jacoco:org.jacoco.core:$jacocoVersion"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.0"
     }
 }
 
@@ -53,5 +54,15 @@ allprojects  {
             }
         }
         maven { url 'https://jitpack.io' }
+
+        project.ext {
+            versionName = "1.5.1"
+            versionCode = 4
+            compileSdkVersion = 29
+            buildToolsVersion = "29.0.3"
+            //TODO review minsdk, before was 21 but qrcode library has min 24
+            minSdkVersion = 24
+            targetSdkVersion = 29
+        }
     }
 }

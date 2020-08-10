@@ -55,7 +55,7 @@ android {
     defaultConfig {
         testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
         applicationId = 'com.breadwallet'
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 28
 
         versionCode brdVersionCode
