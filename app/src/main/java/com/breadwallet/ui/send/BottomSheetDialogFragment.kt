@@ -1,12 +1,12 @@
 package com.breadwallet.ui.send
 
-import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import androidx.fragment.app.FragmentManager
+import com.bluelinelabs.conductor.Router
 
-fun BottomSheetDialogFragment.showIn(activity: Activity?, tag:String = "UNKNOWN_TAG") {
+fun Router.fragmentManager(): FragmentManager? {
     activity?.let {
-        val fragmentManager = (it as AppCompatActivity).supportFragmentManager
-        show(fragmentManager, tag)
+        return (it as AppCompatActivity).supportFragmentManager
     }
+    return null
 }

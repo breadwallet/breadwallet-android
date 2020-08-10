@@ -31,10 +31,9 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import cash.just.support.CashSupport
 import cash.just.support.pages.GeneralSupportPage
-
+import cash.just.ui.CashUI
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
-import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.mobius.nestedConnectable
 import com.breadwallet.tools.animation.SlideDetector
@@ -50,8 +49,9 @@ import com.breadwallet.ui.receive.ReceiveScreen.E
 import com.breadwallet.ui.receive.ReceiveScreen.F
 import com.breadwallet.ui.receive.ReceiveScreen.M
 import com.breadwallet.ui.send.formatFiatForInputUi
-import com.breadwallet.ui.send.showIn
+import com.breadwallet.ui.send.fragmentManager
 import com.breadwallet.ui.view
+import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.CurrencyCode
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.First.first
@@ -142,9 +142,7 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
 
     override fun bindView(output: Consumer<E>) = output.view {
         faq_button.setOnClickListener {
-            val fragment = CashSupport.Builder().detail(GeneralSupportPage.RECEIVE).build()
-                .createDialogFragment()
-            fragment.showIn(activity)
+            CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.RECEIVE), router.fragmentManager()!!)
         }
         share_button.onClick(E.OnShareClicked)
         close_button.onClick(E.OnCloseClicked)

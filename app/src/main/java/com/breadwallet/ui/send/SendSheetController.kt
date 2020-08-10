@@ -38,6 +38,7 @@ import androidx.core.view.isVisible
 import cash.just.support.CashSupport
 import cash.just.support.pages.GeneralSupportPage
 import cash.just.support.pages.TroubleShootingPage
+import cash.just.ui.CashUI
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
@@ -178,10 +179,7 @@ class SendSheetController(args: Bundle? = null) :
     override fun onHelpClicked(dialogId: String, controller: AlertDialogController) {
         if (dialogId == DIALOG_PAYMENT_ERROR) {
             // check if fastsync is off to show error: could not publish transaction
-            CashSupport.Builder()
-                .detail(TroubleShootingPage.ERROR_PUBLISH_TRANSACTION_P2P)
-                .build()
-                .createDialogFragment().showIn(activity)
+            CashUI.showSupportPage(CashSupport.Builder().detail(TroubleShootingPage.ERROR_PUBLISH_TRANSACTION_P2P), router.fragmentManager()!!)
         }
     }
 
@@ -210,9 +208,7 @@ class SendSheetController(args: Bundle? = null) :
             buttonFaq.clicks().map {
                 activity?.let {
                     if (it is AppCompatActivity) {
-                        val fragment = CashSupport.Builder().detail(GeneralSupportPage.SEND).build()
-                            .createDialogFragment()
-                        fragment.show(it.supportFragmentManager, "tag")
+                        CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.SEND), router.fragmentManager()!!)
                     }
                 }
 
