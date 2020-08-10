@@ -1,1 +1,3 @@
 include ':app'
+include ':cashUI'
+project(':cashUI').projectDir = file("../cash-ui-android/cashUI")
