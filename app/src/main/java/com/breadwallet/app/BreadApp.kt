@@ -83,7 +83,6 @@ import com.platform.sqlite.PlatformSqliteHelper
 import com.platform.tools.KVStoreManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -174,7 +173,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
          * Initialize the wallet id (rewards id), and save it in the SharedPreferences.
          */
         private fun initializeWalletId() {
-            GlobalScope.launch(Dispatchers.Main) {
+            applicationScope.launch(Dispatchers.Main) {
                 val walletId = getBreadBox()
                     .wallets(false)
                     .mapNotNull { wallets ->
