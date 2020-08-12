@@ -51,7 +51,6 @@ import com.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
@@ -522,7 +521,7 @@ class CryptoUserManager(
 
     private fun startDisabledTimer(failTimestamp: Long) {
         if (failTimestamp > 0) {
-            GlobalScope.launch {
+            BreadApp.applicationScope.launch {
                 val secureTime = BRSharedPrefs.getSecureTime()
                 val disableUntil = disabledUntil(getFailCount(), failTimestamp)
                 val delaySeconds = ((disableUntil - secureTime) / 1000).toInt()
