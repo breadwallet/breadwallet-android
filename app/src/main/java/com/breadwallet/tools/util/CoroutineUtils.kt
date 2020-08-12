@@ -26,6 +26,7 @@ package com.breadwallet.tools.util
 
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logWarning
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
 
@@ -62,12 +63,13 @@ suspend fun <R> netRetry(
     repeat(retryAttempts - 1) { retryIndex ->
         logDebug("Retry attempt $retryIndex")
 
-        runCatching {
+        try {
             return when (timeoutMs) {
                 -1L -> block()
                 else -> withTimeout(timeoutMs) { block() }
             }
-        }.onFailure { e ->
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
             logWarning("Network call attempt failed", e)
         }
         val nextDelay = delayMs * (retryIndex + 1)
