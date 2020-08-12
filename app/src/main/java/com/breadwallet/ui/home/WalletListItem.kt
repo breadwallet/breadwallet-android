@@ -51,7 +51,7 @@ class WalletListItem(
 
         private val boundScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-        override fun bindView(item: WalletListItem, payloads: MutableList<Any>) {
+        override fun bindView(item: WalletListItem, payloads: List<Any>) {
             val wallet = item.model
             val context = containerView.context
             val currencyCode = wallet.currencyCode
