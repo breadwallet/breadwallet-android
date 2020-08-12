@@ -177,7 +177,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         super.onDestroy()
         trackingListener?.run(router::removeChangeListener)
         trackingListener = null
-        (applicationContext as BreadApp).setDelayServerShutdown(false, -1)
         resumedScope.cancel()
     }
 

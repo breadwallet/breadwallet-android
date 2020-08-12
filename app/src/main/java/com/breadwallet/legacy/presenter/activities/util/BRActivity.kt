@@ -74,7 +74,6 @@ abstract class BRActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         resumedScope.cancel()
-        (applicationContext as BreadApp).setDelayServerShutdown(false, -1)
     }
 
     override fun onResume() {

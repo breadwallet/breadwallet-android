@@ -31,9 +31,6 @@ import android.content.Context
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.CameraXConfig
@@ -352,11 +349,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         }
     }
 
-    private var mDelayServerShutdownCode = -1
-    private var mDelayServerShutdown = false
-    private var mServerShutdownHandler: Handler? = null
-    private var mServerShutdownRunnable: Runnable? = null
-
     private var accountLockJob: Job? = null
 
     private val apiClient by instance<APIClient>()
@@ -406,7 +398,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
     private fun handleOnStart() {
         accountLockJob?.cancel()
         BreadBoxCloseWorker.cancelEnqueuedWork()
-        setDelayServerShutdown(false, -1)
         val breadBox = getBreadBox()
         userManager
             .stateChanges()
@@ -431,41 +422,18 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
                 EventUtils.saveEvents(this@BreadApp)
                 EventUtils.pushToServer(this@BreadApp)
             }
-            if (!mDelayServerShutdown) {
-                logDebug("Shutting down HTTPServer.")
-                HTTPServer.getInstance().stopServer()
-            } else {
-                // If server shutdown needs to be delayed, it will occur after
-                // SERVER_SHUTDOWN_DELAY_MILLIS.  This may be cancelled if the app
-                // is closed before execution or the user returns to the app.
-                logDebug("Delaying HTTPServer shutdown.")
-                if (mServerShutdownHandler == null) {
-                    mServerShutdownHandler = Handler(Looper.getMainLooper())
-                }
-                mServerShutdownRunnable = Runnable {
-                    logDebug("Shutdown delay elapsed, shutting down HTTPServer.")
-                    HTTPServer.getInstance().stopServer()
-                    mServerShutdownRunnable = null
-                    mServerShutdownHandler = null
-                }
-                mServerShutdownHandler!!.postDelayed(
-                    mServerShutdownRunnable,
-                    SERVER_SHUTDOWN_DELAY_MILLIS
-                )
-            }
+
         }
+        logDebug("Shutting down HTTPServer.")
+        HTTPServer.getInstance().stopServer()
+
         startedScope.coroutineContext.cancelChildren()
     }
 
     private fun handleOnDestroy() {
         if (HTTPServer.getInstance().isRunning) {
-            if (mServerShutdownHandler != null && mServerShutdownRunnable != null) {
-                logDebug("Preempt delayed server shutdown callback")
-                mServerShutdownHandler!!.removeCallbacks(mServerShutdownRunnable)
-            }
             logDebug("Shutting down HTTPServer.")
             HTTPServer.getInstance().stopServer()
-            mDelayServerShutdown = false
         }
 
         getBreadBox().apply { if (isOpen) close() }
@@ -510,35 +478,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
             BRSharedPrefs.APP_FOREGROUNDED_COUNT,
             BRSharedPrefs.getInt(BRSharedPrefs.APP_FOREGROUNDED_COUNT, 0) + 1
         )
-    }
-
-    /**
-     * When delayServerShutdown is true, the HTTPServer will remain
-     * running after onStop, until onDestroy.
-     */
-    @Synchronized
-    fun setDelayServerShutdown(delayServerShutdown: Boolean, requestCode: Int) {
-        Log.d(TAG, "setDelayServerShutdown($delayServerShutdown, $requestCode)")
-        val isMatchingRequestCode = mDelayServerShutdownCode == requestCode ||
-            requestCode == -1 || // Force the update regardless of current request
-            mDelayServerShutdownCode == -1 // No initial request
-
-        if (isMatchingRequestCode) {
-            mDelayServerShutdown = delayServerShutdown
-            mDelayServerShutdownCode = requestCode
-            if (!mDelayServerShutdown &&
-                mServerShutdownRunnable != null &&
-                mServerShutdownHandler != null
-            ) {
-                Log.d(TAG, "Cancelling delayed HTTPServer execution.")
-                mServerShutdownHandler!!.removeCallbacks(mServerShutdownRunnable)
-                mServerShutdownHandler = null
-                mServerShutdownRunnable = null
-            }
-            if (!mDelayServerShutdown) {
-                mDelayServerShutdownCode = -1
-            }
-        }
     }
 
     private fun createEncryptedPrefs(): SharedPreferences? {
