@@ -115,6 +115,7 @@ import java.util.regex.Pattern
 
 private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val ENCRYPTED_PREFS_FILE = "crypto_shared_prefs"
+private const val WALLETKIT_DATA_DIR_NAME = "cryptocore"
 
 @Suppress("TooManyFunctions")
 class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
@@ -154,11 +155,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         )
 
         fun getBreadBox(): BreadBox = mInstance.direct.instance()
-
-        // TODO: For code organization only, to be removed
-        fun getStorageDir(context: Context): File {
-            return File(context.filesDir, "cryptocore")
-        }
 
         // TODO: Find better place/means for this
         fun getDefaultEnabledWallets() = when {
@@ -324,7 +320,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         bind<BreadBox>() with singleton {
             CoreBreadBox(
-                getStorageDir(this@BreadApp),
+                File(filesDir, WALLETKIT_DATA_DIR_NAME),
                 !BuildConfig.BITCOIN_TESTNET,
                 instance(),
                 instance(),
@@ -515,7 +511,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
             }
             (userManager as CryptoUserManager).wipeAccount()
 
-            getStorageDir(this).deleteRecursively()
+            File(filesDir, WALLETKIT_DATA_DIR_NAME).deleteRecursively()
 
             PlatformSqliteHelper.getInstance(this)
                 .writableDatabase
