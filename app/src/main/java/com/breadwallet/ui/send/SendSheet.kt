@@ -197,6 +197,8 @@ object SendSheet {
         val hederaMemo: TransferField? =
             transferFields.find { it.key == TransferField.HEDERA_MEMO }
 
+        val isDestinationTagFromPayId: Boolean = isPayId && !(destinationTag?.value.isNullOrBlank() ?: true)
+
         companion object {
 
             /** Create a [SendSheetModel] using only the required values. */
@@ -588,4 +590,13 @@ fun CryptoRequest.asSendSheetModel(fiatCode: String) =
             else -> emptyList()
         }
     )
+
+fun List<TransferField>.copy(key: String, value: String): List<TransferField> = map { transferField ->
+    if (transferField.key == key) {
+        transferField.copy(value = value)
+    } else {
+        transferField
+    }
+}
+
 

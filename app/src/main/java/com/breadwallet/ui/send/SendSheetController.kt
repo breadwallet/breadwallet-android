@@ -457,10 +457,12 @@ class SendSheetController(args: Bundle? = null) :
                 if ((destinationTag.value.isNullOrBlank() &&
                         !textInputDestinationTag.text.isNullOrBlank()) ||
                     (!destinationTag.value.isNullOrBlank() &&
-                        textInputDestinationTag.text.isNullOrBlank())
+                        textInputDestinationTag.text.isNullOrBlank()) || isDestinationTagFromPayId
                 ) {
                     textInputDestinationTag.setText(currentModel.destinationTag?.value)
                 }
+
+                textInputDestinationTag.isEnabled = !isDestinationTagFromPayId
             }
         }
 
