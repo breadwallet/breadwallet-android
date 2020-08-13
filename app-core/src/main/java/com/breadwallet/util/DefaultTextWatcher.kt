@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 8/6/19.
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 6/2/2019.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,31 +22,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.model
+package com.breadwallet.util
 
-import java.util.*
-import kotlin.math.absoluteValue
+import android.text.Editable
+import android.text.TextWatcher
 
 /**
- * Price change of a currency over the last 24Hrs.
+ * A [TextWatcher] with default implementations to reduce
+ * lines of code when adding [TextWatcher]s.
  */
-data class PriceChange (val changePercentage24Hrs: Double,
-                        val change24Hrs: Double) {
+open class DefaultTextWatcher : TextWatcher {
+    override fun afterTextChanged(s: Editable?) = Unit
 
-    private val arrow : String = when {
-        change24Hrs > 0 -> "\u25B4"
-        change24Hrs < 0 -> "\u25BE"
-        else -> ""
-    }
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
-    override fun toString(): String {
-        val amount = String.format(Locale.getDefault(), "%.2f", change24Hrs.absoluteValue)
-        val percentage = String.format(Locale.getDefault(), "%.2f", changePercentage24Hrs.absoluteValue)
-        return "$arrow $percentage% ($amount)"
-    }
-
-    fun getPercentageChange(): String {
-        val percentage = String.format(Locale.getDefault(), "%.2f", changePercentage24Hrs.absoluteValue)
-        return "$arrow $percentage%"
-    }
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
 }

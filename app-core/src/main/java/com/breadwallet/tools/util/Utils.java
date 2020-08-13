@@ -20,8 +20,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.breadwallet.tools.manager.BRSharedPrefs;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -94,7 +92,6 @@ public class Utils {
         String specsTag = "PHONE SPECS";
         Log.e(specsTag, "");
         Log.e(specsTag, "***************************PHONE SPECS***************************");
-        Log.e(specsTag, "* screen X: " + BRSharedPrefs.getScreenWidth() + " , screen Y: " + BRSharedPrefs.getScreenHeight());
         Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();

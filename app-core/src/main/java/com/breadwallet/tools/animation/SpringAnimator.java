@@ -1,18 +1,12 @@
 package com.breadwallet.tools.animation;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
 
-import com.breadwallet.R;
+import com.breadwallet.appcore.R;
 
 /**
  * BreadWallet

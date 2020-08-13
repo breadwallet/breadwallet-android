@@ -5,9 +5,6 @@ import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.FragmentManager;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Looper;
 import android.util.Log;
@@ -16,13 +13,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 
-import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.ui.MainActivity;
-import com.breadwallet.ui.wallet.WalletController;
-
-import java.util.List;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * BreadWallet

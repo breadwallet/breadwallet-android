@@ -47,7 +47,6 @@ import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.models.TransactionState
 import com.breadwallet.ui.wallet.WalletScreen.E
 import com.breadwallet.ui.wallet.WalletScreen.F
-import com.platform.util.AppReviewPromptManager
 import com.spotify.mobius.Connectable
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
@@ -60,7 +59,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.transformLatest
 import java.math.BigDecimal
 import kotlin.math.min
 

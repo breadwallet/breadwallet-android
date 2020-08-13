@@ -237,6 +237,7 @@ clean {
 }
 
 dependencies {
+    implementation project(":app-core")
     implementation "com.breadwallet.core:corecrypto-android:$core_version"
 
     // AndroidX
