@@ -68,7 +68,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import kotlin.math.absoluteValue
 
 /** Default port for [NetworkPeer] */
 private const val DEFAULT_PORT = 8333L

@@ -1,8 +1,8 @@
 /**
  * BreadWallet
  *
- * Created by Drew Carlson <drew.carlson@breadwallet.com> on 10/1/19.
- * Copyright (c) 2019 breadwallet LLC
+ * Created by Shivangi Gandhi on <shivangi@brd.com> 7/25/18.
+ * Copyright (c) 2018 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,16 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.legacy.wallet.entities
+package com.breadwallet.protocols.messageexchange.entities
 
-import java.io.Serializable
+import android.os.Parcelable
 
-data class GenericTransactionMetaData(
-    val targetAddress: String,
-    val amount: String,
-    val amountUnit: Unit,
-    val gasPrice: Long = 0,
-    val gasPriceUnit: Unit,
-    val gasLimit: Long = 0,
-    val data: String
-) : Serializable
+abstract class MetaData(
+    val id: String
+) : Parcelable
