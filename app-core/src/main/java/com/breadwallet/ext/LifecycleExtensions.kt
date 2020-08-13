@@ -33,7 +33,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.fragment.app.FragmentActivity
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -51,8 +50,8 @@ inline fun <reified T : ViewModel> FragmentActivity.viewModel(
             override fun <T2 : ViewModel?> create(modelClass: Class<T2>): T2 =
                 factory() as T2
         }
-        ViewModelProviders.of(this, vmFactory).get(T::class.java)
-    } else ViewModelProviders.of(this).get(T::class.java)
+        ViewModelProvider(this, vmFactory).get(T::class.java)
+    } else ViewModelProvider(this).get(T::class.java)
 }
 
 /**

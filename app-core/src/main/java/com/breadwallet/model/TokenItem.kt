@@ -24,7 +24,6 @@
  */
 package com.breadwallet.model
 
-import com.breadwallet.BuildConfig
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isEthereum
@@ -45,21 +44,19 @@ data class TokenItem(
 
     val isNative: Boolean = type.isBlank()
 
-    val urlScheme: String?
-        get() = when {
-            symbol.isEthereum() || type == "erc20" -> "ethereum"
-            symbol.isRipple() -> "xrp"
-            symbol.isBitcoin() -> "bitcoin"
-            symbol.isBitcoinCash() -> when {
-                BuildConfig.BITCOIN_TESTNET -> "bchtest"
-                else -> "bitcoincash"
-            }
-            else -> null
+    fun urlScheme(testnet: Boolean): String? = when {
+        symbol.isEthereum() || type == "erc20" -> "ethereum"
+        symbol.isRipple() -> "xrp"
+        symbol.isBitcoin() -> "bitcoin"
+        symbol.isBitcoinCash() -> when {
+            testnet -> "bchtest"
+            else -> "bitcoincash"
         }
+        else -> null
+    }
 
-    val urlSchemes: List<String>
-        get() = when {
-            symbol.isRipple() -> listOf(urlScheme!!, "xrpl", "ripple")
-            else -> urlScheme?.run(::listOf) ?: emptyList()
-        }
+    fun urlSchemes(testnet: Boolean): List<String> = when {
+        symbol.isRipple() -> listOfNotNull(urlScheme(testnet), "xrpl", "ripple")
+        else -> urlScheme(testnet)?.run(::listOf) ?: emptyList()
+    }
 }
