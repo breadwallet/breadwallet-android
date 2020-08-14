@@ -148,6 +148,7 @@ class ConfirmTxController(
                 else -> when (transferSpeed) {
                     TransferSpeed.ECONOMY -> R.string.FeeSelector_economyTime
                     TransferSpeed.REGULAR -> R.string.FeeSelector_regularTime
+                    TransferSpeed.SPEEDY -> R.string.FeeSelector_regularTime
                     TransferSpeed.PRIORITY -> R.string.FeeSelector_priorityTime
                 }
             }
