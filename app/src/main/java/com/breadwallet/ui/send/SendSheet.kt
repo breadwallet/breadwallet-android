@@ -207,7 +207,8 @@ object SendSheet {
                 fiatCode: String
             ) = M(
                 currencyCode = currencyCode,
-                fiatCode = fiatCode
+                fiatCode = fiatCode,
+                transferSpeed = if (currencyCode.isBitcoin()) TransferSpeed.REGULAR  else TransferSpeed.SPEEDY
             )
         }
 
