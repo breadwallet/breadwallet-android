@@ -29,7 +29,6 @@ import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object LoginScreen {
@@ -51,11 +50,6 @@ object LoginScreen {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "LoginScreen",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
         object OnFingerprintClicked : E()
         object OnPinLocked : E()

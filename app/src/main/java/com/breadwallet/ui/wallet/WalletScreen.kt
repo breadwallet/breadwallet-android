@@ -33,7 +33,6 @@ import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.platform.entities.TxMetaData
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
@@ -84,11 +83,6 @@ object WalletScreen {
                 filterPending || filterComplete
     }
 
-    @MobiusUpdateSpec(
-        prefix = "WalletScreen",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
         data class OnSyncProgressUpdated(
             val progress: Float,

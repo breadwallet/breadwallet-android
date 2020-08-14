@@ -1,8 +1,8 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 11/05/19.
- * Copyright (c) 2019 breadwallet LLC
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 8/14/20.
+ * Copyright (c) 2020 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,44 +24,21 @@
  */
 package com.breadwallet.ui.settings.nodeselector
 
-import com.breadwallet.crypto.WalletManagerState
-import com.breadwallet.ui.ViewEffect
-import io.sweers.redacted.annotation.Redacted
+import com.spotify.mobius.Next
 
-object NodeSelector {
-
-    enum class Mode { AUTOMATIC, MANUAL }
-
-    data class M(
-        val mode: Mode? = null,
-        @Redacted val currentNode: String = "",
-        val connected: Boolean = false
-    ) {
-
-        companion object {
-            fun createDefault() = M()
-        }
+interface NodeSelectorUpdateSpec {
+    fun patch(model: NodeSelector.M, event: NodeSelector.E): Next<NodeSelector.M, NodeSelector.F> = when (event) {
+        NodeSelector.E.OnSwitchButtonClicked -> onSwitchButtonClicked(model)
+        is NodeSelector.E.OnConnectionStateUpdated -> onConnectionStateUpdated(model, event)
+        is NodeSelector.E.OnConnectionInfoLoaded -> onConnectionInfoLoaded(model, event)
+        is NodeSelector.E.SetCustomNode -> setCustomNode(model, event)
     }
 
-    sealed class E {
-        object OnSwitchButtonClicked : E()
+    fun onSwitchButtonClicked(model: NodeSelector.M): Next<NodeSelector.M, NodeSelector.F>
 
-        data class OnConnectionStateUpdated(
-            val state: WalletManagerState
-        ) : E()
+    fun onConnectionStateUpdated(model: NodeSelector.M, event: NodeSelector.E.OnConnectionStateUpdated): Next<NodeSelector.M, NodeSelector.F>
 
-        data class OnConnectionInfoLoaded(
-            val mode: Mode,
-            @Redacted val node: String = ""
-        ) : E()
+    fun onConnectionInfoLoaded(model: NodeSelector.M, event: NodeSelector.E.OnConnectionInfoLoaded): Next<NodeSelector.M, NodeSelector.F>
 
-        data class SetCustomNode(@Redacted val node: String) : E()
-    }
-
-    sealed class F {
-        object ShowNodeDialog : F(), ViewEffect
-        object LoadConnectionInfo : F()
-        object SetToAutomatic : F()
-        data class SetCustomNode(@Redacted val node: String) : F()
-    }
+    fun setCustomNode(model: NodeSelector.M, event: NodeSelector.E.SetCustomNode): Next<NodeSelector.M, NodeSelector.F>
 }

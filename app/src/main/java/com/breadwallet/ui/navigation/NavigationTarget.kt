@@ -30,7 +30,6 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.auth.AuthenticationController.Mode
 import com.breadwallet.ui.settings.SettingsSection
-import drewcarlson.switchboard.MobiusHandlerSpec
 import io.sweers.redacted.annotation.Redacted
 
 /**
@@ -42,7 +41,6 @@ interface NavigationEffect : ViewEffect {
     val navigationTarget: NavigationTarget
 }
 
-@MobiusHandlerSpec
 sealed class NavigationTarget {
     data class SendSheet(
         val currencyId: String,

@@ -1,8 +1,8 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 11/05/19.
- * Copyright (c) 2019 breadwallet LLC
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 8/14/20.
+ * Copyright (c) 2020 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,34 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.settings.segwit
+package com.breadwallet.ui.showkey
 
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationTarget
+import com.spotify.mobius.Next
 
-object EnableSegWit {
-
-    data class M(val state: State = State.ENABLE) {
-        enum class State {
-            ENABLE, CONFIRMATION, DONE
-        }
+interface ShowPaperKeyUpdateSpec {
+    fun patch(model: ShowPaperKey.M, event: ShowPaperKey.E): Next<ShowPaperKey.M, ShowPaperKey.F> = when (event) {
+        ShowPaperKey.E.OnNextClicked -> onNextClicked(model)
+        ShowPaperKey.E.OnPreviousClicked -> onPreviousClicked(model)
+        ShowPaperKey.E.OnCloseClicked -> onCloseClicked(model)
+        is ShowPaperKey.E.OnPageChanged -> onPageChanged(model, event)
     }
 
-    sealed class E {
-        object OnEnableClick : E()
-        object OnContinueClicked : E()
-        object OnCancelClicked : E()
-        object OnBackClicked : E()
-        object OnDoneClicked : E()
-    }
+    fun onNextClicked(model: ShowPaperKey.M): Next<ShowPaperKey.M, ShowPaperKey.F>
 
-    sealed class F {
-        object GoBack : F(),  NavigationEffect {
-            override val navigationTarget = NavigationTarget.Back
-        }
-        object GoToHome : F(), NavigationEffect {
-            override val navigationTarget = NavigationTarget.Home
-        }
-        object EnableSegWit : F()
-    }
+    fun onPreviousClicked(model: ShowPaperKey.M): Next<ShowPaperKey.M, ShowPaperKey.F>
+
+    fun onCloseClicked(model: ShowPaperKey.M): Next<ShowPaperKey.M, ShowPaperKey.F>
+
+    fun onPageChanged(model: ShowPaperKey.M, event: ShowPaperKey.E.OnPageChanged): Next<ShowPaperKey.M, ShowPaperKey.F>
 }

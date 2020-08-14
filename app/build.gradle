@@ -5,7 +5,6 @@ plugins {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'io.sweers.redacted.redacted-plugin'
 apply from: file("../gradle/google-services.gradle")
@@ -145,12 +144,6 @@ android {
         variant.outputs.all { output ->
             outputFileName = "${output.baseName}-${brdInternalVersionName}.apk"
         }
-
-        // Add kapt generated sources, required only for IntelliJ IDEA compatibility
-        variant.sourceSets
-                .find { it.name == variant.name }
-                .java
-                .srcDirs += "$buildDir/generated/source/kaptKotlin/${variant.name}/"
     }
 
     compileOptions {
@@ -308,9 +301,6 @@ dependencies {
     testImplementation "com.spotify.mobius:mobius-test:$mobius_version"
 
     implementation "drewcarlson.mobius:mobius-coroutines:$mobius_coroutines_version"
-
-    compileOnly "drewcarlson.switchboard:api-mobius:$switchboard_version"
-    kapt "drewcarlson.switchboard:generator-mobius:$switchboard_version"
 
     // Fastadapter
     implementation "com.mikepenz:fastadapter:$fastadapter_version"

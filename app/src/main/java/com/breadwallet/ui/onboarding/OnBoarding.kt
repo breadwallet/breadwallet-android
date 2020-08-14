@@ -27,7 +27,6 @@ package com.breadwallet.ui.onboarding
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
-import drewcarlson.switchboard.MobiusUpdateSpec
 
 object OnBoarding {
 
@@ -51,11 +50,6 @@ object OnBoarding {
         val isFirstPage = page == 1
     }
 
-    @MobiusUpdateSpec(
-        prefix = "OnBoarding",
-        baseEffect = F::class,
-        baseModel = M::class
-    )
     sealed class E {
         data class OnPageChanged(val page: Int) : E()
         object OnSkipClicked : E()
