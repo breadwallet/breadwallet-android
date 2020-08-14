@@ -1,8 +1,8 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 6/10/19.
- * Copyright (c) 2019 breadwallet LLC
+ * Created by Shivangi Gandhi on <shivangi@brd.com> 7/25/18.
+ * Copyright (c) 2018 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,35 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.model
+package com.breadwallet.protocols.messageexchange.entities
 
-import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
-/**
- * In-app message model.
- */
 @Parcelize
-data class InAppMessage(
-        val id: String,
-        val type: Type,
-        val messageId: String,
-        val title: String,
-        val body: String,
-        val actionButtonText: String?,
-        val actionButtonUrl: String?,
-        val imageUrl: String?
-) : Parcelable {
-
-    enum class Type {
-        IN_APP_NOTIFICATION, // Notifications that will be shown while the user is using the app.
-        UNKNOWN;
-
-        companion object {
-            fun fromString(value: String): Type = when (value) {
-                "inApp" -> IN_APP_NOTIFICATION
-                else -> UNKNOWN
-            }
-        }
-    }
-}
+class LinkMetaData(
+    val serviceMetaData: ServiceMetaData?
+) : MetaData("")

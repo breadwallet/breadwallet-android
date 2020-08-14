@@ -24,21 +24,12 @@
  */
 package com.breadwallet.tools.sqlite;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import com.breadwallet.BuildConfig;
-import com.breadwallet.legacy.presenter.entities.BRTransactionEntity;
-import com.breadwallet.tools.util.BRConstantsKt;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final String TAG = BRSQLiteHelper.class.getName();
@@ -61,10 +52,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
      */
     public static final String MB_TABLE_NAME_OLD = "merkleBlockTable";
     public static final String MB_TABLE_NAME = "merkleBlockTable_v2";
-    public static final String MB_COLUMN_ID = "_id";
-    public static final String MB_BUFF = "merkleBlockBuff";
-    public static final String MB_HEIGHT = "merkleBlockHeight";
-    public static final String MB_ISO = "merkleBlockIso";
 
     /**
      * Transaction table
@@ -72,23 +59,15 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static final String TX_TABLE_NAME_OLD = "transactionTable";
     public static final String TX_TABLE_NAME = "transactionTable_v2";
-    public static final String TX_COLUMN_ID = "_id";
     public static final String TX_BUFF = "transactionBuff";
     public static final String TX_BLOCK_HEIGHT = "transactionBlockHeight";
-    public static final String TX_TIME_STAMP = "transactionTimeStamp";
-    public static final String TX_ISO = "transactionISO";
 
     /**
      * Peer table
      */
 
     public static final String PEER_TABLE_NAME_OLD = "peerTable";
-    public static final String PEER_TABLE_NAME = "peerTable_v2";
-    public static final String PEER_COLUMN_ID = "_id";
     public static final String PEER_ADDRESS = "peerAddress";
-    public static final String PEER_PORT = "peerPort";
-    public static final String PEER_TIMESTAMP = "peerTimestamp";
-    public static final String PEER_ISO = "peerIso";
 
     /**
      * Currency table
@@ -112,47 +91,23 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        //drop peers table due to multiple changes
-
-        //database.execSQL(MB_DATABASE_CREATE);
-        //database.execSQL(TX_DATABASE_CREATE);
-        //database.execSQL(PEER_DATABASE_CREATE);
         database.execSQL(CURRENCY_DATABASE_CREATE);
-
-//        printTableStructures(database, MB_TABLE_NAME);
-//        printTableStructures(database, TX_TABLE_NAME);
-//        printTableStructures(database, PEER_TABLE_NAME);
-//        printTableStructures(database, CURRENCY_TABLE_NAME);
-
-//        database.execSQL("PRAGMA journal_mode=WRITE_AHEAD_LOGGING;");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
         if (oldVersion < 13 && (newVersion >= 13)) {
             boolean migrationNeeded = !tableExists(MB_TABLE_NAME, db);
             onCreate(db); //create new db tables
 
             if (migrationNeeded)
                 migrateDatabases(db);
-        } else {
-            //drop everything maybe?
-//            db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
-//            db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
-//            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
-//            db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME);
-//            db.execSQL("PRAGMA journal_mode=WRITE_AHEAD_LOGGING;");
         }
-        //recreate if needed
-
     }
 
     private void migrateDatabases(SQLiteDatabase db) {
         db.beginTransaction();
         try {
-            db.execSQL("INSERT INTO " + MB_TABLE_NAME + " (_id, merkleBlockBuff, merkleBlockHeight) SELECT _id, merkleBlockBuff, merkleBlockHeight FROM " + MB_TABLE_NAME_OLD);
-            db.execSQL("INSERT INTO " + TX_TABLE_NAME + " (_id, transactionBuff, transactionBlockHeight, transactionTimeStamp) SELECT _id, transactionBuff, transactionBlockHeight, transactionTimeStamp FROM " + TX_TABLE_NAME_OLD);
             if (tableExists(CURRENCY_TABLE_NAME_OLD, db) && tableExists(CURRENCY_TABLE_NAME, db))
                 db.execSQL("INSERT INTO " + CURRENCY_TABLE_NAME + " (code, name, rate) SELECT code, name, rate FROM " + CURRENCY_TABLE_NAME_OLD);
 
@@ -160,8 +115,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME_OLD);
             db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME_OLD);
             db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME_OLD);
-
-            copyTxsForBch(db);
 
             db.setTransactionSuccessful();
             Log.e(TAG, "migrateDatabases: SUCCESS");
@@ -184,46 +137,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return false;
-    }
-
-    private void copyTxsForBch(SQLiteDatabase db) {
-        List<BRTransactionEntity> transactions = new ArrayList<>();
-        Cursor cursorGet = null;
-        int bCashForkBlockHeight = BuildConfig.BITCOIN_TESTNET ? 1155876 : 478559;
-        int bCashForkTimeStamp = BuildConfig.BITCOIN_TESTNET ? 1501597117 : 1501568580;
-        db.beginTransaction();
-        try {
-            cursorGet = db.query(BRSQLiteHelper.TX_TABLE_NAME,
-                    BtcBchTransactionDataStore.allColumns, BRSQLiteHelper.TX_ISO + "=? AND " + BRSQLiteHelper.TX_BLOCK_HEIGHT + " <?", new String[]{"BTC", String.valueOf(bCashForkBlockHeight)}, null, null, null);
-
-            cursorGet.moveToFirst();
-            while (!cursorGet.isAfterLast()) {
-                BRTransactionEntity transactionEntity = BtcBchTransactionDataStore.cursorToTransaction(null, "BTC", cursorGet);
-                transactions.add(transactionEntity);
-                cursorGet.moveToNext();
-            }
-
-            int count = 0;
-            for (BRTransactionEntity tx : transactions) {
-                ContentValues values = new ContentValues();
-                values.put(BRSQLiteHelper.TX_COLUMN_ID, tx.getTxHash());
-                values.put(BRSQLiteHelper.TX_BUFF, tx.getBuff());
-                values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, tx.getBlockheight());
-                values.put(BRSQLiteHelper.TX_ISO, BRConstantsKt.bch.toUpperCase(Locale.ROOT));
-                values.put(BRSQLiteHelper.TX_TIME_STAMP, tx.getTimestamp());
-
-                db.insert(BRSQLiteHelper.TX_TABLE_NAME, null, values);
-                count++;
-
-            }
-            Log.e(TAG, "copyTxsForBch: copied: " + count);
-            db.setTransactionSuccessful();
-
-        } finally {
-            if (cursorGet != null)
-                cursorGet.close();
-            db.endTransaction();
-        }
     }
 
     public void printTableStructures(SQLiteDatabase db, String tableName) {

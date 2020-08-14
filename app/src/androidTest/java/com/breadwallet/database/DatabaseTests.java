@@ -3,17 +3,12 @@ package com.breadwallet.database;
 import android.app.Activity;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import androidx.test.runner.AndroidJUnit4;
 import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
-import com.breadwallet.legacy.presenter.entities.BRTransactionEntity;
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
-import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.RatesDataSource;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -76,8 +71,6 @@ public class DatabaseTests {
     private void cleanUp() {
         Activity app = mActivityRule.getActivity();
 
-        PeerDataSource.getInstance(app).deleteAllPeers(app, "BTC");
-        PeerDataSource.getInstance(app).deleteAllPeers(app, "BCH");
     }
 
     @After
