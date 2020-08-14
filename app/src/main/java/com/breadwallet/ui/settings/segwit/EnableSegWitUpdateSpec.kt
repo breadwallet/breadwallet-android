@@ -1,8 +1,8 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 11/05/19.
- * Copyright (c) 2019 breadwallet LLC
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 8/14/20.
+ * Copyright (c) 2020 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,32 +24,24 @@
  */
 package com.breadwallet.ui.settings.segwit
 
-import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.NavigationTarget
+import com.spotify.mobius.Next
 
-object EnableSegWit {
-
-    data class M(val state: State = State.ENABLE) {
-        enum class State {
-            ENABLE, CONFIRMATION, DONE
-        }
+interface EnableSegWitUpdateSpec {
+    fun patch(model: EnableSegWit.M, event: EnableSegWit.E): Next<EnableSegWit.M, EnableSegWit.F> = when (event) {
+        EnableSegWit.E.OnEnableClick -> onEnableClick(model)
+        EnableSegWit.E.OnContinueClicked -> onContinueClicked(model)
+        EnableSegWit.E.OnCancelClicked -> onCancelClicked(model)
+        EnableSegWit.E.OnBackClicked -> onBackClicked(model)
+        EnableSegWit.E.OnDoneClicked -> onDoneClicked(model)
     }
 
-    sealed class E {
-        object OnEnableClick : E()
-        object OnContinueClicked : E()
-        object OnCancelClicked : E()
-        object OnBackClicked : E()
-        object OnDoneClicked : E()
-    }
+    fun onEnableClick(model: EnableSegWit.M): Next<EnableSegWit.M, EnableSegWit.F>
 
-    sealed class F {
-        object GoBack : F(),  NavigationEffect {
-            override val navigationTarget = NavigationTarget.Back
-        }
-        object GoToHome : F(), NavigationEffect {
-            override val navigationTarget = NavigationTarget.Home
-        }
-        object EnableSegWit : F()
-    }
+    fun onContinueClicked(model: EnableSegWit.M): Next<EnableSegWit.M, EnableSegWit.F>
+
+    fun onCancelClicked(model: EnableSegWit.M): Next<EnableSegWit.M, EnableSegWit.F>
+
+    fun onBackClicked(model: EnableSegWit.M): Next<EnableSegWit.M, EnableSegWit.F>
+
+    fun onDoneClicked(model: EnableSegWit.M): Next<EnableSegWit.M, EnableSegWit.F>
 }

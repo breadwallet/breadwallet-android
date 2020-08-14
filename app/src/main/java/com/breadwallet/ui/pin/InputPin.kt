@@ -29,7 +29,6 @@ import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 private const val PIN_LENGTH = 6
@@ -64,11 +63,6 @@ object InputPin {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "InputPin",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
 
         object OnFaqClicked : E()

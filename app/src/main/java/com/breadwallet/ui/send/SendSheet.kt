@@ -40,7 +40,6 @@ import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 import kotlinx.android.parcel.Parcelize
 import java.math.BigDecimal
@@ -278,11 +277,6 @@ object SendSheet {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "SendSheet",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
 
         sealed class TransferFieldUpdate : E() {

@@ -28,7 +28,6 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object WriteDownKey {
@@ -44,11 +43,6 @@ object WriteDownKey {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "WriteDownKey",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
 
         object OnCloseClicked : E()

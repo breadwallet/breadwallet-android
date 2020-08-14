@@ -32,7 +32,6 @@ import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.send.TransferField
 import com.breadwallet.util.CurrencyCode
 import com.platform.entities.TxMetaData
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 import java.util.Date
@@ -97,11 +96,6 @@ object TxDetails {
             get() = feeToken.isNotBlank()
     }
 
-    @MobiusUpdateSpec(
-        prefix = "TxDetails",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
         data class OnTransactionUpdated(
             val transaction: Transfer,

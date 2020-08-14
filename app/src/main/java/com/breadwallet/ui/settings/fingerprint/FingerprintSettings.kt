@@ -27,7 +27,6 @@ package com.breadwallet.ui.settings.fingerprint
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
-import drewcarlson.switchboard.MobiusUpdateSpec
 
 object FingerprintSettings {
 
@@ -37,11 +36,6 @@ object FingerprintSettings {
         val sendMoneyEnable: Boolean = false
     )
 
-    @MobiusUpdateSpec(
-        prefix = "FingerprintSettings",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
         object OnBackClicked : E()
         object OnFaqClicked : E()

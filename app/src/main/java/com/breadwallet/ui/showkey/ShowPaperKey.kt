@@ -27,7 +27,6 @@ package com.breadwallet.ui.showkey
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object ShowPaperKey {
@@ -44,11 +43,6 @@ object ShowPaperKey {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "ShowPaperKey",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
 
         object OnNextClicked : E()
