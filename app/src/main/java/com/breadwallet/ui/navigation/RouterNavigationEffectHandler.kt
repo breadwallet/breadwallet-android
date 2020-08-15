@@ -154,7 +154,7 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToTrade() {
-        CashUI.showStatusList(router.activity!!)
+        CashUI.showStatusList(router.activity!!, 0x02)
     }
 
     override fun goToMenu(effect: NavigationEffect.GoToMenu) {
