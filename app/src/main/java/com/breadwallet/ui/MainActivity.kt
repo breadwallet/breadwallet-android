@@ -24,11 +24,14 @@
  */
 package com.breadwallet.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.WindowManager
 import android.widget.Toast
+import cash.just.atm.base.AtmResult
+import cash.just.ui.CashUI
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Controller
@@ -38,12 +41,16 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.app.BreadApp
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
+import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.protocols.messageexchange.MessageExchangeService
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BRKeyStore
 import com.breadwallet.tools.security.KeyStore
+import com.breadwallet.tools.util.BRConstants.ATM_ACTIVITY_REQUEST_CODE
+import com.breadwallet.tools.util.BRConstants.ATM_MAP_REQUEST_CODE
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.ServerBundlesHelper
@@ -201,6 +208,47 @@ class MainActivity : BRActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         router.onActivityResult(requestCode, resultCode, data)
         KeyStore.onActivityResult(requestCode, resultCode)
+
+        if (resultCode == Activity.RESULT_OK) {
+            when(requestCode) {
+                ATM_MAP_REQUEST_CODE,
+                ATM_ACTIVITY_REQUEST_CODE -> {
+                    data?.let{
+                        parseIntent(it)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun parseIntent(data:Intent) {
+        when(CashUI.getResult(data)) {
+            AtmResult.SEND -> {
+                CashUI.getSendData(data)?.let {
+                    goToSend(it.btcAmount, it.address)
+                }
+            }
+            AtmResult.DETAILS -> {
+                CashUI.getDetailsData(data)?.let {
+                    CashUI.showStatus(this, it.secureCode, ATM_ACTIVITY_REQUEST_CODE)
+                }
+            }
+        }
+    }
+
+    private fun goToSend(btc: String, address: String) {
+        val builder = CryptoRequest.Builder()
+        builder.address = address
+        builder.amount = btc.toFloat().toBigDecimal()
+        builder.currencyCode = WalletBitcoinManager.BITCOIN_CURRENCY_CODE
+        val request = builder.build()
+        router.replaceTopController(
+            RouterTransaction.with(
+                SendSheetController(
+                    request //make it default
+                )
+            )
+        )
     }
 
     override fun onBackPressed() {

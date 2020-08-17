@@ -32,10 +32,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
+import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.app.BreadApp.Companion.setBreadContext
 import com.breadwallet.legacy.presenter.activities.DisabledActivity
+import com.breadwallet.legacy.presenter.entities.CryptoRequest
+import com.breadwallet.legacy.wallet.wallets.bitcoin.WalletBitcoinManager
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs.getScreenHeight
@@ -50,6 +53,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.recovery.RecoveryKeyActivity
+import com.breadwallet.ui.send.SendSheetController
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
