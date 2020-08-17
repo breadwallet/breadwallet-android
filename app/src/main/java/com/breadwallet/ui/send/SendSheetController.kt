@@ -198,9 +198,9 @@ class SendSheetController(args: Bundle? = null) :
                 }
             },
             buttonCurrencySelect.clicks().map { E.OnToggleCurrencyClicked },
-            buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.REGULAR) },
-            buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.ECONOMY) },
-            buttonPriority.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.PRIORITY) }
+            buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.REGULAR) },
+            buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.ECONOMY) },
+            buttonPriority.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.PRIORITY) }
         )
     }
 
@@ -525,7 +525,7 @@ class SendSheetController(args: Bundle? = null) :
         val context = applicationContext!!
         // TODO: Redo using a toggle button and a selector
         when (feeOption) {
-            TransferSpeed.REGULAR -> {
+            is TransferSpeed.Regular -> {
                 buttonRegular.setTextColor(context.getColor(R.color.white))
                 buttonRegular.background = context.getDrawable(R.drawable.b_blue_square)
                 buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
@@ -537,7 +537,7 @@ class SendSheetController(args: Bundle? = null) :
                     .format(context.getString(R.string.FeeSelector_regularTime))
                 labelFeeWarning.visibility = View.GONE
             }
-            TransferSpeed.ECONOMY -> {
+            is TransferSpeed.Economy -> {
                 buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
                 buttonRegular.background = context.getDrawable(R.drawable.b_blue_square_stroke)
                 buttonEconomy.setTextColor(context.getColor(R.color.white))
@@ -549,7 +549,7 @@ class SendSheetController(args: Bundle? = null) :
                     .format(context.getString(R.string.FeeSelector_economyTime))
                 labelFeeWarning.visibility = View.VISIBLE
             }
-            TransferSpeed.PRIORITY -> {
+            is TransferSpeed.Priority -> {
                 buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
                 buttonRegular.background = context.getDrawable(R.drawable.b_blue_square_stroke)
                 buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
