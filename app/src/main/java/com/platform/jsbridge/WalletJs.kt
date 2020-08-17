@@ -403,7 +403,7 @@ class WalletJs(
         val address = checkNotNull(wallet.addressFor(toAddress))
 
         val limitMaxAmount =
-            wallet.estimateMaximum(address, wallet.feeForSpeed(TransferSpeed.PRIORITY))
+            wallet.estimateMaximum(address, wallet.feeForSpeed(TransferSpeed.Priority(currency)))
 
         checkNotNull(limitMaxAmount)
 
@@ -437,7 +437,11 @@ class WalletJs(
         }
 
         try {
-            return wallet.estimateFee(address, amount, wallet.feeForSpeed(TransferSpeed.PRIORITY))
+            return wallet.estimateFee(
+                address,
+                amount,
+                wallet.feeForSpeed(TransferSpeed.Priority(wallet.currency.code))
+            )
         } catch (e: FeeEstimationError) {
             logError("Failed get fee estimate", e)
         } catch (e: IllegalStateException) {
@@ -487,7 +491,7 @@ class WalletJs(
                     fiatCode,
                     feeBasis.currency.code,
                     address.toSanitizedString(),
-                    TransferSpeed.PRIORITY,
+                    TransferSpeed.Priority(wallet.currency.code),
                     amount.toBigDecimal(),
                     fiatAmount,
                     fiatTotalCost,

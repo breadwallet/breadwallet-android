@@ -57,6 +57,12 @@ data class TransferField(
     }
 }
 
+enum class TransferSpeedInput() {
+    ECONOMY,
+    REGULAR,
+    PRIORITY
+}
+
 object SendSheet {
 
     /**
@@ -111,7 +117,7 @@ object SendSheet {
         val fiatPricePerFeeUnit: BigDecimal = BigDecimal.ZERO,
 
         /** The user selected [TransferSpeed] for this transaction. */
-        val transferSpeed: TransferSpeed = TransferSpeed.REGULAR,
+        val transferSpeed: TransferSpeed = TransferSpeed.Regular(currencyCode),
 
         /** The currency code used for paying transaction fee. */
         val feeCurrencyCode: CurrencyCode = currencyCode,
@@ -206,8 +212,7 @@ object SendSheet {
                 fiatCode: String
             ) = M(
                 currencyCode = currencyCode,
-                fiatCode = fiatCode,
-                transferSpeed = if (currencyCode.isBitcoin()) TransferSpeed.REGULAR  else TransferSpeed.SPEEDY
+                fiatCode = fiatCode
             )
         }
 
@@ -326,7 +331,7 @@ object SendSheet {
         ) : E()
 
         data class OnTransferSpeedChanged(
-            val transferSpeed: TransferSpeed
+            val transferSpeed: TransferSpeedInput
         ) : E()
 
         sealed class OnAmountChange : E() {

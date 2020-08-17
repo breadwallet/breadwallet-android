@@ -122,7 +122,7 @@ class WalletImporter {
         }
         val walletSweeper = checkNotNull(walletSweeper)
 
-        val networkFee = targetWallet.feeForSpeed(TransferSpeed.REGULAR)
+        val networkFee = targetWallet.feeForSpeed(TransferSpeed.Regular(targetWallet.currency.code))
         return try {
             val feeBasis = walletSweeper.estimateFee(networkFee)
             transferFeeBasis = feeBasis
