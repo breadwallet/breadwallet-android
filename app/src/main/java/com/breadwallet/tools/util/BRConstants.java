@@ -73,6 +73,8 @@ public final class BRConstants {
     public static final int REQUEST_PHRASE_BITID = 117;
     public static final int PROVE_PHRASE_REQUEST = 119;
     public static final int UPLOAD_FILE_REQUEST = 120;
+    public static final int ATM_MAP_REQUEST_CODE = 121;
+    public static final int ATM_ACTIVITY_REQUEST_CODE = 122;
 
     /**
      * Request codes for take picture

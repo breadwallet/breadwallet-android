@@ -38,6 +38,7 @@ import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.tools.animation.UiUtils
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.BRConstants.FAQ_IMPORT_WALLET
 import com.breadwallet.tools.util.BRConstants.FAQ_PAPER_KEY
 import com.breadwallet.tools.util.BRConstants.FAQ_SET_PIN
@@ -146,15 +147,15 @@ class RouterNavigationEffectHandler(
     }
 
     private fun goToMap() {
-        CashUI.startCashOutActivityForResult(router.activity!!, 0x01)
+        CashUI.startCashOutActivityForResult(router.activity!!, BRConstants.ATM_MAP_REQUEST_CODE)
     }
 
     override fun goToBuy() {
-            goToMap()
+        goToMap()
     }
 
     override fun goToTrade() {
-        CashUI.showStatusList(router.activity!!, 0x02)
+        CashUI.showStatusList(router.activity!!, BRConstants.ATM_ACTIVITY_REQUEST_CODE)
     }
 
     override fun goToMenu(effect: NavigationEffect.GoToMenu) {
@@ -328,7 +329,7 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToAtmMap() {
-        CashUI.startCashOutActivityForResult(router.activity!!, 0x01)
+        CashUI.startCashOutActivityForResult(router.activity!!, BRConstants.ATM_MAP_REQUEST_CODE)
     }
 
     override fun goToPaperKey(effect: NavigationEffect.GoToPaperKey) {
