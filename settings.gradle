@@ -1,1 +1,7 @@
 include ':app'
+//include ':cashUI'
+//project(':cashUI').projectDir = file("../cash-ui-android/cashUI")
+//include ':supportUI'
+//project(':supportUI').projectDir = file("../cash-ui-android/supportUI")
+//include ':atmUI'
+//project(':atmUI').projectDir = file("../cash-ui-android/atmUI")

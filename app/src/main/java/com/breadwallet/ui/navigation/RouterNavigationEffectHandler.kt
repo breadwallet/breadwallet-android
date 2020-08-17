@@ -25,9 +25,9 @@
 package com.breadwallet.ui.navigation
 
 import android.content.Intent
-import android.os.Bundle
 import cash.just.support.CashSupport
 import cash.just.support.pages.GeneralSupportPage
+import cash.just.ui.CashUI
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router
@@ -46,8 +46,6 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.ui.addwallets.AddWalletsController
-import com.breadwallet.ui.atm.MapController
-import com.breadwallet.ui.atm.StatusListController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.home.HomeController
@@ -60,7 +58,7 @@ import com.breadwallet.ui.provekey.PaperKeyProveController
 import com.breadwallet.ui.receive.ReceiveController
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.send.SendSheetController
-import com.breadwallet.ui.send.showIn
+import com.breadwallet.ui.send.fragmentManager
 import com.breadwallet.ui.settings.SettingsController
 import com.breadwallet.ui.settings.about.AboutController
 import com.breadwallet.ui.settings.analytics.ShareDataController
@@ -148,70 +146,15 @@ class RouterNavigationEffectHandler(
     }
 
     private fun goToMap() {
-        // val url = String.format(
-        //     BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
-        //     HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
-        //     BITCOIN_CURRENCY_CODE
-        // )
-
-        val mapTransaction = MapController(Bundle.EMPTY).asTransaction(
-                VerticalChangeHandler(),
-                VerticalChangeHandler()
-            )
-        when (router.backstack.lastOrNull()?.controller()) {
-            is HomeController -> router.pushController(mapTransaction)
-            else -> {
-                router.setBackstack(
-                    listOf(
-                        HomeController().asTransaction(),
-                        mapTransaction
-                    ),
-                    VerticalChangeHandler()
-                )
-            }
-        }
+        CashUI.startCashOutActivityForResult(router.activity!!, 0x01)
     }
 
     override fun goToBuy() {
             goToMap()
-        // val url = String.format(
-        //     BRConstants.CURRENCY_PARAMETER_STRING_FORMAT,
-        //     HTTPServer.getPlatformUrl(HTTPServer.URL_BUY),
-        //     BITCOIN_CURRENCY_CODE
-        // )
-        // val webTransaction =
-        //     WebController(url).asTransaction(
-        //         VerticalChangeHandler(),
-        //         VerticalChangeHandler()
-        //     )
-        //
-        // when (router.backstack.lastOrNull()?.controller()) {
-        //     is HomeController -> router.pushController(webTransaction)
-        //     else -> {
-        //         router.setBackstack(
-        //             listOf(
-        //                 HomeController().asTransaction(),
-        //                 webTransaction
-        //             ),
-        //             VerticalChangeHandler()
-        //         )
-        //     }
-        // }
     }
 
     override fun goToTrade() {
-        // val url = HTTPServer.getPlatformUrl(HTTPServer.URL_TRADE)
-        // router.pushController(
-        //     WebController(url).asTransaction(
-        //         VerticalChangeHandler(),
-        //         VerticalChangeHandler()
-        //     )
-        // )
-        router.pushController(
-            RouterTransaction.with(StatusListController(Bundle.EMPTY))
-                .popChangeHandler(VerticalChangeHandler())
-                .pushChangeHandler(VerticalChangeHandler())
-        )
+        CashUI.showStatusList(router.activity!!, 0x02)
     }
 
     override fun goToMenu(effect: NavigationEffect.GoToMenu) {
@@ -302,22 +245,19 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToFaq(effect: NavigationEffect.GoToFaq) {
-        when(effect.articleId) {
-            FAQ_SET_PIN -> {
-                CashSupport.Builder().detail(GeneralSupportPage.PIN).build()
-                    .createDialogFragment().showIn(router.activity)
-            }
-            FAQ_IMPORT_WALLET -> {
-                CashSupport.Builder().detail(GeneralSupportPage.IMPORT_WALLET).build()
-                    .createDialogFragment().showIn(router.activity)
-            }
-            FAQ_PAPER_KEY -> {
-                CashSupport.Builder().detail(GeneralSupportPage.RECOVERY_KEY).build()
-                    .createDialogFragment().showIn(router.activity)
-            } else -> {
-                CashSupport.Builder().build()
-                    .createDialogFragment()
-                    .showIn(router.activity)
+        router.fragmentManager()?.let {
+            when(effect.articleId) {
+                FAQ_SET_PIN -> {
+                    CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.PIN), it)
+                }
+                FAQ_IMPORT_WALLET -> {
+                    CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.IMPORT_WALLET), it)
+                }
+                FAQ_PAPER_KEY -> {
+                    CashUI.showSupportPage(CashSupport.Builder().detail(GeneralSupportPage.RECOVERY_KEY), it)
+                } else -> {
+                    CashUI.showSupportPage(CashSupport.Builder(), it)
+                }
             }
         }
     }
@@ -388,11 +328,7 @@ class RouterNavigationEffectHandler(
     }
 
     override fun goToAtmMap() {
-        router.pushController(
-            RouterTransaction.with(MapController(Bundle.EMPTY))
-                .pushChangeHandler(HorizontalChangeHandler())
-                .popChangeHandler(HorizontalChangeHandler())
-        )
+        CashUI.startCashOutActivityForResult(router.activity!!, 0x01)
     }
 
     override fun goToPaperKey(effect: NavigationEffect.GoToPaperKey) {

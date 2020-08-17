@@ -3,6 +3,7 @@ package com.breadwallet.ui.atm
 import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
+import cash.just.atm.AtmSharedPreferencesManager
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

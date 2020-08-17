@@ -3,11 +3,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-## [Unpublished]
+## Known limitation
+- The theme in the cashUI is not handled properly.
+- Send button at the end of the request and in the status checker is not implemented.
+
+## [4.4.8-beta]
 ## Added
 - Added the CS branding to the AlertDialogFragment
 - Added the helper button to open in the alert dialog the CashSupport page (1.5.1) about troubleshooting the error: failed to submit transaction.
-- Added the CashUI and removed all the cash ui from bread wallet.
+- Added the CashUI library and added the main hooks: Map, Request and RequestList.
+## Changed
+- Changed all the supportUI pages to use the new interface in CashUI.
+## Remove
+- Removed mapController and AtmRequestController, StatusListController and StatusController.
+- Removed showIn extension for bottomDialogManager and added router extension to get fragmentManager.
 
 ## [4.4.7]
 ## Fixed

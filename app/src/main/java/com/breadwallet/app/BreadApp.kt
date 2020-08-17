@@ -38,6 +38,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import cash.just.sdk.Cash
 import cash.just.sdk.CashSDK
+import cash.just.ui.CashUI
 import com.breadwallet.BuildConfig
 import com.breadwallet.breadbox.BdbAuthInterceptor
 import com.breadwallet.breadbox.BreadBox
@@ -67,7 +68,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
-import com.breadwallet.ui.atm.BitcoinServer
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.isEthereum
 import com.breadwallet.util.trackAddressMismatch
@@ -453,16 +453,14 @@ class BreadApp : Application(), KodeinAware {
         // display support WebViews during onboarding.
         HTTPServer.getInstance().startServer(this)
 
-        if (!CashSDK.isSessionCreated()) {
-            CashSDK.createSession(BitcoinServer.getServer(), object: Cash.SessionCallback {
-                override fun onSessionCreated(sessionKey: String) {
-                    Log.d("CashSDK", "Failed to start the SDK")
-                }
+        CashUI.init(getServer())
+    }
 
-                override fun onError(errorMessage: String?) {
-                    Log.e("CashSDK", "Failed to start the SDK")
-                }
-            })
+    private fun getServer(): Cash.BtcNetwork{
+        return if (BuildConfig.FLAVOR.contains("testnet", true)) {
+            Cash.BtcNetwork.TEST_NET
+        } else {
+            Cash.BtcNetwork.MAIN_NET
         }
     }
 
