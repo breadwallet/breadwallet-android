@@ -213,7 +213,7 @@ class MainActivity : BRActivity() {
             when(requestCode) {
                 ATM_MAP_REQUEST_CODE,
                 ATM_ACTIVITY_REQUEST_CODE -> {
-                    data?.let{
+                    data?.let {
                         parseIntent(it)
                     }
                 }
