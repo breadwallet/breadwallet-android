@@ -82,7 +82,7 @@ jobs:
           name:  sonar check  
           command: |
                   echo SonarStart
-                  ./gradlew  --console=plain --stacktrace  --debug sonarqube  -Dsonar.organization=$sonar_organization  -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectName=atm-wallet-android -Dsonar.projectKey=atmcoin_atm-wallet-android -Dsonar.login=$sonar_login -Dsonar.branch.name=$CIRCLE_BRANCH  -Dsonar.coverage.jacoco.xmlReportPaths=/home/circleci/repo/app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml -Dsonar.junit.reportPaths=build/test-results/testBrdTestnetDebugUnitTest
+                  ./gradlew  --console=plain --stacktrace   sonarqube  -Dsonar.organization=$sonar_organization  -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectName=atm-wallet-android -Dsonar.projectKey=atmcoin_atm-wallet-android -Dsonar.login=$sonar_login -Dsonar.branch.name=$CIRCLE_BRANCH  -Dsonar.coverage.jacoco.xmlReportPaths=/home/circleci/repo/app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml -Dsonar.junit.reportPaths=build/test-results/testBrdTestnetDebugUnitTest
 
       # save cache
       - save_cache:
