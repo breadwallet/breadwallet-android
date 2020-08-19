@@ -189,8 +189,8 @@ object SendSheet {
         /** True when the necessary inputs to estimate a fee are available. */
         val canEstimateFee: Boolean =
             targetAddress.isNotBlank() &&
+                balance >= amount &&
                 targetInputError == null &&
-                !isTotalCostOverBalance &&
                 !amount.isZero()
 
         /** True when we are displaying the information of a payment request */
