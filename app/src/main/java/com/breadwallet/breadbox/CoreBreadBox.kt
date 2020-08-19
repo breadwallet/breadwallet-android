@@ -62,6 +62,7 @@ import com.platform.interfaces.WalletProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
@@ -82,6 +83,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import java.io.File
 import java.util.Locale
 import java.util.concurrent.Executors
@@ -165,7 +167,7 @@ internal class CoreBreadBox(
 
             networkManager = NetworkManager(
                 system,
-                openScope,
+                openScope + systemExecutor.asCoroutineDispatcher(),
                 listOf(DefaultNetworkInitializer(userManager))
             )
             systemChannel.offer(Unit)
