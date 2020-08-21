@@ -1,9 +1,9 @@
 package com.breadwallet.ui.wallet
 
-import android.text.TextUtils
+import android.graphics.Paint
+import android.text.format.DateUtils
 import android.view.View
-import android.view.ViewGroup
-import android.widget.RelativeLayout
+import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
@@ -17,8 +17,6 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.tx_item.*
 
 private const val DP_120 = 120
-private const val DP_36 = 36
-private const val DP_16 = 16
 private const val PROGRESS_FULL = 100
 
 class TransactionListItem(
@@ -51,28 +49,39 @@ class TransactionListItem(
 
         @Suppress("LongMethod", "ComplexMethod")
         private fun setTexts(transaction: WalletTransaction, isCryptoPreferred: Boolean) {
-            val mContext = containerView.context
+            val context = containerView.context
             val commentString = transaction.memo
 
             val received = transaction.isReceived
-            val amountColor = when {
-                received -> R.color.transaction_amount_received_color
-                else -> R.color.total_assets_usd_color
-            }
 
-            tx_amount.setTextColor(mContext.resources.getColor(amountColor, null))
+            imageTransferDirection.setBackgroundResource(
+                when {
+                    transaction.progress < PROGRESS_FULL ->
+                        R.drawable.transfer_in_progress
+                    transaction.isErrored -> R.drawable.transfer_failed
+                    received -> R.drawable.transfer_receive
+                    else -> R.drawable.transfer_send
+                }
+            )
+
+            tx_amount.setTextColor(
+                context.getColor(
+                    when {
+                        received -> R.color.transaction_amount_received_color
+                        else -> R.color.total_assets_usd_color
+                    }
+                )
+            )
 
             val preferredCurrencyCode = when {
                 isCryptoPreferred -> transaction.currencyCode
                 else -> BRSharedPrefs.getPreferredFiatIso()
             }
-            var amount = when {
+            val amount = when {
                 isCryptoPreferred -> transaction.amount
                 else -> transaction.amountInFiat
-            }
-            if (!received) {
-                amount = amount.negate()
-            }
+            }.run { if (received) this else negate() }
+
             val formattedAmount = when {
                 isCryptoPreferred -> amount.formatCryptoForUi(preferredCurrencyCode)
                 else -> amount.formatFiatForUi(preferredCurrencyCode)
@@ -80,113 +89,86 @@ class TransactionListItem(
 
             tx_amount.text = formattedAmount
 
-            // If this transaction failed, show the "FAILED" indicator in the cell
-            if (transaction.isErrored) {
-                showTransactionFailed(transaction, received)
-            } else {
-                showTransactionProgress(transaction.progress)
-            }
-
-
-
             tx_description.text = when {
                 commentString == null -> ""
                 commentString.isNotEmpty() -> commentString
                 transaction.isFeeForToken ->
-                    mContext.getString(R.string.Transaction_tokenTransfer, transaction.feeToken)
+                    context.getString(R.string.Transaction_tokenTransfer, transaction.feeToken)
                 received -> {
                     val (res, address) = if (transaction.isComplete) {
                         if (transaction.currencyCode.isBitcoinLike()) {
-                            R.string.TransactionDetails_receivedVia to transaction.toAddress
+                            R.string.TransactionDetails_receivedVia to transaction.truncatedToAddress
                         } else {
-                            R.string.TransactionDetails_receivedFrom to transaction.fromAddress
+                            R.string.TransactionDetails_receivedFrom to transaction.truncatedFromAddress
                         }
                     } else {
                         if (transaction.currencyCode.isBitcoinLike()) {
-                            R.string.TransactionDetails_receivingVia to transaction.toAddress
+                            R.string.TransactionDetails_receivingVia to transaction.truncatedToAddress
                         } else {
-                            R.string.TransactionDetails_receivingFrom to transaction.fromAddress
+                            R.string.TransactionDetails_receivingFrom to transaction.truncatedFromAddress
                         }
                     }
-                    mContext.getString(res, address)
+                    context.getString(res, address)
                 }
                 else -> if (transaction.isComplete) {
-                    mContext.getString(R.string.Transaction_sentTo, transaction.toAddress)
+                    context.getString(R.string.Transaction_sentTo, transaction.truncatedToAddress)
                 } else {
-                    mContext.getString(R.string.Transaction_sendingTo, transaction.toAddress)
+                    context.getString(R.string.Transaction_sendingTo, transaction.truncatedToAddress)
                 }
             }
 
-            //if it's 0 we use the current time.
-            val timeStamp =
-                if (transaction.timeStamp == 0L) System.currentTimeMillis() else transaction.timeStamp
+            val timeStamp = transaction.timeStamp
+            tx_date.text = when {
+                timeStamp == 0L || transaction.isPending -> buildString {
+                    append(transaction.confirmations)
+                    append('/')
+                    append(transaction.confirmationsUntilFinal)
+                    append(' ')
+                    append(context.getString(R.string.TransactionDetails_confirmationsLabel))
+                }
+                DateUtils.isToday(timeStamp) -> BRDateUtil.getTime(timeStamp)
+                else -> BRDateUtil.getShortDate(timeStamp)
+            }
 
-            tx_date.text = BRDateUtil.getShortDate(timeStamp)
+            // If this transaction failed, show the "FAILED" indicator in the cell
+            if (transaction.isErrored) {
+                showTransactionFailed()
+            } else {
+                showTransactionProgress(transaction.progress)
+            }
         }
 
         private fun showTransactionProgress(progress: Int) {
             val context = containerView.context
-            tx_failed_button.visibility = View.GONE
-            tx_amount.visibility = View.VISIBLE
+            tx_date.isVisible = true
+            tx_amount.isVisible = true
+            imageTransferDirection.isVisible = true
+
+            val textColor = context.getColor(R.color.total_assets_usd_color)
+            tx_date.setTextColor(textColor)
+            tx_amount.paintFlags = 0 // clear strike-through
+
             if (progress < PROGRESS_FULL) {
-                tx_progress.visibility = View.VISIBLE
-                tx_date.visibility = View.GONE
-                tx_progress.progress = progress
-                tx_description.maxWidth = Utils.getPixelsFromDps(context, DP_120)
-                tx_description.layoutParams = RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                ).apply {
-                    addRule(RelativeLayout.RIGHT_OF, tx_progress.id)
-                    addRule(RelativeLayout.CENTER_VERTICAL)
-                    setMargins(
-                        Utils.getPixelsFromDps(context, DP_16),
-                        Utils.getPixelsFromDps(context, DP_36),
-                        0,
-                        0
-                    )
+                if (imageTransferDirection.progressDrawable == null) {
+                    imageTransferDirection.progressDrawable = context.getDrawable(R.drawable.transfer_progress_drawable)
                 }
+                imageTransferDirection.setProgress(progress, true)
+                tx_description.maxWidth = Utils.getPixelsFromDps(context, DP_120)
             } else {
-                tx_date.visibility = View.VISIBLE
-                tx_progress.visibility = View.INVISIBLE
-                tx_description.layoutParams =
-                    RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        addRule(RelativeLayout.ALIGN_LEFT, tx_date.id)
-                        addRule(RelativeLayout.BELOW, tx_date.id)
-                        addRule(RelativeLayout.START_OF, tx_amount.id)
-                        setMargins(0, 0, 0, 0)
-                    }
+                imageTransferDirection.progressDrawable = null
+                imageTransferDirection.progress = 0
             }
         }
 
-        private fun showTransactionFailed(tx: WalletTransaction, received: Boolean) {
+        private fun showTransactionFailed() {
             val context = containerView.context
-            tx_date.visibility = View.INVISIBLE
-            tx_failed_button.visibility = View.VISIBLE
+            imageTransferDirection.progressDrawable = null
 
-            // Align txn description with respect to 'Failed' msg
-            tx_description.layoutParams =
-                RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    addRule(RelativeLayout.RIGHT_OF, tx_failed_button.id)
-                    addRule(RelativeLayout.CENTER_VERTICAL)
-                    setMargins(Utils.getPixelsFromDps(context, DP_16), 0, 0, 0)
-                }
-
-            if (!received) {
-                tx_description.text =
-                    context.getString(R.string.Transaction_sendingTo)
-                        .format(tx.toAddress)
-                tx_description.ellipsize = TextUtils.TruncateAt.END
-                tx_description.maxWidth = Utils.getPixelsFromDps(context, DP_120)
-            } else {
-                tx_amount.visibility = View.GONE
-            }
+            val errorColor = context.getColor(R.color.ui_error)
+            tx_date.setText(R.string.Transaction_failed)
+            tx_date.setTextColor(errorColor)
+            tx_amount.setTextColor(errorColor)
+            tx_amount.paintFlags = tx_amount.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
         }
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:gravity="center"
+        android:height="40dp"
+        android:width="40dp">
+        <shape
+            android:shape="oval"
+            android:tint="@color/ui_error_transparent"/>
+    </item>
+    <item android:gravity="center"
+          android:drawable="@drawable/ic_close_red"/>
+</layer-list>
