@@ -188,6 +188,31 @@
     <string name="Button.yes">要</string>
     <!-- Camera plugin instruction -->
     <string name="CameraPlugin.centerInstruction">將您的 ID 在方塊置中</string>
+    <string name="CloudBackup.backupDeleted">備份已刪除</string>
+    <string name="CloudBackup.backupDeletedMessage">PIN嘗試失敗次數過多後，您的iCloud備份已被刪除。該應用程序現在將重新啟動。</string>
+    <string name="CloudBackup.backupMenuTitle">iCloud備份</string>
+    <string name="CloudBackup.createButton">建立新的電子錢包</string>
+    <string name="CloudBackup.createWarning">檢測到先前備份的錢包。建議使用此備份。您確定要繼續創建新的錢包嗎？</string>
+    <string name="CloudBackup.enableBody1">要啟用此功能，必須打開iCloud鑰匙串。</string>
+    <string name="CloudBackup.enableBody2">它應該如下所示：</string>
+    <string name="CloudBackup.enableButton">我已開啟iCloud鑰匙串</string>
+    <string name="CloudBackup.enableTitle">啟用鑰匙串</string>
+    <string name="CloudBackup.encryptBackupMessage">輸入密碼以加密備份</string>
+    <string name="CloudBackup.mainBody">我們仍然建議寫下恢復短語並保持其安全性，但是您也可以將恢復短語備份到iCloud。請注意，iCloud備份僅與您的iCloud帳戶一樣安全。</string>
+    <string name="CloudBackup.mainTitle">iCloud恢復備份</string>
+    <string name="CloudBackup.mainWarning">必須在iOS設置應用中打開iCloud鑰匙串才能使用此功能</string>
+    <string name="CloudBackup.mainWarningConfirmation">您確定要禁用iCloud備份嗎？這將從所有設備上刪除您的備份。</string>
+    <string name="CloudBackup.pinAttempts">清除備份之前還有剩余嘗試： %1$@</string>
+    <string name="CloudBackup.recoverButton">從恢復密鑰還原</string>
+    <string name="CloudBackup.recoverHeader">輸入PIN碼以解鎖iCloud備份</string>
+    <string name="CloudBackup.restoreButton">從iCloud備份還原</string>
+    <string name="CloudBackup.selectTitle">選擇備份</string>
+    <string name="CloudBackup.step1">啟動設置應用。</string>
+    <string name="CloudBackup.step2">點擊您的Apple ID名稱。</string>
+    <string name="CloudBackup.step3">點按iCloud。</string>
+    <string name="CloudBackup.step4">驗證iCloud鑰匙串是否已打開</string>
+    <string name="CloudBackup.understandText">我了解除非啟用iCloud鑰匙串，否則此功能將無法使用。</string>
+    <string name="CloudBackup.warningBody">在嘗試了%1$@次不正確的PIN後，您的iCloud備份將被清除。</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">寄送金額：</string>
     <!-- Network Fee: ($1.00) -->
@@ -280,6 +305,7 @@
     <string name="FeeSelector.estimatedDeliver">預計發送時間：%1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2-5 分鐘</string>
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d 分钟</string>
     <!-- Priority fee -->
     <string name="FeeSelector.priority">優先</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
@@ -394,6 +420,10 @@
     <string name="ManageWallet.textFeildLabel">電子錢包名稱</string>
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">管理電子錢包</string>
+    <string name="MarketData.high24h">24 小时高</string>
+    <string name="MarketData.low24h">24小時低</string>
+    <string name="MarketData.marketCap">市值</string>
+    <string name="MarketData.volume">交易量</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
     <string name="MenuButton.addWallet">增加錢包</string>
     <!-- Menu button title -->
@@ -768,6 +798,8 @@
     <string name="Send.amountLabel">金額</string>
     <!-- Balance: $4.00 -->
     <string name="Send.balance">餘額：%1$s</string>
+    <!-- Balance: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.balanceString">餘額:</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">到「設定」 &gt; 「應用程式」 &gt; 「BRD」 &gt; 「權限」允許相機存取</string>
     <!-- Permission required to access camera -->
@@ -838,6 +870,8 @@
     <string name="Send.remoteRequestError">無法載入付款要求</string>
     <!-- Scan button label -->
     <string name="Send.scanLabel">掃描</string>
+    <!-- Sending Max: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.sendingMax">發送上限：</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">寄送</string>
     <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->
