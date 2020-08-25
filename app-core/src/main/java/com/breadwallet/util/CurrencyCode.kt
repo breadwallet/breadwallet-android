@@ -38,4 +38,7 @@ fun CurrencyCode.isEthereum(): Boolean = equals(eth, true)
 fun CurrencyCode.isBrd(): Boolean = equals("brd", true)
 fun CurrencyCode.isRipple(): Boolean = equals("xrp", true)
 fun CurrencyCode.isHedera(): Boolean = equals(hbar, true)
+fun CurrencyCode.isErc20(): Boolean {
+    return !isBitcoin() && !isBitcoinCash() && !isEthereum() && !isRipple() && !isHedera()
+}
 
