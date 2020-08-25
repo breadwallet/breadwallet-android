@@ -26,6 +26,8 @@ package com.breadwallet.breadbox
 
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
+import com.breadwallet.util.isErc20
+import com.breadwallet.util.isEthereum
 import com.breadwallet.util.isHedera
 import com.breadwallet.util.isRipple
 import java.util.concurrent.TimeUnit
@@ -52,18 +54,23 @@ sealed class TransferSpeed {
     }
 
     class Economy(override val currencyCode: String) :  TransferSpeed() {
-        override val targetTime = TimeUnit.HOURS.toMillis(7L)
+        override val targetTime = when {
+            currencyCode.run { isEthereum() || isErc20() } -> TimeUnit.MINUTES.toMillis(5L)
+            else -> TimeUnit.HOURS.toMillis(7L)
+        }
     }
 
     class Regular(override val currencyCode: String): TransferSpeed() {
         override val targetTime = when {
             currencyCode.isBitcoin() -> TimeUnit.MINUTES.toMillis(30L)
-            currencyCode.isBitcoinCash() || currencyCode.isRipple() || currencyCode.isHedera() -> TimeUnit.MINUTES.toMillis(3L)
-            else -> TimeUnit.MINUTES.toMillis(1L)
+            else -> TimeUnit.MINUTES.toMillis(3L)
         }
     }
 
     class Priority(override val currencyCode: String) :  TransferSpeed() {
-        override val targetTime = TimeUnit.HOURS.toMillis(0L)
+        override val targetTime = when {
+            currencyCode.isEthereum() -> TimeUnit.MINUTES.toMillis(1L)
+            else -> 0L
+        }
     }
 }

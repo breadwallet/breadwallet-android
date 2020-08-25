@@ -40,6 +40,8 @@ import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
+import com.breadwallet.util.isErc20
+import com.breadwallet.util.isEthereum
 import io.sweers.redacted.annotation.Redacted
 import kotlinx.android.parcel.Parcelize
 import java.math.BigDecimal
@@ -174,8 +176,10 @@ object SendSheet {
 
         val isFeeNative: Boolean = currencyCode.equals(feeCurrencyCode, true)
 
-        /** True when the user can select the [TransferSpeed], currently only BTC. */
-        val showFeeSelect: Boolean = currencyCode.isBitcoin()
+        /** True when the user can select the [TransferSpeed], currently only BTC and ETH/ERC20. */
+        val showFeeSelect: Boolean = currencyCode.run {
+            isBitcoin() || isEthereum() || isErc20()
+        }
 
         /** The total cost of this transaction in [currencyCode]. */
         val totalCost: BigDecimal = when {

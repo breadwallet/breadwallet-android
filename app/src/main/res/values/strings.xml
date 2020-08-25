@@ -1319,4 +1319,6 @@
     <string name="SupportForm.notNow">Not now</string>
     <string name="SupportForm.feedbackAppreciated">We would love your feedback</string>
     <string name="SupportForm.pleaseDescribe">Please describe your experience</string>
+
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d minutes</string>
 </resources>
