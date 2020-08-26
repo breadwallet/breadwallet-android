@@ -59,6 +59,7 @@ import com.breadwallet.ui.send.SendSheet.E
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange
 import com.breadwallet.ui.send.SendSheet.F
 import com.breadwallet.ui.send.SendSheet.M
+import com.breadwallet.util.isErc20
 import com.breadwallet.util.isEthereum
 import com.spotify.mobius.Connectable
 import kotlinx.android.synthetic.main.controller_send_sheet.*
@@ -537,7 +538,9 @@ class SendSheetController(args: Bundle? = null) :
                 buttonPriority.background =
                     context.getDrawable(R.drawable.b_half_right_blue_stroke)
                 labelFeeDescription.text = when {
-                    feeOption.currencyCode.isEthereum() -> ethFeeEstimateString(context, feeOption.targetTime)
+                    feeOption.currencyCode.run {
+                        isEthereum() || isErc20()
+                    } -> ethFeeEstimateString(context, feeOption.targetTime)
                     else -> context.getString(R.string.FeeSelector_estimatedDeliver)
                         .format(context.getString(R.string.FeeSelector_regularTime))
                 }
@@ -552,7 +555,9 @@ class SendSheetController(args: Bundle? = null) :
                 buttonPriority.background =
                     context.getDrawable(R.drawable.b_half_right_blue_stroke)
                 labelFeeDescription.text = when {
-                    feeOption.currencyCode.isEthereum() -> ethFeeEstimateString(context, feeOption.targetTime)
+                    feeOption.currencyCode.run {
+                        isEthereum() || isErc20()
+                    } -> ethFeeEstimateString(context, feeOption.targetTime)
                     else -> context.getString(R.string.FeeSelector_estimatedDeliver)
                         .format(context.getString(R.string.FeeSelector_economyTime))
                 }
@@ -566,7 +571,9 @@ class SendSheetController(args: Bundle? = null) :
                 buttonPriority.setTextColor(context.getColor(R.color.white))
                 buttonPriority.background = context.getDrawable(R.drawable.b_half_right_blue)
                 labelFeeDescription.text = when {
-                    feeOption.currencyCode.isEthereum() -> ethFeeEstimateString(context, feeOption.targetTime)
+                    feeOption.currencyCode.run {
+                        isEthereum() || isErc20()
+                    } -> ethFeeEstimateString(context, feeOption.targetTime)
                     else -> context.getString(R.string.FeeSelector_estimatedDeliver)
                         .format(context.getString(R.string.FeeSelector_priorityTime))
                 }
