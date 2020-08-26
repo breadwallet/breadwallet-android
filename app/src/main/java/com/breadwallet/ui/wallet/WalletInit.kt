@@ -39,6 +39,7 @@ val WalletInit = Init<WalletScreen.M, F> { model ->
         F.LoadCurrencyName(model.currencyCode),
         F.LoadSyncState(model.currencyCode),
         F.LoadChartInterval(model.priceChartInterval, model.currencyCode),
+        F.LoadMarketData(model.currencyCode),
         F.TrackEvent(
             String.format(
                 EventUtils.EVENT_WALLET_APPEARED,

@@ -1319,4 +1319,9 @@
     <string name="SupportForm.notNow">Not now</string>
     <string name="SupportForm.feedbackAppreciated">We would love your feedback</string>
     <string name="SupportForm.pleaseDescribe">Please describe your experience</string>
+
+    <string name="MarketData.marketCap">Market Cap</string>
+    <string name="MarketData.volume">Trading Volume</string>
+    <string name="MarketData.high24h">24h high</string>
+    <string name="MarketData.low24h">24h low</string>
 </resources>

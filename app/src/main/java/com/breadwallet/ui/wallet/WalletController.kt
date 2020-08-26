@@ -73,6 +73,7 @@ import com.mikepenz.fastadapter.adapters.ModelAdapter
 import com.spotify.mobius.Connectable
 import kotlinx.android.synthetic.main.chart_view.*
 import kotlinx.android.synthetic.main.controller_wallet.*
+import kotlinx.android.synthetic.main.market_data_view.*
 import kotlinx.android.synthetic.main.view_delisted_token.*
 import kotlinx.android.synthetic.main.wallet_toolbar.*
 import kotlinx.coroutines.channels.SendChannel
@@ -476,6 +477,24 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
 
         ifChanged(M::isShowingDelistedBanner) {
             if (isShowingDelistedBanner) showDelistedTokenBanner()
+        }
+
+        ifChanged(M::marketDataState) {
+            market_data.isVisible = marketDataState != MarketDataState.ERROR
+        }
+
+        ifChanged(
+            M::marketCap,
+            M::totalVolume,
+            M::high24h,
+            M::low24h
+        ) {
+            val preferredFiat = BRSharedPrefs.getPreferredFiatIso().toUpperCase(Locale.ROOT)
+
+            market_cap.text = marketCap?.formatFiatForUi(preferredFiat, 0)?.let { "$it $preferredFiat" } ?: ""
+            total_volume.text = totalVolume?.formatFiatForUi(preferredFiat, 0)?.let { "$it $preferredFiat" } ?: ""
+            twenty_four_high.text = high24h?.formatFiatForUi(preferredFiat)?.let { "$it $preferredFiat" } ?: ""
+            twenty_four_low.text = low24h?.formatFiatForUi(preferredFiat)?.let { "$it $preferredFiat" } ?: ""
         }
     }
 
