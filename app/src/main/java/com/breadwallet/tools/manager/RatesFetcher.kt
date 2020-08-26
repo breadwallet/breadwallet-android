@@ -36,6 +36,7 @@ import com.breadwallet.ui.wallet.Interval
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.platform.interfaces.AccountMetaDataProvider
+import com.platform.util.getDoubleOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -52,6 +53,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
+import java.math.BigDecimal
 import java.util.Date
 import java.util.Locale
 
@@ -275,6 +277,74 @@ class RatesFetcher(
                     }
             }
         }
+    }
+
+    suspend fun getMarketData(
+        fromCurrency: String,
+        toCurrency: String
+    ): MarketDataResult {
+        val id = TokenUtil.coingeckoIdForCode(fromCurrency) ?: return MarketDataResult.Failure.UnsupportedCurrency
+
+        val url = buildString {
+            append(COINGECKO_API_URL)
+            append("coins/$id/")
+            append("?market_data=true")
+            append("&localization=false")
+            append("&tickers=false")
+            append("&community_data=false")
+            append("&developer_data=false")
+        }
+        val request = Request.Builder()
+            .get()
+            .url(url)
+            .build()
+        val res = withContext(Dispatchers.IO) {
+            runCatching {
+                okhttp.newCall(request).execute()
+            }.onFailure { e ->
+                logError("Failed to fetch data", e)
+            }
+        }.getOrNull()
+
+        return if (res == null || !res.isSuccessful) {
+            MarketDataResult.Failure.Fetch
+        } else {
+            val json = runCatching {
+                val bodyString = checkNotNull(res.body).string()
+                JSONObject(bodyString)
+            }.onFailure { e ->
+                logError("Failed to parse response body", e)
+            }.getOrNull()
+
+            if (json == null) {
+                MarketDataResult.Failure.BadData
+            } else {
+                val marketData = json.getJSONObject("market_data")
+                val lowerToCurrency = toCurrency.toLowerCase(Locale.ROOT)
+
+                val marketCap = marketData.getJSONObject("market_cap").getDoubleOrNull(lowerToCurrency)?.toBigDecimal()
+                val totalVolume = marketData.getJSONObject("total_volume").getDoubleOrNull(lowerToCurrency)?.toBigDecimal()
+                val high = marketData.getJSONObject("high_24h").getDoubleOrNull(lowerToCurrency)?.toBigDecimal()
+                val low = marketData.getJSONObject("low_24h").getDoubleOrNull(lowerToCurrency)?.toBigDecimal()
+                MarketDataResult.Success(marketCap, totalVolume, high, low)
+            }
+        }
+    }
+
+}
+
+sealed class MarketDataResult  {
+    data class Success(
+        val marketCap: BigDecimal?,
+        val totalVolume: BigDecimal?,
+        val high24h: BigDecimal?,
+        val low24h: BigDecimal?
+    ) : MarketDataResult()
+
+    sealed class Failure : MarketDataResult() {
+        object Fetch : Failure()
+        object BadData : Failure()
+        object UnsupportedCurrency : Failure()
     }
 }
 

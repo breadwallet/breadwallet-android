@@ -135,14 +135,6 @@
         app:layout_constraintStart_toEndOf="@id/one_year"
         app:layout_constraintTop_toTopOf="@+id/one_year" />
 
-    <View
-        android:id="@+id/bottom_line"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/white_transparent_25"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/one_month" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

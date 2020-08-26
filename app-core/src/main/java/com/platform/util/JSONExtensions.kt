@@ -49,6 +49,10 @@ fun JSONObject.getIntOrDefault(name: String, default: Int = 0) =
 fun JSONObject.getLongOrDefault(name: String, default: Long = 0) =
     if (has(name)) getLong(name) else default
 
+/** Returns the value mapped by name of null if it doesn't exist. */
+fun JSONObject.getDoubleOrNull(name: String): Double? =
+    if (has(name)) getDouble(name) else null
+
 /** Returns the value mapped by name or [default] if it doesn't exist. */
 fun JSONObject.getDoubleOrDefault(name: String, default: Double = 0.0) =
     if (has(name)) getDouble(name) else default
