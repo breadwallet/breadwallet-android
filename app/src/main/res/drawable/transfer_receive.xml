@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:gravity="center"
+        android:height="40dp"
+        android:width="40dp">
+        <shape
+            android:shape="oval"
+            android:tint="@color/green_success_tint"/>
+    </item>
+    <item android:gravity="center"
+          android:drawable="@drawable/ic_transfer_arrow_receive"/>
+</layer-list>

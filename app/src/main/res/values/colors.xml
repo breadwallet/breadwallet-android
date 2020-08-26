@@ -30,6 +30,9 @@
     <item name="black_trans" type="color">#b5000000</item>
     <item name="red_text" type="color">#FF5454</item>
     <item name="green_text" type="color">#00BF00</item>
+    <item name="green_success" type="color">#00BF00</item>
+    <item name="green_success_tint" type="color">#2900BF00</item>
+    <item name="bg_secondary_dark" type="color">#EFEFF2</item>
     <item name="pink" type="color">#68ffc0c1</item>
     <item name="status_bar" type="color">#000000</item>
     <item name="intro_status_bar" type="color">#ffbf7f</item>
@@ -169,5 +172,8 @@
     </array>
 
     <color name="ui_accent">#5B6DEE</color>
+    <color name="ui_accent_transparent">#295B6DEE</color>
+    <color name="ui_error">#EA5A5A</color>
+    <color name="ui_error_transparent">#29EA5A5A</color>
 
 </resources>

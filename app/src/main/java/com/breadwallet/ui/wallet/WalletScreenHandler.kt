@@ -307,6 +307,7 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
         ),
         timeStamp = confirmation.orNull()?.confirmationTime?.time ?: System.currentTimeMillis(),
         currencyCode = wallet.currency.code,
-        feeToken = feeForToken
+        feeToken = feeForToken,
+        confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal.toInt()
     )
 }
