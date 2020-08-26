@@ -69,7 +69,7 @@ sealed class TransferSpeed {
 
     class Priority(override val currencyCode: String) :  TransferSpeed() {
         override val targetTime = when {
-            currencyCode.isEthereum() -> TimeUnit.MINUTES.toMillis(1L)
+            currencyCode.run { isEthereum() || isErc20() } -> TimeUnit.MINUTES.toMillis(1L)
             else -> 0L
         }
     }
