@@ -188,6 +188,31 @@
     <string name="Button.yes">Ja</string>
     <!-- Camera plugin instruction -->
     <string name="CameraPlugin.centerInstruction">Centrer dit ID i boksen</string>
+    <string name="CloudBackup.backupDeleted">Sikkerhedskopiering slettet</string>
+    <string name="CloudBackup.backupDeletedMessage">Din iCloud-sikkerhedskopi er slettet efter for mange mislykkede PIN-forsøg. Appen genstarter nu.</string>
+    <string name="CloudBackup.backupMenuTitle">iCloud-sikkerhedskopi</string>
+    <string name="CloudBackup.createButton">Opret ny tegnebog</string>
+    <string name="CloudBackup.createWarning">En tidligere sikkerhedskopieret tegnebog er blevet registreret. Brug af denne sikkerhedskopi anbefales. Er du sikker på, at du vil fortsætte med at oprette en ny tegnebog?</string>
+    <string name="CloudBackup.enableBody1">iCloud-nøglering skal være tændt for at denne funktion kan fungere.</string>
+    <string name="CloudBackup.enableBody2">Det skal se ud som følger:</string>
+    <string name="CloudBackup.enableButton">Jeg har tændt for iCloud-nøglering</string>
+    <string name="CloudBackup.enableTitle">Aktivér nøglering</string>
+    <string name="CloudBackup.encryptBackupMessage">Indtast pin for at kryptere backup</string>
+    <string name="CloudBackup.mainBody">Vi anbefaler stadig, at du skriver din gendannelsesfrase ned og holder den sikker, men du kan også sikkerhedskopiere din gendannelsesfrase til iCloud. Bemærk, iCloud-sikkerhedskopi er kun så sikker som din iCloud-konto.</string>
+    <string name="CloudBackup.mainTitle">Sikkerhedskopiering af iCloud-genoprettelse</string>
+    <string name="CloudBackup.mainWarning">iCloud-nøglering skal være tændt i iOS-indstillingsappen for at denne funktion kan fungere</string>
+    <string name="CloudBackup.mainWarningConfirmation">Er du sikker på, at du vil deaktivere iCloud Backup? Dette vil slette din sikkerhedskopi fra alle enheder.</string>
+    <string name="CloudBackup.pinAttempts">Resterende forsøg inden sletning af sikkerhedskopi: %1$@</string>
+    <string name="CloudBackup.recoverButton">Gendan fra genoprettelsesnøgle</string>
+    <string name="CloudBackup.recoverHeader">Indtast pinkoden for at låse op iCloud-sikkerhedskopi</string>
+    <string name="CloudBackup.restoreButton">Gendan fra iCloud Backup</string>
+    <string name="CloudBackup.selectTitle">Vælg Sikkerhedskopi</string>
+    <string name="CloudBackup.step1">Start appen Indstillinger.</string>
+    <string name="CloudBackup.step2">Tryk på dit Apple ID-navn.</string>
+    <string name="CloudBackup.step3">Tryk på iCloud.</string>
+    <string name="CloudBackup.step4">Kontroller, at iCloud-nøglering er Tændt</string>
+    <string name="CloudBackup.understandText">Jeg forstår, at denne funktion ikke fungerer, medmindre iCloud Keychain er aktiveret.</string>
+    <string name="CloudBackup.warningBody">Din iCloud-sikkerhedskopi slettes efter %1$@ flere forkerte PIN-forsøg.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Beløb der skal sendes:</string>
     <!-- Network Fee: ($1.00) -->
@@ -280,6 +305,7 @@
     <string name="FeeSelector.estimatedDeliver">Forventet levering: %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2-5 minutter</string>
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d minutter</string>
     <!-- Priority fee -->
     <string name="FeeSelector.priority">Prioritet</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
@@ -394,6 +420,10 @@
     <string name="ManageWallet.textFeildLabel">Pungens navn</string>
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">Administrer pung</string>
+    <string name="MarketData.high24h">24 timer høj</string>
+    <string name="MarketData.low24h">24 timer lav</string>
+    <string name="MarketData.marketCap">Markedsværdi</string>
+    <string name="MarketData.volume">Handelsvolumen</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
     <string name="MenuButton.addWallet">Tilføj pung</string>
     <!-- Menu button title -->
@@ -768,6 +798,8 @@
     <string name="Send.amountLabel">Beløb</string>
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Balance: %1$s</string>
+    <!-- Balance: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.balanceString">Saldo:</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">Tillad adgang under \"Indstillinger\" &gt; \"Apps\" &gt; \"BRD\" &gt; \"Tilladelser\"</string>
     <!-- Permission required to access camera -->
@@ -838,6 +870,8 @@
     <string name="Send.remoteRequestError">Kunne ikke behandle betalingsanmodning</string>
     <!-- Scan button label -->
     <string name="Send.scanLabel">Scan</string>
+    <!-- Sending Max: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.sendingMax">Sender maks:</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">Send</string>
     <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->

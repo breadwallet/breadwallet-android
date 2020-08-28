@@ -188,6 +188,31 @@
     <string name="Button.yes">はい</string>
     <!-- Camera plugin instruction -->
     <string name="CameraPlugin.centerInstruction">ご自身のIDをこのボックス内の中央に配置してください</string>
+    <string name="CloudBackup.backupDeleted">バックアップが消去されました</string>
+    <string name="CloudBackup.backupDeletedMessage">PINの試行が何度も失敗した後、iCloudバックアップが消去されました。アプリが再起動します。</string>
+    <string name="CloudBackup.backupMenuTitle">iCloudバックアップ</string>
+    <string name="CloudBackup.createButton">新しいウォレットを作成する</string>
+    <string name="CloudBackup.createWarning">以前にバックアップされたウォレットが検出されました。このバックアップを使用することをお勧めします。新しいウォレットを作成してよろしいですか？</string>
+    <string name="CloudBackup.enableBody1">この機能を使用するには、iCloudキーチェーンをオンにする必要があります。</string>
+    <string name="CloudBackup.enableBody2">次のようになります。</string>
+    <string name="CloudBackup.enableButton">iCloudキーチェーンをオンにしました</string>
+    <string name="CloudBackup.enableTitle">キーチェーンを有効にする</string>
+    <string name="CloudBackup.encryptBackupMessage">バックアップを暗号化するにはPINを入力してください</string>
+    <string name="CloudBackup.mainBody">回復フレーズを書き留めて安全に保つことをお勧めしますが、回復フレーズをiCloudにバックアップすることもできます。 iCloudバックアップは、iCloudアカウントと同じくらい安全です。</string>
+    <string name="CloudBackup.mainTitle">iCloudリカバリバックアップ</string>
+    <string name="CloudBackup.mainWarning">この機能を使用するには、iOS設定アプリでiCloudキーチェーンをオンにする必要があります</string>
+    <string name="CloudBackup.mainWarningConfirmation">iCloudバックアップを無効にしてもよろしいですか？これにより、すべてのデバイスからバックアップが削除されます。</string>
+    <string name="CloudBackup.pinAttempts">バックアップを消去する前に残っている試行： %1$@</string>
+    <string name="CloudBackup.recoverButton">回復キーから復元</string>
+    <string name="CloudBackup.recoverHeader">PINを入力してiCloudバックアップのロックを解除します</string>
+    <string name="CloudBackup.restoreButton">iCloudバックアップから復元</string>
+    <string name="CloudBackup.selectTitle">バックアップを選択</string>
+    <string name="CloudBackup.step1">設定アプリを起動します。</string>
+    <string name="CloudBackup.step2">Apple ID名をタップします。</string>
+    <string name="CloudBackup.step3">iCloudをタップします。</string>
+    <string name="CloudBackup.step4">iCloudキーチェーンがオンになっていることを確認する</string>
+    <string name="CloudBackup.understandText">この機能はiCloudキーチェーンが有効になっていないと機能しないことを理解しています。</string>
+    <string name="CloudBackup.warningBody">あなたのiCloudバックアップは、あと%1$@回の間違ったPIN試行の後に消去されます。</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">送る金額：</string>
     <!-- Network Fee: ($1.00) -->
@@ -280,6 +305,7 @@
     <string name="FeeSelector.estimatedDeliver">推定送金時間: %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2〜5分</string>
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d 分</string>
     <!-- Priority fee -->
     <string name="FeeSelector.priority">優先度</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
@@ -394,6 +420,10 @@
     <string name="ManageWallet.textFeildLabel">ウォレットの名前</string>
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">ウォレットを管理</string>
+    <string name="MarketData.high24h">24時間高</string>
+    <string name="MarketData.low24h">24時間低</string>
+    <string name="MarketData.marketCap">時価総額</string>
+    <string name="MarketData.volume">取引量</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
     <string name="MenuButton.addWallet">ウォレットの追加</string>
     <!-- Menu button title -->
@@ -768,6 +798,8 @@
     <string name="Send.amountLabel">金額</string>
     <!-- Balance: $4.00 -->
     <string name="Send.balance">残高: %1$s</string>
+    <!-- Balance: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.balanceString">残高:</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">「設定」 &gt; 「アプリ」 &gt; 「ブレッド」 &gt; 「許可」でカメラへのアクセスを許可してください</string>
     <!-- Permission required to access camera -->
@@ -838,6 +870,8 @@
     <string name="Send.remoteRequestError">支払い要求がロードできませんでした</string>
     <!-- Scan button label -->
     <string name="Send.scanLabel">スキャン</string>
+    <!-- Sending Max: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.sendingMax">最大送信：</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">送金する</string>
     <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->

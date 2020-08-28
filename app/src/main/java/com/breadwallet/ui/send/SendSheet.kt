@@ -40,6 +40,8 @@ import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
+import com.breadwallet.util.isErc20
+import com.breadwallet.util.isEthereum
 import io.sweers.redacted.annotation.Redacted
 import kotlinx.android.parcel.Parcelize
 import java.math.BigDecimal
@@ -55,6 +57,12 @@ data class TransferField(
         const val DESTINATION_TAG = "DestinationTag"
         const val HEDERA_MEMO = "Memo"
     }
+}
+
+enum class TransferSpeedInput() {
+    ECONOMY,
+    REGULAR,
+    PRIORITY
 }
 
 object SendSheet {
@@ -111,7 +119,7 @@ object SendSheet {
         val fiatPricePerFeeUnit: BigDecimal = BigDecimal.ZERO,
 
         /** The user selected [TransferSpeed] for this transaction. */
-        val transferSpeed: TransferSpeed = TransferSpeed.REGULAR,
+        val transferSpeed: TransferSpeed = TransferSpeed.Regular(currencyCode),
 
         /** The currency code used for paying transaction fee. */
         val feeCurrencyCode: CurrencyCode = currencyCode,
@@ -168,8 +176,10 @@ object SendSheet {
 
         val isFeeNative: Boolean = currencyCode.equals(feeCurrencyCode, true)
 
-        /** True when the user can select the [TransferSpeed], currently only BTC. */
-        val showFeeSelect: Boolean = currencyCode.isBitcoin()
+        /** True when the user can select the [TransferSpeed], currently only BTC and ETH/ERC20. */
+        val showFeeSelect: Boolean = currencyCode.run {
+            isBitcoin() || isEthereum() || isErc20()
+        }
 
         /** The total cost of this transaction in [currencyCode]. */
         val totalCost: BigDecimal = when {
@@ -183,8 +193,8 @@ object SendSheet {
         /** True when the necessary inputs to estimate a fee are available. */
         val canEstimateFee: Boolean =
             targetAddress.isNotBlank() &&
+                balance >= amount &&
                 targetInputError == null &&
-                !isTotalCostOverBalance &&
                 !amount.isZero()
 
         /** True when we are displaying the information of a payment request */
@@ -206,8 +216,7 @@ object SendSheet {
                 fiatCode: String
             ) = M(
                 currencyCode = currencyCode,
-                fiatCode = fiatCode,
-                transferSpeed = if (currencyCode.isBitcoin()) TransferSpeed.REGULAR  else TransferSpeed.SPEEDY
+                fiatCode = fiatCode
             )
         }
 
@@ -326,7 +335,7 @@ object SendSheet {
         ) : E()
 
         data class OnTransferSpeedChanged(
-            val transferSpeed: TransferSpeed
+            val transferSpeed: TransferSpeedInput
         ) : E()
 
         sealed class OnAmountChange : E() {

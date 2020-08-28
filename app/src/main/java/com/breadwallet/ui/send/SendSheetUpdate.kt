@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.send
 
+import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.ext.isZero
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.send.SendSheet.E
@@ -352,23 +353,28 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         model: M,
         event: E.OnTransferSpeedChanged
     ): Next<M, F> {
+        val transferSpeed = when(event.transferSpeed) {
+            TransferSpeedInput.ECONOMY -> TransferSpeed.Economy(model.currencyCode)
+            TransferSpeedInput.REGULAR -> TransferSpeed.Regular(model.currencyCode)
+            TransferSpeedInput.PRIORITY -> TransferSpeed.Priority(model.currencyCode)
+        }
         return when {
             model.isConfirmingTx -> noChange()
             model.canEstimateFee -> next(
                 model.copy(
-                    transferSpeed = event.transferSpeed
+                    transferSpeed = transferSpeed
                 ),
                 setOf(
                     F.EstimateFee(
                         model.currencyCode,
                         model.targetAddress,
                         model.amount,
-                        event.transferSpeed
+                        transferSpeed
                     )
                 )
             )
             else -> next(
-                model.copy(transferSpeed = event.transferSpeed)
+                model.copy(transferSpeed = transferSpeed)
             )
         }
     }
