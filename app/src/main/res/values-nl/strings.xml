@@ -188,6 +188,31 @@
     <string name="Button.yes">Ja</string>
     <!-- Camera plugin instruction -->
     <string name="CameraPlugin.centerInstruction">Centreer je ID in het daarvoor bestemde vak</string>
+    <string name="CloudBackup.backupDeleted">Back-up gewist</string>
+    <string name="CloudBackup.backupDeletedMessage">Uw iCloud-back-up is gewist na te veel mislukte PIN-pogingen. De app zal nu opnieuw opstarten.</string>
+    <string name="CloudBackup.backupMenuTitle">iCloud-back-up</string>
+    <string name="CloudBackup.createButton">Nieuwe wallet maken</string>
+    <string name="CloudBackup.createWarning">Er is een portemonnee gedetecteerd waarvan eerder een back-up is gemaakt. Het gebruik van deze back-up wordt aanbevolen. Weet u zeker dat u wilt doorgaan met het aanmaken van een nieuwe portemonnee?</string>
+    <string name="CloudBackup.enableBody1">iCloud Keychain moet ingeschakeld zijn om deze functie te laten werken.</string>
+    <string name="CloudBackup.enableBody2">Het zou er als volgt uit moeten zien:</string>
+    <string name="CloudBackup.enableButton">Ik heb iCloud-sleutelhanger ingeschakeld</string>
+    <string name="CloudBackup.enableTitle">Schakel Keychain in</string>
+    <string name="CloudBackup.encryptBackupMessage">Voer een pincode in om de back-up te versleutelen</string>
+    <string name="CloudBackup.mainBody">We raden nog steeds aan om uw herstelzin op te schrijven en veilig te bewaren, maar u kunt ook een back-up maken van uw herstelzin op iCloud. Houd er rekening mee dat iCloud-back-up slechts zo veilig is als uw iCloud-account.</string>
+    <string name="CloudBackup.mainTitle">iCloud-herstelback-up</string>
+    <string name="CloudBackup.mainWarning">iCloud-sleutelhanger moet zijn ingeschakeld in de app iOS-instellingen om deze functie te laten werken</string>
+    <string name="CloudBackup.mainWarningConfirmation">Weet u zeker dat u iCloud-back-up wilt uitschakelen? Hiermee wordt uw back-up van alle apparaten verwijderd.</string>
+    <string name="CloudBackup.pinAttempts">Pogingen blijven voordat back-up wordt gewist: %1$ @</string>
+    <string name="CloudBackup.recoverButton">Herstellen vanaf herstelsleutel</string>
+    <string name="CloudBackup.recoverHeader">Voer de PIN-code in om een iCloud-back-up te ontgrendelen</string>
+    <string name="CloudBackup.restoreButton">Herstellen van iCloud Backup</string>
+    <string name="CloudBackup.selectTitle">Kies Back-up</string>
+    <string name="CloudBackup.step1">Start de app Instellingen.</string>
+    <string name="CloudBackup.step2">Tik op uw Apple ID-naam.</string>
+    <string name="CloudBackup.step3">Tik op iCloud.</string>
+    <string name="CloudBackup.step4">Controleer of iCloud-sleutelhanger is ingeschakeld</string>
+    <string name="CloudBackup.understandText">Ik begrijp dat deze functie alleen werkt als iCloud-sleutelhanger is ingeschakeld.</string>
+    <string name="CloudBackup.warningBody">Uw iCloud-back-up wordt gewist na nog %1$@ onjuiste pincode-pogingen.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Bedrag om te versturen:</string>
     <!-- Network Fee: ($1.00) -->
@@ -280,6 +305,7 @@
     <string name="FeeSelector.estimatedDeliver">Geschatte levering: %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2 tot 5 minuten</string>
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d minuten</string>
     <!-- Priority fee -->
     <string name="FeeSelector.priority">Voorrang</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
@@ -394,6 +420,10 @@
     <string name="ManageWallet.textFeildLabel">Portemonnee Naam</string>
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">Portemonnee Beheren</string>
+    <string name="MarketData.high24h">24u hoog</string>
+    <string name="MarketData.low24h">24u laag</string>
+    <string name="MarketData.marketCap">Marktkapitalisatie</string>
+    <string name="MarketData.volume">Handelsvolume</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
     <string name="MenuButton.addWallet">Voeg Wallet toe</string>
     <!-- Menu button title -->
@@ -768,6 +798,8 @@
     <string name="Send.amountLabel">Bedrag</string>
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Balans: %1$s</string>
+    <!-- Balance: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.balanceString">Balans:</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">Sta cameratoegang toe via \"Instellingen\" &gt; \"Apps\" &gt; \"BRD\" &gt; \"Toestemmingen\"</string>
     <!-- Permission required to access camera -->
@@ -838,6 +870,8 @@
     <string name="Send.remoteRequestError">Kon de betalingsaanvraag niet laden</string>
     <!-- Scan button label -->
     <string name="Send.scanLabel">Scannen</string>
+    <!-- Sending Max: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.sendingMax">Max verzenden:</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">Versturen</string>
     <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->

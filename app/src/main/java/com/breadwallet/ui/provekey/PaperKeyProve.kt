@@ -30,7 +30,6 @@ import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.util.normalize
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object PaperKeyProve {
@@ -69,11 +68,6 @@ object PaperKeyProve {
         val secondWord: String = phrase[secondWordIndex].normalize()
     }
 
-    @MobiusUpdateSpec(
-        prefix = "PaperKeyProve",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
         object OnSubmitClicked : E()
         object OnBreadSignalShown : E()

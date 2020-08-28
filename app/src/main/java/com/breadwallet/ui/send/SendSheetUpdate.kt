@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.send
 
+import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.ext.isZero
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.send.SendSheet.E
@@ -352,23 +353,28 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         model: M,
         event: E.OnTransferSpeedChanged
     ): Next<M, F> {
+        val transferSpeed = when(event.transferSpeed) {
+            TransferSpeedInput.ECONOMY -> TransferSpeed.Economy(model.currencyCode)
+            TransferSpeedInput.REGULAR -> TransferSpeed.Regular(model.currencyCode)
+            TransferSpeedInput.PRIORITY -> TransferSpeed.Priority(model.currencyCode)
+        }
         return when {
             model.isConfirmingTx -> noChange()
             model.canEstimateFee -> next(
                 model.copy(
-                    transferSpeed = event.transferSpeed
+                    transferSpeed = transferSpeed
                 ),
                 setOf(
                     F.EstimateFee(
                         model.currencyCode,
                         model.targetAddress,
                         model.amount,
-                        event.transferSpeed
+                        transferSpeed
                     )
                 )
             )
             else -> next(
-                model.copy(transferSpeed = event.transferSpeed)
+                model.copy(transferSpeed = transferSpeed)
             )
         }
     }
@@ -442,17 +448,24 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         model: M,
         event: E.OnAddressValidated
     ): Next<M, F> {
+        val transferFields = when {
+            event is PayId.ValidAddress -> model.transferFields.copy(TransferField.DESTINATION_TAG, event.destinationTag ?: "")
+            model.isPayId -> model.transferFields.copy(TransferField.DESTINATION_TAG, "")
+            else -> model.transferFields
+        }
+
         return when {
             model.isConfirmingTx -> noChange()
             else -> when (event) {
                 is Address.ValidAddress -> {
-                    processValidAddress(model, event.address)
+                    processValidAddress(model, event.address, transferFields = transferFields)
                 }
                 is Address.PayIdString -> next(
                     model.copy(
                         targetString = event.payId,
                         isPayId = true,
-                        isResolvingAddress = true
+                        isResolvingAddress = true,
+                        transferFields = transferFields
                     ),
                     setOf<F>(F.ResolvePayId(model.currencyCode, event.payId))
                 )
@@ -460,38 +473,43 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                     model.copy(
                         isPayId = false,
                         isResolvingAddress = false,
-                        targetInputError = if (event.fromClipboard) M.InputError.ClipboardInvalid else M.InputError.Invalid
+                        targetInputError = if (event.fromClipboard) M.InputError.ClipboardInvalid else M.InputError.Invalid,
+                        transferFields = transferFields
                     )
                 )
                 is Address.NoAddress -> next(
                     model.copy(
                         isPayId = false,
                         isResolvingAddress = false,
-                        targetInputError = if (event.fromClipboard) M.InputError.ClipboardEmpty else M.InputError.Empty
+                        targetInputError = if (event.fromClipboard) M.InputError.ClipboardEmpty else M.InputError.Empty,
+                        transferFields = transferFields
                     )
                 )
                 is PayId.ValidAddress -> {
-                    processValidAddress(model, event.address, event.payId, event.destinationTag)
+                    processValidAddress(model, event.address, event.payId, transferFields)
                 }
                 PayId.InvalidPayId -> next(
                     model.copy(
                         isPayId = true,
                         isResolvingAddress = false,
-                        targetInputError = M.InputError.PayIdInvalid
+                        targetInputError = M.InputError.PayIdInvalid,
+                        transferFields = transferFields
                     )
                 )
                 PayId.NoAddress -> next(
                     model.copy(
                         isPayId = true,
                         isResolvingAddress = false,
-                        targetInputError = M.InputError.PayIdNoAddress
+                        targetInputError = M.InputError.PayIdNoAddress,
+                        transferFields = transferFields
                     )
                 )
                 PayId.RetrievalError -> next(
                     model.copy(
                         isPayId = true,
                         isResolvingAddress = false,
-                        targetInputError = M.InputError.PayIdRetrievalError
+                        targetInputError = M.InputError.PayIdRetrievalError,
+                        transferFields = transferFields
                     )
                 )
             }
@@ -503,7 +521,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         model: M,
         address: String,
         payId: String? = null,
-        destinationTag: String? = null
+        transferFields: List<TransferField>
     ): Next<M, F> {
         val effects = mutableSetOf<F>()
         if (model.canEstimateFee) {
@@ -515,19 +533,13 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             ).run(effects::add)
         }
 
-        val transferFields = if (destinationTag != null) {
-            model.transferFields.filter { it.key != TransferField.DESTINATION_TAG } +
-                TransferField(TransferField.DESTINATION_TAG, false, false, destinationTag)
-        } else {
-            model.transferFields
-        }
-
+        val isPayId = payId != null
         return next(
             model.copy(
                 targetAddress = address,
                 targetString = payId ?: address, // Handle paste
                 targetInputError = null,
-                isPayId = payId != null,
+                isPayId = isPayId,
                 isResolvingAddress = false,
                 transferFields = transferFields
             ),

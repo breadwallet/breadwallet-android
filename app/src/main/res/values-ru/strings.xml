@@ -188,6 +188,31 @@
     <string name="Button.yes">Да</string>
     <!-- Camera plugin instruction -->
     <string name="CameraPlugin.centerInstruction">Поместите ваш ID-номер в центр данного поля</string>
+    <string name="CloudBackup.backupDeleted">Резервная копия удалена</string>
+    <string name="CloudBackup.backupDeletedMessage">Ваша резервная копия iCloud была удалена после слишком большого количества неудачных попыток ввода PIN-кода. Приложение перезапустится.</string>
+    <string name="CloudBackup.backupMenuTitle">Резервное копирование iCloud</string>
+    <string name="CloudBackup.createButton">Создать новый кошелек</string>
+    <string name="CloudBackup.createWarning">Обнаружен ранее созданный кошелек. Рекомендуется использовать эту резервную копию. Вы уверены, что хотите продолжить создание нового кошелька?</string>
+    <string name="CloudBackup.enableBody1">Для работы этой функции необходимо включить Связку ключей iCloud.</string>
+    <string name="CloudBackup.enableBody2">Должно получиться так:</string>
+    <string name="CloudBackup.enableButton">Я включил Связку ключей iCloud</string>
+    <string name="CloudBackup.enableTitle">Включить связку ключей</string>
+    <string name="CloudBackup.encryptBackupMessage">Введите PIN-код, чтобы зашифровать резервную копию</string>
+    <string name="CloudBackup.mainBody">Мы по-прежнему рекомендуем записывать фразу восстановления и хранить ее в безопасности, но вы также можете сделать резервную копию фразы восстановления в iCloud. Обратите внимание, что резервное копирование iCloud защищено ровно настолько, насколько безопасно ваша учетная запись iCloud.</string>
+    <string name="CloudBackup.mainTitle">Резервное копирование iCloud Recovery</string>
+    <string name="CloudBackup.mainWarning">Чтобы эта функция работала, в приложении «Настройки» iOS необходимо включить «Связку ключей iCloud».</string>
+    <string name="CloudBackup.mainWarningConfirmation">Вы действительно хотите отключить резервное копирование iCloud? Это удалит вашу резервную копию со всех устройств.</string>
+    <string name="CloudBackup.pinAttempts">Осталось попыток до удаления резервной копии: %1$@</string>
+    <string name="CloudBackup.recoverButton">Восстановление из ключа восстановления</string>
+    <string name="CloudBackup.recoverHeader">Введите PIN-код для разблокировки резервного копирования iCloud</string>
+    <string name="CloudBackup.restoreButton">Восстановление из резервной копии iCloud</string>
+    <string name="CloudBackup.selectTitle">Выберите Резервное копирование</string>
+    <string name="CloudBackup.step1">Запустите приложение \"Настройки\".</string>
+    <string name="CloudBackup.step2">Коснитесь своего имени Apple ID.</string>
+    <string name="CloudBackup.step3">Нажмите iCloud.</string>
+    <string name="CloudBackup.step4">Убедитесь, что связка ключей iCloud включена</string>
+    <string name="CloudBackup.understandText">Я понимаю, что эта функция не будет работать, если не будет включена Связка ключей iCloud.</string>
+    <string name="CloudBackup.warningBody">Ваша резервная копия iCloud будет удалена после еще %1$@ попыток неправильного ввода PIN-кода.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Сумма для отправки:</string>
     <!-- Network Fee: ($1.00) -->
@@ -280,6 +305,7 @@
     <string name="FeeSelector.estimatedDeliver">Ожидаемое исполнение: %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2-5 минут</string>
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d минут</string>
     <!-- Priority fee -->
     <string name="FeeSelector.priority">Приоритет</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
@@ -394,6 +420,10 @@
     <string name="ManageWallet.textFeildLabel">Название кошелька</string>
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">Управление кошельком</string>
+    <string name="MarketData.high24h">24ч высокий</string>
+    <string name="MarketData.low24h">24 часа низкая</string>
+    <string name="MarketData.marketCap">Рыночная капитализация</string>
+    <string name="MarketData.volume">Объем торгов</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
     <string name="MenuButton.addWallet">Добавить кошелек</string>
     <!-- Menu button title -->
@@ -768,6 +798,8 @@
     <string name="Send.amountLabel">Сумма</string>
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Баланс: %1$s</string>
+    <!-- Balance: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.balanceString">Баланс:</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">Разрешить доступ к камере в: \"Настройки\" &gt; \"Приложения\" &gt; \"BRD\" &gt; \"Разрешения\"</string>
     <!-- Permission required to access camera -->
@@ -838,6 +870,8 @@
     <string name="Send.remoteRequestError">Не удалось загрузить запрос на оплату</string>
     <!-- Scan button label -->
     <string name="Send.scanLabel">Сканировать</string>
+    <!-- Sending Max: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.sendingMax">Отправка Макс:</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">Отправить</string>
     <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->

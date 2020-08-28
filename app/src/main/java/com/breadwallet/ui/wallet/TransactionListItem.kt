@@ -39,7 +39,7 @@ class TransactionListItem(
     ) : FastAdapter.ViewHolder<TransactionListItem>(containerView),
         LayoutContainer {
 
-        override fun bindView(item: TransactionListItem, payloads: MutableList<Any>) {
+        override fun bindView(item: TransactionListItem, payloads: List<Any>) {
             setTexts(item.model, item.isCryptoPreferred)
         }
 

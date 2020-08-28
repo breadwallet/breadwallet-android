@@ -47,6 +47,7 @@ import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.WalletSweeper
 import com.breadwallet.crypto.errors.AccountInitializationError
 import com.breadwallet.crypto.errors.FeeEstimationError
+import com.breadwallet.crypto.errors.LimitEstimationError
 import com.breadwallet.crypto.errors.WalletSweeperError
 import com.breadwallet.crypto.utility.CompletionHandler
 import com.breadwallet.logger.logError
@@ -63,11 +64,9 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import kotlin.math.absoluteValue
 
 /** Default port for [NetworkPeer] */
 private const val DEFAULT_PORT = 8333L
@@ -164,22 +163,15 @@ suspend fun WalletSweeper.estimateFee(networkFee: NetworkFee): TransferFeeBasis 
         estimate(networkFee, handler)
     }
 
-private const val ECONOMY_FEE_HOURS = 10L
-private const val REGULAR_FEE_MINUTES = 30L
-
-enum class TransferSpeed(val targetTime: Long) {
-    ECONOMY(TimeUnit.HOURS.toMillis(ECONOMY_FEE_HOURS)),
-    REGULAR(TimeUnit.MINUTES.toMillis(REGULAR_FEE_MINUTES)),
-    PRIORITY(0L);
-}
-
 fun Wallet.feeForSpeed(speed: TransferSpeed): NetworkFee {
     val fees = walletManager.network.fees
     return when (fees.size) {
         1 -> fees.single()
-        else -> fees.minBy { fee ->
-            (fee.confirmationTimeInMilliseconds.toLong() - speed.targetTime).absoluteValue
-        } ?: walletManager.defaultNetworkFee
+        else -> fees
+            .filter { it.confirmationTimeInMilliseconds.toLong() <= speed.targetTime }
+            .minBy { fee ->
+                speed.targetTime - fee.confirmationTimeInMilliseconds.toLong()
+            } ?: fees.minBy { it.confirmationTimeInMilliseconds } ?: walletManager.defaultNetworkFee
     }
 }
 
@@ -381,5 +373,32 @@ suspend fun System.accountInitialize(
         }
     }
     accountInitialize(account, network, create, handler)
+}
+
+suspend fun Wallet.estimateMaximum(
+    address: Address,
+    networkFee: NetworkFee
+): Amount = suspendCoroutine { continuation ->
+    val handler = object : CompletionHandler<Amount, LimitEstimationError> {
+        override fun handleData(limitMaxAmount: Amount?) {
+            if (limitMaxAmount == null) {
+                continuation.resumeWithException(Exception("Limit Estimation is null"))
+                return
+            }
+            continuation.resume(limitMaxAmount)
+        }
+
+        override fun handleError(error: LimitEstimationError?) {
+            continuation.resumeWithException(
+                error ?: Exception("Unknown Limit Estimation Error")
+            )
+        }
+    }
+
+    estimateLimitMaximum(
+        address,
+        networkFee,
+        handler
+    )
 }
 

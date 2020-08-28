@@ -26,7 +26,6 @@ package com.breadwallet.ui.settings.segwit
 
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object LegacyAddress {
@@ -40,11 +39,6 @@ object LegacyAddress {
         val walletName: String = ""
     )
 
-    @MobiusUpdateSpec(
-        prefix = "LegacyAddress",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
         object OnShareClicked : E()
         object OnAddressClicked : E()

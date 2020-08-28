@@ -26,7 +26,6 @@ package com.breadwallet.ui.settings.segwit
 
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
-import drewcarlson.switchboard.MobiusUpdateSpec
 
 object EnableSegWit {
 
@@ -36,11 +35,6 @@ object EnableSegWit {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "EnableSegWit",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
         object OnEnableClick : E()
         object OnContinueClicked : E()
