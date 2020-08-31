@@ -1324,4 +1324,6 @@
     <string name="MarketData.volume">Trading Volume</string>
     <string name="MarketData.high24h">24h high</string>
     <string name="MarketData.low24h">24h low</string>
+
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d minutes</string>
 </resources>

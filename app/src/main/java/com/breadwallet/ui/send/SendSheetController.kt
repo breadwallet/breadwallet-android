@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.send
 
+import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -58,6 +59,8 @@ import com.breadwallet.ui.send.SendSheet.E
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange
 import com.breadwallet.ui.send.SendSheet.F
 import com.breadwallet.ui.send.SendSheet.M
+import com.breadwallet.util.isErc20
+import com.breadwallet.util.isEthereum
 import com.spotify.mobius.Connectable
 import kotlinx.android.synthetic.main.controller_send_sheet.*
 import kotlinx.coroutines.channels.awaitClose
@@ -71,10 +74,12 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 private const val CURRENCY_CODE = "CURRENCY_CODE"
 private const val CRYPTO_REQUEST_LINK = "CRYPTO_REQUEST_LINK"
 private const val RESOLVED_ADDRESS_CHARS = 10
+private const val FEE_TIME_PADDING = 1
 
 /** A BottomSheet for sending crypto from the user's wallet to a specified target. */
 @Suppress("TooManyFunctions")
@@ -198,9 +203,9 @@ class SendSheetController(args: Bundle? = null) :
                 }
             },
             buttonCurrencySelect.clicks().map { E.OnToggleCurrencyClicked },
-            buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.REGULAR) },
-            buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.ECONOMY) },
-            buttonPriority.clicks().map { E.OnTransferSpeedChanged(TransferSpeed.PRIORITY) }
+            buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.REGULAR) },
+            buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.ECONOMY) },
+            buttonPriority.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.PRIORITY) }
         )
     }
 
@@ -384,7 +389,6 @@ class SendSheetController(args: Bundle? = null) :
             setFeeOption(transferSpeed)
         }
 
-        ifChanged(M::transferSpeed, ::setFeeOption)
         ifChanged(M::showFeeSelect) {
             layoutFeeOption.isVisible = showFeeSelect
         }
@@ -525,7 +529,7 @@ class SendSheetController(args: Bundle? = null) :
         val context = applicationContext!!
         // TODO: Redo using a toggle button and a selector
         when (feeOption) {
-            TransferSpeed.REGULAR -> {
+            is TransferSpeed.Regular -> {
                 buttonRegular.setTextColor(context.getColor(R.color.white))
                 buttonRegular.background = context.getDrawable(R.drawable.b_blue_square)
                 buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
@@ -533,11 +537,16 @@ class SendSheetController(args: Bundle? = null) :
                 buttonPriority.setTextColor(context.getColor(R.color.dark_blue))
                 buttonPriority.background =
                     context.getDrawable(R.drawable.b_half_right_blue_stroke)
-                labelFeeDescription.text = context.getString(R.string.FeeSelector_estimatedDeliver)
-                    .format(context.getString(R.string.FeeSelector_regularTime))
+                labelFeeDescription.text = when {
+                    feeOption.currencyCode.run {
+                        isEthereum() || isErc20()
+                    } -> ethFeeEstimateString(context, feeOption.targetTime)
+                    else -> context.getString(R.string.FeeSelector_estimatedDeliver)
+                        .format(context.getString(R.string.FeeSelector_regularTime))
+                }
                 labelFeeWarning.visibility = View.GONE
             }
-            TransferSpeed.ECONOMY -> {
+            is TransferSpeed.Economy -> {
                 buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
                 buttonRegular.background = context.getDrawable(R.drawable.b_blue_square_stroke)
                 buttonEconomy.setTextColor(context.getColor(R.color.white))
@@ -545,23 +554,38 @@ class SendSheetController(args: Bundle? = null) :
                 buttonPriority.setTextColor(context.getColor(R.color.dark_blue))
                 buttonPriority.background =
                     context.getDrawable(R.drawable.b_half_right_blue_stroke)
-                labelFeeDescription.text = context.getString(R.string.FeeSelector_estimatedDeliver)
-                    .format(context.getString(R.string.FeeSelector_economyTime))
+                labelFeeDescription.text = when {
+                    feeOption.currencyCode.run {
+                        isEthereum() || isErc20()
+                    } -> ethFeeEstimateString(context, feeOption.targetTime)
+                    else -> context.getString(R.string.FeeSelector_estimatedDeliver)
+                        .format(context.getString(R.string.FeeSelector_economyTime))
+                }
                 labelFeeWarning.visibility = View.VISIBLE
             }
-            TransferSpeed.PRIORITY -> {
+            is TransferSpeed.Priority -> {
                 buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
                 buttonRegular.background = context.getDrawable(R.drawable.b_blue_square_stroke)
                 buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
                 buttonEconomy.background = context.getDrawable(R.drawable.b_half_left_blue_stroke)
                 buttonPriority.setTextColor(context.getColor(R.color.white))
                 buttonPriority.background = context.getDrawable(R.drawable.b_half_right_blue)
-                labelFeeDescription.text =
-                    context.getString(R.string.FeeSelector_estimatedDeliver)
+                labelFeeDescription.text = when {
+                    feeOption.currencyCode.run {
+                        isEthereum() || isErc20()
+                    } -> ethFeeEstimateString(context, feeOption.targetTime)
+                    else -> context.getString(R.string.FeeSelector_estimatedDeliver)
                         .format(context.getString(R.string.FeeSelector_priorityTime))
+                }
                 labelFeeWarning.visibility = View.GONE
             }
         }
+    }
+
+    private fun ethFeeEstimateString(context: Context, time: Long): String {
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(time) + FEE_TIME_PADDING
+        return context.getString(R.string.FeeSelector_estimatedDeliver)
+            .format(context.getString(R.string.FeeSelector_lessThanMinutes, minutes))
     }
 }
 
