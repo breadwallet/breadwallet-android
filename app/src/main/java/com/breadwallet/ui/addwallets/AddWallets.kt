@@ -26,7 +26,6 @@ package com.breadwallet.ui.addwallets
 
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object AddWallets {
@@ -40,11 +39,6 @@ object AddWallets {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "AddWallets",
-        baseEffect = F::class,
-        baseModel = M::class
-    )
     sealed class E {
         data class OnSearchQueryChanged(@Redacted val query: String) : E()
         data class OnTokensChanged(@Redacted val tokens: List<Token>) : E()

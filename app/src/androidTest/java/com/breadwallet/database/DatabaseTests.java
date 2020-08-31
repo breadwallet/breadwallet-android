@@ -3,17 +3,12 @@ package com.breadwallet.database;
 import android.app.Activity;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import androidx.test.runner.AndroidJUnit4;
 import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
-import com.breadwallet.legacy.presenter.entities.BRTransactionEntity;
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
-import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.RatesDataSource;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -76,8 +71,6 @@ public class DatabaseTests {
     private void cleanUp() {
         Activity app = mActivityRule.getActivity();
 
-        PeerDataSource.getInstance(app).deleteAllPeers(app, "BTC");
-        PeerDataSource.getInstance(app).deleteAllPeers(app, "BCH");
     }
 
     @After
@@ -101,7 +94,7 @@ public class DatabaseTests {
         );
         toInsert.add(ent);
         cds.putCurrencies(toInsert);
-        List<CurrencyEntity> cs = cds.getAllCurrencies(app, "BTC");
+        List<CurrencyEntity> cs = cds.getAllCurrencies("BTC");
         Assert.assertNotNull(cs);
         Assert.assertEquals(cs.size(), 1);
         Assert.assertEquals(cs.get(0).getName(), "OmiseGo");
@@ -120,8 +113,8 @@ public class DatabaseTests {
         toInsert.add(btcEntity);
         cds.putCurrencies(toInsert);
 
-        List<CurrencyEntity> btcCurs = cds.getAllCurrencies(app, "BTC");
-        List<CurrencyEntity> bchCurs = cds.getAllCurrencies(app, "BCH");
+        List<CurrencyEntity> btcCurs = cds.getAllCurrencies("BTC");
+        List<CurrencyEntity> bchCurs = cds.getAllCurrencies("BCH");
         Assert.assertNotNull(btcCurs);
         Assert.assertNotNull(bchCurs);
         Assert.assertEquals(btcCurs.size(), 1);

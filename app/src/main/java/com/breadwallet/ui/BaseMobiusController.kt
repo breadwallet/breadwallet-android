@@ -26,6 +26,7 @@ package com.breadwallet.ui
 
 import android.os.Bundle
 import android.view.View
+import com.breadwallet.app.BreadApp
 import com.breadwallet.ext.throttleFirst
 import com.breadwallet.mobius.ConsumerDelegate
 import com.breadwallet.mobius.QueuedConsumer
@@ -52,7 +53,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart.ATOMIC
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Unconfined
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -134,7 +134,8 @@ abstract class BaseMobiusController<M, E, F>(
                 override fun dispose() {
                     connection.dispose()
                     // Dispose any queued effects
-                    viewEffectChannel.receiveAsFlow().launchIn(GlobalScope)
+                    viewEffectChannel.receiveAsFlow()
+                        .launchIn(BreadApp.applicationScope)
                 }
             }
         }

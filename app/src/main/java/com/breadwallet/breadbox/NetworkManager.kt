@@ -90,11 +90,6 @@ class NetworkManager(
             return
         }
         scope.launch {
-            // TODO(DROID-1658): Restore migration
-            //if (systemEvt.migrateRequired(event.network)) {
-            //    migrateNetwork(systemEvt, event.network, event.network.currency.code)
-            //}
-
             initializeNetwork(network, false)
         }
     }

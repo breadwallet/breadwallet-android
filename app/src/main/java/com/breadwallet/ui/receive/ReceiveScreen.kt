@@ -31,7 +31,6 @@ import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.send.MAX_DIGITS
 import com.breadwallet.util.CurrencyCode
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
@@ -111,11 +110,6 @@ object ReceiveScreen {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "ReceiveScreen",
-        baseEffect = F::class,
-        baseModel = M::class
-    )
     sealed class E {
 
         data class OnExchangeRateUpdated(

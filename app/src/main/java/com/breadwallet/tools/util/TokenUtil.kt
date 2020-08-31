@@ -92,6 +92,7 @@ object TokenUtil {
         val tokensFile = File(context.filesDir, TOKENS_FILENAME)
         if (!tokensFile.exists() || forceLoad) {
             try {
+                initLock.tryLock()
                 val tokens = context.resources
                     .openRawResource(R.raw.tokens)
                     .reader()
@@ -105,6 +106,7 @@ object TokenUtil {
                 BRReportsManager.error("Failed to read res/raw/tokens.json", e)
             }
         } else {
+            initLock.tryLock()
             fetchTokensFromServer()
             initLock.unlock()
         }

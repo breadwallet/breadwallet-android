@@ -29,7 +29,6 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object RecoveryKey {
@@ -89,11 +88,6 @@ object RecoveryKey {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "RecoveryKey",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
         data class OnWordChanged(val index: Int, @Redacted val word: String) : E() {
             init {

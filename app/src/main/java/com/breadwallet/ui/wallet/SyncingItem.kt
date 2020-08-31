@@ -56,7 +56,7 @@ class SyncingItem : AbstractItem<SyncingItem.ViewHolder>() {
         private val dateFormat = SimpleDateFormat(SYNCED_THROUGH_DATE_FORMAT, Locale.US)
         private val numberFormat = NumberFormat.getPercentInstance()
 
-        override fun bindView(item: SyncingItem, payloads: MutableList<Any>) {
+        override fun bindView(item: SyncingItem, payloads: List<Any>) {
             val syncingText = resources.getString(R.string.SyncingView_syncing)
             val syncingPercentText = numberFormat.format(item.syncProgress)
             syncing_label.text = "%s %s".format(syncingText, syncingPercentText)

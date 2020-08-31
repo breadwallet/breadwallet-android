@@ -1,6 +1,5 @@
 package com.breadwallet.legacy.presenter.entities;
 
-import com.breadwallet.legacy.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.tools.util.Utils;
 
 import java.io.Serializable;

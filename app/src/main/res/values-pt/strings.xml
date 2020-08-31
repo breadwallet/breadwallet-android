@@ -188,6 +188,31 @@
     <string name="Button.yes">Sim</string>
     <!-- Camera plugin instruction -->
     <string name="CameraPlugin.centerInstruction">Centre a sua ID na caixa</string>
+    <string name="CloudBackup.backupDeleted">Backup Apagado</string>
+    <string name="CloudBackup.backupDeletedMessage">Seu backup do iCloud foi apagado após muitas tentativas malsucedidas de PIN. O aplicativo será reiniciado agora.</string>
+    <string name="CloudBackup.backupMenuTitle">Backup do iCloud</string>
+    <string name="CloudBackup.createButton">Criar Carteira Nova</string>
+    <string name="CloudBackup.createWarning">Foi detectada uma carteira com backup anterior. O uso deste backup é recomendado. Tem certeza de que deseja prosseguir com a criação de uma nova carteira?</string>
+    <string name="CloudBackup.enableBody1">As Chaves do iCloud devem estar ativadas para que este recurso funcione.</string>
+    <string name="CloudBackup.enableBody2">Deve ser parecido com o seguinte:</string>
+    <string name="CloudBackup.enableButton">Eu ativei o iCloud Keychain</string>
+    <string name="CloudBackup.enableTitle">Habilitar Keychain</string>
+    <string name="CloudBackup.encryptBackupMessage">Digite o PIN para criptografar o backup</string>
+    <string name="CloudBackup.mainBody">Ainda recomendamos anotar sua frase de recuperação e mantê-la segura, mas você também pode fazer backup de sua frase de recuperação para o iCloud. Observe que o backup do iCloud é tão seguro quanto a sua conta do iCloud.</string>
+    <string name="CloudBackup.mainTitle">Backup de recuperação do iCloud</string>
+    <string name="CloudBackup.mainWarning">O chaveiro iCloud deve estar ligado no aplicativo iOS Settings para que este recurso funcione</string>
+    <string name="CloudBackup.mainWarningConfirmation">Tem certeza de que deseja desativar o Backup do iCloud? Isso excluirá seu backup de todos os dispositivos.</string>
+    <string name="CloudBackup.pinAttempts">Tentativas restantes antes de apagar o backup: %1$@</string>
+    <string name="CloudBackup.recoverButton">Restaurar da chave de recuperação</string>
+    <string name="CloudBackup.recoverHeader">Digite o PIN para desbloquear o backup do iCloud</string>
+    <string name="CloudBackup.restoreButton">Restaurar do backup do iCloud</string>
+    <string name="CloudBackup.selectTitle">Escolha Backup</string>
+    <string name="CloudBackup.step1">Inicie o aplicativo Settings.</string>
+    <string name="CloudBackup.step2">Toque no nome do seu ID Apple.</string>
+    <string name="CloudBackup.step3">Toque em iCloud.</string>
+    <string name="CloudBackup.step4">Verifique se o chaveiro do iCloud está ligado</string>
+    <string name="CloudBackup.understandText">Entendo que este recurso não funcionará a menos que o iCloud Keychain esteja ativado.</string>
+    <string name="CloudBackup.warningBody">Seu backup do iCloud será apagado após mais %1$@ tentativas incorretas de PIN.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Montante a enviar:</string>
     <!-- Network Fee: ($1.00) -->
@@ -280,6 +305,7 @@
     <string name="FeeSelector.estimatedDeliver">Entrega estimada: %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2 a 5 minutos</string>
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d minutos</string>
     <!-- Priority fee -->
     <string name="FeeSelector.priority">Prioridade</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
@@ -394,6 +420,10 @@
     <string name="ManageWallet.textFeildLabel">Nome da Carteira</string>
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">Gerir Carteira</string>
+    <string name="MarketData.high24h">24h de altura</string>
+    <string name="MarketData.low24h">24h baixo</string>
+    <string name="MarketData.marketCap">Valor de mercado</string>
+    <string name="MarketData.volume">Volume de negócios</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
     <string name="MenuButton.addWallet">Adicionar Carteira</string>
     <!-- Menu button title -->
@@ -768,6 +798,8 @@
     <string name="Send.amountLabel">Quantia</string>
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Saldo: %1$s</string>
+    <!-- Balance: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.balanceString">Saldo:</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">Permita o acesso à câmara em \"Definições\" &gt; \"Aplicações\" &gt; \"BRD\" &gt; \"Permissões\"</string>
     <!-- Permission required to access camera -->
@@ -838,6 +870,8 @@
     <string name="Send.remoteRequestError">Não foi possível carregar a solicitação de pagamento</string>
     <!-- Scan button label -->
     <string name="Send.scanLabel">Digitalizar</string>
+    <!-- Sending Max: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.sendingMax">Enviando Max: </string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">Enviar</string>
     <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->

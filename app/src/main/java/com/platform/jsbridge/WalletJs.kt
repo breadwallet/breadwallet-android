@@ -30,7 +30,6 @@ import android.webkit.JavascriptInterface
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.Buy
-import com.breadwallet.app.Conversion
 import com.breadwallet.app.ConversionTracker
 import com.breadwallet.app.Trade
 import com.breadwallet.breadbox.BreadBox
@@ -41,6 +40,7 @@ import com.breadwallet.breadbox.containsCurrency
 import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.defaultUnit
 import com.breadwallet.breadbox.estimateFee
+import com.breadwallet.breadbox.estimateMaximum
 import com.breadwallet.breadbox.feeForSpeed
 import com.breadwallet.breadbox.findCurrency
 import com.breadwallet.breadbox.hashString
@@ -58,8 +58,6 @@ import com.breadwallet.crypto.TransferState
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.logger.logDebug
-import com.breadwallet.crypto.errors.LimitEstimationError
-import com.breadwallet.crypto.utility.CompletionHandler
 import com.breadwallet.logger.logError
 import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.RatesRepository
@@ -83,9 +81,6 @@ import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.Currency
 import java.util.Locale
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class WalletJs(
     private val promise: NativePromiseFactory,
@@ -407,37 +402,20 @@ class WalletJs(
         val wallet = system.wallets.first { it.currency.code.equals(currency, true) }
         val address = checkNotNull(wallet.addressFor(toAddress))
 
-        suspendCoroutine { continuation ->
-            val handler = object : CompletionHandler<Amount, LimitEstimationError> {
-                override fun handleData(limitMaxAmount: Amount?) {
-                    if (limitMaxAmount == null) {
-                        continuation.resumeWithException(Exception("Limit Estimation is null"))
-                        return
-                    }
-                    val numerator = limitMaxAmount.convert(wallet.baseUnit).orNull()
-                        ?.toStringWithBase(BASE_10, "") ?: "0"
-                    val denominator = Amount.create("1", false, wallet.baseUnit).orNull()
-                        ?.toStringWithBase(BASE_10, "")
-                        ?: Amount.create(0, wallet.baseUnit).toStringWithBase(BASE_10, "")
+        val limitMaxAmount =
+            wallet.estimateMaximum(address, wallet.feeForSpeed(TransferSpeed.Priority(currency)))
 
-                    continuation.resume(JSONObject().apply {
-                        put(KEY_NUMERATOR, numerator)
-                        put(KEY_DENOMINATOR, denominator)
-                    })
-                }
+        checkNotNull(limitMaxAmount)
 
-                override fun handleError(error: LimitEstimationError?) {
-                    continuation.resumeWithException(
-                        error ?: Exception("Unknown Limit Estimation Error")
-                    )
-                }
-            }
+        val numerator = limitMaxAmount.convert(wallet.baseUnit).orNull()
+            ?.toStringWithBase(BASE_10, "") ?: "0"
+        val denominator = Amount.create("1", false, wallet.baseUnit).orNull()
+            ?.toStringWithBase(BASE_10, "")
+            ?: Amount.create(0, wallet.baseUnit).toStringWithBase(BASE_10, "")
 
-            wallet.estimateLimitMaximum(
-                address,
-                wallet.feeForSpeed(TransferSpeed.PRIORITY),
-                handler
-            )
+        JSONObject().apply {
+            put(KEY_NUMERATOR, numerator)
+            put(KEY_DENOMINATOR, denominator)
         }
     }
 
@@ -459,7 +437,11 @@ class WalletJs(
         }
 
         try {
-            return wallet.estimateFee(address, amount, wallet.feeForSpeed(TransferSpeed.PRIORITY))
+            return wallet.estimateFee(
+                address,
+                amount,
+                wallet.feeForSpeed(TransferSpeed.Priority(wallet.currency.code))
+            )
         } catch (e: FeeEstimationError) {
             logError("Failed get fee estimate", e)
         } catch (e: IllegalStateException) {
@@ -509,7 +491,7 @@ class WalletJs(
                     fiatCode,
                     feeBasis.currency.code,
                     address.toSanitizedString(),
-                    TransferSpeed.PRIORITY,
+                    TransferSpeed.Priority(wallet.currency.code),
                     amount.toBigDecimal(),
                     fiatAmount,
                     fiatTotalCost,

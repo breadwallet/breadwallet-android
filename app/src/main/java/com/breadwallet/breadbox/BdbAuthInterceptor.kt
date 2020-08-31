@@ -26,6 +26,7 @@ package com.breadwallet.breadbox
 
 import android.util.Base64
 import com.breadwallet.BuildConfig
+import com.breadwallet.app.BreadApp
 import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
@@ -39,10 +40,8 @@ import com.breadwallet.tools.security.BrdUserState
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -85,7 +84,7 @@ class BdbAuthInterceptor(
     init {
         if (BuildConfig.USE_REMOTE_CONFIG) {
             clientToken = Firebase.remoteConfig.getString(BDB_TOKEN_KEY)
-            GlobalScope.launch { fetchClientToken() }
+            BreadApp.applicationScope.launch { fetchClientToken() }
         } else {
             clientToken = BuildConfig.BDB_CLIENT_TOKEN
         }

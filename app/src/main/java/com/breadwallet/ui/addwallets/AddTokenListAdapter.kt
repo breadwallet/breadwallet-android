@@ -96,7 +96,7 @@ class AddTokenListAdapter(
         }
 
         holder.name.text = token.name
-        holder.symbol.text = currencyCode
+        holder.symbol.text = token.currencyCode.toUpperCase(Locale.ROOT)
 
         holder.addRemoveButton.apply {
             val token = tokens[holder.adapterPosition]

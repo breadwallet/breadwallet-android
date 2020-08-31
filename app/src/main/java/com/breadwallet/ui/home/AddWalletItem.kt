@@ -30,7 +30,7 @@ class AddWalletItem : AbstractItem<AddWalletItem.ViewHolder>(), IDraggable {
 
         override fun bindView(
             item: AddWalletItem,
-            payloads: MutableList<Any>
+            payloads: List<Any>
         ) = Unit
 
         override fun unbindView(item: AddWalletItem) = Unit
