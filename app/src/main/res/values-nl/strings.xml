@@ -25,7 +25,7 @@
     <!-- Account balance -->
     <string name="Account.balance">Balans</string>
     <!-- Delisted token alert banner message -->
-    <string name="Account.delistedToken">Dit token is verwijderd omdat de uitgever besloot de ERC20-ondersteuning stop te zetten. \n\nMogelijk kunt u deze tokens nog steeds naar een ander platform verzenden. Ga voor meer informatie naar onze ondersteuningspagina.</string>
+    <string name="Account.delistedToken">Dit token is verwijderd. \n\nMogelijk kunt u deze tokens nog steeds naar een ander platform verzenden. Ga voor meer informatie naar onze ondersteuningspagina.</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%1$s per %2$s</string>
     <!-- Loading Wallet Message -->
@@ -47,7 +47,7 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">Mijn BRD</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">Het lijkt erop dat u een toetsenbord van een derde gebruikt. Deze kan bijhouden wat u typt en eventueel uw sleutel stelen. Schakel alstublieft over naar het standaard Android toetsenbord voor extra veiligheid.</string>
+    <string name="Alert.customKeyboard.android">Het lijkt erop dat u een toetsenbord van een derde partij gebruikt, dat kan opnemen wat u typt en uw herstelzin kan stelen. Schakel over naar het standaard Android-toetsenbord voor extra bescherming.</string>
     <!-- Error alert title -->
     <string name="Alert.error">Error</string>
     <!-- Keystore error -->
@@ -55,9 +55,9 @@
     <!-- KeyStore error, keys are invalidated -->
     <string name="Alert.keystore.invalidated.android">Uw door BRD geëncrypteerde data is onlangs ongeldig gemaakt omdat uw Android schermvergrendeling is uitgeschakeld.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
-    <string name="Alert.keystore.invalidated.uninstall.android">We kunnen niet doorgaan omdat uw instellingen voor schermvergrendeling zijn gewijzigd (bijv. wachtwoord was uitgeschakeld, vingerafdrukken waren gewijzigd). Om veiligheidsredenen heeft Android uw sleutelarchief permanent gesloten. Daarom moeten uw BRD-app-gegevens worden gewist door de installatie ongedaan te maken.\n\nGeen zorgen, uw geld is nog steeds veilig! Installeer de app opnieuw en herstel uw portemonnee met behulp van uw papieren sleutel.</string>
+    <string name="Alert.keystore.invalidated.uninstall.android">We kunnen niet doorgaan omdat uw instellingen voor schermvergrendeling zijn gewijzigd (bijv. Wachtwoord is uitgeschakeld, vingerafdrukken zijn gewijzigd). Om veiligheidsredenen heeft Android uw sleutelopslag permanent vergrendeld. Daarom moeten uw BRD-app-gegevens worden gewist door de installatie ongedaan te maken. \n\nMaak je geen zorgen, je geld is nog steeds veilig! Installeer de app opnieuw en herstel uw portemonnee met uw herstelzin.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
-    <string name="Alert.keystore.invalidated.wipe.android">We kunnen niet doorgaan omdat uw instellingen voor schermvergrendeling zijn gewijzigd (bijv. wachtwoord was uitgeschakeld, vingerafdrukken waren gewijzigd). Om veiligheidsredenen heeft Android uw sleutelarchief permanent gesloten. Daarom moeten uw BRD-app-gegevens worden gewist.\n\nGeen zorgen, uw geld is nog steeds veilig! Herstel uw portemonnee met behulp van uw papieren sleutel.</string>
+    <string name="Alert.keystore.invalidated.wipe.android">We kunnen niet doorgaan omdat uw instellingen voor schermvergrendeling zijn gewijzigd (bijv. Wachtwoord is uitgeschakeld, vingerafdrukken zijn gewijzigd). Om veiligheidsredenen heeft Android uw sleutelopslag permanent vergrendeld. Daarom moeten uw BRD-app-gegevens worden gewist. \n\nMaak je geen zorgen, je geld is nog steeds veilig! Herstel uw portemonnee met behulp van uw herstelzin.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Android KeyStore fout</string>
     <!-- No internet alert message -->
@@ -73,7 +73,7 @@
     <!-- Addresses Copied Alert sub header -->
     <string name="Alerts.copiedAddressesSubheader">Alle wallet-adressen zijn succesvol gekopieerd.</string>
     <!-- Alert Header Label (the paper key was set) -->
-    <string name="Alerts.paperKeySet">Paper key set</string>
+    <string name="Alerts.paperKeySet">Herstelsgroepset</string>
     <!-- Alert Subheader label (playfully positive) -->
     <string name="Alerts.paperKeySetSubheader">Geweldig!</string>
     <!-- Alert Header label (the PIN was set) -->
@@ -198,7 +198,7 @@
     <string name="CloudBackup.enableButton">Ik heb iCloud-sleutelhanger ingeschakeld</string>
     <string name="CloudBackup.enableTitle">Schakel Keychain in</string>
     <string name="CloudBackup.encryptBackupMessage">Voer een pincode in om de back-up te versleutelen</string>
-    <string name="CloudBackup.mainBody">We raden nog steeds aan om uw herstelzin op te schrijven en veilig te bewaren, maar u kunt ook een back-up maken van uw herstelzin op iCloud. Houd er rekening mee dat iCloud-back-up slechts zo veilig is als uw iCloud-account.</string>
+    <string name="CloudBackup.mainBody">Houd er rekening mee dat iCloud-back-up slechts zo veilig is als uw iCloud-account. We raden u toch aan om uw herstelzin in de volgende stap op te schrijven en veilig te bewaren. De herstelzin is de enige manier om uw portemonnee te herstellen als u geen toegang meer hebt tot iCloud.</string>
     <string name="CloudBackup.mainTitle">iCloud-herstelback-up</string>
     <string name="CloudBackup.mainWarning">iCloud-sleutelhanger moet zijn ingeschakeld in de app iOS-instellingen om deze functie te laten werken</string>
     <string name="CloudBackup.mainWarningConfirmation">Weet u zeker dat u iCloud-back-up wilt uitschakelen? Hiermee wordt uw back-up van alle apparaten verwijderd.</string>
@@ -232,9 +232,9 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">Totale Prijs:</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">De ingevulde woorden komen niet overeen met uw paper key. Probeer het opnieuw.</string>
+    <string name="ConfirmPaperPhrase.error">De ingevoerde woorden komen niet overeen met uw herstelzin. Probeer het a.u.b. opnieuw.</string>
     <!-- Confirm paper phrase view label. -->
-    <string name="ConfirmPaperPhrase.label">Voer de volgende woorden in van je papieren sleutel om te verzekeren dat alles correct is opgeschreven.</string>
+    <string name="ConfirmPaperPhrase.label">Voer de volgende woorden uit uw herstelzin in om er zeker van te zijn dat alles correct is opgeschreven.</string>
     <!-- Word label eg. Word #1, Word #2 -->
     <string name="ConfirmPaperPhrase.word">Woord #%1$s</string>
     <!-- Agree to legal terms button -->
@@ -445,7 +445,7 @@
     <!-- button label -->
     <string name="MenuViewController.recoverButton">Portemonnee Herstellen</string>
     <!-- Paper Key Skip modal body (Android-version) -->
-    <string name="Modal.PaperKeySkip.Body.Android">U heeft uw papieren sleutel nodig om uw wallet te openen als u uw beveiligingsinstellingen op uw telefoon wijzigt.\n\nWeet u zeker dat u uw papieren sleutel later wilt instellen?</string>
+    <string name="Modal.PaperKeySkip.Body.Android">Uw herstelzin is vereist om uw portemonnee te openen als u de beveiligingsinstellingen op uw telefoon wijzigt. \n\nWeet u zeker dat u uw herstelzin later wilt instellen?</string>
     <!-- Paper Key Skip modal Continue Set Up button -->
     <string name="Modal.PaperKeySkip.Button.ContinueSetUp">Doorgaan met instellen</string>
     <!-- Paper Key Skip modal I'll do it later button -->
@@ -546,10 +546,10 @@
     <string name="Prompts.NoScreenLock.body.android">Een schermvergrendeling voor uw apparaat is nodig om uw portemonnee te beveiligen. Ga naar \"Instellingen\" &gt; \"Beveiliging\" &gt; \"Schermvergrendeling\" en stel in om door te gaan.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Schermvergrendeling uitgeschakeld</string>
-    <!-- Warning about recovery key (formerly paper key). -->
-    <string name="Prompts.PaperKey.body">Uw Papiersleutel moet opgeslagen worden voor het geval dat u uw telefoon ooit verliest of vervangt.</string>
+    <!-- Warning about recovery phrase (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">Uw herstelzin moet worden opgeslagen voor het geval u uw telefoon verliest of wijzigt.</string>
     <!-- Warning about paper key (Android-version) -->
-    <string name="Prompts.PaperKey.Body.Android">Stel uw papieren sleutel in voor het geval dat u uw telefoon ooit kwijtraakt of vervangt. U heeft uw sleutel nodig indien u de beveiligingsinstellingen van uw telefoon aanpast.</string>
+    <string name="Prompts.PaperKey.Body.Android">Stel uw herstelzin in voor het geval u ooit uw telefoon kwijtraakt of vervangt. Uw sleutel is ook vereist als u de beveiligingsinstellingen van uw telefoon wijzigt.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Actie Vereist</string>
     <string name="Prompts.RateApp.dontShow">Vraag het niet nog eens</string>
@@ -626,11 +626,11 @@
     <!-- Reset PIN with paper key: header -->
     <string name="RecoverWallet.header_reset_pin">PIN Resetten</string>
     <!-- Enter paper key instruction -->
-    <string name="RecoverWallet.instruction">Papieren Sleutel Invoeren</string>
+    <string name="RecoverWallet.instruction">Voer de herstelzin in</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Herstel je BRD met je papieren sleutel.</string>
+    <string name="RecoverWallet.intro">Herstel uw BRD met uw herstelzin.</string>
     <!-- Invalid paper key message -->
-    <string name="RecoverWallet.invalid">De papieren sleutel die je hebt ingevoerd is ongeldig. Check ieder woord a.u.b. en probeer het opnieuw.</string>
+    <string name="RecoverWallet.invalid">De ingevoerde herstelzin is ongeldig. Controleer elk woord nogmaals en probeer het opnieuw.</string>
     <!-- Previous button accessibility label -->
     <string name="RecoverWallet.leftArrow">Linker Pijl</string>
     <!-- Next button label -->
@@ -640,35 +640,35 @@
     <!-- Next button accessibility label -->
     <string name="RecoverWallet.rightArrow">Rechter Pijl</string>
     <!-- Recover wallet sub-header -->
-    <string name="RecoverWallet.subheader">Voer de papieren sleutel in voor de portemonnee die je wilt herstellen.</string>
+    <string name="RecoverWallet.subheader">Voer de herstelzin in voor de portemonnee die u wilt herstellen.</string>
     <!-- Reset PIN with paper key: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">Om je PIN te resetten moet je de woorden van je papieren sleutel in onderstaande velden invoeren.</string>
+    <string name="RecoverWallet.subheader_reset_pin">Om uw pincode opnieuw in te stellen, voert u de woorden uit uw herstelzin in de onderstaande vakken in.</string>
     <!-- Instructs the user to enter words from the set of recovery key words. -->
     <string name="RecoveryKeyFlow.confirmRecoveryInputError">Het woord dat u ingevoerd heeft is niet juist. Probeer het nogmaals.</string>
-    <!-- Instructs the user to enter words from the set of recovery key words. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Bijna klaar! Voer de volgende woorden in van uw herstelcode.</string>
-    <!-- Title for the confirmation step of the recovery key flow. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Bevestig herstelcode</string>
-    <!-- Title displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKey">Voer herstelcode in</string>
-    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Voer uw herstelcode in om deze wallet van uw apparaat te ontkoppelen.</string>
-    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
-    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Weet u zeker dat u uw herstelcode later in wilt stellen?</string>
+    <!-- Instructs the user to enter words from the set of recovery phrase words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Bijna klaar! Typ de volgende woorden uit uw herstelzin.</string>
+    <!-- Title for the confirmation step of the recovery phrase flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Bevestig de herstelzin</string>
+    <!-- Title displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">Voer de herstelzin in</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Voer uw herstelzin in om deze portemonnee van uw apparaat te ontkoppelen.</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery phrase later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Weet u zeker dat u uw herstelzin later wilt instellen?</string>
     <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
     <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">Later instellen</string>
-    <!-- Button text for the 'Generate Recovery Key' button -->
-    <string name="RecoveryKeyFlow.generateKeyButton">Herstelcode aanmaken</string>
+    <!-- Button text for the 'Generate Recovery Phrase' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">Genereer een herstelzin</string>
     <!-- Subtext for the recovery key landing page. -->
     <string name="RecoveryKeyFlow.generateKeyExplanation">De code is vereist om uw geld terug te krijgen als u een upgrade uitvoert of uw telefoon verliest.</string>
-    <!-- Default title for the recovery key landing page -->
-    <string name="RecoveryKeyFlow.generateKeyTitle">Maak uw persoonlijke herstelcode aan</string>
+    <!-- Default title for the recovery phrase landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">Genereer uw persoonlijke herstelzin</string>
     <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
     <string name="RecoveryKeyFlow.goToWalletButtonTitle">Ga naar Wallet</string>
     <!-- Hint text for recovery key intro page, e.g., Step 2 -->
     <string name="RecoveryKeyFlow.howItWorksStep">Hoe werkt het - Stap %1$@</string>
-    <!-- Error text displayed when the user enters an incorrect recovery key -->
-    <string name="RecoveryKeyFlow.invalidPhrase">Enkele van de woorden die u heeft ingevoerd komen niet overeen met uw herstelcode. Probeer het nogmaals.</string>
+    <!-- Error text displayed when the user enters an incorrect recovery phrase -->
+    <string name="RecoveryKeyFlow.invalidPhrase">Sommige van de ingevoerde woorden komen niet overeen met uw herstelzin. Probeer het a.u.b. opnieuw.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.keepSecure">Houd het veilig</string>
     <!-- Informs the user that the recovery is only required for recovering a wallet. -->
@@ -680,19 +680,19 @@
     <!-- Title displayed when the user starts the process of recovering a wallet -->
     <string name="RecoveryKeyFlow.recoveryYourWallet">Herstel uw wallet</string>
     <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
-    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Voer de herstelcode in van de wallet die u wilt herstellen.</string>
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Voer de herstelzin in van de portemonnee die u wilt herstellen.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.relaxBuyTrade">Ontspan, koop en handel</string>
     <!-- Reminds the user to write down the recovery key words. -->
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">Vergeet niet om deze woorden op te schrijven. Veeg terug als u het vergeten bent.</string>
-    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
-    <string name="RecoveryKeyFlow.resetPINInstruction">Voer uw herstelcode in om uw PIN opnieuw in te stellen.</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery phrase to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">Voer uw herstelzin in om uw pincode opnieuw in te stellen.</string>
     <!-- Assures the user that BRD will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">Koop en handel in de wetenschap dat uw fondsen beschermd zijn met de beste veiligheid en privacy die er zijn.</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
     <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Bewaar uw code op een veilige plek. Dit is de enige manier om uw wallet terug te krijgen. BRD bewaart geen kopie.</string>
-    <!-- Title for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successHeading">Gefeliciteerd! U heeft de instellingen van uw herstelcode voltooid.</string>
+    <!-- Title for the success page after the recovery phrase has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">Gefeliciteerd! U heeft het instellen van uw herstelzin voltooid.</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successSubheading">U bent nu klaar om te storten, handelen en crypto van uw BRD-wallet te kopen.</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
@@ -707,12 +707,12 @@
     <string name="RecoveryKeyFlow.wipeWalletSubtext">Start een nieuwe portefeuille door de huidige portefeuille van uw apparaat te wissen.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">Noteer uw code</string>
-    <!-- Title for the recovery key landing page if the key has already been generated. -->
-    <string name="RecoveryKeyFlow.writeKeyAgain">Noteer nogmaals uw herstelcode</string>
+    <!-- Title for the recovery phrase landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">Schrijf uw herstelzin opnieuw op</string>
     <!-- Subtitle for the write recovery key screen -->
     <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Noteer de volgende woorden op volgorde.</string>
-    <!-- Title for the write recovery key screen -->
-    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Uw herstelcode</string>
+    <!-- Title for the write recovery phrase screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Uw herstelzin</string>
     <!-- Title for the step number when the user pages through the recovery words -->
     <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@ van %2$@</string>
     <!-- No amount entered error message. -->
@@ -767,11 +767,11 @@
     <string name="SecurityCenter.faceIdTitle">Face-ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">De enige manier om toegang te hebben tot je Bitcoins is als je je telefoon verliest of upgrade.</string>
-    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+    <!-- Recovery Phrase button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
  * to not break existing client code. -->
-    <string name="SecurityCenter.paperKeyTitle">Papieren Sleutel</string>
+    <string name="SecurityCenter.paperKeyTitle">Herstelzin</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle.android">Papieren Sleutel</string>
+    <string name="SecurityCenter.paperKeyTitle.android">Herstelzin</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Beschermt je BRD van ongeautoriseerde gebruikers.</string>
     <!-- PIN button title -->
@@ -955,15 +955,15 @@
     <!-- Share data switch label. -->
     <string name="ShareData.toggleLabel">Anonieme Data Delen?</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.againButtonTitle">Schrijf Papieren Sleutel Opnieuw Op</string>
+    <string name="StartPaperPhrase.againButtonTitle">Schrijf de herstelzin opnieuw op</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Je papieren sleutel is de enige manier om je BRD te herstellen als je telefoon verloren, gestolen, kapot of geüpgrade is.\n\nWe zullen je een lijst met woorden laten zie die je op een papiertje moet schrijven en veilig moet bewaren.</string>
+    <string name="StartPaperPhrase.body">Uw herstelzin is de enige manier om uw BRD te herstellen als uw telefoon verloren, gestolen, defect of geüpgraded is. \n\nWe laten u een lijst met woorden zien die u op een vel papier kunt schrijven en veilig kunt bewaren.</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">Uw papieren sleutel is de enige manier om uw BRD te herstellen indien u uw telefoon kwijtraakt of als deze gestolen of geüpgraded wordt. \n\nU heeft uw papieren sleutel tevens nodig indien u de beveiligingsinstellingen van uw apparaat aanpast.\n\nWe tonen u een lijst met woorden die u op een stuk papier kunt opschrijven en veilig dient te bewaren.</string>
+    <string name="StartPaperPhrase.Body.Android">Uw herstelzin is de enige manier om uw BRD te herstellen als uw telefoon verloren, gestolen, defect of geüpgraded is. \n\nUw herstelzin is ook vereist als u de beveiligingsinstellingen op uw apparaat wijzigt. \n\nWe laten u een lijst met woorden zien die u op een vel papier kunt schrijven en veilig kunt bewaren.</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.buttonTitle">Schrijf Papieren Sleutel Op</string>
+    <string name="StartPaperPhrase.buttonTitle">Schrijf de herstelzin op</string>
     <!-- Argument is date; date should be on a new line -->
-    <string name="StartPaperPhrase.date">Je hebt voor het laatst je papieren sleutel opgeschreven op \n%1$@</string>
+    <string name="StartPaperPhrase.date">Laatst opgeschreven \n %1$@</string>
     <!-- button label -->
     <string name="StartViewController.createButton">Nieuwe wallet maken</string>
     <!-- Start view message -->
@@ -1277,11 +1277,11 @@
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">Mislukt</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">Om een nieuwe portemonnee te beginnen of een bestaande te laden, moet u eerst de portemonnee die momenteel geïnstalleerd is ontkoppelen. Voer de Papieren Sleutel van de huidige portemonnee in om door te gaan.</string>
+    <string name="WipeWallet.instruction">Voer uw herstelzin in om deze portemonnee van uw apparaat te wissen.</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Ontkoppel je portemonnee om het te verwijderen van dit toestel. Wanneer deze portemonnee ontkoppeld is kunt u een nieuwe portemonnee beginnen of een andere portemonnee laden op dit toestel.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">U zal niet langer uw huidige BRD portemonnee kunnen bereiken vanaf dit apparaat. Uw saldo zal hetzelfde blijven.</string>
+    <string name="WipeWallet.startWarning">Uw huidige portemonnee wordt van dit apparaat verwijderd. Als u het in de toekomst wilt herstellen, moet u uw herstelzin invoeren.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Portemonnee Ontkoppelen</string>
     <!-- Wipe wallet button title -->

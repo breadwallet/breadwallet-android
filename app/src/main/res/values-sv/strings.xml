@@ -25,7 +25,7 @@
     <!-- Account balance -->
     <string name="Account.balance">Saldo</string>
     <!-- Delisted token alert banner message -->
-    <string name="Account.delistedToken">Denna token har avförts eftersom utfärdaren har beslutat att sluta stödja ERC20. \n\nDu kan eventuellt sänd dessa tokens till en annan plattform. Besök vår supportsida för mer information.</string>
+    <string name="Account.delistedToken">Detta token har avlistats. \n\nDu kanske fortfarande kan skicka dessa tokens till en annan plattform. För mer information, besök vår supportsida.</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%1$s per %2$s</string>
     <!-- Loading Wallet Message -->
@@ -47,7 +47,7 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">Mitt BRD</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">Det verkar som att du använder ett tangentbord från tredje part, vilket kan registrera det du skriver och stjäla din kryptonyckel. Byt till Androids standardtangentbord för extra säkerhet.</string>
+    <string name="Alert.customKeyboard.android">Det verkar som om du använder ett tangentbord från tredje part som kan spela in vad du skriver och stjäla din återställningsfras. Byt till standard Android-tangentbordet för extra skydd.</string>
     <!-- Error alert title -->
     <string name="Alert.error">Fel</string>
     <!-- Keystore error -->
@@ -55,9 +55,9 @@
     <!-- KeyStore error, keys are invalidated -->
     <string name="Alert.keystore.invalidated.android">Dina krypterade BRD-uppgifter har nyligen ogiltigförklarats på grund av att Androids skärmlås inaktiverades.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
-    <string name="Alert.keystore.invalidated.uninstall.android">Vi kan inte fortsätta eftersom dina skärmslåsinställningar har ändrats (t.ex. lösenordet inaktiverades, fingeravtryck ändrades). Av säkerhetsskäl har Android låst din nyckelförvaring. Därför måste dina BRD-appdata tas bort genom att avinstallera appen.\n\nOroa dig inte, dina pengar är fortfarande säkra! Installera om appen och återställ din plånbok med din pappersnyckel.</string>
+    <string name="Alert.keystore.invalidated.uninstall.android">Vi kan inte fortsätta eftersom dina inställningar för skärmlås har ändrats (t.ex. lösenord har inaktiverats, fingeravtryck har ändrats). Av säkerhetsskäl har Android permanent låst din nyckelbutik. Därför måste dina BRD-appdata rensas genom att avinstallera. \n\nOroa dig inte, dina pengar är fortfarande säkra! Installera om appen och återställ din plånbok med din återställningsfras.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
-    <string name="Alert.keystore.invalidated.wipe.android">Vi kan inte fortsätta eftersom dina skärmslåsinställningar har ändrats (t.ex. lösenordet inaktiverades, fingeravtryck ändrades). Av säkerhetsskäl har Android låst din nyckelförvaring. Därför måste dina BRD-appdata tas bort.\n\nOroa dig inte, dina pengar är fortfarande säkra! Återställ din plånbok med pappersnyckeln.</string>
+    <string name="Alert.keystore.invalidated.wipe.android">Vi kan inte fortsätta eftersom dina inställningar för skärmlås har ändrats (t.ex. lösenord har inaktiverats, fingeravtryck har ändrats). Av säkerhetsskäl har Android permanent låst din nyckelbutik. Därför måste dina BRD-appdata rensas. \n\nOroa dig inte, dina pengar är fortfarande säkra! Återställ din plånbok med din återställningsfras.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">KeyStore-fel för Android</string>
     <!-- No internet alert message -->
@@ -73,7 +73,7 @@
     <!-- Addresses Copied Alert sub header -->
     <string name="Alerts.copiedAddressesSubheader">Alla plånboksadresser har kopierats.</string>
     <!-- Alert Header Label (the paper key was set) -->
-    <string name="Alerts.paperKeySet">Ordnyckel är inställd</string>
+    <string name="Alerts.paperKeySet">Återställningsfrasuppsättning</string>
     <!-- Alert Subheader label (playfully positive) -->
     <string name="Alerts.paperKeySetSubheader">Härligt!</string>
     <!-- Alert Header label (the PIN was set) -->
@@ -198,7 +198,7 @@
     <string name="CloudBackup.enableButton">Jag har aktiverat iCloud Keychain</string>
     <string name="CloudBackup.enableTitle">Aktivera nyckelring</string>
     <string name="CloudBackup.encryptBackupMessage">Ange stift för att kryptera säkerhetskopiering</string>
-    <string name="CloudBackup.mainBody">Vi rekommenderar fortfarande att du skriver ner din återställningsfras och håller den säker, men du kan också säkerhetskopiera din återställningsfras till iCloud. Observera att iCloud-säkerhetskopiering är bara lika säker som ditt iCloud-konto.</string>
+    <string name="CloudBackup.mainBody">Observera att iCloud-säkerhetskopiering är bara lika säker som ditt iCloud-konto. Vi rekommenderar fortfarande att du skriver ned din återställningsfras i följande steg och håller den säker. Återställningsfrasen är det enda sättet att återställa din plånbok om du inte längre kan komma åt iCloud.</string>
     <string name="CloudBackup.mainTitle">Säkerhetskopiering av återställning iCloud</string>
     <string name="CloudBackup.mainWarning">iCloud-nyckelring måste vara aktiverad i appen iOS-inställningar för att den här funktionen ska fungera</string>
     <string name="CloudBackup.mainWarningConfirmation">Är du säker på att du vill inaktivera iCloud Backup? Detta tar bort din säkerhetskopia från alla enheter.</string>
@@ -232,9 +232,9 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">Total kostnad:</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">Orden som angivits matchar inte din pappersnyckel. Försök igen.</string>
+    <string name="ConfirmPaperPhrase.error">De angivna orden matchar inte din återställningsfras. Var god försök igen.</string>
     <!-- Confirm paper phrase view label. -->
-    <string name="ConfirmPaperPhrase.label">Ange följande ord från din ordnyckel, för att vara säker på att allt skrevs korrekt.</string>
+    <string name="ConfirmPaperPhrase.label">För att säkerställa att allt har skrivits ner korrekt, skriv följande ord från din återställningsfras.</string>
     <!-- Word label eg. Word #1, Word #2 -->
     <string name="ConfirmPaperPhrase.word">Ord #%1$s</string>
     <!-- Agree to legal terms button -->
@@ -445,7 +445,7 @@
     <!-- button label -->
     <string name="MenuViewController.recoverButton">Återställ plånbok</string>
     <!-- Paper Key Skip modal body (Android-version) -->
-    <string name="Modal.PaperKeySkip.Body.Android">Din skrivna nyckel krävs för att öppna din plånbok om du ändrar säkerhetsinställningarna på din telefon. \n\nÄr du säker på att du vill vänta med att ordna en skriven nyckel? </string>
+    <string name="Modal.PaperKeySkip.Body.Android">Din återställningsfras krävs för att öppna din plånbok om du ändrar säkerhetsinställningarna på din telefon. \n\nÄr du säker på att du vill ställa in din återställningsfras senare?</string>
     <!-- Paper Key Skip modal Continue Set Up button -->
     <string name="Modal.PaperKeySkip.Button.ContinueSetUp">Fortsätt processen</string>
     <!-- Paper Key Skip modal I'll do it later button -->
@@ -546,10 +546,10 @@
     <string name="Prompts.NoScreenLock.body.android">Ett skärmlås krävs på enheten för att skydda din plånbok. Gå till Inställningar &gt; Säkerhet &gt; Skärmlås och aktivera för att fortsätta.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Skärmlås inaktiverat</string>
-    <!-- Warning about recovery key (formerly paper key). -->
-    <string name="Prompts.PaperKey.body">Din pappersnyckel måste sparas ifall du skulle förlora eller byta ut din telefon.</string>
+    <!-- Warning about recovery phrase (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">Din återställningsfras måste sparas om du tappar eller byter telefon.</string>
     <!-- Warning about paper key (Android-version) -->
-    <string name="Prompts.PaperKey.Body.Android">Ha en skriven nyckel ifall du skulle tappa bort eller byta telefon. Nyckeln krävs också om du ändrar säkerhetsinställningarna på din telefon. </string>
+    <string name="Prompts.PaperKey.Body.Android">Ställ in din återställningsfras om du någonsin tappar eller byter ut telefonen. Din nyckel krävs också om du ändrar telefonens säkerhetsinställningar.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Åtgärd krävs</string>
     <string name="Prompts.RateApp.dontShow">Fråga inte igen</string>
@@ -626,11 +626,11 @@
     <!-- Reset PIN with paper key: header -->
     <string name="RecoverWallet.header_reset_pin">Återställ PIN-kod</string>
     <!-- Enter paper key instruction -->
-    <string name="RecoverWallet.instruction">Ange ordnyckel</string>
+    <string name="RecoverWallet.instruction">Ange återställningsfras</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Återställ BRD med din ordnyckel.</string>
+    <string name="RecoverWallet.intro">Återställ din BRD med din återställningsfras.</string>
     <!-- Invalid paper key message -->
-    <string name="RecoverWallet.invalid">Den ordnyckel du angav är ogiltig. Dubbelkolla varje ord och försök igen.</string>
+    <string name="RecoverWallet.invalid">Återställningsfrasen du angav är ogiltig. Dubbelkolla varje ord och försök igen.</string>
     <!-- Previous button accessibility label -->
     <string name="RecoverWallet.leftArrow">Vänster pil</string>
     <!-- Next button label -->
@@ -640,35 +640,35 @@
     <!-- Next button accessibility label -->
     <string name="RecoverWallet.rightArrow">Höger pil</string>
     <!-- Recover wallet sub-header -->
-    <string name="RecoverWallet.subheader">Ange ordnyckel till den plånbok du vill återställ.</string>
+    <string name="RecoverWallet.subheader">Ange återställningsfrasen för plånboken du vill återställa.</string>
     <!-- Reset PIN with paper key: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">För att återställa din PIN-kod anger du orden från din ordnyckel i boxarna nedan.</string>
+    <string name="RecoverWallet.subheader_reset_pin">För att återställa din PIN-kod, ange orden från din återställningsfras i rutorna nedan.</string>
     <!-- Instructs the user to enter words from the set of recovery key words. -->
     <string name="RecoveryKeyFlow.confirmRecoveryInputError">Ordet du skrev in är felaktigt. Var god försök igen.</string>
-    <!-- Instructs the user to enter words from the set of recovery key words. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Nästan klar! Ange följande ord från din återställningsnyckel.</string>
-    <!-- Title for the confirmation step of the recovery key flow. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Bekräfta återställningsnyckel</string>
-    <!-- Title displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKey">Ange återställningsnyckel</string>
-    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Ange din återställningsnyckel för att ta bort länken till denna plånbok från din enhet.</string>
-    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
-    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Är du säker på att du vill ställa in din återställningsnyckel vid ett senare tillfälle?</string>
+    <!-- Instructs the user to enter words from the set of recovery phrase words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Nästan klar! Ange följande ord från din återställningsfras.</string>
+    <!-- Title for the confirmation step of the recovery phrase flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Bekräfta återställningsfrasen</string>
+    <!-- Title displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">Ange återvinningsfras</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Ange din återställningsfras för att ta bort länken till din plånbok från din enhet.</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery phrase later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Är du säker på att du vill konfigurera din återställningsfras senare?</string>
     <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
     <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">Ställ in senare</string>
-    <!-- Button text for the 'Generate Recovery Key' button -->
-    <string name="RecoveryKeyFlow.generateKeyButton">Generera återställningsnyckel</string>
+    <!-- Button text for the 'Generate Recovery Phrase' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">Generera återhämtningsfras</string>
     <!-- Subtext for the recovery key landing page. -->
     <string name="RecoveryKeyFlow.generateKeyExplanation">Den här nyckeln krävs för att återställa dina pengar om du uppgraderar eller förlorar din telefon.</string>
-    <!-- Default title for the recovery key landing page -->
-    <string name="RecoveryKeyFlow.generateKeyTitle">Skapa din privata återställningsnyckel</string>
+    <!-- Default title for the recovery phrase landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">Generera din privata återhämtningsfras</string>
     <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
     <string name="RecoveryKeyFlow.goToWalletButtonTitle">Gå till plånbok</string>
     <!-- Hint text for recovery key intro page, e.g., Step 2 -->
     <string name="RecoveryKeyFlow.howItWorksStep">Hur det fungerar - Steg %1$@</string>
-    <!-- Error text displayed when the user enters an incorrect recovery key -->
-    <string name="RecoveryKeyFlow.invalidPhrase">Några av orden du skrev in matchar inte din återställningsnyckel. Var god försök igen.</string>
+    <!-- Error text displayed when the user enters an incorrect recovery phrase -->
+    <string name="RecoveryKeyFlow.invalidPhrase">Vissa av de ord du angav matchar inte din återställningsfras. Var god försök igen.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.keepSecure">Förvara den säkert</string>
     <!-- Informs the user that the recovery is only required for recovering a wallet. -->
@@ -680,19 +680,19 @@
     <!-- Title displayed when the user starts the process of recovering a wallet -->
     <string name="RecoveryKeyFlow.recoveryYourWallet">Återställ din plånbok</string>
     <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
-    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Ange återställningsnyckeln för den plånbok du vill återställa.</string>
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Ange återställningsfrasen för plånboken du vill återställa.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.relaxBuyTrade">Slappna av, köp, och handla</string>
     <!-- Reminds the user to write down the recovery key words. -->
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">Kom ihåg att skriva ner dessa ord. Svep tillbaka om du glömt att göra det.</string>
-    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
-    <string name="RecoveryKeyFlow.resetPINInstruction">Ange din återställningsnyckel för att återställa din PIN-kod.</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery phrase to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">Ange din återställningsfras för att återställa din PIN-kod.</string>
     <!-- Assures the user that BRD will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">Köp och handla med vetskapen att dina tillgångar skyddas av den bästa säkerheten och integriteten i branschen</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
     <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Förvara din nyckel på en säker plats. Detta är det enda sättet att återställa din plånbok. BRD tillhandahåller inte någon kopia.</string>
-    <!-- Title for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successHeading">Gratulerar! Du är nu klar med att ställa in din återställningsnyckel.</string>
+    <!-- Title for the success page after the recovery phrase has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">Grattis! Du slutförde din återställningsfrasinstallation.</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successSubheading">Du är nu redo att börja sätta in, handla med och köpa krypto från din BRD-plånbok</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
@@ -707,12 +707,12 @@
     <string name="RecoveryKeyFlow.wipeWalletSubtext">Starta en ny plånbok genom att torka av den nuvarande plånboken från din enhet.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">Skriv ner din nyckel</string>
-    <!-- Title for the recovery key landing page if the key has already been generated. -->
-    <string name="RecoveryKeyFlow.writeKeyAgain">Skriv ner din återställningsnyckel igen</string>
+    <!-- Title for the recovery phrase landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">Skriv ner din återhämtningsfras igen</string>
     <!-- Subtitle for the write recovery key screen -->
     <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Skriv ner följande ord i ordning.</string>
-    <!-- Title for the write recovery key screen -->
-    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Din återställningsnyckel</string>
+    <!-- Title for the write recovery phrase screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Din återhämtningsfras</string>
     <!-- Title for the step number when the user pages through the recovery words -->
     <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@ av %2$@</string>
     <!-- No amount entered error message. -->
@@ -767,11 +767,11 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">Det enda sättet att komma åt dina bitcoin om du förlorar eller uppgraderar din telefon.</string>
-    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+    <!-- Recovery Phrase button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
  * to not break existing client code. -->
-    <string name="SecurityCenter.paperKeyTitle">Ordnyckel</string>
+    <string name="SecurityCenter.paperKeyTitle">Återställningsfras</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle.android">Ordnyckel</string>
+    <string name="SecurityCenter.paperKeyTitle.android">Återställningsfras</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Skyddar ditt BRD från obehöriga användare.</string>
     <!-- PIN button title -->
@@ -955,15 +955,15 @@
     <!-- Share data switch label. -->
     <string name="ShareData.toggleLabel">Dela anonyma uppgifter?</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.againButtonTitle">Skriv ner ordnyckel på nytt</string>
+    <string name="StartPaperPhrase.againButtonTitle">Skriv ner återhämtningsfrasen igen</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Din ordnyckel  är enda sättet att återställ BRD om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.\n\nVi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
+    <string name="StartPaperPhrase.body">Din återställningsfras är det enda sättet att återställa din BRD om din telefon går förlorad, stulen, trasig eller uppgraderas. \n\nVi visar dig en lista med ord att skriva ner på ett papper och hålla dig säker.</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">Det är enbart med din skrivna nyckel du kan återställa BRD om din telefon försvinner, går sönder eller uppgraderas. \n\nDen skrivna nyckeln behövs också om du ändrar säkerhetsinställningarna på din enhet. \n\nVi visar dig en lista med ord som du ska nedteckna på ett papper och förvara säkert. </string>
+    <string name="StartPaperPhrase.Body.Android">Din återställningsfras är det enda sättet att återställa din BRD om din telefon går förlorad, stulen, trasig eller uppgraderas. \n\nDin återställningsfras krävs också om du ändrar säkerhetsinställningarna på din enhet. \n\nVi visar dig en lista med ord att skriva ner på ett papper och hålla dig säker.</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.buttonTitle">Skriv ner ordnyckel</string>
+    <string name="StartPaperPhrase.buttonTitle">Skriv ner återhämtningsfras</string>
     <!-- Argument is date; date should be on a new line -->
-    <string name="StartPaperPhrase.date">Senast skrev du ner din ordnyckel på \n%1$@</string>
+    <string name="StartPaperPhrase.date">Senast nedskrivet \n %1$@</string>
     <!-- button label -->
     <string name="StartViewController.createButton">Skapa ny plånbok</string>
     <!-- Start view message -->
@@ -1277,11 +1277,11 @@
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">Misslyckades</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">För att skapa en ny plånbok eller återställa en befintlig plånbok måste du först ta bort länken till den plånbok som för närvarande är installerad. Ange den nuvarande plånbokens pappersnyckel för att fortsätta.</string>
+    <string name="WipeWallet.instruction">Ange din återställningsfras för att torka den här plånboken från din enhet.</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Ta bort länken till din plånbok för att ta bort den från denna enhet. När länken till denna plånbok är borttagen kan du skapa en ny plånbok eller återställa en annan plånbok på denna enhet.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">Du kommer inte längre att kunna komma åt din aktuella BRDplånbok från denna enhet. Saldot kommer att kvarstå på frasen.</string>
+    <string name="WipeWallet.startWarning">Din nuvarande plånbok kommer att tas bort från den här enheten. Om du vill återställa den i framtiden måste du ange din återställningsfras.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Ta Bort Länken Till Plånboken</string>
     <!-- Wipe wallet button title -->

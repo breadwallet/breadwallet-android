@@ -25,7 +25,7 @@
     <!-- Account balance -->
     <string name="Account.balance">Saldo</string>
     <!-- Delisted token alert banner message -->
-    <string name="Account.delistedToken">Denne værdikupon er fjernet fra listen, da udstederen har valgt at stoppe ERC20-support. \n\nDu kan muligvis stadig sende disse værdikuponer til en anden platform. Se vores hjælpeside for mere information.</string>
+    <string name="Account.delistedToken">Denne værdikupon er fjernet fra listen. \n\nDu kan muligvis stadig sende disse værdikuponer til en anden platform. Se vores hjælpeside for mere information.</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%1$s per %2$s</string>
     <!-- Loading Wallet Message -->
@@ -47,7 +47,7 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">Mit BRD</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">Det ser ud til at du bruger et tastatur fra en tredjepart, som kan optage det du skriver og stjæle din Paper Key. Skift til standard Android-tastaturet for ekstra beskyttelse.</string>
+    <string name="Alert.customKeyboard.android">Det ser ud til, at du bruger et tredjeparts tastatur, som kan registrere, hvad du skriver og stjæle din gendannelsesfrase. Skift til standard Android-tastaturet for ekstra beskyttelse.</string>
     <!-- Error alert title -->
     <string name="Alert.error">Fejl</string>
     <!-- Keystore error -->
@@ -55,9 +55,9 @@
     <!-- KeyStore error, keys are invalidated -->
     <string name="Alert.keystore.invalidated.android">Dine BRD-krypterede data blev for nyligt ugyldiggjort, eftersom din Android skærmlås blev deaktiveret.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
-    <string name="Alert.keystore.invalidated.uninstall.android">Vi kan ikke fortsætte, fordi dine indstillinger for skærmlåsen er blevet ændret (f.eks. adgangskoden deaktiveret, fingeraftryk ændret). Af sikkerhedshensyn har Android permanent låst din nøglelager. Derfor skal dine BRD-appdata fjernes fuldstændigt ved at afinstallere.\n\nBare rolig, dine midler er stadig sikre! Geninstallr appen og gendan din pung vha. din papirnøgle.</string>
+    <string name="Alert.keystore.invalidated.uninstall.android">Vi kan ikke fortsætte, fordi dine skærmlåsindstillinger er blevet ændret (f.eks. Adgangskode blev deaktiveret, fingeraftryk blev ændret). Af sikkerhedsmæssige årsager har Android permanent låst din nøglelager. Derfor skal dine BRD-appdata slettes ved at afinstallere dem. \n\nBare rolig, dine midler er stadig sikre! Geninstaller appen, og gendan din tegnebog ved hjælp af din gendannelsesfrase.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
-    <string name="Alert.keystore.invalidated.wipe.android">Vi kan ikke fortsætte, fordi dine indstillinger for skærmlåsen er blevet ændret (f.eks. adgangskoden deaktiveret, fingeraftryk ændret). Af sikkerhedshensyn har Android permanent låst din nøglelager. Derfor skal dine BRD-appdata fjernes fuldstændugt.\n\nBare rolig, dine midler er stadig sikre! Gendan din pung vha. din papirtast.</string>
+    <string name="Alert.keystore.invalidated.wipe.android">Vi kan ikke fortsætte, fordi dine skærmlåsindstillinger er blevet ændret (f.eks. Adgangskode blev deaktiveret, fingeraftryk blev ændret). Af sikkerhedsmæssige årsager har Android permanent låst din nøglelager. Derfor skal dine BRD-appdata slettes. \n\nBare rolig, dine midler er stadig sikre! Gendan din tegnebog ved hjælp af din gendannelsesfrase.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Android KeyStore fejl</string>
     <!-- No internet alert message -->
@@ -73,7 +73,7 @@
     <!-- Addresses Copied Alert sub header -->
     <string name="Alerts.copiedAddressesSubheader">Alle pungens adresser er kopieret.</string>
     <!-- Alert Header Label (the paper key was set) -->
-    <string name="Alerts.paperKeySet">Paper key indstillet</string>
+    <string name="Alerts.paperKeySet">Gendannelsessæt sæt</string>
     <!-- Alert Subheader label (playfully positive) -->
     <string name="Alerts.paperKeySetSubheader">Fedt!</string>
     <!-- Alert Header label (the PIN was set) -->
@@ -198,7 +198,7 @@
     <string name="CloudBackup.enableButton">Jeg har tændt for iCloud-nøglering</string>
     <string name="CloudBackup.enableTitle">Aktivér nøglering</string>
     <string name="CloudBackup.encryptBackupMessage">Indtast pin for at kryptere backup</string>
-    <string name="CloudBackup.mainBody">Vi anbefaler stadig, at du skriver din gendannelsesfrase ned og holder den sikker, men du kan også sikkerhedskopiere din gendannelsesfrase til iCloud. Bemærk, iCloud-sikkerhedskopi er kun så sikker som din iCloud-konto.</string>
+    <string name="CloudBackup.mainBody">Bemærk, iCloud-sikkerhedskopi er kun så sikker som din iCloud-konto. Vi anbefaler stadig, at du skriver din gendannelsesfrase ned i følgende trin og holder den sikker. Gendannelsesfrasen er den eneste måde at gendanne din tegnebog på, hvis du ikke længere har adgang til iCloud.</string>
     <string name="CloudBackup.mainTitle">Sikkerhedskopiering af iCloud-genoprettelse</string>
     <string name="CloudBackup.mainWarning">iCloud-nøglering skal være tændt i iOS-indstillingsappen for at denne funktion kan fungere</string>
     <string name="CloudBackup.mainWarningConfirmation">Er du sikker på, at du vil deaktivere iCloud Backup? Dette vil slette din sikkerhedskopi fra alle enheder.</string>
@@ -232,9 +232,9 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">Samlede omkostninger:</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">Ordene du har indtastet matcher ikke din papirnøgle. Prøv venligst igen.</string>
+    <string name="ConfirmPaperPhrase.error">De indtastede ord matcher ikke din gendannelsessætning. Prøv igen.</string>
     <!-- Confirm paper phrase view label. -->
-    <string name="ConfirmPaperPhrase.label">For at sørge for, at alt blev skrevet korrekt, bedes du indtaste følgende ord fra din paper key.</string>
+    <string name="ConfirmPaperPhrase.label">For at sikre, at alt blev skrevet korrekt, skal du indtaste følgende ord fra din gendannelsessætning.</string>
     <!-- Word label eg. Word #1, Word #2 -->
     <string name="ConfirmPaperPhrase.word">Ord #%1$s</string>
     <!-- Agree to legal terms button -->
@@ -445,7 +445,7 @@
     <!-- button label -->
     <string name="MenuViewController.recoverButton">Gendan pung</string>
     <!-- Paper Key Skip modal body (Android-version) -->
-    <string name="Modal.PaperKeySkip.Body.Android">Din papirnøgle er nødvendig for at du kan åbne din tegnebog, hvis du ændrer sikkerhedsindstillingerne på din telefon.\n\nEr du sikker på at du vil oprette din papirnøgle senere?</string>
+    <string name="Modal.PaperKeySkip.Body.Android">Din gendannelsesfrase er nødvendig for at åbne din tegnebog, hvis du ændrer sikkerhedsindstillingerne på din telefon. \n\nEr du sikker på, at du vil konfigurere din gendannelsesfrase senere?</string>
     <!-- Paper Key Skip modal Continue Set Up button -->
     <string name="Modal.PaperKeySkip.Button.ContinueSetUp">Fortsæt oprettelse</string>
     <!-- Paper Key Skip modal I'll do it later button -->
@@ -546,10 +546,10 @@
     <string name="Prompts.NoScreenLock.body.android">Der skal en skærmlås til på enheden, for at beskytte din pung. Gå til \"Indstillinger\" &gt; \"Sikkerhed\" &gt; \"Skærmlås\" og aktiver for at fortsætte.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Skærmlås deaktiveret</string>
-    <!-- Warning about recovery key (formerly paper key). -->
-    <string name="Prompts.PaperKey.body">Din Papirnøgle skal gemmes i tilfælde af du nogensinde mister eller skifter telefon.</string>
+    <!-- Warning about recovery phrase (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">Din gendannelsessætning skal gemmes, hvis du mister eller ændrer din telefon.</string>
     <!-- Warning about paper key (Android-version) -->
-    <string name="Prompts.PaperKey.Body.Android">Opret din papirnøgle, i tilfælde af at du mister eller udskifter din telefon. Din nøgle er også påkrævet, hvis du ændrer sikkerhedsindstillingerne på din telefon.</string>
+    <string name="Prompts.PaperKey.Body.Android">Konfigurer din gendannelsesfrase, hvis du nogensinde mister eller udskifter din telefon. Din nøgle er også påkrævet, hvis du ændrer telefonens sikkerhedsindstillinger.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Handling påkrævet</string>
     <string name="Prompts.RateApp.dontShow">Spørg ikke igen</string>
@@ -626,11 +626,11 @@
     <!-- Reset PIN with paper key: header -->
     <string name="RecoverWallet.header_reset_pin">Nulstil PIN</string>
     <!-- Enter paper key instruction -->
-    <string name="RecoverWallet.instruction">Indtast paper key</string>
+    <string name="RecoverWallet.instruction">Indtast gendannelsesfrase</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Gendan dit BRD med din paper key.</string>
+    <string name="RecoverWallet.intro">Gendan din BRD med din gendannelsesfrase.</string>
     <!-- Invalid paper key message -->
-    <string name="RecoverWallet.invalid">Den paper key du indtastede er ugyldig. Dobbelttjek hvert ord og prøv igen.</string>
+    <string name="RecoverWallet.invalid">Den gendannelsessætning, du indtastede, er ugyldig. Dobbeltkontrol af hvert ord, og prøv igen.</string>
     <!-- Previous button accessibility label -->
     <string name="RecoverWallet.leftArrow">Venstre pil</string>
     <!-- Next button label -->
@@ -640,35 +640,35 @@
     <!-- Next button accessibility label -->
     <string name="RecoverWallet.rightArrow">Højre pil</string>
     <!-- Recover wallet sub-header -->
-    <string name="RecoverWallet.subheader">Indtast paper key til pungen du vil gendanne.</string>
+    <string name="RecoverWallet.subheader">Indtast gendannelsessætningen for den tegnebog, du vil gendanne.</string>
     <!-- Reset PIN with paper key: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">For at nulstille din PIN, skal du indtaste ordene fra din paper key i boksene nedenfor.</string>
+    <string name="RecoverWallet.subheader_reset_pin">For at nulstille din pinkode skal du indtaste ordene fra din gendannelsessætning i felterne nedenfor.</string>
     <!-- Instructs the user to enter words from the set of recovery key words. -->
     <string name="RecoveryKeyFlow.confirmRecoveryInputError">Ordet du indtastede er forkert. Prøv igen.</string>
-    <!-- Instructs the user to enter words from the set of recovery key words. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Næsten færdig! Indtast følgende ord fra din genoprettelsesnøgle.</string>
-    <!-- Title for the confirmation step of the recovery key flow. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Bekræft Genoprettelsesnøgle</string>
-    <!-- Title displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKey">Indtast Genoprettelsesnøgle</string>
-    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Indtast venligst din genoprettelsesnøgle for at fjerne tilknytningen til denne tegnebog fra din enhed.</string>
-    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
-    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Er du sikker på, at du vil opsætte din genoprettelsesnøgle senere?</string>
+    <!-- Instructs the user to enter words from the set of recovery phrase words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Næsten færdig! Indtast følgende ord fra din gendannelsesfrase.</string>
+    <!-- Title for the confirmation step of the recovery phrase flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Bekræft gendannelsesfrase</string>
+    <!-- Title displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">Indtast gendannelsesfrase</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Indtast din gendannelsesfrase for at fjerne linket fra denne tegnebog fra din enhed.</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery phrase later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Er du sikker på, at du vil konfigurere din gendannelsesfrase senere?</string>
     <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
     <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">Opsæt senere</string>
-    <!-- Button text for the 'Generate Recovery Key' button -->
-    <string name="RecoveryKeyFlow.generateKeyButton">Generer Genoprettelsesnøgle</string>
+    <!-- Button text for the 'Generate Recovery Phrase' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">Generer gendannelsesfrase</string>
     <!-- Subtext for the recovery key landing page. -->
     <string name="RecoveryKeyFlow.generateKeyExplanation">Denne nøgle er nødvendig for at inddrive dine penge, hvis du opgraderer eller mister din telefon.</string>
-    <!-- Default title for the recovery key landing page -->
-    <string name="RecoveryKeyFlow.generateKeyTitle">Generer din private genoprettelsesnøgle</string>
+    <!-- Default title for the recovery phrase landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">Generer din private gendannelsesfrase</string>
     <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
     <string name="RecoveryKeyFlow.goToWalletButtonTitle">Gå til Tegnebog</string>
     <!-- Hint text for recovery key intro page, e.g., Step 2 -->
     <string name="RecoveryKeyFlow.howItWorksStep">Sådan fungerer det - Trin %1$@</string>
-    <!-- Error text displayed when the user enters an incorrect recovery key -->
-    <string name="RecoveryKeyFlow.invalidPhrase">Nogle af de indtastede ord matcher ikke din genoprettelsesnøgle. Prøv igen.</string>
+    <!-- Error text displayed when the user enters an incorrect recovery phrase -->
+    <string name="RecoveryKeyFlow.invalidPhrase">Nogle af de ord, du indtastede, stemmer ikke overens med din gendannelsesfrase. Prøv igen.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.keepSecure">Hold den sikker</string>
     <!-- Informs the user that the recovery is only required for recovering a wallet. -->
@@ -680,19 +680,19 @@
     <!-- Title displayed when the user starts the process of recovering a wallet -->
     <string name="RecoveryKeyFlow.recoveryYourWallet">Gendan din Tegnebog</string>
     <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
-    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Indtast venligst genoprettelsesnøglen til den tegnebog, du vil gendanne.</string>
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Indtast gendannelsesfrasen for den tegnebog, du vil gendanne.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.relaxBuyTrade">Slap af, køb og handel</string>
     <!-- Reminds the user to write down the recovery key words. -->
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">Husk at skrive disse ord ned. Stryg tilbage, hvis du har glemt dem.</string>
-    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
-    <string name="RecoveryKeyFlow.resetPINInstruction">Indtast venligst din genoprettelsesnøgle for at nulstille din pinkode.</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery phrase to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">Indtast din gendannelsesfrase for at nulstille din pinkode.</string>
     <!-- Assures the user that BRD will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">Køb og handel vel vidende, at dine midler er beskyttet af den bedste sikkerhed og privatlivspolitik i branchen.</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
     <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Gem din nøgle på et sikkert sted. Dette er den eneste måde at genoprette din tegnebog på. BRD beholder ikke en kopi.</string>
-    <!-- Title for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successHeading">Tillykke! Du har gennemført opsætningen af genoprettelsesnøgle.</string>
+    <!-- Title for the success page after the recovery phrase has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">Tillykke! Du afsluttede opsætningen af din gendannelsesfrase.</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successSubheading">Du er klar til at indbetale, handle og købe krypto fra din BRD-tegnebog.</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
@@ -707,12 +707,12 @@
     <string name="RecoveryKeyFlow.wipeWalletSubtext">Start en ny tegnebog ved at tørre den aktuelle tegnebog fra din enhed.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">Skriv din nøgle ned</string>
-    <!-- Title for the recovery key landing page if the key has already been generated. -->
-    <string name="RecoveryKeyFlow.writeKeyAgain">Skriv din genoprettelsesnøgle ned igen</string>
+    <!-- Title for the recovery phrase landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">Skriv din gendannelsessæt igen</string>
     <!-- Subtitle for the write recovery key screen -->
     <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Skriv følgende ord ned i rækkefølge.</string>
-    <!-- Title for the write recovery key screen -->
-    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Din Genoprettelsesnøgle</string>
+    <!-- Title for the write recovery phrase screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Din gendannelsesfrase</string>
     <!-- Title for the step number when the user pages through the recovery words -->
     <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@ af %2$@</string>
     <!-- No amount entered error message. -->
@@ -767,11 +767,11 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">Den eneste måde at få adgang til dine bitcoin på, hvis du mister eller opgraderer din telefon.</string>
-    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+    <!-- Recovery Phrase button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
  * to not break existing client code. -->
-    <string name="SecurityCenter.paperKeyTitle">Paper key</string>
+    <string name="SecurityCenter.paperKeyTitle">Gendannelsesfrase</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle.android">Paper key</string>
+    <string name="SecurityCenter.paperKeyTitle.android">Gendannelsesfrase</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Beskytter dit BRD mod uberettigede brugere.</string>
     <!-- PIN button title -->
@@ -955,15 +955,15 @@
     <!-- Share data switch label. -->
     <string name="ShareData.toggleLabel">Del anonyme data?</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.againButtonTitle">Skriv paper key ned igen</string>
+    <string name="StartPaperPhrase.againButtonTitle">Skriv genoprettelsesfrasen igen</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Din paper key er den eneste måde at gendanne dit BRD på, hvis din telefon mistes, stjæles, går i stykker eller opgraderes.\n\nVi viser dig en liste over word du skal skrive ned på et papir, og holde sikkert.</string>
+    <string name="StartPaperPhrase.body">Din gendannelsessætning er den eneste måde at gendanne din BRD på, hvis din telefon går tabt, stjålet, ødelagt eller opgraderes. \n\nVi viser dig en liste over ord, du kan skrive ned på et stykke papir og holder dig sikker.</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">Din papirnøgle er den eneste måde hvorpå du kan gendanne din BRD, hvis din telefon går tabt, bliver stjålet, ødelagt eller opgraderet.\n\nDin papirnøgle er også påkrævet, hvis du ændrer sikkerhedsindstillingerne på din enhed.\n\nVi viser dig en liste med ord, som du skal skrive ned på et stykke papir og opbevare sikkert.</string>
+    <string name="StartPaperPhrase.Body.Android">Din gendannelsessætning er den eneste måde at gendanne din BRD på, hvis din telefon går tabt, stjålet, ødelagt eller opgraderes. \n\nDin gendannelsessætning er også påkrævet, hvis du ændrer sikkerhedsindstillingerne på din enhed. \n\nVi viser dig en liste over ord, du kan skrive ned på et stykke papir og holder dig sikker.</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.buttonTitle">Skriv paper key ned</string>
+    <string name="StartPaperPhrase.buttonTitle">Skriv gendannelsesfrase ned</string>
     <!-- Argument is date; date should be on a new line -->
-    <string name="StartPaperPhrase.date">Du skrev sidst din paper key ned den \n%1$@</string>
+    <string name="StartPaperPhrase.date">Sidst skrevet ned på \n %1$@</string>
     <!-- button label -->
     <string name="StartViewController.createButton">Opret ny tegnebog</string>
     <!-- Start view message -->
@@ -1277,11 +1277,11 @@
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">Fejl</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">For at oprette en ny pung eller gendanne en eksisterende pung, skal du først fjerne linket til den pung der er installeret på nuværende tidspunkt. For at fortsætte, skal du indtaste den nuværende pungs papirnøgle.</string>
+    <string name="WipeWallet.instruction">Indtast din gendannelsesfrase for at udslette denne tegnebog fra din enhed.</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Fjern link til pung for at fjerne den fra denne enhed. Når linket til denne pung er fjernet, kan du starte en ny pung eller gendanne en anden pung på denne enhed.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">Du vil ikke længere være i stand til at få adgang til din nuværende BRD tegnebog fra denne enhed. Saldoen vil forblive på frasen.</string>
+    <string name="WipeWallet.startWarning">Din nuværende tegnebog fjernes fra denne enhed. Hvis du ønsker at gendanne den i fremtiden, skal du indtaste din gendannelsesfrase.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Fjern link til pung</string>
     <!-- Wipe wallet button title -->
