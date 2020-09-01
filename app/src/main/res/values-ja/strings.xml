@@ -25,7 +25,7 @@
     <!-- Account balance -->
     <string name="Account.balance">残高</string>
     <!-- Delisted token alert banner message -->
-    <string name="Account.delistedToken">発行者がERC20のサポートを終了することを決定した為、このトークンはリストから外れています。 \n\nそれらのトークンを他のプラットフォームに転送することは依然可能かもしれません。詳しくは、サポートページをご覧ください。</string>
+    <string name="Account.delistedToken">このトークンは上場廃止となりました。 \n\nこれらのトークンを別のプラットフォームに送信できる場合があります。詳しくは、サポートページをご覧ください。</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%2$sあたり%1$s</string>
     <!-- Loading Wallet Message -->
@@ -47,7 +47,7 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">マイブレッド</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">現在、サードパーティーのキーボードを使用しているようです。これを使うと入力した内容が記録され、ペーパー・キーが盗まれる可能性があります。追加の保護措置としてAndroidのデフォルトキーボードに切り替えてください。</string>
+    <string name="Alert.customKeyboard.android">サードパーティのキーボードを使用しているようです。キーボードを使用すると、入力内容を記録し、回復フレーズを盗むことができます。保護を強化するには、デフォルトのAndroidキーボードに切り替えてください。</string>
     <!-- Error alert title -->
     <string name="Alert.error">エラー</string>
     <!-- Keystore error -->
@@ -55,9 +55,9 @@
     <!-- KeyStore error, keys are invalidated -->
     <string name="Alert.keystore.invalidated.android">お使いのAndroidロック画面が無効にされたため、暗号化されたブレッドのデータはつい最近無効になりました。</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
-    <string name="Alert.keystore.invalidated.uninstall.android">画面ロック設定が変更されたため（パスワードが無効になった、指紋が変更されたなど）、進めることができません。セキュリティ上の理由から、Androidはキーストアを永久にロックしました。したがって、BRDアプリのデータをアンインストールして消去する必要があります。\n\n心配はいりません、あなたの資金は今でも安全です！アプリを再インストールし、ペーパーキーを使用してウォレットを復元してください。</string>
+    <string name="Alert.keystore.invalidated.uninstall.android">画面ロックの設定が変更されたため、続行できません（例：パスワードが無効になっている、指紋が変更されている）。セキュリティ上の理由から、Androidはキーストアを完全にロックしています。したがって、BRDアプリのデータはアンインストールによってワイプする必要があります。 \n\n心配しないでください、あなたの資金はまだ安全です！アプリを再インストールし、回復フレーズを使用してウォレットを回復します。</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
-    <string name="Alert.keystore.invalidated.wipe.android">画面ロック設定が変更されたため（パスワードが無効になった、指紋が変更されたなど）、進めることができません。セキュリティ上の理由から、Androidはキーストアを永久にロックしました。したがって、BRDアプリのデータを消去する必要があります。\n\n心配はいりません、あなたの資金は今でも安全です！ペーパーキーを使用してウォレットを復元してください。</string>
+    <string name="Alert.keystore.invalidated.wipe.android">画面ロックの設定が変更されたため、続行できません（例：パスワードが無効になっている、指紋が変更されている）。セキュリティ上の理由から、Androidはキーストアを完全にロックしています。したがって、BRDアプリのデータをワイプする必要があります。 \n\n心配しないでください、あなたの資金はまだ安全です！回復フレーズを使用してウォレットを回復します。</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Android KeyStoreエラー</string>
     <!-- No internet alert message -->
@@ -73,7 +73,7 @@
     <!-- Addresses Copied Alert sub header -->
     <string name="Alerts.copiedAddressesSubheader">すべてのウォレットアドレスが正常にコピーされました。</string>
     <!-- Alert Header Label (the paper key was set) -->
-    <string name="Alerts.paperKeySet">復元フレーズがセットされました。</string>
+    <string name="Alerts.paperKeySet">リカバリフレーズセット</string>
     <!-- Alert Subheader label (playfully positive) -->
     <string name="Alerts.paperKeySetSubheader">いいね！</string>
     <!-- Alert Header label (the PIN was set) -->
@@ -198,7 +198,7 @@
     <string name="CloudBackup.enableButton">iCloudキーチェーンをオンにしました</string>
     <string name="CloudBackup.enableTitle">キーチェーンを有効にする</string>
     <string name="CloudBackup.encryptBackupMessage">バックアップを暗号化するにはPINを入力してください</string>
-    <string name="CloudBackup.mainBody">回復フレーズを書き留めて安全に保つことをお勧めしますが、回復フレーズをiCloudにバックアップすることもできます。 iCloudバックアップは、iCloudアカウントと同じくらい安全です。</string>
+    <string name="CloudBackup.mainBody">iCloudバックアップは、iCloudアカウントと同じくらい安全です。次の手順でリカバリフレーズを書き留めて、安全に保管することをお勧めします。回復フレーズは、iCloudにアクセスできなくなった場合にウォレットを回復する唯一の方法です。</string>
     <string name="CloudBackup.mainTitle">iCloudリカバリバックアップ</string>
     <string name="CloudBackup.mainWarning">この機能を使用するには、iOS設定アプリでiCloudキーチェーンをオンにする必要があります</string>
     <string name="CloudBackup.mainWarningConfirmation">iCloudバックアップを無効にしてもよろしいですか？これにより、すべてのデバイスからバックアップが削除されます。</string>
@@ -232,9 +232,9 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">費用合計：</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">入力された言葉がお客様のペーパーキーと一致しません。もう一度お試し下さい。</string>
+    <string name="ConfirmPaperPhrase.error">入力した単語は、回復フレーズと一致しません。もう一度お試しください。</string>
     <!-- Confirm paper phrase view label. -->
-    <string name="ConfirmPaperPhrase.label">全て正しく書き留められていることを確認するため、復元フレーズの中から下記の単語を入力してください。</string>
+    <string name="ConfirmPaperPhrase.label">すべてが正しく記述されていることを確認するには、回復フレーズから次の単語を入力してください。</string>
     <!-- Word label eg. Word #1, Word #2 -->
     <string name="ConfirmPaperPhrase.word">フレーズ #%1$s</string>
     <!-- Agree to legal terms button -->
@@ -445,7 +445,7 @@
     <!-- button label -->
     <string name="MenuViewController.recoverButton">ウォレットを復元</string>
     <!-- Paper Key Skip modal body (Android-version) -->
-    <string name="Modal.PaperKeySkip.Body.Android">ペーパー・キーはお客様の携帯電話でセキュリティ設定を変更した場合,ウォレットを開くために必要となります。\n\nペーパー・キーを後からセットアップしますか？</string>
+    <string name="Modal.PaperKeySkip.Body.Android">スマートフォンのセキュリティ設定を変更した場合、ウォレットを開くにはリカバリフレーズが必要です。 \n\n後でリカバリフレーズを設定してもよろしいですか？</string>
     <!-- Paper Key Skip modal Continue Set Up button -->
     <string name="Modal.PaperKeySkip.Button.ContinueSetUp">セットアップを続けます</string>
     <!-- Paper Key Skip modal I'll do it later button -->
@@ -546,10 +546,10 @@
     <string name="Prompts.NoScreenLock.body.android">ウォレットを守るため機器の画面をロックする必要があります。「設定」 &gt; 「セキュリティ」 &gt; 「画面ロック」で有効にしてから続行してください。</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">画面ロックが無効になっています</string>
-    <!-- Warning about recovery key (formerly paper key). -->
-    <string name="Prompts.PaperKey.body">携帯電話の紛失時や変更時に備えて、お客様の復元フレーズは必ず保管しておいてください。</string>
+    <!-- Warning about recovery phrase (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">電話を紛失または変更した場合に備えて、回復フレーズを保存する必要があります。</string>
     <!-- Warning about paper key (Android-version) -->
-    <string name="Prompts.PaperKey.Body.Android">携帯電話を紛失または交換した場合に備え,ペーパー・キーをセットアップします。お客様のキーは,携帯電話のセキュリティ設定を変更した場合にも必要となります。</string>
+    <string name="Prompts.PaperKey.Body.Android">スマートフォンを紛失または交換した場合に備えて、回復フレーズを設定します。スマートフォンのセキュリティ設定を変更する場合も、キーが必要です。</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">アクションが要求されました</string>
     <string name="Prompts.RateApp.dontShow">もう聞かないで</string>
@@ -626,11 +626,11 @@
     <!-- Reset PIN with paper key: header -->
     <string name="RecoverWallet.header_reset_pin">PINコードをリセット</string>
     <!-- Enter paper key instruction -->
-    <string name="RecoverWallet.instruction">復元フレーズを入力してください</string>
+    <string name="RecoverWallet.instruction">回復フレーズを入力してください</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">復元フレーズを使用し、あなたのブレッドを復元する。</string>
+    <string name="RecoverWallet.intro">回復フレーズを使用してBRDを回復します。</string>
     <!-- Invalid paper key message -->
-    <string name="RecoverWallet.invalid">あなたが入力した復元フレーズは無効です。それぞれの単語を再確認の上、もう一度お試しください。</string>
+    <string name="RecoverWallet.invalid">入力したリカバリフレーズは無効です。各単語を再確認して、もう一度お試しください。</string>
     <!-- Previous button accessibility label -->
     <string name="RecoverWallet.leftArrow">左矢印</string>
     <!-- Next button label -->
@@ -640,35 +640,35 @@
     <!-- Next button accessibility label -->
     <string name="RecoverWallet.rightArrow">右矢印</string>
     <!-- Recover wallet sub-header -->
-    <string name="RecoverWallet.subheader">復元を希望するウォレットの復元フレーズを入力してください。</string>
+    <string name="RecoverWallet.subheader">回復するウォレットの回復フレーズを入力します。</string>
     <!-- Reset PIN with paper key: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">PINコードをリセットするには、復元フレーズの中から当てはまる単語を下記ボックスの中に入力してください。</string>
+    <string name="RecoverWallet.subheader_reset_pin">PINをリセットするには、リカバリフレーズの単語を下のボックスに入力します。</string>
     <!-- Instructs the user to enter words from the set of recovery key words. -->
     <string name="RecoveryKeyFlow.confirmRecoveryInputError">入力した単語は正しくありません。もう一度入力してください。</string>
-    <!-- Instructs the user to enter words from the set of recovery key words. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">もうすぐです ! 復元キーから単語を入力してください。</string>
-    <!-- Title for the confirmation step of the recovery key flow. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">復元キーの確認</string>
-    <!-- Title displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKey">復元キーの入力</string>
-    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">復元キーを入力して,端末からウォレットを解除してください。</string>
-    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
-    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">復元キーの使用は後からでよろしいですか？</string>
+    <!-- Instructs the user to enter words from the set of recovery phrase words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">ほぼ完了しました！回復フレーズから次の単語を入力します。</string>
+    <!-- Title for the confirmation step of the recovery phrase flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">回復フレーズの確認</string>
+    <!-- Title displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">回復フレーズを入力してください</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">デバイスからこのウォレットのリンクを解除するには、リカバリフレーズを入力してください。</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery phrase later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">後でリカバリフレーズを設定してもよろしいですか？</string>
     <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
     <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">後から行う</string>
-    <!-- Button text for the 'Generate Recovery Key' button -->
-    <string name="RecoveryKeyFlow.generateKeyButton">復元キーを生成する</string>
+    <!-- Button text for the 'Generate Recovery Phrase' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">回復フレーズの生成</string>
     <!-- Subtext for the recovery key landing page. -->
     <string name="RecoveryKeyFlow.generateKeyExplanation">携帯のアップグレードや紛失の際に,保有資金を復元するためにこのキーが必要です。</string>
-    <!-- Default title for the recovery key landing page -->
-    <string name="RecoveryKeyFlow.generateKeyTitle">秘密復元キーを生成します</string>
+    <!-- Default title for the recovery phrase landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">プライベートな回復フレーズを生成する</string>
     <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
     <string name="RecoveryKeyFlow.goToWalletButtonTitle">ウォレットへ</string>
     <!-- Hint text for recovery key intro page, e.g., Step 2 -->
     <string name="RecoveryKeyFlow.howItWorksStep">使い方 - ステップ%1$@</string>
-    <!-- Error text displayed when the user enters an incorrect recovery key -->
-    <string name="RecoveryKeyFlow.invalidPhrase">入力した単語にお客様の復元キーと一致しないものがあります。\nもう一度入力してください。</string>
+    <!-- Error text displayed when the user enters an incorrect recovery phrase -->
+    <string name="RecoveryKeyFlow.invalidPhrase">入力した単語の一部が回復フレーズと一致しません。もう一度お試しください。</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.keepSecure">安全に保管</string>
     <!-- Informs the user that the recovery is only required for recovering a wallet. -->
@@ -680,19 +680,19 @@
     <!-- Title displayed when the user starts the process of recovering a wallet -->
     <string name="RecoveryKeyFlow.recoveryYourWallet">ウォレットの復元</string>
     <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
-    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">復元したいウォレットの復元キーを入力してください。</string>
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">回復するウォレットの回復フレーズを入力してください。</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.relaxBuyTrade">安心の購入と取引</string>
     <!-- Reminds the user to write down the recovery key words. -->
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">単語はメモしましたか。忘れていたら,スワイプして戻ってください。</string>
-    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
-    <string name="RecoveryKeyFlow.resetPINInstruction">復元キーを入力して,PINコードをリセットしてください。</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery phrase to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">PINをリセットするには、回復フレーズを入力してください。</string>
     <!-- Assures the user that BRD will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">お客様の資産は最も安全に個人情報を守りながら保護されていますので,安心して購入や取引ができます。</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
     <string name="RecoveryKeyFlow.storeSecurelyRecommendation">キーは安全な場所に保管してください。ウォレットを復元できるのはこのキーだけです。BRD はキーを保存していません。</string>
-    <!-- Title for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successHeading">おつかれさまです ! 復元キーの設定は完了しました。</string>
+    <!-- Title for the success page after the recovery phrase has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">おめでとう！回復フレーズの設定が完了しました。</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successSubheading">BRD ウォレットで仮想通貨を保管・購入・取引をする準備ができました。</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
@@ -707,12 +707,12 @@
     <string name="RecoveryKeyFlow.wipeWalletSubtext">デバイスから現在のウォレットを消去して、新しいウォレットを開始します。</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">復元キーをメモする</string>
-    <!-- Title for the recovery key landing page if the key has already been generated. -->
-    <string name="RecoveryKeyFlow.writeKeyAgain">もう一度,復元キーをメモする</string>
+    <!-- Title for the recovery phrase landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">回復フレーズをもう一度書き留めます</string>
     <!-- Subtitle for the write recovery key screen -->
     <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">以下の単語を順番通りにメモしてください。</string>
-    <!-- Title for the write recovery key screen -->
-    <string name="RecoveryKeyFlow.writeKeyScreenTitle">お客様の復元キー</string>
+    <!-- Title for the write recovery phrase screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">あなたの回復フレーズ</string>
     <!-- Title for the step number when the user pages through the recovery words -->
     <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@の%2$@</string>
     <!-- No amount entered error message. -->
@@ -767,11 +767,11 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">あなたが携帯電話を紛失したり、アップグレードした場合にご自身のビットコインへアクセスできる唯一の方法です。</string>
-    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+    <!-- Recovery Phrase button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
  * to not break existing client code. -->
-    <string name="SecurityCenter.paperKeyTitle">復元フレーズ</string>
+    <string name="SecurityCenter.paperKeyTitle">回復フレーズ</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle.android">復元フレーズ</string>
+    <string name="SecurityCenter.paperKeyTitle.android">回復フレーズ</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">アクセス権限のないユーザーからあなたのブレッドを守ります。</string>
     <!-- PIN button title -->
@@ -955,15 +955,15 @@
     <!-- Share data switch label. -->
     <string name="ShareData.toggleLabel">匿名データをシェアしますか?</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.againButtonTitle">復元フレーズをもう一度書き留めてください</string>
+    <string name="StartPaperPhrase.againButtonTitle">回復フレーズを書き留めます</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">復元フレーズは、スマートフォンを紛失したり、盗まれたり、壊れたり、アップグレードした場合に、ご自身のブレッドを元に戻せる唯一の方法です。\n\n単語の一覧を表示しますので、紙に書き留めて安全に保管してください。</string>
+    <string name="StartPaperPhrase.body">スマートフォンが紛失、盗難、破損、またはアップグレードされた場合にリカバリフレーズを使用することで、BRDを復元できます。 \n\n一枚の紙に書き留めて安全を保つための単語のリストをお見せします。</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">お客様のペーパー・キーは携帯電話の紛失,盗難,故障またはアップグレードした際にBRDを復元する唯一の方法です。\n\nペーパー・キーはお客様のデバイスでセキュリティ設定を変更した際も必要となります。\n\n紙に書き留めて保管する単語リストを表示します。</string>
+    <string name="StartPaperPhrase.Body.Android">スマートフォンが紛失、盗難、破損、またはアップグレードされた場合にリカバリフレーズを使用することで、BRDを復元できます。 \n\nデバイスのセキュリティ設定を変更する場合も、リカバリフレーズが必要です。 \n\n一枚の紙に書き留めて安全を保つための単語のリストをお見せします。</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.buttonTitle">復元フレーズを書き留めてください</string>
+    <string name="StartPaperPhrase.buttonTitle">回復フレーズを書き留めます</string>
     <!-- Argument is date; date should be on a new line -->
-    <string name="StartPaperPhrase.date">あなたが最後に復元フレーズを書き留めたのは %1$@です</string>
+    <string name="StartPaperPhrase.date">最後に書き留めた\n %1$@</string>
     <!-- button label -->
     <string name="StartViewController.createButton">新しいウォレットを作成する</string>
     <!-- Start view message -->
@@ -1277,11 +1277,11 @@
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">失敗しました</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">新しいウォレットを起動したり既存のウォレットを復元するには、まず現在インストールされているウォレットのリンクを解除する必要があります。現在使用しているウォレットの復元フレーズを入力して続行してください。</string>
+    <string name="WipeWallet.instruction">デバイスからこのウォレットをワイプするには、リカバリフレーズを入力してください。</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">ご利用ウォレットのリンクを解除してこの機器から解除してください。このウォレットのリンクが解除されると、この機器で新しいウォレットを起動したり、別のウォレット再び利用できるようになります。</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">この端末から現在使用中のBRDウォレットへのアクセスはできなくなります。復元する際は復元フレーズが必要になります。</string>
+    <string name="WipeWallet.startWarning">現在のウォレットはこのデバイスから削除されます。後で復元する場合は、リカバリフレーズを入力する必要があります。</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">ウォレットのリンクを解除</string>
     <!-- Wipe wallet button title -->

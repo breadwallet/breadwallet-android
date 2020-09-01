@@ -25,7 +25,7 @@
     <!-- Account balance -->
     <string name="Account.balance">Баланс</string>
     <!-- Delisted token alert banner message -->
-    <string name="Account.delistedToken">Регистрация этого токена была отменена из-за того, что эмитент решил прекратить поддержку ERC20. \n\nВероятно, вы все равно можете отправлять эти токены на другую платформу. Для получения дополнительной информации посетите нашу страницу поддержки.</string>
+    <string name="Account.delistedToken">Этот токен был исключен из списка. \n\nВозможно, вы все еще сможете отправить эти токены на другую платформу. Для получения более подробной информации посетите нашу страницу поддержки.</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%1$s за %2$s</string>
     <!-- Loading Wallet Message -->
@@ -47,7 +47,7 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">Мой BRD</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">Похоже, что вы пользуетесь клавиатурой третьей стороны, которая может записывать последовательность нажимаемых клавиш и похитить ваш Бумажный ключ. Переключитесь на клавиатуру Android по умолчанию для дополнительной защиты.</string>
+    <string name="Alert.customKeyboard.android">Похоже, вы используете стороннюю клавиатуру, которая может записывать то, что вы вводите, и красть вашу фразу для восстановления. Пожалуйста, переключитесь на клавиатуру Android по умолчанию для дополнительной защиты.</string>
     <!-- Error alert title -->
     <string name="Alert.error">Ошибка</string>
     <!-- Keystore error -->
@@ -55,9 +55,9 @@
     <!-- KeyStore error, keys are invalidated -->
     <string name="Alert.keystore.invalidated.android">Ваши зашифрованные данные приложения BRD были недавно аннулированы, так как была отключена блокировка экрана вашего устройства Android.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
-    <string name="Alert.keystore.invalidated.uninstall.android">Мы не можем продолжить, потому что ваши настройки блокировки экрана были изменены (например, пароль отключен, отпечатки пальцев изменены). В целях безопасности Android навсегда заблокировал ваше хранилище ключей. Поэтому ваши данные BRD следует стереть путем удаления приложения.\n\nНе волнуйтесь, ваши средства в безопасности! Переустановите приложение и восстановите свой кошелек с помощью бумажного ключа.</string>
+    <string name="Alert.keystore.invalidated.uninstall.android">Мы не можем продолжить, потому что ваши настройки блокировки экрана были изменены (например, пароль был отключен, отпечатки пальцев были изменены). В целях безопасности Android навсегда заблокировал хранилище ключей. Следовательно, данные вашего приложения BRD должны быть удалены путем удаления. \n\nНе волнуйтесь, ваши средства в безопасности! Переустановите приложение и восстановите свой кошелек, используя фразу для восстановления.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
-    <string name="Alert.keystore.invalidated.wipe.android">Мы не можем продолжить, потому что ваши настройки блокировки экрана были изменены (например, пароль отключен, отпечатки пальцев изменены). В целях безопасности Android навсегда заблокировал ваше хранилище ключей. Поэтому данные вашего приложения BRD необходимо стереть. \nНе волнуйтесь, ваши средства в безопасности! Восстановите свой кошелек, используя бумажный ключ.</string>
+    <string name="Alert.keystore.invalidated.wipe.android">Мы не можем продолжить, потому что ваши настройки блокировки экрана были изменены (например, пароль был отключен, отпечатки пальцев были изменены). В целях безопасности Android навсегда заблокировал хранилище ключей. Следовательно, данные вашего приложения BRD должны быть удалены. \n\nНе волнуйтесь, ваши средства в безопасности! Восстановите свой кошелек, используя фразу для восстановления.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Ошибка хранилища ключей Android</string>
     <!-- No internet alert message -->
@@ -73,7 +73,7 @@
     <!-- Addresses Copied Alert sub header -->
     <string name="Alerts.copiedAddressesSubheader">Все адреса для кошелька успешно скопированы.</string>
     <!-- Alert Header Label (the paper key was set) -->
-    <string name="Alerts.paperKeySet">Бумажный ключ задан</string>
+    <string name="Alerts.paperKeySet">Набор фраз для восстановления</string>
     <!-- Alert Subheader label (playfully positive) -->
     <string name="Alerts.paperKeySetSubheader">Отлично!</string>
     <!-- Alert Header label (the PIN was set) -->
@@ -198,7 +198,7 @@
     <string name="CloudBackup.enableButton">Я включил Связку ключей iCloud</string>
     <string name="CloudBackup.enableTitle">Включить связку ключей</string>
     <string name="CloudBackup.encryptBackupMessage">Введите PIN-код, чтобы зашифровать резервную копию</string>
-    <string name="CloudBackup.mainBody">Мы по-прежнему рекомендуем записывать фразу восстановления и хранить ее в безопасности, но вы также можете сделать резервную копию фразы восстановления в iCloud. Обратите внимание, что резервное копирование iCloud защищено ровно настолько, насколько безопасно ваша учетная запись iCloud.</string>
+    <string name="CloudBackup.mainBody">Обратите внимание, что резервное копирование в iCloud настолько же безопасно, насколько и ваша учетная запись iCloud. Мы по-прежнему рекомендуем записать фразу для восстановления на следующем шаге и хранить ее в безопасности. Фраза восстановления - единственный способ восстановить ваш кошелек, если вы больше не можете получить доступ к iCloud.</string>
     <string name="CloudBackup.mainTitle">Резервное копирование iCloud Recovery</string>
     <string name="CloudBackup.mainWarning">Чтобы эта функция работала, в приложении «Настройки» iOS необходимо включить «Связку ключей iCloud».</string>
     <string name="CloudBackup.mainWarningConfirmation">Вы действительно хотите отключить резервное копирование iCloud? Это удалит вашу резервную копию со всех устройств.</string>
@@ -232,9 +232,9 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">Общая стоимость:</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">Введенные слова не совпадают с вашим бумажным ключом. Повторите попытку.</string>
+    <string name="ConfirmPaperPhrase.error">Введенные слова не соответствуют вашей фразе для восстановления. Пожалуйста, попробуйте еще раз.</string>
     <!-- Confirm paper phrase view label. -->
-    <string name="ConfirmPaperPhrase.label">Чтобы убедиться, что всё записано корректно, пожалуйста, введите следующие слова с вашего бумажного ключа.</string>
+    <string name="ConfirmPaperPhrase.label">Чтобы убедиться, что все записано правильно, введите следующие слова из фразы для восстановления.</string>
     <!-- Word label eg. Word #1, Word #2 -->
     <string name="ConfirmPaperPhrase.word">Слово #%1$s</string>
     <!-- Agree to legal terms button -->
@@ -445,7 +445,7 @@
     <!-- button label -->
     <string name="MenuViewController.recoverButton">Восстановить кошелек</string>
     <!-- Paper Key Skip modal body (Android-version) -->
-    <string name="Modal.PaperKeySkip.Body.Android">Бумажный ключ будет необходим, чтобы открыть ваш кошелек, если вы измените настройки безопасности на вашем телефоне.\n\nВы уверены, что хотите настроить бумажный ключ позже?</string>
+    <string name="Modal.PaperKeySkip.Body.Android">Ваша фраза для восстановления требуется для открытия кошелька, если вы измените настройки безопасности на своем телефоне. \n\nВы уверены, что хотите настроить фразу для восстановления позже?</string>
     <!-- Paper Key Skip modal Continue Set Up button -->
     <string name="Modal.PaperKeySkip.Button.ContinueSetUp">Продолжить настройку</string>
     <!-- Paper Key Skip modal I'll do it later button -->
@@ -546,10 +546,10 @@
     <string name="Prompts.NoScreenLock.body.android">Для защиты вашего кошелька требуется блокировка экрана вашего устройства. Перейдите в \"Настройки\" &gt; \"Безопасность\" &gt; \"Блокировка экрана\" и включите, чтобы продолжить.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Блокировка экрана отключена</string>
-    <!-- Warning about recovery key (formerly paper key). -->
-    <string name="Prompts.PaperKey.body">Ваш бумажный ключ нужно сохранить на случай, если вы потеряете или смените свой телефон.</string>
+    <!-- Warning about recovery phrase (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">Фразу для восстановления необходимо сохранить на случай, если вы потеряете или поменяете телефон.</string>
     <!-- Warning about paper key (Android-version) -->
-    <string name="Prompts.PaperKey.Body.Android">Создайте бумажный ключ на случай, если вы потеряете или смените ваш телефон. Ключ будет также необходим, если вы измените настройки безопасности на вашем телефоне.</string>
+    <string name="Prompts.PaperKey.Body.Android">Настройте фразу для восстановления на случай, если вы потеряете или замените телефон. Ваш ключ также потребуется, если вы измените настройки безопасности вашего телефона.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Необходимо совершить действие</string>
     <string name="Prompts.RateApp.dontShow">Не спрашивай снова</string>
@@ -626,11 +626,11 @@
     <!-- Reset PIN with paper key: header -->
     <string name="RecoverWallet.header_reset_pin">Сбросить PIN-код</string>
     <!-- Enter paper key instruction -->
-    <string name="RecoverWallet.instruction">Введите бумажный ключ</string>
+    <string name="RecoverWallet.instruction">Введите фразу для восстановления</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Восстановите Ваш BRD-кошелек с помощью бумажного ключа.</string>
+    <string name="RecoverWallet.intro">Восстановите свой BRD с помощью фразы восстановления.</string>
     <!-- Invalid paper key message -->
-    <string name="RecoverWallet.invalid">Введенный вами бумажный ключ недействителен. Пожалуйста, внимательно перепроверьте каждое слово и повторите попытку.</string>
+    <string name="RecoverWallet.invalid">Вы ввели неверную фразу для восстановления. Пожалуйста, дважды проверьте каждое слово и попробуйте еще раз.</string>
     <!-- Previous button accessibility label -->
     <string name="RecoverWallet.leftArrow">Стрелка влево</string>
     <!-- Next button label -->
@@ -640,35 +640,35 @@
     <!-- Next button accessibility label -->
     <string name="RecoverWallet.rightArrow">Стрелка вправо</string>
     <!-- Recover wallet sub-header -->
-    <string name="RecoverWallet.subheader">Введите бумажный ключ для кошелька, который вы хотите восстановить.</string>
+    <string name="RecoverWallet.subheader">Введите фразу восстановления для кошелька, который вы хотите восстановить.</string>
     <!-- Reset PIN with paper key: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">Для сброса PIN-кода введите слова из вашего бумажного ключа в расположенные ниже поля.</string>
+    <string name="RecoverWallet.subheader_reset_pin">Чтобы сбросить PIN-код, введите слова из фразы для восстановления в поля ниже.</string>
     <!-- Instructs the user to enter words from the set of recovery key words. -->
     <string name="RecoveryKeyFlow.confirmRecoveryInputError">Вы неверно ввели слово. Пожалуйста, повторите попытку.</string>
-    <!-- Instructs the user to enter words from the set of recovery key words. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Почти готово! Введите следующие слова из вашего ключа восстановления.</string>
-    <!-- Title for the confirmation step of the recovery key flow. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Подтверждение ключа восстановления</string>
-    <!-- Title displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKey">Введите ключ восстановления</string>
-    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Пожалуйста, введите ваш ключ восстановления, чтобы отвязать этот кошелек от вашего устройства.</string>
-    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
-    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Вы уверены, что хотите выполнить настройку ключа восстановления позже?</string>
+    <!-- Instructs the user to enter words from the set of recovery phrase words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Почти сделано! Введите следующие слова из фразы восстановления.</string>
+    <!-- Title for the confirmation step of the recovery phrase flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Подтвердите фразу для восстановления</string>
+    <!-- Title displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">Введите фразу восстановления</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Введите фразу для восстановления, чтобы отменить связь этого кошелька с вашим устройством.</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery phrase later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Вы уверены, что хотите настроить фразу для восстановления позже?</string>
     <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
     <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">Настроить позже</string>
-    <!-- Button text for the 'Generate Recovery Key' button -->
-    <string name="RecoveryKeyFlow.generateKeyButton">Сгенерировать ключ восстановления</string>
+    <!-- Button text for the 'Generate Recovery Phrase' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">Создать фразу для восстановления</string>
     <!-- Subtext for the recovery key landing page. -->
     <string name="RecoveryKeyFlow.generateKeyExplanation">Ключ необходим, чтобы вернуть ваши средства, если вы смените или потеряете ваш телефон.</string>
-    <!-- Default title for the recovery key landing page -->
-    <string name="RecoveryKeyFlow.generateKeyTitle">Сгенерируйте приватный ключ восстановления</string>
+    <!-- Default title for the recovery phrase landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">Создайте свою личную фразу для восстановления</string>
     <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
     <string name="RecoveryKeyFlow.goToWalletButtonTitle">Перейти к кошельку</string>
     <!-- Hint text for recovery key intro page, e.g., Step 2 -->
     <string name="RecoveryKeyFlow.howItWorksStep">Как это работает — Шаг %1$@</string>
-    <!-- Error text displayed when the user enters an incorrect recovery key -->
-    <string name="RecoveryKeyFlow.invalidPhrase">Некоторые из введенных вами слов не совпадают с вашим ключом восстановления. Пожалуйста, повторите попытку.</string>
+    <!-- Error text displayed when the user enters an incorrect recovery phrase -->
+    <string name="RecoveryKeyFlow.invalidPhrase">Некоторые из введенных вами слов не соответствуют фразе для восстановления. Пожалуйста, попробуйте еще раз.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.keepSecure">Держите его в безопасности</string>
     <!-- Informs the user that the recovery is only required for recovering a wallet. -->
@@ -680,19 +680,19 @@
     <!-- Title displayed when the user starts the process of recovering a wallet -->
     <string name="RecoveryKeyFlow.recoveryYourWallet">Восстановление кошелька</string>
     <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
-    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Пожалуйста, введите ключ восстановления кошелька, который вы хотите восстановить.</string>
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Введите фразу для восстановления кошелька, который вы хотите восстановить.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.relaxBuyTrade">Расслабьтесь, покупайте и торгуйте</string>
     <!-- Reminds the user to write down the recovery key words. -->
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">Не забудьте записать эти слова. Вернитесь к предыдущему шагу, если вы забыли это сделать.</string>
-    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
-    <string name="RecoveryKeyFlow.resetPINInstruction">Пожалуйста, введите ваш ключ восстановления, чтобы сбросить ваш PIN-код.</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery phrase to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">Введите фразу для восстановления, чтобы сбросить PIN-код.</string>
     <!-- Assures the user that BRD will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">Покупайте и торгуйте, зная, что ваши средства защищены лучшей системой безопасности и конфиденциальности в этой сфере.</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
     <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Храните ваш ключ в безопасном месте. Только с помощью него вы сможете восстановить ваш кошелек. BRD не хранит его копию.</string>
-    <!-- Title for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successHeading">Поздравляем! Вы закончили настройку ключа восстановления.</string>
+    <!-- Title for the success page after the recovery phrase has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">Поздравляю! Вы завершили настройку фразы восстановления.</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successSubheading">Теперь вы готовы вносить депозит, торговать и покупать криптовалюту из вашего кошелька BRD.</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
@@ -707,12 +707,12 @@
     <string name="RecoveryKeyFlow.wipeWalletSubtext">Запустите новый кошелек, протерев текущий кошелек с устройства.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">Запишите ваш ключ</string>
-    <!-- Title for the recovery key landing page if the key has already been generated. -->
-    <string name="RecoveryKeyFlow.writeKeyAgain">Запишите ваш ключ восстановления еще раз</string>
+    <!-- Title for the recovery phrase landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">Снова запишите фразу для восстановления</string>
     <!-- Subtitle for the write recovery key screen -->
     <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Запишите эти слова по порядку.</string>
-    <!-- Title for the write recovery key screen -->
-    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Ваш ключ восстановления</string>
+    <!-- Title for the write recovery phrase screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Ваша фраза для восстановления</string>
     <!-- Title for the step number when the user pages through the recovery words -->
     <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@ из %2$@</string>
     <!-- No amount entered error message. -->
@@ -767,11 +767,11 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">Единственный способ получения доступа к вашим биткойнам в случае потери или изменения вашего телефона.</string>
-    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+    <!-- Recovery Phrase button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
  * to not break existing client code. -->
-    <string name="SecurityCenter.paperKeyTitle">Бумажный ключ</string>
+    <string name="SecurityCenter.paperKeyTitle">Фраза восстановления</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle.android">Бумажный ключ</string>
+    <string name="SecurityCenter.paperKeyTitle.android">Фраза восстановления</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Защищает ваш BRD от несанкционированных пользователей.</string>
     <!-- PIN button title -->
@@ -955,15 +955,15 @@
     <!-- Share data switch label. -->
     <string name="ShareData.toggleLabel">Поделиться анонимными данными?</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.againButtonTitle">Выписать бумажный ключ снова</string>
+    <string name="StartPaperPhrase.againButtonTitle">Запишите фразу восстановления еще раз</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Бумажный ключ – это единственный способ восстановить ваш BRD-кошелек в случае потери, кражи, поломки или замены вашего телефона.\n\nМы покажем вам список слов, которые необходимо записать на листе бумаги и хранить в надежном месте.</string>
+    <string name="StartPaperPhrase.body">Фраза восстановления - единственный способ восстановить BRD, если ваш телефон утерян, украден, сломан или модернизирован. \n\nМы покажем вам список слов, которые нужно записать на листе бумаги и хранить в безопасности.</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">Бумажный ключ — это единственный способ восстановить ваш кошелек BRD в случае, если ваш телефон окажется утерян, украден, сломан или обновлен.\n\nБумажный ключ будет также необходим, если вы измените настройки безопасности на вашем устройстве.\n\nМы покажем вам список слов, которые необходимо записать на бумаге и хранить в безопасном месте.</string>
+    <string name="StartPaperPhrase.Body.Android">Фраза восстановления - единственный способ восстановить BRD, если ваш телефон утерян, украден, сломан или модернизирован. \n\nФраза для восстановления также потребуется, если вы измените настройки безопасности на своем устройстве. \n\nМы покажем вам список слов, которые нужно записать на листе бумаги и хранить в безопасности.</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.buttonTitle">Выписать бумажный ключ</string>
+    <string name="StartPaperPhrase.buttonTitle">Запишите фразу для восстановления</string>
     <!-- Argument is date; date should be on a new line -->
-    <string name="StartPaperPhrase.date">Вы выписывали свой бумажный ключ в последний раз \n%1$@</string>
+    <string name="StartPaperPhrase.date">Последнее записано на \n %1$@</string>
     <!-- button label -->
     <string name="StartViewController.createButton">Создать новый кошелек</string>
     <!-- Start view message -->
@@ -1277,11 +1277,11 @@
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">Не удалось</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">Чтобы открыть новый кошелек или восстановить существующий, вы должны сначала отвязать кошелек, который в настоящее время установлен. Чтобы продолжить, введите текущий бумажный ключ (Paper Key).</string>
+    <string name="WipeWallet.instruction">Пожалуйста, введите фразу для восстановления, чтобы стереть этот кошелек с вашего устройства.</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Отвязать ваш кошелек, чтобы удалить его с этого устройства. Как только вы отвяжете этот кошелек, вы сможете открыть новый кошелек или восстановить другой на этом устройстве.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">Вы больше не сможете получить доступ к текущему кошельку BRD с этого устройства. Ваш баланс останется на этой фразе.</string>
+    <string name="WipeWallet.startWarning">Ваш текущий кошелек будет удален с этого устройства. Если вы захотите восстановить его в будущем, вам нужно будет ввести фразу для восстановления.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Отвязать кошелек</string>
     <!-- Wipe wallet button title -->
