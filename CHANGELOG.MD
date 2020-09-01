@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [4.5.5]
+## Updated
+- Upgraded CashUi to 2.0.7
+## Fixed
+- Send Button not available on Send Verification Code Screen
+- When title of the ATM has 2 lines or more, the first name and last name get cut
+- On the Atm List, the atm machine name may overlap with the redeem icon
+- Rotation of device removes the map and does not allow scrolling to fill out the form. It also removes the map from the view.
+
 ## [4.5.4]
 ## Updated
 - Upgraded CashUi to 2.0.6
