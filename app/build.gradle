@@ -177,7 +177,7 @@ task downloadBundles {
     doLast {
         def bundles = ["brd-web-3", "brd-tokens-prod", "brd-web-3-staging", "brd-tokens-staging"]
         def stagingHost = "stage2.breadwallet.com"
-        def releaseHost = "build.just.cash"
+        def releaseHost = "api.breadwallet.com"
         for (String bundleName : bundles) {
             def fileUrl
             def resFolder
