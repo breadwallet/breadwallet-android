@@ -30,6 +30,7 @@ import com.breadwallet.crypto.Transfer
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.PriceChange
 import com.breadwallet.model.PriceDataPoint
+import com.breadwallet.tools.manager.MarketDataResult
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.platform.entities.TxMetaData
@@ -67,6 +68,11 @@ object WalletScreen {
         val priceChartIsLoading: Boolean = true,
         val priceChartInterval: Interval = Interval.ONE_YEAR,
         @Redacted val priceChartDataPoints: List<PriceDataPoint> = emptyList(),
+        val marketDataState: MarketDataState = MarketDataState.LOADING,
+        val marketCap: BigDecimal? = null,
+        val totalVolume: BigDecimal? = null,
+        val high24h: BigDecimal? = null,
+        val low24h: BigDecimal? = null,
         val selectedPriceDataPoint: PriceDataPoint? = null,
         val priceChange: PriceChange? = null,
         val state: WalletState = WalletState.Loading
@@ -156,6 +162,10 @@ object WalletScreen {
             @Redacted val priceDataPoints: List<PriceDataPoint>
         ) : E()
 
+        data class OnMarketDataUpdated(
+            val marketData : MarketDataResult
+        ) : E()
+
         data class OnChartDataPointSelected(val priceDataPoint: PriceDataPoint) : E()
         object OnChartDataPointReleased : E()
 
@@ -228,6 +238,10 @@ object WalletScreen {
             val currencyCode: String
         ) : F()
 
+        data class LoadMarketData(
+            val currencyCode: String
+        ) : F()
+
         data class TrackEvent(
             val eventName: String,
             val attributes: Map<String, String>? = null
@@ -254,4 +268,8 @@ object WalletScreen {
 
         data class CreateAccount(val currencyCode: String) : F()
     }
+}
+
+enum class MarketDataState {
+    LOADED, LOADING, ERROR
 }

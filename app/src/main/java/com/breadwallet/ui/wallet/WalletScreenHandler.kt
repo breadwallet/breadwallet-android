@@ -41,6 +41,7 @@ import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.model.PriceChange
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.manager.MarketDataResult
 import com.breadwallet.tools.manager.RatesFetcher
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
@@ -90,6 +91,7 @@ object WalletScreenHandler {
         addFunctionSync(Default, ::handleLoadIsTokenSupported)
         addFunctionSync(Default, ::handleConvertCryptoTransactions)
         addFunction(handleLoadChartInterval(ratesFetcher))
+        addFunction(handleLoadMarketData(ratesFetcher))
         addFunctionSync<F.LoadCryptoPreferred>(Default) {
             E.OnIsCryptoPreferredLoaded(BRSharedPrefs.isCryptoPreferred())
         }
@@ -145,6 +147,16 @@ object WalletScreenHandler {
             effect.interval
         )
         E.OnMarketChartDataUpdated(dataPoints)
+    }
+
+    private fun handleLoadMarketData(
+        ratesFetcher: RatesFetcher
+    ): suspend (F.LoadMarketData) -> E = { effect ->
+        val marketDataResult = ratesFetcher.getMarketData(
+            effect.currencyCode,
+            BRSharedPrefs.getPreferredFiatIso()
+        )
+        E.OnMarketDataUpdated(marketDataResult)
     }
 
     private fun handleLoadTransactions(
@@ -307,6 +319,7 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
         ),
         timeStamp = confirmation.orNull()?.confirmationTime?.time ?: System.currentTimeMillis(),
         currencyCode = wallet.currency.code,
-        feeToken = feeForToken
+        feeToken = feeForToken,
+        confirmationsUntilFinal = wallet.walletManager.network.confirmationsUntilFinal.toInt()
     )
 }

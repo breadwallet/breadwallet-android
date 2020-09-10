@@ -78,19 +78,13 @@ class ApplicationLifecycleObserver : LifecycleObserver {
     /**
      * The interface to implement to register for lifecycle events.
      */
-    interface ApplicationLifecycleListener {
+    fun interface ApplicationLifecycleListener {
         fun onLifeCycle(event: Lifecycle.Event)
     }
 
     companion object {
         private val TAG = ApplicationLifecycleObserver::class.java.simpleName
         private val listeners = mutableListOf<ApplicationLifecycleListener>()
-
-        fun addApplicationLifecycleListener(listener: (event: Lifecycle.Event) -> Unit) {
-            listeners.add(object : ApplicationLifecycleListener {
-                override fun onLifeCycle(event: Lifecycle.Event) = listener(event)
-            })
-        }
 
         /**
          * Registers an application lifecycle listener to receive lifecycle events.
