@@ -146,9 +146,9 @@ class ConfirmTxController(
             when {
                 isErc20 -> R.string.FeeSelector_ethTime
                 else -> when (transferSpeed) {
-                    TransferSpeed.ECONOMY -> R.string.FeeSelector_economyTime
-                    TransferSpeed.REGULAR -> R.string.FeeSelector_regularTime
-                    TransferSpeed.PRIORITY -> R.string.FeeSelector_priorityTime
+                    is TransferSpeed.Economy -> R.string.FeeSelector_economyTime
+                    is TransferSpeed.Regular -> R.string.FeeSelector_regularTime
+                    is TransferSpeed.Priority -> R.string.FeeSelector_priorityTime
                 }
             }
         )

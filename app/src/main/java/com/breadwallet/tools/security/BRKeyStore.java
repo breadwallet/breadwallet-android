@@ -723,7 +723,6 @@ public final class BRKeyStore {
                         context.getString(R.string.UnlockScreen_touchIdTitle_android),
                         context.getString(R.string.UnlockScreen_touchIdPrompt_android));
                 if (intent != null) {
-                    ((BreadApp) app.getApplicationContext()).setDelayServerShutdown(true, requestCode);
                     app.startActivityForResult(intent, requestCode);
                 } else {
                     Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");

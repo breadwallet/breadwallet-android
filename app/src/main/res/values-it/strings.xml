@@ -188,6 +188,31 @@
     <string name="Button.yes">Sì</string>
     <!-- Camera plugin instruction -->
     <string name="CameraPlugin.centerInstruction">Centra il tuo ID nel riquadro</string>
+    <string name="CloudBackup.backupDeleted">Backup cancellato</string>
+    <string name="CloudBackup.backupDeletedMessage">Il tuo backup iCloud è stato cancellato dopo troppi tentativi falliti di PIN. L\'app verrà ora riavviata.</string>
+    <string name="CloudBackup.backupMenuTitle">Backup iCloud</string>
+    <string name="CloudBackup.createButton">Crea Nuovo Portafoglio</string>
+    <string name="CloudBackup.createWarning">E\' stato rilevato un portafoglio con un precedente backup. Si raccomanda di utilizzare questo backup. Siete sicuri di voler procedere con la creazione di un nuovo portafoglio?</string>
+    <string name="CloudBackup.enableBody1">Il portachiavi iCloud deve essere attivato affinché questa funzione funzioni.</string>
+    <string name="CloudBackup.enableBody2">Dovrebbe assomigliare al seguente:</string>
+    <string name="CloudBackup.enableButton">Ho acceso iCloud Keychain</string>
+    <string name="CloudBackup.enableTitle">Abilita portachiavi</string>
+    <string name="CloudBackup.encryptBackupMessage">Inserisci il PIN per crittografare il backup</string>
+    <string name="CloudBackup.mainBody">Ti consigliamo comunque di annotare la frase di ripristino e di mantenerla al sicuro, ma puoi anche eseguire il backup della frase di ripristino su iCloud. Tieni presente che il backup di iCloud è sicuro quanto il tuo account iCloud.</string>
+    <string name="CloudBackup.mainTitle">Backup del ripristino iCloud</string>
+    <string name="CloudBackup.mainWarning">Il portachiavi iCloud deve essere attivato nell\'app Impostazioni iOS affinché questa funzione funzioni</string>
+    <string name="CloudBackup.mainWarningConfirmation">Sei sicuro di voler disabilitare il backup di iCloud? Questo cancellerà il tuo backup da tutti i dispositivi.</string>
+    <string name="CloudBackup.pinAttempts">Tentativi rimanenti prima di cancellare il backup: %1$@</string>
+    <string name="CloudBackup.recoverButton">Ripristina dalla chiave di ripristino</string>
+    <string name="CloudBackup.recoverHeader">Inserisci il PIN per sbloccare il backup di iCloud</string>
+    <string name="CloudBackup.restoreButton">Ripristina da iCloud Backup</string>
+    <string name="CloudBackup.selectTitle">Scegliere Backup</string>
+    <string name="CloudBackup.step1">Avvia l\'app Impostazioni.</string>
+    <string name="CloudBackup.step2">Tocca il nome del tuo ID Apple.</string>
+    <string name="CloudBackup.step3">Tocca iCloud.</string>
+    <string name="CloudBackup.step4">Verifica che il portachiavi iCloud sia ATTIVO</string>
+    <string name="CloudBackup.understandText">Capisco che questa funzione non funzionerà se il portachiavi iCloud non è abilitato.</string>
+    <string name="CloudBackup.warningBody">Il backup di iCloud verrà cancellato dopo altri %1$@ tentativi di PIN errati.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Somma da inviare:</string>
     <!-- Network Fee: ($1.00) -->
@@ -280,6 +305,7 @@
     <string name="FeeSelector.estimatedDeliver">Consegna Stimata: %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2-5 minuti</string>
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d minuti</string>
     <!-- Priority fee -->
     <string name="FeeSelector.priority">Priorità</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
@@ -394,6 +420,10 @@
     <string name="ManageWallet.textFeildLabel">Nome Portafoglio</string>
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">Gestisci Portafoglio</string>
+    <string name="MarketData.high24h">24 ore di alta</string>
+    <string name="MarketData.low24h">24 ore minimo</string>
+    <string name="MarketData.marketCap">Capitalizzazione di mercato</string>
+    <string name="MarketData.volume">Volume di scambio</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
     <string name="MenuButton.addWallet">Aggiungi portafoglio</string>
     <!-- Menu button title -->
@@ -768,6 +798,8 @@
     <string name="Send.amountLabel">Importo</string>
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Saldo: %1$s</string>
+    <!-- Balance: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.balanceString">Saldo:</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">Consenti l’accesso alla fotocamera in “Impostazioni” &gt; “Apps” &gt; “BRD” &gt; “Permessi”</string>
     <!-- Permission required to access camera -->
@@ -838,6 +870,8 @@
     <string name="Send.remoteRequestError">Non è stato possibile caricare la richiesta</string>
     <!-- Scan button label -->
     <string name="Send.scanLabel">Acquisisci</string>
+    <!-- Sending Max: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.sendingMax">Invio Max: </string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">Invia</string>
     <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->

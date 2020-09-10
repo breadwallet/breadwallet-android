@@ -30,7 +30,6 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
-import drewcarlson.switchboard.MobiusUpdateSpec
 
 object FastSync {
 
@@ -47,11 +46,6 @@ object FastSync {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "FastSync",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
         object OnBackClicked : E()
         object OnLearnMoreClicked : E()

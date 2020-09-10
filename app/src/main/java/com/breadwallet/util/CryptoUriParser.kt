@@ -25,6 +25,7 @@
 package com.breadwallet.util
 
 import android.net.Uri
+import com.breadwallet.BuildConfig
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.addressFor
 import com.breadwallet.breadbox.isErc20
@@ -160,7 +161,7 @@ class CryptoUriParser(
             }
         } else {
             builder.currencyCode = TokenUtil.getTokenItems()
-                .firstOrNull { it.urlSchemes.contains(uri.scheme) }
+                .firstOrNull { it.urlSchemes(BuildConfig.BITCOIN_TESTNET).contains(uri.scheme) }
                 ?.symbol
         }
 

@@ -2,8 +2,8 @@ package com.platform.jsbridge
 
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import com.breadwallet.app.BreadApp
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class PromiseJs(
@@ -15,7 +15,7 @@ class PromiseJs(
     }
 
     @JavascriptInterface
-    fun injectPromiseHooks() = GlobalScope.launch(Dispatchers.Main) {
+    fun injectPromiseHooks() = BreadApp.applicationScope.launch(Dispatchers.Main) {
         webView.evaluateJavascript(
             """
                 (function() {

@@ -188,6 +188,31 @@
     <string name="Button.yes">Sí</string>
     <!-- Camera plugin instruction -->
     <string name="CameraPlugin.centerInstruction">Centra tu ID en el recuadro</string>
+    <string name="CloudBackup.backupDeleted">Copia de seguridad borrada</string>
+    <string name="CloudBackup.backupDeletedMessage">Tu copia de seguridad de iCloud ha sido borrada después de demasiados intentos fallidos de PIN. La aplicación se reiniciará ahora.</string>
+    <string name="CloudBackup.backupMenuTitle">Copia de seguridad de iCloud</string>
+    <string name="CloudBackup.createButton">Crear nueva cartera</string>
+    <string name="CloudBackup.createWarning">Se ha detectado una billetera con copia de seguridad anterior. Se recomienda utilizar esta copia de seguridad. ¿Está seguro de que desea continuar con la creación de una nueva billetera?</string>
+    <string name="CloudBackup.enableBody1">El llavero de iCloud debe estar activado para que esta función funcione.</string>
+    <string name="CloudBackup.enableBody2">Debería tener el siguiente aspecto:</string>
+    <string name="CloudBackup.enableButton">He activado el llavero de iCloud</string>
+    <string name="CloudBackup.enableTitle">Habilitar llavero</string>
+    <string name="CloudBackup.encryptBackupMessage">Ingrese el PIN para cifrar la copia de seguridad</string>
+    <string name="CloudBackup.mainBody">Aún te recomendamos que escribas tu frase de recuperación y la mantengas segura, pero también puedes respaldar tu frase de recuperación en iCloud. Ten en cuenta que la copia de seguridad de iCloud solo es tan segura como tu cuenta de iCloud.</string>
+    <string name="CloudBackup.mainTitle">Copia de seguridad de recuperación de iCloud</string>
+    <string name="CloudBackup.mainWarning">El llavero de iCloud debe estar activado en la aplicación de configuración de iOS para que esta función funcione</string>
+    <string name="CloudBackup.mainWarningConfirmation">¿Estás seguro de que deseas desactivar la copia de seguridad de iCloud? Esto eliminará su copia de seguridad de todos los dispositivos.</string>
+    <string name="CloudBackup.pinAttempts">Intentos restantes antes de borrar la copia de seguridad: %1$@</string>
+    <string name="CloudBackup.recoverButton">Restaurar desde la clave de recuperación</string>
+    <string name="CloudBackup.recoverHeader">Ingrese el PIN para desbloquear la copia de seguridad de iCloud</string>
+    <string name="CloudBackup.restoreButton">Restaurar desde copia de seguridad de iCloud</string>
+    <string name="CloudBackup.selectTitle">Elija Backup</string>
+    <string name="CloudBackup.step1">Inicie la aplicación de configuración.</string>
+    <string name="CloudBackup.step2">Toca el nombre de tu Apple ID.</string>
+    <string name="CloudBackup.step3">Toca iCloud.</string>
+    <string name="CloudBackup.step4">Verifica que el llavero de iCloud esté encendido</string>
+    <string name="CloudBackup.understandText">Entiendo que esta función no funcionará a menos que iCloud Keychain esté habilitado.</string>
+    <string name="CloudBackup.warningBody">Tu copia de seguridad de iCloud se borrará después de %1$@ más intentos de PIN incorrectos.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Cantidad a enviar:</string>
     <!-- Network Fee: ($1.00) -->
@@ -280,6 +305,7 @@
     <string name="FeeSelector.estimatedDeliver">Entrega estimada: %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2 a 5 minutos</string>
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d minutos</string>
     <!-- Priority fee -->
     <string name="FeeSelector.priority">Prioridad</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
@@ -394,6 +420,10 @@
     <string name="ManageWallet.textFeildLabel">Nombre de la cartera</string>
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">Gestionar cartera</string>
+    <string name="MarketData.high24h">24h alto</string>
+    <string name="MarketData.low24h">24h bajo</string>
+    <string name="MarketData.marketCap">Capitalización del mercado</string>
+    <string name="MarketData.volume">Volumen de comercio</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
     <string name="MenuButton.addWallet">Añadir billetera</string>
     <!-- Menu button title -->
@@ -768,6 +798,8 @@
     <string name="Send.amountLabel">Cantidad</string>
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Saldo: %1$s</string>
+    <!-- Balance: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.balanceString">Saldo:</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">Para permitir el acceso a la cámara, ve a «Ajustes», selecciona «Aplicaciones», busca la aplicación «BRD» y selecciona la opción «Permisos»</string>
     <!-- Permission required to access camera -->
@@ -838,6 +870,8 @@
     <string name="Send.remoteRequestError">No se pudo cargar la solicitud de pago</string>
     <!-- Scan button label -->
     <string name="Send.scanLabel">Escanear</string>
+    <!-- Sending Max: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.sendingMax">Envío máximo:</string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">Enviar</string>
     <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->

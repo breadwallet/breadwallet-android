@@ -29,13 +29,13 @@ import android.content.SharedPreferences
 import android.text.format.DateUtils
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
+import com.breadwallet.app.BreadApp
 import com.breadwallet.app.Conversion
 import com.breadwallet.model.PriceAlert
 import com.breadwallet.repository.asJsonArrayString
 import com.breadwallet.repository.fromJsonArrayString
 import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.tools.util.ServerBundlesHelper
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
@@ -121,7 +121,7 @@ object BRSharedPrefs {
      */
     fun initialize(context: Context) {
         brdPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        GlobalScope.launch {
+        BreadApp.applicationScope.launch {
             _trackedConversionChanges.value = getTrackedConversions()
         }
     }

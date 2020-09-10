@@ -29,7 +29,7 @@ import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.Key
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
-import com.breadwallet.legacy.wallet.entities.GenericTransactionMetaData
+import com.breadwallet.legacy.presenter.entities.GenericTransactionMetaData
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData
 import com.breadwallet.tools.util.BRConstants.WALLET_LINK_PATH
 import com.breadwallet.tools.util.BRConstants.WALLET_PAIR_PATH

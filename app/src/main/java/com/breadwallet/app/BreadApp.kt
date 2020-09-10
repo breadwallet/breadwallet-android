@@ -31,9 +31,6 @@ import android.content.Context
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.CameraXConfig
@@ -86,7 +83,6 @@ import com.platform.sqlite.PlatformSqliteHelper
 import com.platform.tools.KVStoreManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -118,6 +114,7 @@ import java.util.regex.Pattern
 
 private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val ENCRYPTED_PREFS_FILE = "crypto_shared_prefs"
+private const val WALLETKIT_DATA_DIR_NAME = "cryptocore"
 
 @Suppress("TooManyFunctions")
 class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
@@ -158,11 +155,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         fun getBreadBox(): BreadBox = mInstance.direct.instance()
 
-        // TODO: For code organization only, to be removed
-        fun getStorageDir(context: Context): File {
-            return File(context.filesDir, "cryptocore")
-        }
-
         // TODO: Find better place/means for this
         fun getDefaultEnabledWallets() = when {
             BuildConfig.BITCOIN_TESTNET -> listOf(
@@ -181,7 +173,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
          * Initialize the wallet id (rewards id), and save it in the SharedPreferences.
          */
         private fun initializeWalletId() {
-            GlobalScope.launch(Dispatchers.Main) {
+            applicationScope.launch(Dispatchers.Main) {
                 val walletId = getBreadBox()
                     .wallets(false)
                     .mapNotNull { wallets ->
@@ -327,7 +319,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         bind<BreadBox>() with singleton {
             CoreBreadBox(
-                getStorageDir(this@BreadApp),
+                File(filesDir, WALLETKIT_DATA_DIR_NAME),
                 !BuildConfig.BITCOIN_TESTNET,
                 instance(),
                 instance(),
@@ -351,11 +343,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
             ConversionTracker(instance())
         }
     }
-
-    private var mDelayServerShutdownCode = -1
-    private var mDelayServerShutdown = false
-    private var mServerShutdownHandler: Handler? = null
-    private var mServerShutdownRunnable: Runnable? = null
 
     private var accountLockJob: Job? = null
 
@@ -405,7 +392,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
      */
     private fun handleOnStart() {
         accountLockJob?.cancel()
-        setDelayServerShutdown(false, -1)
+        BreadBoxCloseWorker.cancelEnqueuedWork()
         val breadBox = getBreadBox()
         userManager
             .stateChanges()
@@ -430,41 +417,18 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
                 EventUtils.saveEvents(this@BreadApp)
                 EventUtils.pushToServer(this@BreadApp)
             }
-            if (!mDelayServerShutdown) {
-                logDebug("Shutting down HTTPServer.")
-                HTTPServer.getInstance().stopServer()
-            } else {
-                // If server shutdown needs to be delayed, it will occur after
-                // SERVER_SHUTDOWN_DELAY_MILLIS.  This may be cancelled if the app
-                // is closed before execution or the user returns to the app.
-                logDebug("Delaying HTTPServer shutdown.")
-                if (mServerShutdownHandler == null) {
-                    mServerShutdownHandler = Handler(Looper.getMainLooper())
-                }
-                mServerShutdownRunnable = Runnable {
-                    logDebug("Shutdown delay elapsed, shutting down HTTPServer.")
-                    HTTPServer.getInstance().stopServer()
-                    mServerShutdownRunnable = null
-                    mServerShutdownHandler = null
-                }
-                mServerShutdownHandler!!.postDelayed(
-                    mServerShutdownRunnable,
-                    SERVER_SHUTDOWN_DELAY_MILLIS
-                )
-            }
+
         }
+        logDebug("Shutting down HTTPServer.")
+        HTTPServer.getInstance().stopServer()
+
         startedScope.coroutineContext.cancelChildren()
     }
 
     private fun handleOnDestroy() {
         if (HTTPServer.getInstance().isRunning) {
-            if (mServerShutdownHandler != null && mServerShutdownRunnable != null) {
-                logDebug("Preempt delayed server shutdown callback")
-                mServerShutdownHandler!!.removeCallbacks(mServerShutdownRunnable)
-            }
             logDebug("Shutting down HTTPServer.")
             HTTPServer.getInstance().stopServer()
-            mDelayServerShutdown = false
         }
 
         getBreadBox().apply { if (isOpen) close() }
@@ -473,7 +437,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
     fun startWithInitializedWallet(breadBox: BreadBox, migrate: Boolean = false) {
         val context = mInstance.applicationContext
-        BreadBoxCloseWorker.cancelEnqueuedWork()
         incrementAppForegroundedCounter()
 
         if (!breadBox.isOpen) {
@@ -512,35 +475,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         )
     }
 
-    /**
-     * When delayServerShutdown is true, the HTTPServer will remain
-     * running after onStop, until onDestroy.
-     */
-    @Synchronized
-    fun setDelayServerShutdown(delayServerShutdown: Boolean, requestCode: Int) {
-        Log.d(TAG, "setDelayServerShutdown($delayServerShutdown, $requestCode)")
-        val isMatchingRequestCode = mDelayServerShutdownCode == requestCode ||
-            requestCode == -1 || // Force the update regardless of current request
-            mDelayServerShutdownCode == -1 // No initial request
-
-        if (isMatchingRequestCode) {
-            mDelayServerShutdown = delayServerShutdown
-            mDelayServerShutdownCode = requestCode
-            if (!mDelayServerShutdown &&
-                mServerShutdownRunnable != null &&
-                mServerShutdownHandler != null
-            ) {
-                Log.d(TAG, "Cancelling delayed HTTPServer execution.")
-                mServerShutdownHandler!!.removeCallbacks(mServerShutdownRunnable)
-                mServerShutdownHandler = null
-                mServerShutdownRunnable = null
-            }
-            if (!mDelayServerShutdown) {
-                mDelayServerShutdownCode = -1
-            }
-        }
-    }
-
     private fun createEncryptedPrefs(): SharedPreferences? {
         val masterKeys = runCatching {
             MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
@@ -576,7 +510,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
             }
             (userManager as CryptoUserManager).wipeAccount()
 
-            getStorageDir(this).deleteRecursively()
+            File(filesDir, WALLETKIT_DATA_DIR_NAME).deleteRecursively()
 
             PlatformSqliteHelper.getInstance(this)
                 .writableDatabase

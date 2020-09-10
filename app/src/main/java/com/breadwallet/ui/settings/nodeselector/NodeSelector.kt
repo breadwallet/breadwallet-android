@@ -26,7 +26,6 @@ package com.breadwallet.ui.settings.nodeselector
 
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.ui.ViewEffect
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object NodeSelector {
@@ -44,11 +43,6 @@ object NodeSelector {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "NodeSelector",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
         object OnSwitchButtonClicked : E()
 

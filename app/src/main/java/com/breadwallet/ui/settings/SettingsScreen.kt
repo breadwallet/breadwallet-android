@@ -29,7 +29,6 @@ import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
-import drewcarlson.switchboard.MobiusUpdateSpec
 import io.sweers.redacted.annotation.Redacted
 
 object SettingsScreen {
@@ -42,11 +41,6 @@ object SettingsScreen {
         }
     }
 
-    @MobiusUpdateSpec(
-        prefix = "SettingsScreen",
-        baseModel = M::class,
-        baseEffect = F::class
-    )
     sealed class E {
 
         data class OnLinkScanned(val link: Link) : E()
