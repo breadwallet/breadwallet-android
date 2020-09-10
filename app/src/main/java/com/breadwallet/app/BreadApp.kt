@@ -39,6 +39,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import cash.just.sdk.Cash
+import cash.just.ui.CashUI
 import com.breadwallet.BuildConfig
 import com.breadwallet.breadbox.BdbAuthInterceptor
 import com.breadwallet.breadbox.BreadBox
@@ -274,6 +276,8 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         fun getKodeinInstance(): DKodein {
             return mInstance.direct
         }
+
+
     }
 
     override val kodein by Kodein.lazy {
@@ -384,6 +388,16 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         // Start our local server as soon as the application instance is created, since we need to
         // display support WebViews during onboarding.
         HTTPServer.getInstance().startServer(this)
+
+        CashUI.init(getServer())
+    }
+
+    private fun getServer(): Cash.BtcNetwork{
+        return if (BuildConfig.FLAVOR.contains("testnet", true)) {
+            Cash.BtcNetwork.TEST_NET
+        } else {
+            Cash.BtcNetwork.MAIN_NET
+        }
     }
 
     /**

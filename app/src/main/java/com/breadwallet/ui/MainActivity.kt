@@ -24,11 +24,15 @@
  */
 package com.breadwallet.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.security.keystore.UserNotAuthenticatedException
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
+import cash.just.atm.base.AtmResult
+import cash.just.override.CoinsquareConstants
+import cash.just.ui.CashUI
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
@@ -37,12 +41,15 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
+import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logDebug
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.BrdUserState
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
+import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.disabled.DisabledController
@@ -57,6 +64,7 @@ import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
+import com.breadwallet.ui.send.SendSheetController
 import com.breadwallet.util.ControllerTrackingListener
 import com.breadwallet.util.errorHandler
 import kotlinx.coroutines.CoroutineScope
@@ -201,6 +209,45 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         super.onActivityResult(requestCode, resultCode, data)
         router.onActivityResult(requestCode, resultCode, data)
         userManager.onActivityResult(requestCode, resultCode)
+
+        if (resultCode == Activity.RESULT_OK) {
+            when(requestCode) {
+                CoinsquareConstants.ATM_CASH_OUT_REQUEST_CODE,
+                CoinsquareConstants.ATM_ACTIVITY_REQUEST_CODE -> {
+                    data?.let {
+                        parseIntent(it)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun parseIntent(data:Intent) {
+        when(CashUI.getResult(data)) {
+            AtmResult.SEND -> {
+                CashUI.getSendData(data)?.let {
+                    goToSend(it.btcAmount, it.address)
+                }
+            }
+            AtmResult.DETAILS -> {
+                CashUI.getDetailsData(data)?.let {
+                    CashUI.showStatus(this, it.secureCode, CoinsquareConstants.ATM_ACTIVITY_REQUEST_CODE)
+                }
+            }
+        }
+    }
+
+    private fun goToSend(btcAmount: String, address: String) {
+        router.replaceTopController(
+            RouterTransaction.with(
+                SendSheetController(Link.CryptoRequestUrl(
+                    currencyCode = com.breadwallet.tools.util.btc,
+                    address = address,
+                    amount = btcAmount.toFloat().toBigDecimal()
+                ))
+
+            )
+        )
     }
 
     override fun onBackPressed() {

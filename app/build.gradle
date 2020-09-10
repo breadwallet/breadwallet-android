@@ -39,7 +39,7 @@ android {
     }
     defaultConfig {
         applicationId = 'com.breadwallet'
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 29
 
         versionCode brdVersionCode
@@ -324,4 +324,7 @@ dependencies {
     compileOnly "io.sweers.redacted:redacted-compiler-plugin-annotation:$redacted_version"
 
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detekt_version"
+
+    implementation 'com.github.atmcoin:cash-ui-android:2.0.6'
+    implementation project(":CashOverride")
 }

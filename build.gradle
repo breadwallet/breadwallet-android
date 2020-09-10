@@ -1,4 +1,7 @@
 buildscript {
+    ext {
+        kotlin_version = '1.4.0'
+    }
     repositories {
         mavenCentral()
         google()
@@ -42,5 +45,6 @@ allprojects {
                 includeGroup "io.sweers.redacted"
             }
         }
+        maven { url 'https://jitpack.io' }
     }
 }

@@ -34,6 +34,10 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import cash.just.override.CoinsquareConstants
+import cash.just.ui.CashUI
+import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.legacy.presenter.customviews.BRButton
@@ -42,12 +46,14 @@ import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
 import com.breadwallet.ui.home.HomeScreen.M
+import com.breadwallet.ui.importwallet.ImportController
 import com.breadwallet.util.isValidEmail
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.GenericFastAdapter
@@ -59,6 +65,7 @@ import com.mikepenz.fastadapter.drag.SimpleDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
+import kotlinx.android.synthetic.main.atm_wallet_bottom_navigation.*
 import kotlinx.android.synthetic.main.controller_home.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
@@ -103,6 +110,8 @@ class HomeController(
         buy_layout.setOnClickListener { output.accept(E.OnBuyClicked) }
         trade_layout.setOnClickListener { output.accept(E.OnTradeClicked) }
         menu_layout.setOnClickListener { output.accept(E.OnMenuClicked) }
+
+        addCoinsquareActions()
 
         val fastAdapter = checkNotNull(fastAdapter)
         fastAdapter.onClickListener = { _, _, item, _ ->
@@ -342,6 +351,28 @@ class HomeController(
         result: AlertDialogController.DialogInputResult
     ) {
         eventConsumer.accept(E.OnSupportFormSubmitted(result.inputText))
+    }
+
+    private fun addCoinsquareActions() {
+        sweep_layout.setOnClickListener {
+            router.pushController(
+                RouterTransaction.with(ImportController())
+                    .popChangeHandler(HorizontalChangeHandler())
+                    .pushChangeHandler(HorizontalChangeHandler())
+            )
+        }
+
+        activity_layout.setOnClickListener {
+            router.activity?.let {
+                CashUI.showStatusList(router.activity!!, CoinsquareConstants.ATM_ACTIVITY_REQUEST_CODE)
+            }
+        }
+
+        cash_out_layout.setOnClickListener {
+            router.activity?.let {
+                CashUI.startCashOutActivityForResult(it, CoinsquareConstants.ATM_CASH_OUT_REQUEST_CODE)
+            }
+        }
     }
 }
 
