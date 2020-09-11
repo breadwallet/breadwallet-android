@@ -303,9 +303,14 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         bind<OkHttpClient>() with singleton { OkHttpClient() }
 
+        bind<BdbAuthInterceptor>() with singleton {
+            val httpClient = instance<OkHttpClient>()
+            BdbAuthInterceptor(httpClient, direct.instance())
+        }
+
         bind<BlockchainDb>() with singleton {
             val httpClient = instance<OkHttpClient>()
-            val authInterceptor = BdbAuthInterceptor(httpClient, direct.instance())
+            val authInterceptor = instance<BdbAuthInterceptor>()
             BlockchainDb(
                 httpClient.newBuilder()
                     .addInterceptor(authInterceptor)

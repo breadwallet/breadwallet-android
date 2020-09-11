@@ -139,6 +139,10 @@ class BdbAuthInterceptor(
             .run(chain::proceed)
     }
 
+    suspend fun refreshClientToken() {
+        fetchClientToken(overwrite = true)
+    }
+
     private suspend fun createAndSetJwt() {
         val (newJwt, expiration) = try {
             createAccountJwt()
@@ -223,7 +227,7 @@ class BdbAuthInterceptor(
         }
     }
 
-    private suspend fun fetchClientToken() = mutex.withLock {
+    private suspend fun fetchClientToken(overwrite: Boolean = false) = mutex.withLock {
         logDebug("Fetching client token from remote-config.")
         val remoteConfig = Firebase.remoteConfig
         var attempt = 1L
@@ -236,7 +240,7 @@ class BdbAuthInterceptor(
             }
 
             when {
-                changesActivated -> {
+                overwrite || changesActivated -> {
                     logDebug("remote-config synced and activated.")
                     val newClientToken = remoteConfig.getString(BDB_TOKEN_KEY)
                     if (clientToken != newClientToken) {
