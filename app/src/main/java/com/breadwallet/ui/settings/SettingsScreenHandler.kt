@@ -30,6 +30,7 @@ import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
+import com.breadwallet.breadbox.BdbAuthInterceptor
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.logger.logDebug
@@ -40,8 +41,8 @@ import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
-import com.breadwallet.tools.util.SupportUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
+import com.breadwallet.tools.util.SupportUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.SettingsScreen.E
@@ -67,7 +68,8 @@ class SettingsScreenHandler(
     private val experimentsRepository: ExperimentsRepository,
     private val metaDataManager: AccountMetaDataProvider,
     private val userManager: BrdUserManager,
-    private val breadBox: BreadBox
+    private val breadBox: BreadBox,
+    private val bdbAuthInterceptor: BdbAuthInterceptor
 ) : Connection<F>, CoroutineScope {
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
@@ -140,11 +142,19 @@ class SettingsScreenHandler(
                     close(true)
                     open(checkNotNull(userManager.getAccount()))
                 }
-                output.accept(E.OnBlockchainDataCleared)
+                output.accept(E.OnCloseHiddenMenu)
             }
             F.ToggleRateAppPrompt -> {
                 BRSharedPrefs.appRatePromptShouldPromptDebug =
                     !BRSharedPrefs.appRatePromptShouldPromptDebug
+            }
+            F.RefreshTokens -> {
+                BreadApp.applicationScope.launch {
+                    userManager.putBdbJwt("", 0)
+                    userManager.removeToken()
+                    bdbAuthInterceptor.refreshClientToken()
+                }
+                output.accept(E.OnCloseHiddenMenu)
             }
         }
     }
@@ -168,6 +178,10 @@ class SettingsScreenHandler(
 
     private fun getHiddenOptions(): List<SettingsItem> {
         return listOf(
+            SettingsItem(
+                "Refresh API Tokens",
+                SettingsOption.REFRESH_TOKENS
+            ),
             SettingsItem(
                 "Clear Blockchain Data",
                 SettingsOption.CLEAR_BLOCKCHAIN_DATA

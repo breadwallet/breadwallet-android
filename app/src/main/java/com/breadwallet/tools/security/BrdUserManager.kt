@@ -113,6 +113,7 @@ interface BrdUserManager {
 
     fun getToken(): String?
     fun putToken(token: String)
+    fun removeToken()
 
     fun getBdbJwt(): String?
     fun putBdbJwt(jwt: String, exp: Long)
@@ -401,6 +402,12 @@ class CryptoUserManager(
     override fun putToken(token: String) {
         checkNotNull(store).edit { putString(KEY_TOKEN, token) }
         this.token = token
+    }
+
+    @Synchronized
+    override fun removeToken() {
+        checkNotNull(store).edit { remove(KEY_TOKEN) }
+        token = null
     }
 
     @Synchronized

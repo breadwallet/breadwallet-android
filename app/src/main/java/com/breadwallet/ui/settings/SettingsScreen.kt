@@ -60,7 +60,7 @@ object SettingsScreen {
         data class SetTokenBundle(val bundle: String) : E()
         object OnWalletsUpdated : E()
         object ShowHiddenOptions : E()
-        object OnBlockchainDataCleared : E()
+        object OnCloseHiddenMenu : E()
 
         data class OnATMMapClicked(val url: String, val mapJson: String) : E()
     }
@@ -78,6 +78,7 @@ object SettingsScreen {
         object EnableAllWallets : F()
         object ClearBlockchainData : F()
         object ToggleRateAppPrompt : F()
+        object RefreshTokens : F()
 
         data class SetApiServer(val host: String) : F()
         data class SetPlatformDebugUrl(val url: String) : F()
