@@ -653,12 +653,15 @@ class CryptoUserManager(
                 .apply { load(null) }
                 .getKey(BRKeyStore.PHRASE_ALIAS, null)
 
-            // If there is no key, then it has not been initialized yet. The key store is still considered valid.
-            if (key != null) {
-                val cipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM)
-                cipher.init(Cipher.ENCRYPT_MODE, key)
+            when {
+                key != null -> {
+                    val cipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM)
+                    cipher.init(Cipher.ENCRYPT_MODE, key)
+                    true
+                }
+                store?.getBytes(KEY_ACCOUNT, null) != null -> false // key is null when it should not be
+                else -> true // key has not been initialized, the key store is still considered valid
             }
-            true
         }.recoverCatching { e ->
             // If KeyPermanentlyInvalidatedException
             //  -> with no cause happens, then the password was disabled. See DROID-1019.
