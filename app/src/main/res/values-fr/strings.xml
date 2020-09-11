@@ -25,7 +25,7 @@
     <!-- Account balance -->
     <string name="Account.balance">Solde</string>
     <!-- Delisted token alert banner message -->
-    <string name="Account.delistedToken">Ce jeton a été retiré de la liste car l\'émetteur a décidé de cesser le support ERC20. \n\nVous pourrez peut-être encore envoyer ces jetons sur une autre plate-forme. Pour plus de détails, visitez notre page de support.</string>
+    <string name="Account.delistedToken">Ce jeton a été retiré de la liste. \n\nVous pourrez peut-être encore envoyer ces jetons sur une autre plate-forme. Pour plus de détails, visitez notre page de support.</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%1$s par %2$s</string>
     <!-- Loading Wallet Message -->
@@ -47,7 +47,7 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">Mon BRD</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">Il semble que vous utilisez un clavier tiers. Ce dernier peut enregistrer ce que vous tapez et voler votre portefeuille papier. Veuillez basculer vers le clavier Android par défaut pour plus de sécurité.</string>
+    <string name="Alert.customKeyboard.android">Il semble que vous utilisez un clavier tiers, qui peut enregistrer ce que vous tapez et voler votre phrase de récupération. Veuillez passer au clavier Android par défaut pour une protection supplémentaire.</string>
     <!-- Error alert title -->
     <string name="Alert.error">Erreur</string>
     <!-- Keystore error -->
@@ -55,9 +55,9 @@
     <!-- KeyStore error, keys are invalidated -->
     <string name="Alert.keystore.invalidated.android">Vos données cryptées de BRD ont été récemment invalidées, car le verrouillage de l\'écran de votre appareil Android a été désactivé.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
-    <string name="Alert.keystore.invalidated.uninstall.android">Nous ne pouvons pas continuer car les paramètres de verrouillage de votre écran ont été modifiés (par exemple, le mot de passe a été désactivé, les empreintes digitales ont été modifiées). Pour des raisons de sécurité, Android a verrouillé en permanence votre magasin de clés. Par conséquent, les données de votre application BRD doivent être effacées par désinstallation.\n\nNe vous inquiétez pas, vos fonds sont toujours en sécurité ! Réinstallez l\'application et récupérez votre portefeuille à l\'aide de votre clé en papier.</string>
+    <string name="Alert.keystore.invalidated.uninstall.android">Nous ne pouvons pas continuer car vos paramètres de verrouillage d\'écran ont été modifiés (par exemple, le mot de passe a été désactivé, les empreintes digitales ont été modifiées). Pour des raisons de sécurité, Android a verrouillé définitivement votre magasin de clés. Par conséquent, les données de votre application BRD doivent être effacées lors de la désinstallation. \n\nNe vous inquiétez pas, vos fonds sont toujours en sécurité! Réinstallez l\'application et récupérez votre portefeuille à l\'aide de votre phrase de récupération.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
-    <string name="Alert.keystore.invalidated.wipe.android">Nous ne pouvons pas continuer car les paramètres de verrouillage de votre écran ont été modifiés (par exemple, le mot de passe a été désactivé, les empreintes digitales ont été modifiées). Pour des raisons de sécurité, Android a verrouillé en permanence votre magasin de clés. Par conséquent, les données de votre application BRD doivent être effacées.\n\nNe vous inquiétez pas, vos fonds sont toujours en sécurité ! Récupérez votre portefeuille en utilisant votre clé en papier.</string>
+    <string name="Alert.keystore.invalidated.wipe.android">Nous ne pouvons pas continuer car vos paramètres de verrouillage d\'écran ont été modifiés (par exemple, le mot de passe a été désactivé, les empreintes digitales ont été modifiées). Pour des raisons de sécurité, Android a verrouillé définitivement votre magasin de clés. Par conséquent, les données de votre application BRD doivent être effacées. \n\nNe vous inquiétez pas, vos fonds sont toujours en sécurité! Récupérez votre portefeuille en utilisant votre phrase de récupération.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Erreur avec le KeyStore Android</string>
     <!-- No internet alert message -->
@@ -73,7 +73,7 @@
     <!-- Addresses Copied Alert sub header -->
     <string name="Alerts.copiedAddressesSubheader">Toutes les adresses du portefeuille ont été copiées avec succès.</string>
     <!-- Alert Header Label (the paper key was set) -->
-    <string name="Alerts.paperKeySet">Ensemble des clés papier</string>
+    <string name="Alerts.paperKeySet">Ensemble de phrases de récupération</string>
     <!-- Alert Subheader label (playfully positive) -->
     <string name="Alerts.paperKeySetSubheader">Impressionnant !</string>
     <!-- Alert Header label (the PIN was set) -->
@@ -198,7 +198,7 @@
     <string name="CloudBackup.enableButton">J’ai activé iCloud Keychain</string>
     <string name="CloudBackup.enableTitle">Activer le porte-clés</string>
     <string name="CloudBackup.encryptBackupMessage">Entrez le code PIN pour crypter la sauvegarde</string>
-    <string name="CloudBackup.mainBody">Nous vous recommandons toujours de noter votre phrase de récupération et de la garder en sécurité, mais vous pouvez également sauvegarder votre phrase de récupération sur iCloud. Veuillez noter que la sauvegarde iCloud n\'est aussi sécurisée que votre compte iCloud.</string>
+    <string name="CloudBackup.mainBody">Veuillez noter que la sauvegarde iCloud n\'est aussi sécurisée que votre compte iCloud. Nous vous recommandons tout de même d\'écrire votre phrase de récupération à l\'étape suivante et de la garder en sécurité. La phrase de récupération est le seul moyen de récupérer votre portefeuille si vous ne pouvez plus accéder à iCloud.</string>
     <string name="CloudBackup.mainTitle">Sauvegarde de récupération iCloud</string>
     <string name="CloudBackup.mainWarning">Le porte-clés iCloud doit être activé dans l’application Paramètres iOS pour que cette fonctionnalité fonctionne</string>
     <string name="CloudBackup.mainWarningConfirmation">Êtes-vous sûr de vouloir désactiver la sauvegarde iCloud ? Cela supprimera votre sauvegarde de tous les appareils.</string>
@@ -232,9 +232,9 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">Coût total :</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">Les mots saisis ne correspondent pas à votre clé papier. Veuillez réessayer.</string>
+    <string name="ConfirmPaperPhrase.error">Les mots saisis ne correspondent pas à votre phrase de récupération. Veuillez réessayer.</string>
     <!-- Confirm paper phrase view label. -->
-    <string name="ConfirmPaperPhrase.label">Pour vous assurer que tout a été écrit correctement, entrez les mots suivants à partir de votre clé papier.</string>
+    <string name="ConfirmPaperPhrase.label">Pour vous assurer que tout a été écrit correctement, veuillez saisir les mots suivants de votre phrase de récupération.</string>
     <!-- Word label eg. Word #1, Word #2 -->
     <string name="ConfirmPaperPhrase.word">Mot no.%1$s</string>
     <!-- Agree to legal terms button -->
@@ -445,7 +445,7 @@
     <!-- button label -->
     <string name="MenuViewController.recoverButton">Récupérer le portefeuille</string>
     <!-- Paper Key Skip modal body (Android-version) -->
-    <string name="Modal.PaperKeySkip.Body.Android">Votre clé papier est nécessaire pour ouvrir votre portefeuille si vous modifier les paramètres de sécurité de votre téléphone. \n\nÊtes-vous certain de vouloir paramétrer votre clé papier plus tard ?</string>
+    <string name="Modal.PaperKeySkip.Body.Android">Votre phrase de récupération est requise pour ouvrir votre portefeuille si vous modifiez les paramètres de sécurité de votre téléphone. \n\nVoulez-vous vraiment configurer votre phrase de récupération plus tard?</string>
     <!-- Paper Key Skip modal Continue Set Up button -->
     <string name="Modal.PaperKeySkip.Button.ContinueSetUp">Continuer le paramétrage</string>
     <!-- Paper Key Skip modal I'll do it later button -->
@@ -546,10 +546,10 @@
     <string name="Prompts.NoScreenLock.body.android">Il est nécessaire de configurer un verrouillage d\'écran pour protéger votre portefeuille. Allez dans « Paramètres » &gt; « Sécurité » &gt; « Verrouillage d\'écran », puis activez-le pour continuer.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Verrouillage d\'écran désactivé</string>
-    <!-- Warning about recovery key (formerly paper key). -->
-    <string name="Prompts.PaperKey.body">Votre paperkey doit être sauvegardé au cas où vous perdiez ou changiez votre téléphone.</string>
+    <!-- Warning about recovery phrase (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">Votre phrase de récupération doit être enregistrée au cas où vous perdriez ou changeriez votre téléphone.</string>
     <!-- Warning about paper key (Android-version) -->
-    <string name="Prompts.PaperKey.Body.Android">Paramétrez votre clé papier au cas où vous perdriez ou remplaceriez votre téléphone. Votre clé sera également requise si vous modifiez les paramètres de sécurité de votre téléphone.</string>
+    <string name="Prompts.PaperKey.Body.Android">Configurez votre phrase de récupération au cas où vous perdriez ou remplaceriez votre téléphone. Votre clé est également requise si vous modifiez les paramètres de sécurité de votre téléphone.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Une action est requise</string>
     <string name="Prompts.RateApp.dontShow">Ne plus demander</string>
@@ -626,11 +626,11 @@
     <!-- Reset PIN with paper key: header -->
     <string name="RecoverWallet.header_reset_pin">Réinitialiser PIN</string>
     <!-- Enter paper key instruction -->
-    <string name="RecoverWallet.instruction">Entrez la clé papier</string>
+    <string name="RecoverWallet.instruction">Entrez la phrase de récupération</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Récupérez votre BRD avec votre clé papier.</string>
+    <string name="RecoverWallet.intro">Récupérez votre BRD avec votre phrase de récupération.</string>
     <!-- Invalid paper key message -->
-    <string name="RecoverWallet.invalid">La clé papier saisie n\'est pas valide. Revérifiez chaque mot et réessayez.</string>
+    <string name="RecoverWallet.invalid">La phrase de récupération que vous avez entrée n\'est pas valide. Veuillez vérifier chaque mot et réessayer.</string>
     <!-- Previous button accessibility label -->
     <string name="RecoverWallet.leftArrow">Flèche gauche</string>
     <!-- Next button label -->
@@ -640,35 +640,35 @@
     <!-- Next button accessibility label -->
     <string name="RecoverWallet.rightArrow">Flèche droite</string>
     <!-- Recover wallet sub-header -->
-    <string name="RecoverWallet.subheader">Entrez la clé papier pour le portefeuille que vous souhaitez récupérer.</string>
+    <string name="RecoverWallet.subheader">Saisissez la phrase de récupération du portefeuille que vous souhaitez récupérer.</string>
     <!-- Reset PIN with paper key: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">Pour réinitialiser votre PIN, entrez les mots de votre clé papier dans les cases ci-dessous.</string>
+    <string name="RecoverWallet.subheader_reset_pin">Pour réinitialiser votre code PIN, entrez les mots de votre phrase de récupération dans les cases ci-dessous.</string>
     <!-- Instructs the user to enter words from the set of recovery key words. -->
     <string name="RecoveryKeyFlow.confirmRecoveryInputError">Le mot que vous avez entré est incorrect. Veuillez réessayer.</string>
-    <!-- Instructs the user to enter words from the set of recovery key words. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Presque terminé ! Entrez les mots suivants de votre clé de récupération.</string>
-    <!-- Title for the confirmation step of the recovery key flow. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Confirmer la clé de récupération</string>
-    <!-- Title displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKey">Entrer la clé de récupération</string>
-    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Veuillez entrer votre clé de récupération afin de dissocier ce portefeuille de votre appareil.</string>
-    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
-    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Êtes-vous sûr de vouloir configurer votre clé de récupération ultérieurement ?</string>
+    <!-- Instructs the user to enter words from the set of recovery phrase words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Presque fini! Entrez les mots suivants de votre phrase de récupération.</string>
+    <!-- Title for the confirmation step of the recovery phrase flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Confirmer la phrase de récupération</string>
+    <!-- Title displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">Entrez la phrase de récupération</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Veuillez saisir votre phrase de récupération pour dissocier ce portefeuille de votre appareil.</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery phrase later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Voulez-vous vraiment configurer votre phrase de récupération plus tard?</string>
     <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
     <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">Configurer ultérieurement</string>
-    <!-- Button text for the 'Generate Recovery Key' button -->
-    <string name="RecoveryKeyFlow.generateKeyButton">Générer une clé de récupération</string>
+    <!-- Button text for the 'Generate Recovery Phrase' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">Générer une phrase de récupération</string>
     <!-- Subtext for the recovery key landing page. -->
     <string name="RecoveryKeyFlow.generateKeyExplanation">Cette clé est nécessaire pour récupérer votre argent en cas de mise à niveau ou de perte de votre téléphone.</string>
-    <!-- Default title for the recovery key landing page -->
-    <string name="RecoveryKeyFlow.generateKeyTitle">Générez votre clé de récupération privée</string>
+    <!-- Default title for the recovery phrase landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">Générez votre phrase de récupération privée</string>
     <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
     <string name="RecoveryKeyFlow.goToWalletButtonTitle">Aller au portefeuille</string>
     <!-- Hint text for recovery key intro page, e.g., Step 2 -->
     <string name="RecoveryKeyFlow.howItWorksStep">Comment ça marche - Étape %1$@</string>
-    <!-- Error text displayed when the user enters an incorrect recovery key -->
-    <string name="RecoveryKeyFlow.invalidPhrase">Certains mots que vous avez saisis ne correspondent pas à votre clé de récupération. Veuillez réessayer.</string>
+    <!-- Error text displayed when the user enters an incorrect recovery phrase -->
+    <string name="RecoveryKeyFlow.invalidPhrase">Certains des mots que vous avez saisis ne correspondent pas à votre phrase de récupération. Veuillez réessayer.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.keepSecure">Gardez-la en sécurité</string>
     <!-- Informs the user that the recovery is only required for recovering a wallet. -->
@@ -680,19 +680,19 @@
     <!-- Title displayed when the user starts the process of recovering a wallet -->
     <string name="RecoveryKeyFlow.recoveryYourWallet">Récupérer votre portefeuille</string>
     <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
-    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Veuillez entrer la clé de récupération du portefeuille que vous voulez récupérer.</string>
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Veuillez saisir la phrase de récupération du portefeuille que vous souhaitez récupérer.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.relaxBuyTrade">Détendez-vous, achetez et échangez</string>
     <!-- Reminds the user to write down the recovery key words. -->
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">N\'oubliez pas de noter ces mots. Glissez pour revenir en arrière en cas d\'oubli.</string>
-    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
-    <string name="RecoveryKeyFlow.resetPINInstruction">Veuillez entrer votre clé de récupération pour réinitialiser votre code PIN.</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery phrase to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">Veuillez saisir votre phrase de récupération pour réinitialiser votre code PIN.</string>
     <!-- Assures the user that BRD will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">Achetez et échangez en sachant que vos fonds sont protégés par la meilleure sécurité et la plus grande confidentialité qui soient.</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
     <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Conservez votre clé dans un endroit sécurisé. C\'est le seul moyen de récupérer votre portefeuille. BRD n\'en conserve pas de copie.</string>
-    <!-- Title for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successHeading">Félicitations ! Vous avez terminé la configuration de votre clé de récupération.</string>
+    <!-- Title for the success page after the recovery phrase has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">Félicitations! Vous avez terminé votre configuration de phrase de récupération.</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successSubheading">Vous êtes prêt à déposer, échanger et acheter de la crypto-monnaie à partir de votre portefeuille BRD.</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
@@ -707,12 +707,12 @@
     <string name="RecoveryKeyFlow.wipeWalletSubtext">Commencez un nouveau portefeuille en effaçant le portefeuille actuel de votre appareil.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">Saisissez votre clé</string>
-    <!-- Title for the recovery key landing page if the key has already been generated. -->
-    <string name="RecoveryKeyFlow.writeKeyAgain">Saisissez à nouveau votre clé de récupération</string>
+    <!-- Title for the recovery phrase landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">Notez à nouveau votre phrase de récupération</string>
     <!-- Subtitle for the write recovery key screen -->
     <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Notez les mots suivants dans l\'ordre.</string>
-    <!-- Title for the write recovery key screen -->
-    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Votre clé de récupération</string>
+    <!-- Title for the write recovery phrase screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Votre phrase de récupération</string>
     <!-- Title for the step number when the user pages through the recovery words -->
     <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@ de %2$@</string>
     <!-- No amount entered error message. -->
@@ -767,11 +767,11 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">La seule façon d\'accéder à votre bitcoin si vous perdez ou mettez à niveau votre téléphone.</string>
-    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+    <!-- Recovery Phrase button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
  * to not break existing client code. -->
-    <string name="SecurityCenter.paperKeyTitle">Clé papier</string>
+    <string name="SecurityCenter.paperKeyTitle">Phrase de récupération</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle.android">Clé papier</string>
+    <string name="SecurityCenter.paperKeyTitle.android">Phrase de récupération</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Protège vos BRD contre les utilisateurs non autorisés.</string>
     <!-- PIN button title -->
@@ -955,15 +955,15 @@
     <!-- Share data switch label. -->
     <string name="ShareData.toggleLabel">Partager des données anonymes ?</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.againButtonTitle">Enregistrez la clé papier à nouveau</string>
+    <string name="StartPaperPhrase.againButtonTitle">Notez à nouveau la phrase de récupération</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Votre clé papier est la seule façon de restaurer votre BRD si votre téléphone est perdu, volé, cassé ou mis à niveau.\n\nNous allons vous montrer une liste de mots à écrire sur un morceau de papier et à garder en sécurité.</string>
+    <string name="StartPaperPhrase.body">Votre phrase de récupération est le seul moyen de restaurer votre BRD si votre téléphone est perdu, volé, cassé ou mis à niveau. \n\nNous allons vous montrer une liste de mots à écrire sur un morceau de papier et à garder en sécurité.</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">Votre clé papier est la seule façon de restaurer votre BRD si votre téléphone est perdu, volé, cassé ou changé. \n\nVotre clé papier est également nécessaire si vous modifiez les paramètres de sécurité de votre appareil.\n\nNous afficherons une liste de mots que vous devrez noter sur un papier et conserver en sécurité.</string>
+    <string name="StartPaperPhrase.Body.Android">Votre phrase de récupération est le seul moyen de restaurer votre BRD si votre téléphone est perdu, volé, cassé ou mis à niveau. \n\nVotre phrase de récupération est également requise si vous modifiez les paramètres de sécurité de votre appareil. \n\nNous allons vous montrer une liste de mots à écrire sur un morceau de papier et à garder en sécurité.</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.buttonTitle">Écrire la clé papier</string>
+    <string name="StartPaperPhrase.buttonTitle">Notez la phrase de récupération</string>
     <!-- Argument is date; date should be on a new line -->
-    <string name="StartPaperPhrase.date">Vous avez écrit votre clé papier la dernière fois sur\n%1$@</string>
+    <string name="StartPaperPhrase.date">Dernière note le \n %1$@</string>
     <!-- button label -->
     <string name="StartViewController.createButton">Créer un nouveau portefeuille</string>
     <!-- Start view message -->
@@ -1277,11 +1277,11 @@
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">Échec</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">Pour commencer un nouveau portefeuille ou rétablir un portefeuille existant, vous devez d\'abord supprimer le portefeuille actuellement installé. Pour continuer, saisissez la Clé Papier du portefeuille actuel.</string>
+    <string name="WipeWallet.instruction">Veuillez saisir votre phrase de récupération pour effacer ce portefeuille de votre appareil.</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Démarrer ou récupérer un autre portefeuille vous permet d\'accéder et de gérer un portefeuille BRD différent sur cet appareil.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">Vous ne pourrez plus accéder à votre portefeuille courant depuis cet appareil. Si vous souhaitez le récupérer plus tard, vous devrais réentrer la clé papier.</string>
+    <string name="WipeWallet.startWarning">Votre portefeuille actuel sera supprimé de cet appareil. Si vous souhaitez le restaurer ultérieurement, vous devrez entrer votre phrase de récupération.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Démarrer our réinitialiser un autre portefeuille</string>
     <!-- Wipe wallet button title -->

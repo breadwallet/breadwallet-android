@@ -195,7 +195,7 @@ fun BigDecimal.formatCryptoForUi(
 }
 
 // TODO: Move somewhere UI related
-fun BigDecimal.formatFiatForUi(currencyCode: String): String {
+fun BigDecimal.formatFiatForUi(currencyCode: String, scale: Int? = null): String {
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault()) as DecimalFormat
     val decimalFormatSymbols = currencyFormat.decimalFormatSymbols
     currencyFormat.isGroupingUsed = true
@@ -206,8 +206,8 @@ fun BigDecimal.formatFiatForUi(currencyCode: String): String {
         decimalFormatSymbols.currencySymbol = symbol
         currencyFormat.decimalFormatSymbols = decimalFormatSymbols
         currencyFormat.negativePrefix = "-$symbol"
-        currencyFormat.maximumFractionDigits = currency.defaultFractionDigits
-        currencyFormat.minimumFractionDigits = currency.defaultFractionDigits
+        currencyFormat.maximumFractionDigits = scale ?: currency.defaultFractionDigits
+        currencyFormat.minimumFractionDigits = scale ?: currency.defaultFractionDigits
     } catch (e: IllegalArgumentException) {
         logError("Illegal Currency code: $currencyCode")
     }

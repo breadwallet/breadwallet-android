@@ -25,7 +25,7 @@
     <!-- Account balance -->
     <string name="Account.balance">Balance</string>
     <!-- Delisted token alert banner message -->
-    <string name="Account.delistedToken">This token has been delisted because the issuer decided to cease ERC20 support. \n\nYou may still be able to send these tokens to another platform. For more details, visit our support page.</string>
+    <string name="Account.delistedToken">This token has been delisted. \n\nYou may still be able to send these tokens to another platform. For more details, visit our support page.</string>
     <!-- $10000 per BTC -->
     <string name="Account.exchangeRate">%1$s per %2$s</string>
     <!-- Loading Wallet Message -->
@@ -36,7 +36,7 @@
     <string name="AccountCreation.create">Create Account</string>
     <!-- Creating Account progress Label -->
     <string name="AccountCreation.creating">Creating Account</string>
-    <!-- Creating Account error -->
+    <!-- Creating Account progress Label -->
     <string name="AccountCreation.error">An error occurred during account creation. Please try again later.</string>
     <!-- Not Now button label. -->
     <string name="AccountCreation.notNow">Not Now</string>
@@ -47,7 +47,7 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">My BRD</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">It looks like you are using a third-party keyboard, which can record what you type and steal your Paper Key. Please switch to the default Android keyboard for extra protection.</string>
+    <string name="Alert.customKeyboard.android">It looks like you are using a third-party keyboard, which can record what you type and steal your Recovery Phrase. Please switch to the default Android keyboard for extra protection.</string>
     <!-- Error alert title -->
     <string name="Alert.error">Error</string>
     <!-- Keystore error -->
@@ -55,9 +55,9 @@
     <!-- KeyStore error, keys are invalidated -->
     <string name="Alert.keystore.invalidated.android">Your BRD encrypted data was recently invalidated because your Android lock screen was disabled.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must uninstall. -->
-    <string name="Alert.keystore.invalidated.uninstall.android">We can\'t proceed because your screen lock settings have been changed (e.g. password was disabled, fingerprints were changed). For security purposes, Android has permanently locked your key store. Therefore, your BRD app data must be wiped by uninstalling.\n\nDon’t worry, your funds are still secure! Reinstall the app and recover your wallet using your paper key.</string>
+    <string name="Alert.keystore.invalidated.uninstall.android">We can\'t proceed because your screen lock settings have been changed (e.g. password was disabled, fingerprints were changed). For security purposes, Android has permanently locked your key store. Therefore, your BRD app data must be wiped by uninstalling.\n\nDon’t worry, your funds are still secure! Reinstall the app and recover your wallet using your recovery phrase.</string>
     <!-- Warn user key store data has been invalidate because the user changed their security settings. The user must wipe their app data. -->
-    <string name="Alert.keystore.invalidated.wipe.android">We can\'t proceed because your screen lock settings have been changed (e.g. password was disabled, fingerprints were changed). For security purposes, Android has permanently locked your key store. Therefore, your BRD app data must be wiped.\n\nDon’t worry, your funds are still secure! Recover your wallet using your paper key.</string>
+    <string name="Alert.keystore.invalidated.wipe.android">We can\'t proceed because your screen lock settings have been changed (e.g. password was disabled, fingerprints were changed). For security purposes, Android has permanently locked your key store. Therefore, your BRD app data must be wiped.\n\nDon’t worry, your funds are still secure! Recover your wallet using your recovery phrase.</string>
     <!-- Keystore error title -->
     <string name="Alert.keystore.title.android">Android Key Store Error</string>
     <!-- No internet alert message -->
@@ -73,7 +73,7 @@
     <!-- Addresses Copied Alert sub header -->
     <string name="Alerts.copiedAddressesSubheader">All wallet addresses successfully copied.</string>
     <!-- Alert Header Label (the paper key was set) -->
-    <string name="Alerts.paperKeySet">Paper Key Set</string>
+    <string name="Alerts.paperKeySet">Recovery Phrase Set</string>
     <!-- Alert Subheader label (playfully positive) -->
     <string name="Alerts.paperKeySetSubheader">Awesome!</string>
     <!-- Alert Header label (the PIN was set) -->
@@ -188,6 +188,31 @@
     <string name="Button.yes">Yes</string>
     <!-- Camera plugin instruction -->
     <string name="CameraPlugin.centerInstruction">Center your ID in the box</string>
+    <string name="CloudBackup.backupDeleted">Backup Erased</string>
+    <string name="CloudBackup.backupDeletedMessage">Your iCloud backup has been erased after too many failed PIN attempts. The app will now restart.</string>
+    <string name="CloudBackup.backupMenuTitle">iCloud Backup</string>
+    <string name="CloudBackup.createButton">Create new wallet</string>
+    <string name="CloudBackup.createWarning">A previously backed up wallet has been detected. Using this backup is recomended. Are you sure you want to proceeed with creating a new wallet?</string>
+    <string name="CloudBackup.enableBody1">iCloud Keychain must be turned on for this feature to work.</string>
+    <string name="CloudBackup.enableBody2">It should look like the following:</string>
+    <string name="CloudBackup.enableButton">I have turned on iCloud Keychain</string>
+    <string name="CloudBackup.enableTitle">Enable Keychain</string>
+    <string name="CloudBackup.encryptBackupMessage">Enter pin to encrypt backup</string>
+    <string name="CloudBackup.mainBody">Please note, iCloud backup is only as secure as your iCloud account. We still recommend writing down your recovery phrase in the following step and keeping it secure. The recovery phrase is the only way to recover your wallet if you can no longer access iCloud.</string>
+    <string name="CloudBackup.mainTitle">iCloud Recovery Backup</string>
+    <string name="CloudBackup.mainWarning">iCloud Keychain must be turned on in the iOS Settings app for this feature to work</string>
+    <string name="CloudBackup.mainWarningConfirmation">Are you sure you want to disable iCloud Backup? This will delete your backup from all devices.</string>
+    <string name="CloudBackup.pinAttempts">Attempts remaining before erasing backup: %1$@</string>
+    <string name="CloudBackup.recoverButton">Restore from Recovery Phrase</string>
+    <string name="CloudBackup.recoverHeader">Enter PIN to unlock iCloud backup</string>
+    <string name="CloudBackup.restoreButton">Restore from iCloud Backup</string>
+    <string name="CloudBackup.selectTitle">Choose Backup</string>
+    <string name="CloudBackup.step1">Launch the Settings app.</string>
+    <string name="CloudBackup.step2">Tap your Apple ID name.</string>
+    <string name="CloudBackup.step3">Tap iCloud.</string>
+    <string name="CloudBackup.step4">Verify that iCloud Keychain is ON</string>
+    <string name="CloudBackup.understandText">I understand that this feature will not work unless iCloud Keychain is enabled.</string>
+    <string name="CloudBackup.warningBody">Your iCloud backup will be erased after %1$@ more incorrect PIN attempts.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Amount to Send:</string>
     <!-- Network Fee: ($1.00) -->
@@ -207,9 +232,9 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">Total Cost:</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">The words entered do not match your paper key. Please try again.</string>
+    <string name="ConfirmPaperPhrase.error">The words entered do not match your recovery phrase. Please try again.</string>
     <!-- Confirm paper phrase view label. -->
-    <string name="ConfirmPaperPhrase.label">To make sure everything was written down correctly, please enter the following words from your paper key.</string>
+    <string name="ConfirmPaperPhrase.label">To make sure everything was written down correctly, please enter the following words from your recovery phrase.</string>
     <!-- Word label eg. Word #1, Word #2 -->
     <string name="ConfirmPaperPhrase.word">Word #%1$s</string>
     <!-- Agree to legal terms button -->
@@ -280,6 +305,7 @@
     <string name="FeeSelector.estimatedDeliver">Estimated Delivery: %1$s</string>
     <!-- [This transaction will complete in] 2-5 minutes -->
     <string name="FeeSelector.ethTime">2-5 minutes</string>
+    <string name="FeeSelector.lessThanMinutes">&lt;%1$d minutes</string>
     <!-- Priority fee -->
     <string name="FeeSelector.priority">Priority</string>
     <!-- E.g. [This transaction is predicted to complete in] 10-30 minutes -->
@@ -394,6 +420,10 @@
     <string name="ManageWallet.textFeildLabel">Wallet Name</string>
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">Manage Wallet</string>
+    <string name="MarketData.high24h">24h high</string>
+    <string name="MarketData.low24h">24h low</string>
+    <string name="MarketData.marketCap">Market Cap</string>
+    <string name="MarketData.volume">Trading Volume</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
     <string name="MenuButton.addWallet">Add Wallet</string>
     <!-- Menu button title -->
@@ -415,7 +445,7 @@
     <!-- button label -->
     <string name="MenuViewController.recoverButton">Recover Wallet</string>
     <!-- Paper Key Skip modal body (Android-version) -->
-    <string name="Modal.PaperKeySkip.Body.Android">Your paper key is required to open your wallet if you change the security settings on your phone.\n\nAre you sure you want to set up your paper key later?</string>
+    <string name="Modal.PaperKeySkip.Body.Android">Your recovery phrase is required to open your wallet if you change the security settings on your phone.\n\nAre you sure you want to set up your recovery phrase later?</string>
     <!-- Paper Key Skip modal Continue Set Up button -->
     <string name="Modal.PaperKeySkip.Button.ContinueSetUp">Continue Set Up</string>
     <!-- Paper Key Skip modal I'll do it later button -->
@@ -516,12 +546,17 @@
     <string name="Prompts.NoScreenLock.body.android">A device screen lock is needed to safeguard your wallet. Enable screen lock in your settings to continue.</string>
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">Screen lock disabled</string>
-    <!-- Warning about recovery key (formerly paper key). -->
-    <string name="Prompts.PaperKey.body">Your recovery key must be saved in case you lose or change your phone.</string>
+    <!-- Warning about recovery phrase (formerly paper key). -->
+    <string name="Prompts.PaperKey.body">Your recovery phrase must be saved in case you lose or change your phone.</string>
     <!-- Warning about paper key (Android-version) -->
-    <string name="Prompts.PaperKey.Body.Android">Set up your paper key in case you ever lose or replace your phone. Your key is also required if you change your phone\'s security settings.</string>
+    <string name="Prompts.PaperKey.Body.Android">Set up your recovery phrase in case you ever lose or replace your phone. Your key is also required if you change your phone\'s security settings.</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">Action Required</string>
+    <string name="Prompts.RateApp.dontShow">Don\'t ask again</string>
+    <string name="Prompts.RateApp.enjoyingBrd">Enjoying BRD?</string>
+    <string name="Prompts.RateApp.googlePlayReview">Your review helps grow the BRD community.</string>
+    <string name="Prompts.RateApp.noThanks">No thanks</string>
+    <string name="Prompts.RateApp.rateUs">Review us</string>
     <!-- Transaction rejected prompt body -->
     <string name="Prompts.RecommendRescan.body">Your wallet may be out of sync. This can often be fixed by rescanning the blockchain.</string>
     <!-- Transaction rejected prompt title -->
@@ -591,11 +626,11 @@
     <!-- Reset PIN with paper key: header -->
     <string name="RecoverWallet.header_reset_pin">Reset PIN</string>
     <!-- Enter paper key instruction -->
-    <string name="RecoverWallet.instruction">Enter Paper Key</string>
+    <string name="RecoverWallet.instruction">Enter Recovery Phrase</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Recover your BRD with your paper key.</string>
+    <string name="RecoverWallet.intro">Recover your BRD with your recovery phrase.</string>
     <!-- Invalid paper key message -->
-    <string name="RecoverWallet.invalid">The paper key you entered is invalid. Please double-check each word and try again.</string>
+    <string name="RecoverWallet.invalid">The recovery phrase you entered is invalid. Please double-check each word and try again.</string>
     <!-- Previous button accessibility label -->
     <string name="RecoverWallet.leftArrow">Left Arrow</string>
     <!-- Next button label -->
@@ -605,35 +640,35 @@
     <!-- Next button accessibility label -->
     <string name="RecoverWallet.rightArrow">Right Arrow</string>
     <!-- Recover wallet sub-header -->
-    <string name="RecoverWallet.subheader">Enter the paper key for the wallet you want to recover.</string>
+    <string name="RecoverWallet.subheader">Enter the recovery phrase for the wallet you want to recover.</string>
     <!-- Reset PIN with paper key: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">To reset your PIN, enter the words from your paper key into the boxes below.</string>
+    <string name="RecoverWallet.subheader_reset_pin">To reset your PIN, enter the words from your recovery phrase into the boxes below.</string>
     <!-- Instructs the user to enter words from the set of recovery key words. -->
     <string name="RecoveryKeyFlow.confirmRecoveryInputError">The word you entered is incorrect. Please try again.</string>
-    <!-- Instructs the user to enter words from the set of recovery key words. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Almost done! Enter the following words from your recovery key.</string>
-    <!-- Title for the confirmation step of the recovery key flow. -->
-    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Confirm Recovery Key</string>
-    <!-- Title displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKey">Enter Recovery Key</string>
-    <!-- Subtitle displayed when the user starts the process of entering a recovery key -->
-    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Please enter your recovery key to unlink this wallet from your device.</string>
-    <!-- Body text for an alert dialog asking the user whether to set up the recovery key later -->
-    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Are you sure you want to set up your recovery key later?</string>
+    <!-- Instructs the user to enter words from the set of recovery phrase words. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeySubtitle">Almost done! Enter the following words from your recovery phrase.</string>
+    <!-- Title for the confirmation step of the recovery phrase flow. -->
+    <string name="RecoveryKeyFlow.confirmRecoveryKeyTitle">Confirm Recovery Phrase</string>
+    <!-- Title displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKey">Enter Recovery Phrase</string>
+    <!-- Subtitle displayed when the user starts the process of entering a recovery phrase -->
+    <string name="RecoveryKeyFlow.enterRecoveryKeySubtitle">Please enter your recovery phrase to unlink this wallet from your device.</string>
+    <!-- Body text for an alert dialog asking the user whether to set up the recovery phrase later -->
+    <string name="RecoveryKeyFlow.exitRecoveryKeyPromptBody">Are you sure you want to set up your recovery phrase later?</string>
     <!-- Title for an alert dialog asking the user whether to set up the recovery key later -->
     <string name="RecoveryKeyFlow.exitRecoveryKeyPromptTitle">Set Up Later</string>
-    <!-- Button text for the 'Generate Recovery Key' button -->
-    <string name="RecoveryKeyFlow.generateKeyButton">Generate Recovery Key</string>
+    <!-- Button text for the 'Generate Recovery Phrase' button -->
+    <string name="RecoveryKeyFlow.generateKeyButton">Generate Recovery Phrase</string>
     <!-- Subtext for the recovery key landing page. -->
     <string name="RecoveryKeyFlow.generateKeyExplanation">This key is required to recover your money if you upgrade or lose your phone.</string>
-    <!-- Default title for the recovery key landing page -->
-    <string name="RecoveryKeyFlow.generateKeyTitle">Generate your private recovery key</string>
+    <!-- Default title for the recovery phrase landing page -->
+    <string name="RecoveryKeyFlow.generateKeyTitle">Generate your private recovery phrase</string>
     <!-- Title for a button that takes the user to the wallet after setting up the recovery key. -->
     <string name="RecoveryKeyFlow.goToWalletButtonTitle">Go to Wallet</string>
     <!-- Hint text for recovery key intro page, e.g., Step 2 -->
     <string name="RecoveryKeyFlow.howItWorksStep">How it works - Step %1$@</string>
-    <!-- Error text displayed when the user enters an incorrect recovery key -->
-    <string name="RecoveryKeyFlow.invalidPhrase">Some of the words you entered do not match your recovery key. Please try again.</string>
+    <!-- Error text displayed when the user enters an incorrect recovery phrase -->
+    <string name="RecoveryKeyFlow.invalidPhrase">Some of the words you entered do not match your recovery phrase. Please try again.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.keepSecure">Keep it secure</string>
     <!-- Informs the user that the recovery is only required for recovering a wallet. -->
@@ -645,19 +680,19 @@
     <!-- Title displayed when the user starts the process of recovering a wallet -->
     <string name="RecoveryKeyFlow.recoveryYourWallet">Recover Your Wallet</string>
     <!-- Subtitle displayed when the user starts the process of recovering a wallet -->
-    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Please enter the recovery key of the wallet you want to recover.</string>
+    <string name="RecoveryKeyFlow.recoveryYourWalletSubtitle">Please enter the recovery phrase of the wallet you want to recover.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.relaxBuyTrade">Relax, buy, and trade</string>
     <!-- Reminds the user to write down the recovery key words. -->
     <string name="RecoveryKeyFlow.rememberToWriteDownReminder">Remember to write these words down. Swipe back if you forgot.</string>
-    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery key to be entered -->
-    <string name="RecoveryKeyFlow.resetPINInstruction">Please enter your recovery key to reset your PIN.</string>
+    <!-- Instruction displayed when the user is resetting the PIN, which requires the recovery phrase to be entered -->
+    <string name="RecoveryKeyFlow.resetPINInstruction">Please enter your recovery phrase to reset your PIN.</string>
     <!-- Assures the user that BRD will keep the user's funds secure. -->
     <string name="RecoveryKeyFlow.securityAssurance">Buy and trade knowing that your funds are protected by the best security and privacy in the business.</string>
     <!-- Recommends that the user stores the recovery key in a secure location -->
     <string name="RecoveryKeyFlow.storeSecurelyRecommendation">Store your key in a secure location. This is the only way to recover your wallet. BRD does not keep a copy.</string>
-    <!-- Title for the success page after the recovery key has been set up -->
-    <string name="RecoveryKeyFlow.successHeading">Congratulations! You completed your recovery key setup.</string>
+    <!-- Title for the success page after the recovery phrase has been set up -->
+    <string name="RecoveryKeyFlow.successHeading">Congratulations! You completed your recovery phrase setup.</string>
     <!-- Subtitle for the success page after the recovery key has been set up -->
     <string name="RecoveryKeyFlow.successSubheading">You\'re all set to deposit, trade, and buy crypto from your BRD wallet.</string>
     <!-- Title displayed to the user on the intro screen when unlinking a wallet -->
@@ -672,12 +707,12 @@
     <string name="RecoveryKeyFlow.wipeWalletSubtext">Start a new wallet by wiping the current wallet from your device.</string>
     <!-- Title for recovery key intro page -->
     <string name="RecoveryKeyFlow.writeItDown">Write down your key</string>
-    <!-- Title for the recovery key landing page if the key has already been generated. -->
-    <string name="RecoveryKeyFlow.writeKeyAgain">Write down your recovery key again</string>
+    <!-- Title for the recovery phrase landing page if the key has already been generated. -->
+    <string name="RecoveryKeyFlow.writeKeyAgain">Write down your recovery phrase again</string>
     <!-- Subtitle for the write recovery key screen -->
     <string name="RecoveryKeyFlow.writeKeyScreenSubtitle">Write down the following words in order.</string>
-    <!-- Title for the write recovery key screen -->
-    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Your Recovery Key</string>
+    <!-- Title for the write recovery phrase screen -->
+    <string name="RecoveryKeyFlow.writeKeyScreenTitle">Your Recovery Phrase</string>
     <!-- Title for the step number when the user pages through the recovery words -->
     <string name="RecoveryKeyFlow.writeKeyStepTitle">%1$@ of %2$@</string>
     <!-- No amount entered error message. -->
@@ -732,11 +767,11 @@
     <string name="SecurityCenter.faceIdTitle">Face ID</string>
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">The only way to access your assets if you lose or upgrade your phone.</string>
-    <!-- Recovery Key button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
-   * to not break existing client code. -->
-    <string name="SecurityCenter.paperKeyTitle">Recovery Key</string>
+    <!-- Recovery Phrase button title. This used to be called 'paper key', so leaving the string key as `paperKeyTitle` in order
+ * to not break existing client code. -->
+    <string name="SecurityCenter.paperKeyTitle">Recovery Phrase</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle.android">Paper Key</string>
+    <string name="SecurityCenter.paperKeyTitle.android">Recovery Phrase</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Protects your BRD from unauthorized users.</string>
     <!-- PIN button title -->
@@ -763,6 +798,8 @@
     <string name="Send.amountLabel">Amount</string>
     <!-- Balance: $4.00 -->
     <string name="Send.balance">Balance: %1$s</string>
+    <!-- Balance: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.balanceString">Balance: </string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"BRD\" &gt; \"Permissions\"</string>
     <!-- Permission required to access camera -->
@@ -833,6 +870,8 @@
     <string name="Send.remoteRequestError">Could not load payment request</string>
     <!-- Scan button label -->
     <string name="Send.scanLabel">Scan</string>
+    <!-- Sending Max: $4.00 for iOS, the balance can't have a parameter -->
+    <string name="Send.sendingMax">Sending Max: </string>
     <!-- Send button label (the action, "press here to send") -->
     <string name="Send.sendLabel">Send</string>
     <!-- Send button label (for special case where the user specified send amount is too high and does not leave a balance to cover fees.) -->
@@ -916,13 +955,13 @@
     <!-- Share data switch label. -->
     <string name="ShareData.toggleLabel">Share Anonymous Data?</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.againButtonTitle">Write Down Paper Key Again</string>
+    <string name="StartPaperPhrase.againButtonTitle">Write Down Recovery Phrase Again</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Your paper key is the only way to restore your BRD if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+    <string name="StartPaperPhrase.body">Your recovery phrase is the only way to restore your BRD if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
     <!-- Paper key explanation text (Android-version) -->
-    <string name="StartPaperPhrase.Body.Android">Your paper key is the only way to restore your BRD if your phone is lost, stolen, broken, or upgraded.\n\nYour paper key is also required if you change the security settings on your device.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+    <string name="StartPaperPhrase.Body.Android">Your recovery phrase is the only way to restore your BRD if your phone is lost, stolen, broken, or upgraded.\n\nYour recovery phrase is also required if you change the security settings on your device.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.buttonTitle">Write Down Paper Key</string>
+    <string name="StartPaperPhrase.buttonTitle">Write Down Recovery Phrase</string>
     <!-- Argument is date; date should be on a new line -->
     <string name="StartPaperPhrase.date">Last written down on\n %1$@</string>
     <!-- button label -->
@@ -931,6 +970,10 @@
     <string name="StartViewController.message">Moving money forward.</string>
     <!-- Recover your wallet from a backup -->
     <string name="StartViewController.recoverButton">Recover Wallet</string>
+    <string name="SupportForm.feedbackAppreciated">We would love your feedback</string>
+    <string name="SupportForm.helpUsImprove">Help us improve</string>
+    <string name="SupportForm.notNow">Not now</string>
+    <string name="SupportForm.pleaseDescribe">Please describe your experience</string>
     <!-- Syncing view done syncing state header text -->
     <string name="SyncingView.activity">Activity</string>
     <!-- Syncing view connectiong state header text -->
@@ -1234,11 +1277,11 @@
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">Failed</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">Please enter your recovery key to wipe this wallet from your device.</string>
+    <string name="WipeWallet.instruction">Please enter your recovery phrase to wipe this wallet from your device.</string>
     <!-- Instructions for unlinking the wallet -->
     <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different BRD wallet on this device.</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your Paper Key.</string>
+    <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your Recovery Phrase.</string>
     <!-- Unlink this wallet from this device. -->
     <string name="WipeWallet.title">Start or Recover Another Wallet</string>
     <!-- Wipe wallet button title -->
@@ -1309,16 +1352,4 @@
     <string name="Confirmation.destinationTag_EmptyHint">(empty)</string>
     <string name="Send.destinationTag_required_error">A valid Destination Tag is required for the target address.</string>
 
-    <string name="Prompts.RateApp.enjoyingBrd">Enjoying BRD?</string>
-    <string name="Prompts.RateApp.googlePlayReview">Your review helps grow the BRD community.</string>
-    <string name="Prompts.RateApp.noThanks">No thanks</string>
-    <string name="Prompts.RateApp.rateUs">Review us</string>
-    <string name="Prompts.RateApp.dontShow">Don\'t ask again</string>
-
-    <string name="SupportForm.helpUsImprove">Help us improve</string>
-    <string name="SupportForm.notNow">Not now</string>
-    <string name="SupportForm.feedbackAppreciated">We would love your feedback</string>
-    <string name="SupportForm.pleaseDescribe">Please describe your experience</string>
-
-    <string name="FeeSelector.lessThanMinutes">&lt;%1$d minutes</string>
 </resources>

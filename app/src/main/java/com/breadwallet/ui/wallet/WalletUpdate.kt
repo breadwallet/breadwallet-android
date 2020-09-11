@@ -26,6 +26,7 @@ package com.breadwallet.ui.wallet
 
 import com.breadwallet.breadbox.WalletState
 import com.breadwallet.ext.replaceAt
+import com.breadwallet.tools.manager.MarketDataResult
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.wallet.WalletScreen.E
 import com.breadwallet.ui.wallet.WalletScreen.F
@@ -470,6 +471,28 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
                 priceChartDataPoints = event.priceDataPoints
             )
         )
+
+    override fun onMarketDataUpdated(
+        model: M,
+        event: E.OnMarketDataUpdated
+    ): Next<M, F> = when (event.marketData) {
+        is MarketDataResult.Success -> {
+            next(
+                model.copy(
+                    marketCap = event.marketData.marketCap,
+                    totalVolume = event.marketData.totalVolume,
+                    high24h = event.marketData.high24h,
+                    low24h = event.marketData.low24h,
+                    marketDataState = MarketDataState.LOADED
+                )
+            )
+        }
+        else -> next(
+            model.copy(
+                marketDataState = MarketDataState.ERROR
+            )
+        )
+    }
 
     override fun onChartDataPointSelected(
         model: M,

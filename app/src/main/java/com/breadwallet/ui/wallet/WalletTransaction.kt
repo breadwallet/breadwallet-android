@@ -27,6 +27,8 @@ package com.breadwallet.ui.wallet
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
+private const val TRUNCATED_ADDRESS_CHARS = 7
+
 data class WalletTransaction(
     @Redacted val txHash: String,
     val amount: BigDecimal,
@@ -43,7 +45,14 @@ data class WalletTransaction(
     val isErrored: Boolean,
     val progress: Int,
     val currencyCode: String,
-    val feeToken: String = ""
+    val feeToken: String = "",
+    val confirmationsUntilFinal: Int
 ) {
     val isFeeForToken: Boolean = feeToken.isNotBlank()
+
+    val truncatedToAddress: String
+        get() = "${toAddress.take(TRUNCATED_ADDRESS_CHARS)}...${toAddress.takeLast(TRUNCATED_ADDRESS_CHARS)}"
+
+    val truncatedFromAddress: String
+        get() = "${fromAddress.take(TRUNCATED_ADDRESS_CHARS)}...${fromAddress.takeLast(TRUNCATED_ADDRESS_CHARS)}"
 }

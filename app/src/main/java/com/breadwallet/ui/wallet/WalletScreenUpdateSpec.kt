@@ -64,6 +64,7 @@ interface WalletScreenUpdateSpec {
         is WalletScreen.E.OnChartDataPointSelected -> onChartDataPointSelected(model, event)
         is WalletScreen.E.OnIsTokenSupportedUpdated -> onIsTokenSupportedUpdated(model, event)
         is WalletScreen.E.OnWalletStateUpdated -> onWalletStateUpdated(model, event)
+        is WalletScreen.E.OnMarketDataUpdated -> onMarketDataUpdated(model, event)
     }
 
     fun onFilterSentClicked(model: WalletScreen.M): Next<WalletScreen.M, WalletScreen.F>
@@ -137,4 +138,6 @@ interface WalletScreenUpdateSpec {
     fun onIsTokenSupportedUpdated(model: WalletScreen.M, event: WalletScreen.E.OnIsTokenSupportedUpdated): Next<WalletScreen.M, WalletScreen.F>
 
     fun onWalletStateUpdated(model: WalletScreen.M, event: WalletScreen.E.OnWalletStateUpdated): Next<WalletScreen.M, WalletScreen.F>
+
+    fun onMarketDataUpdated(model: WalletScreen.M, event: WalletScreen.E.OnMarketDataUpdated): Next<WalletScreen.M, WalletScreen.F>
 }

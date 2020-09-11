@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/market_data_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/white_transparent_10"
+    app:cardElevation="0dp"
+    app:cardCornerRadius="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/market_data_grid"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="6dp"
+            android:background="@color/white_transparent_25"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+        />
+
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+            android:id="@+id/market_cap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/mobile_font_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/divider"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="$23,420,120 USD"/>
+
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+            android:id="@+id/market_cap_label"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@+id/market_cap"
+            android:textColor="@color/balance_crypto_color"
+            android:text="@string/MarketData.marketCap"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"/>
+
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+            android:id="@+id/total_volume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/mobile_font_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@+id/market_cap_label"
+            tools:text="$1,080,080 USD" />
+
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+            android:id="@+id/total_volume_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/balance_crypto_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@+id/total_volume"
+            android:text="@string/MarketData.volume"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"/>
+
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+            android:id="@+id/twenty_four_high"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/mobile_font_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/divider"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="$13,769.49 USD" />
+
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+            android:id="@+id/twenty_four_high_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/balance_crypto_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@+id/twenty_four_high"
+            android:text="@string/MarketData.high24h"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"/>
+
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+            android:id="@+id/twenty_four_low"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/mobile_font_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@+id/twenty_four_high_label"
+            tools:text="$5,490.20 USD" />
+
+        <com.breadwallet.legacy.presenter.customviews.BaseTextView
+            android:id="@+id/twenty_four_low_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/balance_crypto_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@+id/twenty_four_low"
+            android:text="@string/MarketData.low24h"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
