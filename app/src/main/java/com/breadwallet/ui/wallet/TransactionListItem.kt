@@ -1,9 +1,11 @@
 package com.breadwallet.ui.wallet
 
 import android.graphics.Paint
+import android.os.Build
 import android.text.format.DateUtils
 import android.view.View
 import androidx.core.view.isVisible
+import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.breadbox.formatFiatForUi
@@ -152,7 +154,11 @@ class TransactionListItem(
                 if (imageTransferDirection.progressDrawable == null) {
                     imageTransferDirection.progressDrawable = context.getDrawable(R.drawable.transfer_progress_drawable)
                 }
-                imageTransferDirection.setProgress(progress, true)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    imageTransferDirection.setProgress(progress, true)
+                } else {
+                    imageTransferDirection.progress = progress
+                }
                 tx_description.maxWidth = Utils.getPixelsFromDps(context, DP_120)
             } else {
                 imageTransferDirection.progressDrawable = null
