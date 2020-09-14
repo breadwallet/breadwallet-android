@@ -103,7 +103,8 @@ private const val MARKET_CHART_ANIMATION_ACCELERATION = 1.2f
  * TODO: Remaining work: Make review prompt a controller.
  */
 open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
-    AlertDialogController.Listener {
+    AlertDialogController.Listener,
+    AppBarLayout.OnOffsetChangedListener {
 
     constructor(currencyCode: String) : this(
         bundleOf(EXTRA_CURRENCY_CODE to currencyCode)
@@ -185,33 +186,11 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             interpolator = AccelerateInterpolator(MARKET_CHART_ANIMATION_ACCELERATION)
         }
 
-        appbar.addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
-            override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
-                when {
-                    abs(verticalOffset) == appBarLayout.totalScrollRange -> {
-                        appBarLayout.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                        market_info.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                        sparkview_container.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                    }
-                    verticalOffset == 0 -> {
-                        appBarLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
-                        market_info.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
-                        sparkview_container.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
-                    }
-                    else -> {
-                        appBarLayout.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                        market_info.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                        sparkview_container.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                        TransitionManager.endTransitions(market_info)
-                        TransitionManager.endTransitions(sparkview_container)
-                        TransitionManager.endTransitions(balance_values)
-                    }
-                }
-            }
-        })
+        appbar.addOnOffsetChangedListener(this)
     }
 
     override fun onDestroyView(view: View) {
+        appbar.removeOnOffsetChangedListener(this)
         txAdapter = null
         fastAdapter = null
         mPriceDataAdapter = SparkAdapter()
@@ -643,5 +622,29 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
                     R.color.white, null
             )
         )
+    }
+
+    override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
+        // Disable layout transitions while collapsed or collapsing
+        when {
+            abs(verticalOffset) == appBarLayout.totalScrollRange -> {
+                appBarLayout.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                market_info.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                sparkview_container.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+            }
+            verticalOffset == 0 -> {
+                appBarLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+                market_info.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+                sparkview_container.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+            }
+            else -> {
+                appBarLayout.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                market_info.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                sparkview_container.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                TransitionManager.endTransitions(market_info)
+                TransitionManager.endTransitions(sparkview_container)
+                TransitionManager.endTransitions(balance_values)
+            }
+        }
     }
 }
