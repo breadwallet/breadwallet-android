@@ -35,10 +35,15 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.SetupResult
 import com.breadwallet.tools.util.Bip39Reader
+import com.breadwallet.tools.util.SupportUtils
 import com.breadwallet.ui.recovery.RecoveryKey.E
 import com.breadwallet.ui.recovery.RecoveryKey.F
+import com.breadwallet.ui.recovery.RecoveryKey.M.Companion.RECOVERY_KEY_WORDS_COUNT
 import com.breadwallet.util.asNormalizedString
 import drewcarlson.mobius.flow.subtypeEffectHandler
+import kotlinx.coroutines.delay
+
+private const val LOADING_WATCH_DELAY = 8_000L
 
 fun createRecoveryKeyHandler(
     breadApp: BreadApp,
@@ -76,11 +81,19 @@ fun createRecoveryKeyHandler(
     }
 
     addFunction<F.ValidatePhrase> { effect ->
-        val errors = MutableList(RecoveryKey.M.RECOVERY_KEY_WORDS_COUNT) { false }
-        effect.phrase.forEachIndexed { index, word ->
-            errors[index] = !Bip39Reader.isWordValid(breadApp, word)
-        }
-        E.OnPhraseValidated(errors)
+        E.OnPhraseValidated(List(RECOVERY_KEY_WORDS_COUNT) { i ->
+            val word = effect.phrase[i]
+            !Bip39Reader.isWordValid(breadApp, word)
+        })
+    }
+
+    addFunction<F.MonitorLoading> {
+        delay(LOADING_WATCH_DELAY)
+        E.OnLoadingCompleteExpected
+    }
+
+    addAction<F.ContactSupport> {
+        SupportUtils.submitEmailFromOnboarding(breadApp)
     }
 
     addFunction<F.RecoverWallet> { effect ->
@@ -88,25 +101,25 @@ fun createRecoveryKeyHandler(
         val words = breadApp.findWordsForPhrase(phraseBytes)
         if (words == null) {
             logInfo("Phrase validation failed.")
-            return@addFunction E.OnPhraseInvalid
-        }
-
-        try {
-            when (val result = userManager.setupWithPhrase(phraseBytes)) {
-                SetupResult.Success -> {
-                    logInfo("Wallet recovered.")
-                    BRSharedPrefs.putPhraseWroteDown(check = true)
-                    E.OnRecoveryComplete
-                }
-                else -> {
-                    logError("Error recovering wallet from phrase: $result")
-                    E.OnPhraseInvalid
-                }
-            }
-        } catch (e: Exception) {
-            logError("Error opening BreadBox", e)
-            // TODO: Define initialization error
             E.OnPhraseInvalid
+        } else {
+            try {
+                when (val result = userManager.setupWithPhrase(phraseBytes)) {
+                    SetupResult.Success -> {
+                        logInfo("Wallet recovered.")
+                        BRSharedPrefs.putPhraseWroteDown(check = true)
+                        E.OnRecoveryComplete
+                    }
+                    else -> {
+                        logError("Error recovering wallet from phrase: $result")
+                        E.OnPhraseInvalid
+                    }
+                }
+            } catch (e: Exception) {
+                logError("Error opening BreadBox", e)
+                // TODO: Define initialization error
+                E.OnPhraseInvalid
+            }
         }
     }
 }
