@@ -61,7 +61,8 @@ object RecoveryKey {
         /** True when user input should be blocked and navigation prevented. */
         val isLoading: Boolean = false,
         /** The list index of the currently selected word input or -1 if none is selected. */
-        val focusedWordIndex: Int = 0
+        val focusedWordIndex: Int = 0,
+        val showContactSupport: Boolean = false
     ) {
 
         companion object {
@@ -132,6 +133,8 @@ object RecoveryKey {
         object OnRequestWipeWallet : E()
         object OnWipeWalletConfirmed : E()
         object OnWipeWalletCancelled : E()
+        object OnLoadingCompleteExpected : E()
+        object OnContactSupportClicked : E()
     }
 
     sealed class F {
@@ -174,6 +177,8 @@ object RecoveryKey {
 
         object WipeWallet : F(), ViewEffect
         object ErrorShake : F(), ViewEffect
+        object MonitorLoading : F()
+        object ContactSupport : F()
 
         data class ValidateWord(
             val index: Int,
