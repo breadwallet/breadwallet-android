@@ -1352,4 +1352,13 @@
     <string name="Confirmation.destinationTag_EmptyHint">(empty)</string>
     <string name="Send.destinationTag_required_error">A valid Destination Tag is required for the target address.</string>
 
+    <!-- FIO label -->
+    <string name="Send_fio_toLabel">FIO</string>
+    <!-- Error message for invalid PayID -->
+    <string name="Send.fio_invalid">Invalid FIO address.</string>
+    <!-- Error message for no address associated with a FIO for a given currency -->
+    <string name="Send.fio_noAddress">There is no %1$s address associated with this FIO address.</string>
+    <!-- Error message for error in retrieving the address from the FIO endpoint -->
+    <string name="Send.fio_retrievalError">There was an error retrieving the address for this FIO address. Please try again later.</string>
+
 </resources>

@@ -67,7 +67,9 @@ import com.breadwallet.tools.services.BRDFirebaseMessagingService
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.util.AddressResolverServiceLocator
 import com.breadwallet.util.CryptoUriParser
+import com.breadwallet.util.FioService
 import com.breadwallet.util.PayIdService
 import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isEthereum
@@ -320,6 +322,17 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         bind<PayIdService>() with singleton {
             PayIdService(instance())
+        }
+
+        bind<FioService>() with singleton {
+            FioService(instance())
+        }
+
+        bind<AddressResolverServiceLocator>() with singleton {
+            AddressResolverServiceLocator(
+                instance(),
+                instance()
+            )
         }
 
         bind<BreadBox>() with singleton {

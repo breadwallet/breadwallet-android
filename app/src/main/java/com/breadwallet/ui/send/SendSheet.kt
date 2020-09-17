@@ -65,6 +65,15 @@ enum class TransferSpeedInput() {
     PRIORITY
 }
 
+sealed class AddressType {
+    object NativePublic : AddressType()
+
+    sealed class Resolvable : AddressType() {
+        object PayId : Resolvable()
+        object Fio : Resolvable()
+    }
+}
+
 object SendSheet {
 
     /**
@@ -102,7 +111,7 @@ object SendSheet {
         val targetString: String = "",
         /** The address to send the [amount] of [currencyCode] to. */
         val targetAddress: String = "",
-        val isPayId: Boolean = false,
+        val addressType: AddressType = AddressType.NativePublic,
         val isResolvingAddress: Boolean = false,
         /** The user supplied amount to send as a string. */
         val rawAmount: String = "",
@@ -171,6 +180,10 @@ object SendSheet {
             object PayIdNoAddress : InputError()
             object PayIdRetrievalError : InputError()
 
+            object FioInvalid : InputError()
+            object FioNoAddress : InputError()
+            object FioRetrievalError : InputError()
+
             object FailedToEstimateFee : InputError()
         }
 
@@ -206,7 +219,7 @@ object SendSheet {
         val hederaMemo: TransferField? =
             transferFields.find { it.key == TransferField.HEDERA_MEMO }
 
-        val isDestinationTagFromPayId: Boolean = isPayId && !(destinationTag?.value.isNullOrBlank() ?: true)
+        val isDestinationTagFromResolvedAddress: Boolean = (addressType is AddressType.Resolvable) && !(destinationTag?.value.isNullOrBlank() ?: true)
 
         companion object {
 
@@ -362,28 +375,29 @@ object SendSheet {
         }
 
         sealed class OnAddressValidated : E() {
+            data class ValidAddress(
+                val type: AddressType,
+                @Redacted val address: String,
+                val targetString: String? = null,
+                @Redacted val destinationTag: String? = null
+            ) : OnAddressValidated()
 
-            sealed class Address : OnAddressValidated() {
-                data class ValidAddress(
-                    @Redacted val address: String
-                ) : Address()
+            data class ResolvableAddress(
+                val type: AddressType.Resolvable,
+                val targetString: String
+            ) : OnAddressValidated()
 
-                data class PayIdString(val payId: String) : Address()
-                data class InvalidAddress(val fromClipboard: Boolean = false) : Address()
-                data class NoAddress(val fromClipboard: Boolean = false) : Address()
-            }
+            data class InvalidAddress(
+                val type: AddressType,
+                val fromClipboard: Boolean = false
+            ) : OnAddressValidated()
 
-            sealed class PayId : OnAddressValidated() {
-                data class ValidAddress(
-                    val payId: String,
-                    @Redacted val address: String,
-                    @Redacted val destinationTag: String?
-                ) : PayId()
+            data class NoAddress(
+                val type: AddressType,
+                val fromClipboard: Boolean = false
+            ) : OnAddressValidated()
 
-                object InvalidPayId : PayId()
-                object RetrievalError : PayId()
-                object NoAddress : PayId()
-            }
+            data class ResolveError(val type: AddressType.Resolvable) : OnAddressValidated()
         }
 
         object GoToEthWallet : E()
@@ -454,9 +468,10 @@ object SendSheet {
             @Redacted val address: String
         ) : F()
 
-        data class ResolvePayId(
+        data class ResolveAddress(
             val currencyCode: CurrencyCode,
-            @Redacted val payId: String
+            @Redacted val address: String,
+            val type: AddressType.Resolvable
         ) : F()
 
         data class ShowEthTooLowForTokenFee(

@@ -29,6 +29,7 @@ import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.addressFor
+import com.breadwallet.breadbox.containsCurrency
 import com.breadwallet.breadbox.estimateFee
 import com.breadwallet.breadbox.feeForSpeed
 import com.breadwallet.breadbox.hashString
@@ -53,17 +54,17 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.send.SendSheet.E
 import com.breadwallet.ui.send.SendSheet.F
+import com.breadwallet.util.AddressResolverServiceLocator
+import com.breadwallet.util.AddressResult
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.HEADER_BITPAY_PARTNER
 import com.breadwallet.util.HEADER_BITPAY_PARTNER_KEY
-import com.breadwallet.util.PayIdResult
-import com.breadwallet.util.PayIdResult.Success
-import com.breadwallet.util.PayIdService
 import com.breadwallet.util.buildPaymentProtocolRequest
 import com.breadwallet.util.getAcceptHeader
 import com.breadwallet.util.getContentTypeHeader
 import com.breadwallet.util.getPaymentRequestHeader
+import com.breadwallet.util.isFio
 import com.breadwallet.util.isPayId
 import com.platform.APIClient
 import com.spotify.mobius.Connectable
@@ -97,7 +98,7 @@ object SendSheetHandler {
         apiClient: APIClient,
         ratesRepository: RatesRepository,
         metaDataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>,
-        payIdService: PayIdService
+        addressServiceLocator: AddressResolverServiceLocator
     ) = subtypeEffectHandler<F, E> {
         addTransformer(pollExchangeRate(breadBox, ratesRepository))
         addTransformer(handleLoadBalance(breadBox, ratesRepository))
@@ -108,7 +109,7 @@ object SendSheetHandler {
         addTransformer(handleLoadCryptoRequestData(breadBox, apiClient, context))
         addTransformer(handleContinueWithPayment(userManager, breadBox))
         addTransformer(handlePostPayment(apiClient))
-        addFunction(handleResolvePayId(breadBox, payIdService, uriParser))
+        addFunction(handleResolveAddress(breadBox, addressServiceLocator, uriParser))
         addFunction(parseClipboard(context, breadBox, uriParser))
         addFunction(handleGetTransferFields(breadBox))
         addFunction(handleValidateTransferFields(breadBox))
@@ -261,25 +262,30 @@ object SendSheetHandler {
         }
     }
 
-    private fun handleResolvePayId(
+    private fun handleResolveAddress(
         breadBox: BreadBox,
-        payIdService: PayIdService,
+        addressServiceLocator: AddressResolverServiceLocator,
         uriParser: CryptoUriParser
-    ): suspend (F.ResolvePayId) -> E = { effect ->
-        when (val result = payIdService.getAddress(effect.payId, effect.currencyCode)) {
-            PayIdResult.NoAddress -> E.OnAddressValidated.PayId.NoAddress
-            PayIdResult.InvalidPayId -> E.OnAddressValidated.PayId.InvalidPayId
-            PayIdResult.ExternalError -> E.OnAddressValidated.PayId.RetrievalError
-            is Success -> when (val validateResult =
+    ): suspend (F.ResolveAddress) -> E = { effect ->
+        val nativeCurrency = breadBox.wallet(effect.currencyCode).first().walletManager.currency.code
+        val service = addressServiceLocator.getService(effect.type)
+        checkNotNull(service) { "Failed to resolve address, no service found." }
+
+        when (val result = service.resolveAddress(effect.address, effect.currencyCode, nativeCurrency)) {
+            AddressResult.NoAddress -> E.OnAddressValidated.NoAddress(effect.type)
+            AddressResult.Invalid -> E.OnAddressValidated.InvalidAddress(effect.type)
+            AddressResult.ExternalError -> E.OnAddressValidated.ResolveError(effect.type)
+
+            is AddressResult.Success -> when (val validateResult =
                 validateTargetString(breadBox, uriParser, effect.currencyCode, result.address)) {
-                is E.OnAddressValidated.Address.ValidAddress -> E.OnAddressValidated.PayId.ValidAddress(
-                    effect.payId,
+                is E.OnAddressValidated.ValidAddress -> E.OnAddressValidated.ValidAddress(
+                    effect.type,
                     validateResult.address,
+                    effect.address,
                     result.destinationTag
                 )
-                is E.OnAddressValidated.Address.PayIdString -> E.OnAddressValidated.PayId.InvalidPayId
-                is E.OnAddressValidated.Address.InvalidAddress -> E.OnAddressValidated.PayId.InvalidPayId
-                is E.OnAddressValidated.Address.NoAddress -> E.OnAddressValidated.PayId.NoAddress
+                is E.OnAddressValidated.NoAddress -> E.OnAddressValidated.NoAddress(effect.type)
+                else -> E.OnAddressValidated.InvalidAddress(effect.type)
             }
         }
     }
@@ -301,21 +307,22 @@ object SendSheetHandler {
         currencyCode: CurrencyCode,
         target: String,
         fromClipboard: Boolean = false
-    ): E.OnAddressValidated.Address {
+    ): E.OnAddressValidated {
         val cryptoRequest = (target.asLink(breadBox, uriParser) as? Link.CryptoRequestUrl)
         val reqAddress = cryptoRequest?.address ?: target
 
         return when {
-            target.isPayId() -> E.OnAddressValidated.Address.PayIdString(target)
-            target.isBlank() -> E.OnAddressValidated.Address.NoAddress(fromClipboard)
-            reqAddress.isBlank() -> E.OnAddressValidated.Address.NoAddress(fromClipboard)
+            target.isPayId() -> E.OnAddressValidated.ResolvableAddress(AddressType.Resolvable.PayId, target)
+            target.isFio() -> E.OnAddressValidated.ResolvableAddress(AddressType.Resolvable.Fio, target)
+            target.isBlank() -> E.OnAddressValidated.NoAddress(AddressType.NativePublic, fromClipboard)
+            reqAddress.isBlank() -> E.OnAddressValidated.NoAddress(AddressType.NativePublic, fromClipboard)
             else -> {
                 val wallet = breadBox.wallet(currencyCode).first()
                 val address = wallet.addressFor(reqAddress)
                 if (address == null || wallet.containsAddress(address)) {
-                    E.OnAddressValidated.Address.InvalidAddress(fromClipboard)
+                    E.OnAddressValidated.InvalidAddress(AddressType.NativePublic, fromClipboard)
                 } else {
-                    E.OnAddressValidated.Address.ValidAddress(reqAddress)
+                    E.OnAddressValidated.ValidAddress(AddressType.NativePublic, reqAddress)
                 }
             }
         }
@@ -333,7 +340,7 @@ object SendSheetHandler {
             val fields = effect.transferFields
 
             if (address == null || wallet.containsAddress(address)) {
-                return@mapLatest E.OnAddressValidated.Address.InvalidAddress()
+                return@mapLatest E.OnAddressValidated.InvalidAddress(AddressType.NativePublic)
             }
 
             val attributes = wallet.getTransferAttributesFor(address)
