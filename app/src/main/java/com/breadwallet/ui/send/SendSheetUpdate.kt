@@ -28,8 +28,11 @@ import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.ext.isZero
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.send.SendSheet.E
-import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.Address
-import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.PayId
+import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.ValidAddress
+import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.ResolvableAddress
+import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.ResolveError
+import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.InvalidAddress
+import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.NoAddress
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.AddDecimal
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.AddDigit
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.Clear
@@ -449,66 +452,55 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         event: E.OnAddressValidated
     ): Next<M, F> {
         val transferFields = when {
-            event is PayId.ValidAddress -> model.transferFields.copy(TransferField.DESTINATION_TAG, event.destinationTag ?: "")
-            model.isPayId -> model.transferFields.copy(TransferField.DESTINATION_TAG, "")
+            event is ValidAddress && event.type !is AddressType.NativePublic -> model.transferFields.copy(TransferField.DESTINATION_TAG, event.destinationTag ?: "")
+            model.addressType !is AddressType.NativePublic -> model.transferFields.copy(TransferField.DESTINATION_TAG, "")
             else -> model.transferFields
         }
 
         return when {
             model.isConfirmingTx -> noChange()
             else -> when (event) {
-                is Address.ValidAddress -> {
-                    processValidAddress(model, event.address, transferFields = transferFields)
-                }
-                is Address.PayIdString -> next(
+                is ValidAddress -> processValidAddress(model, event.address, event.type, event.targetString, transferFields)
+                is ResolvableAddress -> next(
                     model.copy(
-                        targetString = event.payId,
-                        isPayId = true,
+                        targetString = event.targetString,
+                        addressType = event.type,
                         isResolvingAddress = true,
                         transferFields = transferFields
                     ),
-                    setOf<F>(F.ResolvePayId(model.currencyCode, event.payId))
+                    setOf<F>(F.ResolveAddress(model.currencyCode, event.targetString, event.type))
                 )
-                is Address.InvalidAddress -> next(
+                is InvalidAddress -> next(
                     model.copy(
-                        isPayId = false,
+                        addressType = event.type,
                         isResolvingAddress = false,
-                        targetInputError = if (event.fromClipboard) M.InputError.ClipboardInvalid else M.InputError.Invalid,
+                        targetInputError = when {
+                            event.type is AddressType.Resolvable.PayId -> M.InputError.PayIdInvalid
+                            event.type is AddressType.Resolvable.Fio -> M.InputError.FioInvalid
+                            event.fromClipboard -> M.InputError.ClipboardInvalid
+                            else -> M.InputError.Invalid
+                        },
                         transferFields = transferFields
                     )
                 )
-                is Address.NoAddress -> next(
+                is NoAddress -> next(
                     model.copy(
-                        isPayId = false,
+                        addressType = event.type,
                         isResolvingAddress = false,
-                        targetInputError = if (event.fromClipboard) M.InputError.ClipboardEmpty else M.InputError.Empty,
+                        targetInputError = when {
+                            event.type is AddressType.Resolvable.PayId -> M.InputError.PayIdNoAddress
+                            event.type is AddressType.Resolvable.Fio -> M.InputError.FioNoAddress
+                            event.fromClipboard -> M.InputError.ClipboardEmpty
+                            else -> M.InputError.Empty
+                        },
                         transferFields = transferFields
                     )
                 )
-                is PayId.ValidAddress -> {
-                    processValidAddress(model, event.address, event.payId, transferFields)
-                }
-                PayId.InvalidPayId -> next(
+                is ResolveError -> next(
                     model.copy(
-                        isPayId = true,
+                        addressType = event.type,
                         isResolvingAddress = false,
-                        targetInputError = M.InputError.PayIdInvalid,
-                        transferFields = transferFields
-                    )
-                )
-                PayId.NoAddress -> next(
-                    model.copy(
-                        isPayId = true,
-                        isResolvingAddress = false,
-                        targetInputError = M.InputError.PayIdNoAddress,
-                        transferFields = transferFields
-                    )
-                )
-                PayId.RetrievalError -> next(
-                    model.copy(
-                        isPayId = true,
-                        isResolvingAddress = false,
-                        targetInputError = M.InputError.PayIdRetrievalError,
+                        targetInputError = if (event.type is AddressType.Resolvable.PayId) M.InputError.PayIdRetrievalError else M.InputError.FioRetrievalError,
                         transferFields = transferFields
                     )
                 )
@@ -520,7 +512,8 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
     private fun processValidAddress(
         model: M,
         address: String,
-        payId: String? = null,
+        addressType: AddressType,
+        targetString: String? = null,
         transferFields: List<TransferField>
     ): Next<M, F> {
         val effects = mutableSetOf<F>()
@@ -533,13 +526,12 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             ).run(effects::add)
         }
 
-        val isPayId = payId != null
         return next(
             model.copy(
                 targetAddress = address,
-                targetString = payId ?: address, // Handle paste
+                targetString = targetString ?: address, // Handle paste
                 targetInputError = null,
-                isPayId = isPayId,
+                addressType = addressType,
                 isResolvingAddress = false,
                 transferFields = transferFields
             ),
