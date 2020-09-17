@@ -44,7 +44,6 @@ import com.platform.entities.WalletInfoData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import org.json.JSONArray
@@ -350,7 +349,7 @@ class MetaDataManager(
         key: String,
         defaultProducer: (() -> JSONObject)? = null
     ): JSONObject? {
-        var value = storeProvider.get(key) ?: storeProvider.sync(key)
+        val value = storeProvider.get(key) ?: storeProvider.sync(key)
         return when (value) {
             null -> {
                 defaultProducer
