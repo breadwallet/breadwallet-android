@@ -89,12 +89,19 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
                     RecoveryKey.Mode.WIPE ->
                         F.Unlink(model.phrase)
                 }
-                next(model.copy(isLoading = true), setOf(nextEffect))
+                next(
+                    model.copy(isLoading = true),
+                    setOf(
+                        F.MonitorLoading,
+                        nextEffect
+                    )
+                )
             }
             else -> next(
                 model.copy(
                     errors = event.errors,
-                    isLoading = false
+                    isLoading = false,
+                    showContactSupport = false
                 ), setOf(F.ErrorShake)
             )
         }
@@ -130,12 +137,18 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
     }
 
     override fun onPhraseSaveFailed(model: M): Next<M, F> {
-        return next(model.copy(isLoading = false))
+        return next(model.copy(
+            isLoading = false,
+            showContactSupport = false
+        ))
     }
 
     override fun onPhraseInvalid(model: M): Next<M, F> {
         return next(
-            model.copy(isLoading = false), setOf<F>(
+            model.copy(
+                isLoading = false,
+                showContactSupport = false
+            ), setOf<F>(
                 F.ErrorShake,
                 F.GoToPhraseError
             )
@@ -188,7 +201,10 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
 
     override fun onShowPhraseFailed(model: M): Next<M, F> {
         return next(
-            model.copy(isLoading = false), setOf<F>(
+            model.copy(
+                isLoading = false,
+                showContactSupport = false
+            ), setOf<F>(
                 F.ErrorShake,
                 F.GoToPhraseError
             )
@@ -211,5 +227,15 @@ object RecoveryKeyUpdate : Update<M, E, F>, RecoveryKeyUpdateSpec {
     override fun onWipeWalletCancelled(model: M): Next<M, F> = when {
         !model.isLoading || model.mode != RecoveryKey.Mode.WIPE -> noChange()
         else -> next(model.copy(isLoading = false))
+    }
+
+    override fun onLoadingCompleteExpected(model: M): Next<M, F> = when {
+        model.mode == RecoveryKey.Mode.RECOVER && model.isLoading ->
+            next(model.copy(showContactSupport = true))
+        else -> noChange()
+    }
+
+    override fun onContactSupportClicked(model: M): Next<M, F> {
+        return dispatch(setOf<F>(F.ContactSupport))
     }
 }

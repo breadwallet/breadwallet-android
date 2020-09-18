@@ -237,4 +237,41 @@ object SupportUtils {
             Toast.makeText(context, NO_EMAIL_APP_ERROR_MESSAGE, Toast.LENGTH_LONG).show()
         }
     }
+
+    fun submitEmailFromOnboarding(context: Context) {
+        val file = FileHelper.saveToExternalStorage(context, LOGS_FILE_NAME, getLogs(context))
+        val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID, file)
+        val emailIntent = Intent(Intent.ACTION_SEND).apply {
+            type = MIME_TYPE
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(ANDROID_TEAM_EMAIL))
+            putExtra(
+                Intent.EXTRA_SUBJECT,
+                String.format(LOGS_EMAIL_SUBJECT, getDeviceId())
+            )
+            putExtra(
+                Intent.EXTRA_TEXT,
+                buildString {
+                    addFeedbackBlock(null)
+                    appendln()
+                    addApplicationBlock(context)
+                    appendln()
+                    addDeviceBlock()
+                }
+            )
+        }
+        try {
+            context.startActivity(
+                Intent.createChooser(
+                    emailIntent,
+                    context.getString(R.string.Receive_share)
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+            )
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(context, NO_EMAIL_APP_ERROR_MESSAGE, Toast.LENGTH_LONG).show()
+        }
+    }
 }

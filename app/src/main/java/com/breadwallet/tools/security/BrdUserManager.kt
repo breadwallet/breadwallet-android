@@ -113,6 +113,7 @@ interface BrdUserManager {
 
     fun getToken(): String?
     fun putToken(token: String)
+    fun removeToken()
 
     fun getBdbJwt(): String?
     fun putBdbJwt(jwt: String, exp: Long)
@@ -202,7 +203,13 @@ class CryptoUserManager(
         checkNotNull(store).edit {
             putBytes(KEY_AUTH_KEY, apiKey.encodeAsPrivate())
         }
-        val creationDate = recoverCreationDate()
+        val creationDate = metaDataProvider.walletInfo()
+            .first()
+            .creationDate
+            .run(::Date)
+        BreadApp.applicationScope.launch {
+            metaDataProvider.recoverAll(true)
+        }
         return initAccount(phrase, creationDate, apiKey)
     }
 
@@ -404,6 +411,12 @@ class CryptoUserManager(
     }
 
     @Synchronized
+    override fun removeToken() {
+        checkNotNull(store).edit { remove(KEY_TOKEN) }
+        token = null
+    }
+
+    @Synchronized
     override fun getBdbJwt() =
         if ((getBdbJwtExp() - JWT_EXP_PADDING_MS) <= System.currentTimeMillis()) {
             null
@@ -575,27 +588,6 @@ class CryptoUserManager(
         )
     }
 
-    private suspend fun recoverCreationDate(): Date {
-        BreadApp.applicationScope.launch {
-            metaDataProvider.recoverAll(true)
-        }
-        // Poll for wallet-info metadata
-        // This is a work-around to avoid blocking until recoverAll(migrate)
-        // recovers *all* metadata
-        return flow {
-            while (true) {
-                metaDataProvider.getWalletInfoUnsafe()?.let {
-                    emit(it)
-                    return@flow
-                }
-                delay(POLL_TIMEOUT_MS)
-            }
-        }
-            .first()
-            .creationDate
-            .run(::Date)
-    }
-
     private fun writeAccount(
         account: Account,
         apiKey: Key,
@@ -653,12 +645,15 @@ class CryptoUserManager(
                 .apply { load(null) }
                 .getKey(BRKeyStore.PHRASE_ALIAS, null)
 
-            // If there is no key, then it has not been initialized yet. The key store is still considered valid.
-            if (key != null) {
-                val cipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM)
-                cipher.init(Cipher.ENCRYPT_MODE, key)
+            when {
+                key != null -> {
+                    val cipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM)
+                    cipher.init(Cipher.ENCRYPT_MODE, key)
+                    true
+                }
+                store?.getBytes(KEY_ACCOUNT, null) != null -> false // key is null when it should not be
+                else -> true // key has not been initialized, the key store is still considered valid
             }
-            true
         }.recoverCatching { e ->
             // If KeyPermanentlyInvalidatedException
             //  -> with no cause happens, then the password was disabled. See DROID-1019.

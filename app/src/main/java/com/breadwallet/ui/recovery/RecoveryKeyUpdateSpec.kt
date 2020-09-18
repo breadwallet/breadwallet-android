@@ -40,6 +40,8 @@ interface RecoveryKeyUpdateSpec {
         RecoveryKey.E.OnRequestWipeWallet -> onRequestWipeWallet(model)
         RecoveryKey.E.OnWipeWalletConfirmed -> onWipeWalletConfirmed(model)
         RecoveryKey.E.OnWipeWalletCancelled -> onWipeWalletCancelled(model)
+        RecoveryKey.E.OnLoadingCompleteExpected -> onLoadingCompleteExpected(model)
+        RecoveryKey.E.OnContactSupportClicked -> onContactSupportClicked(model)
         is RecoveryKey.E.OnWordChanged -> onWordChanged(model, event)
         is RecoveryKey.E.OnWordValidated -> onWordValidated(model, event)
         is RecoveryKey.E.OnPhraseValidated -> onPhraseValidated(model, event)
@@ -70,6 +72,10 @@ interface RecoveryKeyUpdateSpec {
     fun onWipeWalletConfirmed(model: RecoveryKey.M): Next<RecoveryKey.M, RecoveryKey.F>
 
     fun onWipeWalletCancelled(model: RecoveryKey.M): Next<RecoveryKey.M, RecoveryKey.F>
+
+    fun onLoadingCompleteExpected(model: RecoveryKey.M): Next<RecoveryKey.M, RecoveryKey.F>
+
+    fun onContactSupportClicked(model: RecoveryKey.M): Next<RecoveryKey.M, RecoveryKey.F>
 
     fun onWordChanged(model: RecoveryKey.M, event: RecoveryKey.E.OnWordChanged): Next<RecoveryKey.M, RecoveryKey.F>
 

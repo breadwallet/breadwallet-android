@@ -97,7 +97,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
     override fun showHiddenOptions(model: M): Next<M, F> =
         dispatch(setOf(F.GoToSection(SettingsSection.HIDDEN)))
 
-    override fun onBlockchainDataCleared(model: M): Next<M, F> =
+    override fun onCloseHiddenMenu(model: M): Next<M, F> =
         dispatch(setOf(F.RelaunchHomeScreen))
 
     @Suppress("ComplexMethod")
@@ -145,6 +145,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.ENABLE_ALL_WALLETS -> F.EnableAllWallets
                     SettingsOption.CLEAR_BLOCKCHAIN_DATA -> F.ClearBlockchainData
                     SettingsOption.TOGGLE_RATE_APP_PROMPT -> F.ToggleRateAppPrompt
+                    SettingsOption.REFRESH_TOKENS -> F.RefreshTokens
                 }
             )
         )

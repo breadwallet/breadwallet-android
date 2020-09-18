@@ -71,6 +71,7 @@ enum class SettingsOption {
     VIEW_LEGACY_ADDRESS,
     FAST_SYNC_BTC,
     // Hidden
-    CLEAR_BLOCKCHAIN_DATA
+    CLEAR_BLOCKCHAIN_DATA,
+    REFRESH_TOKENS
 }
 
