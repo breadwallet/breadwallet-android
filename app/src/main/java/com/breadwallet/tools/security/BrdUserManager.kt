@@ -203,7 +203,13 @@ class CryptoUserManager(
         checkNotNull(store).edit {
             putBytes(KEY_AUTH_KEY, apiKey.encodeAsPrivate())
         }
-        val creationDate = recoverCreationDate()
+        val creationDate = metaDataProvider.walletInfo()
+            .first()
+            .creationDate
+            .run(::Date)
+        BreadApp.applicationScope.launch {
+            metaDataProvider.recoverAll(true)
+        }
         return initAccount(phrase, creationDate, apiKey)
     }
 
@@ -580,27 +586,6 @@ class CryptoUserManager(
                 else -> return
             }
         )
-    }
-
-    private suspend fun recoverCreationDate(): Date {
-        BreadApp.applicationScope.launch {
-            metaDataProvider.recoverAll(true)
-        }
-        // Poll for wallet-info metadata
-        // This is a work-around to avoid blocking until recoverAll(migrate)
-        // recovers *all* metadata
-        return flow {
-            while (true) {
-                metaDataProvider.getWalletInfoUnsafe()?.let {
-                    emit(it)
-                    return@flow
-                }
-                delay(POLL_TIMEOUT_MS)
-            }
-        }
-            .first()
-            .creationDate
-            .run(::Date)
     }
 
     private fun writeAccount(
