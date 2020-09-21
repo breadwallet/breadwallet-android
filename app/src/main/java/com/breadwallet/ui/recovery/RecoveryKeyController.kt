@@ -157,6 +157,9 @@ class RecoveryKeyController(
         send_button.setOnClickListener {
             output.accept(E.OnNextClicked)
         }
+        buttonContactSupport.setOnClickListener {
+            output.accept(E.OnContactSupportClicked)
+        }
 
         // Bind paste event
         wordInputs.first().addEditTextEventListener { event ->
@@ -212,6 +215,10 @@ class RecoveryKeyController(
         ifChanged(M::isLoading) {
             // TODO: Show loading msg
             loading_view.isVisible = it
+        }
+
+        ifChanged(M::showContactSupport) {
+            buttonContactSupport.isVisible = it
         }
 
         ifChanged(M::errors) { errors ->

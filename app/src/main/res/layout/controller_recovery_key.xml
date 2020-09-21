@@ -20,7 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-
     <ImageButton
         android:id="@+id/faq_button"
         android:layout_width="@dimen/faq_dimen"
@@ -102,13 +101,13 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
+                    android:fontFamily="@font/mobile_font_medium"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word2"
                     android:textAlignment="center"
-                    android:textCursorDrawable="@null"
-                    android:fontFamily="@font/mobile_font_medium"/>
+                    android:textCursorDrawable="@null"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
                     android:layout_width="match_parent"
@@ -125,9 +124,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word2"
@@ -137,8 +134,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word3"
                     android:textAlignment="center"/>
 
@@ -157,9 +154,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word3"
@@ -169,8 +164,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word4"
                     android:textAlignment="center"/>
 
@@ -183,7 +178,6 @@
                     android:text="3"
                     android:textColor="@color/light_gray"/>
             </LinearLayout>
-
         </LinearLayout>
 
         <LinearLayout
@@ -196,9 +190,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word4"
@@ -208,8 +200,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word5"
                     android:textAlignment="center"/>
 
@@ -228,9 +220,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word5"
@@ -240,8 +230,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word6"
                     android:textAlignment="center"/>
 
@@ -260,9 +250,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word6"
@@ -272,8 +260,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word7"
                     android:textAlignment="center"/>
 
@@ -299,9 +287,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word7"
@@ -311,8 +297,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word8"
                     android:textAlignment="center"/>
 
@@ -331,9 +317,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word8"
@@ -343,8 +327,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word9"
                     android:textAlignment="center"/>
 
@@ -363,9 +347,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word9"
@@ -375,8 +357,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word10"
                     android:textAlignment="center"/>
 
@@ -404,9 +386,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word10"
@@ -416,8 +396,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word11"
                     android:textAlignment="center"/>
 
@@ -437,9 +417,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word11"
@@ -449,8 +427,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionNext|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:nextFocusForward="@+id/word12"
                     android:textAlignment="center"/>
 
@@ -470,9 +448,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-
-            >
+                android:weightSum="2">
 
                 <com.breadwallet.legacy.presenter.customviews.BREdit
                     android:id="@+id/word12"
@@ -482,8 +458,8 @@
                     android:layout_weight="0.5"
                     android:backgroundTint="@color/extra_light_gray"
                     android:imeOptions="actionDone|flagNoPersonalizedLearning"
-                    android:maxLines="1"
                     android:inputType="text"
+                    android:maxLines="1"
                     android:textAlignment="center"/>
 
                 <com.breadwallet.legacy.presenter.customviews.BaseTextView
@@ -495,11 +471,8 @@
                     android:text="12"
                     android:textColor="@color/light_gray"/>
             </LinearLayout>
-
         </LinearLayout>
-
     </GridLayout>
-
     <include
         android:id="@+id/loading_view"
         layout="@layout/loading_overlay"
@@ -513,4 +486,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <Button
+        android:id="@+id/buttonContactSupport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@null"
+        android:text="@string/Button.contactSupport.android"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        android:elevation="10dp"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/send_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gridLayout"
+        app:layout_constraintVertical_bias="0"
+        tools:visibility="visible"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

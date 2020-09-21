@@ -25,6 +25,7 @@
 package com.breadwallet.tools.manager
 
 import android.content.Context
+import com.breadwallet.BuildConfig
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
@@ -149,7 +150,9 @@ class RatesFetcher(
             }
         }
 
-        currencyEntities.addAll(getFixedRates())
+        if (BuildConfig.USE_REMOTE_CONFIG) {
+            currencyEntities.addAll(getFixedRates())
+        }
 
         if (currencyEntities.isNotEmpty()) {
             ratesRepo.putCurrencyRates(currencyEntities)

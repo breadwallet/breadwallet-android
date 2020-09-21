@@ -33,7 +33,7 @@ interface SettingsScreenUpdateSpec {
         SettingsScreen.E.OnAuthenticated -> onAuthenticated(model)
         SettingsScreen.E.OnWalletsUpdated -> onWalletsUpdated(model)
         SettingsScreen.E.ShowHiddenOptions -> showHiddenOptions(model)
-        SettingsScreen.E.OnBlockchainDataCleared -> onBlockchainDataCleared(model)
+        SettingsScreen.E.OnCloseHiddenMenu -> onCloseHiddenMenu(model)
         is SettingsScreen.E.OnLinkScanned -> onLinkScanned(model, event)
         is SettingsScreen.E.OnOptionClicked -> onOptionClicked(model, event)
         is SettingsScreen.E.OnOptionsLoaded -> onOptionsLoaded(model, event)
@@ -55,7 +55,7 @@ interface SettingsScreenUpdateSpec {
 
     fun showHiddenOptions(model: SettingsScreen.M): Next<SettingsScreen.M, SettingsScreen.F>
 
-    fun onBlockchainDataCleared(model: SettingsScreen.M): Next<SettingsScreen.M, SettingsScreen.F>
+    fun onCloseHiddenMenu(model: SettingsScreen.M): Next<SettingsScreen.M, SettingsScreen.F>
 
     fun onLinkScanned(model: SettingsScreen.M, event: SettingsScreen.E.OnLinkScanned): Next<SettingsScreen.M, SettingsScreen.F>
 
