@@ -215,6 +215,8 @@
     <string name="CloudBackup.warningBody">Din iCloud-säkerhetskopia raderas efter %1$@ fler felaktiga PIN-försök.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Belopp att sänd:</string>
+    <string name="Confirmation.destinationTag">Mål tag</string>
+    <string name="Confirmation.destinationTag_EmptyHint">(tom)</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Nätverks-avgift</string>
     <!-- Network Fee: (ETH) -->
@@ -522,6 +524,7 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">signaturtypen saknar stöd</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">opålitligt certifikat</string>
+    <string name="Platform.transaction_cancelled">Transaktionen annullerad</string>
     <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
     <string name="Prompts.Email.body">Var först med att få viktiga support- och produktuppdateringar </string>
     <!-- Placeholder text for an email address text field. -->
@@ -794,6 +797,7 @@
     <string name="Segwit.Enable">Aktivera</string>
     <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
     <string name="Segwit.HomeButton">Till månen</string>
+    <string name="Send_fio_toLabel">FIO</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Belopp</string>
     <!-- Balance: $4.00 -->
@@ -818,12 +822,16 @@
     <string name="Send.destinationTag_optional">Destinationstagg (valfritt)</string>
     <!-- Required Destination Tag label -->
     <string name="Send.destinationTag_required">Destinationstagg (obligatoriskt)</string>
+    <string name="Send.destinationTag_required_error">En giltig målmärke krävs för måladressen.</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">Urklipp är tomt</string>
     <!-- "(you) can't send (to your)self" -->
     <string name="Send.ethSendSelf">Kan inte skicka till sig själv.</string>
     <!-- Network Fee: $0.01 -->
     <string name="Send.fee">Nätverksavgift: %1$s</string>
+    <string name="Send.fio_invalid">Ogiltig FIO-adress.</string>
+    <string name="Send.fio_noAddress">Det finns ingen %1$s adress kopplad till denna FIO-adress.</string>
+    <string name="Send.fio_retrievalError">Det gick inte att hämta adressen för den här FIO-adressen. Vänligen försök igen senare.</string>
     <!-- Payee identity not certified alert title. -->
     <string name="Send.identityNotCertified">Betalningsmottagaren är inte certifierad.</string>
     <!-- Insufficient funds error -->
@@ -1109,6 +1117,8 @@
     <!-- Block height and confirmations label -->
     <!--eg. 182930 (45061 confirmations)-->
     <string name="TransactionDetails.confirmationsLabel">Bekräftelser</string>
+    <string name="TransactionDetails.destinationTag">Mål tag</string>
+    <string name="TransactionDetails.destinationTag_EmptyHint">(tom)</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">Dina transaktioner visas här.</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
@@ -1239,6 +1249,12 @@
     <string name="VerifyPin.title">PIN-kod krävs</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">Godkänn denna transaktion</string>
+    <string name="Wallet.one_day">1d</string>
+    <string name="Wallet.one_month">1m</string>
+    <string name="Wallet.one_week">1w</string>
+    <string name="Wallet.one_year">1y</string>
+    <string name="Wallet.three_months">3m</string>
+    <string name="Wallet.three_years">3y</string>
     <!-- Turn off fast sync confirmation question -->
     <string name="WalletConnectionSettings.confirmation">Är du säker på att du vill stänga av Fastsync?</string>
     <!-- Explanation for wallet connection setting -->

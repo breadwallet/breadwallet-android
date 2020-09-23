@@ -215,6 +215,8 @@
     <string name="CloudBackup.warningBody">在尝试了%1$@次不正确的PIN后，您的iCloud备份将被清除。</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">发送金额：</string>
+    <string name="Confirmation.destinationTag">目的地标签</string>
+    <string name="Confirmation.destinationTag_EmptyHint">（空）</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">网络费：</string>
     <!-- Network Fee: (ETH) -->
@@ -522,6 +524,7 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">不受支持的签名类型</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">不可信证书</string>
+    <string name="Platform.transaction_cancelled">交易已取消</string>
     <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
     <string name="Prompts.Email.body">率先接收重要支持和产品更新</string>
     <!-- Placeholder text for an email address text field. -->
@@ -794,6 +797,7 @@
     <string name="Segwit.Enable">启用</string>
     <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
     <string name="Segwit.HomeButton">去月球</string>
+    <string name="Send_fio_toLabel">FIO</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">金额</string>
     <!-- Balance: $4.00 -->
@@ -818,12 +822,16 @@
     <string name="Send.destinationTag_optional">目标标记（可选）</string>
     <!-- Required Destination Tag label -->
     <string name="Send.destinationTag_required">目标标记（必填）</string>
+    <string name="Send.destinationTag_required_error">目标地址需要有效的目标标记。</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">粘贴板为空</string>
     <!-- "(you) can't send (to your)self" -->
     <string name="Send.ethSendSelf">不能发给自己</string>
     <!-- Network Fee: $0.01 -->
     <string name="Send.fee">网络费：%1$s</string>
+    <string name="Send.fio_invalid">无效的FIO地址。</string>
+    <string name="Send.fio_noAddress">没有与此FIO地址关联的%1$s地址。</string>
+    <string name="Send.fio_retrievalError">检索此FIO地址的地址时出错。请稍后再试。</string>
     <!-- Payee identity not certified alert title. -->
     <string name="Send.identityNotCertified">收款人身份未经认证。</string>
     <!-- Insufficient funds error -->
@@ -1109,6 +1117,8 @@
     <!-- Block height and confirmations label -->
     <!--eg. 182930 (45061 confirmations)-->
     <string name="TransactionDetails.confirmationsLabel">确认</string>
+    <string name="TransactionDetails.destinationTag">目的地标签</string>
+    <string name="TransactionDetails.destinationTag_EmptyHint">（空）</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">您的交易将显示在这里。</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
@@ -1239,6 +1249,12 @@
     <string name="VerifyPin.title">PIN 码为必填项</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">授权此交易</string>
+    <string name="Wallet.one_day">1d</string>
+    <string name="Wallet.one_month">1m</string>
+    <string name="Wallet.one_week">1w</string>
+    <string name="Wallet.one_year">1y</string>
+    <string name="Wallet.three_months">3m</string>
+    <string name="Wallet.three_years">3y</string>
     <!-- Turn off fast sync confirmation question -->
     <string name="WalletConnectionSettings.confirmation">您确定要关闭Fastsync吗？</string>
     <!-- Explanation for wallet connection setting -->
