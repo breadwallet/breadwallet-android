@@ -1,8 +1,8 @@
 /**
  * BreadWallet
  *
- * Created by Ahsan Butt <ahsan.butt@breadwallet.com> on 8/1/19.
- * Copyright (c) 2019 breadwallet LLC
+ * Created by Ahsan Butt <ahsan.butt@breadwallet.com> on 9/25/20.
+ * Copyright (c) 2020 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.home
+package com.breadwallet.tools.manager
 
-import com.breadwallet.ui.home.HomeScreen.F
-import com.breadwallet.ui.home.HomeScreen.M
-import com.spotify.mobius.Effects.effects
-import com.spotify.mobius.First.first
-import com.spotify.mobius.Init
+import kotlinx.coroutines.flow.Flow
 
-val HomeScreenInit = Init<M, F> { model ->
-    first(model, effects(
-            F.LoadEnabledWallets,
-            F.LoadSyncStates,
-            F.LoadIsBuyBellNeeded,
-            F.LoadPrompt,
-            F.CheckIfShowBuyAndSell,
-            F.LoadConnectivityState
-    ))
+sealed class ConnectivityState {
+    object Connected : ConnectivityState()
+    object Disconnected : ConnectivityState()
+}
+
+interface ConnectivityStateProvider {
+    fun state() : Flow<ConnectivityState>
+    fun close()
 }

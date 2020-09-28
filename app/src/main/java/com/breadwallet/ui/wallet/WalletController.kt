@@ -124,6 +124,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             Connectable { output ->
                 MetaDataEffectHandler(output, direct.instance(), direct.instance())
             },
+            direct.instance(),
             direct.instance()
         )
 

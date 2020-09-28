@@ -47,7 +47,8 @@ val WalletInit = Init<WalletScreen.M, F> { model ->
             )
         ),
         F.LoadIsTokenSupported(model.currencyCode),
-        F.LoadTransactions(model.currencyCode)
+        F.LoadTransactions(model.currencyCode),
+        F.LoadConnectivityState
     )
     first(model, effects)
 }
