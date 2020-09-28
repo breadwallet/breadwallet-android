@@ -41,6 +41,8 @@ import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.model.PriceChange
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.manager.ConnectivityState
+import com.breadwallet.tools.manager.ConnectivityStateProvider
 import com.breadwallet.tools.manager.MarketDataResult
 import com.breadwallet.tools.manager.RatesFetcher
 import com.breadwallet.tools.util.EventUtils
@@ -72,7 +74,8 @@ object WalletScreenHandler {
         context: Context,
         breadBox: BreadBox,
         metadataEffectHandler: Connectable<MetaDataEffect, MetaDataEvent>,
-        ratesFetcher: RatesFetcher
+        ratesFetcher: RatesFetcher,
+        connectivityStateProvider: ConnectivityStateProvider
     ) = subtypeEffectHandler<F, E> {
         addTransformer(handleLoadPricePerUnit(context))
 
@@ -85,6 +88,7 @@ object WalletScreenHandler {
 
         addTransformer(handleLoadTransactionMetaData(metadataEffectHandler))
         addTransformer(handleLoadTransactionMetaDataSingle(metadataEffectHandler))
+        addTransformer(handleLoadConnectivityState(connectivityStateProvider))
 
         addConsumerSync(Default, ::handleTrackEvent)
         addConsumerSync(Default, ::handleUpdateCryptoPreferred)
@@ -263,6 +267,18 @@ object WalletScreenHandler {
                 .mapLatest {
                     E.OnWalletStateUpdated(it)
                 }
+        }
+
+    private fun handleLoadConnectivityState(connectivityStateProvider: ConnectivityStateProvider) =
+        flowTransformer<F.LoadConnectivityState, E> { effects ->
+            effects
+                .flatMapLatest {
+                    connectivityStateProvider.state()
+                }
+                .mapLatest { state ->
+                    E.OnConnectionUpdated(state == ConnectivityState.Connected)
+                }
+
         }
 
     private fun handleCreateAccount(breadBox: BreadBox): suspend (F.CreateAccount) -> Unit =

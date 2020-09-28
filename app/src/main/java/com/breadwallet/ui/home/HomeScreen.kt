@@ -119,6 +119,7 @@ object HomeScreen {
         object LoadSyncStates : F()
         object LoadIsBuyBellNeeded : F()
         object LoadPrompt : F()
+        object LoadConnectivityState : F()
         object CheckInAppNotification : F()
         object CheckIfShowBuyAndSell : F()
 

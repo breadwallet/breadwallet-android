@@ -38,6 +38,8 @@ import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.repository.MessagesRepository
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.manager.ConnectivityState
+import com.breadwallet.tools.manager.ConnectivityStateProvider
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
@@ -76,7 +78,8 @@ fun createHomeScreenHandler(
     ratesRepo: RatesRepository,
     brdUser: BrdUserManager,
     walletProvider: WalletProvider,
-    accountMetaDataProvider: AccountMetaDataProvider
+    accountMetaDataProvider: AccountMetaDataProvider,
+    connectivityStateProvider: ConnectivityStateProvider
 ) = subtypeEffectHandler<F, E> {
     addConsumer<F.SaveEmail> { effect ->
         UserMetricsUtil.makeEmailOptInRequest(context, effect.email)
@@ -117,6 +120,11 @@ fun createHomeScreenHandler(
                 EventUtils.pushEvent(getPromptName(promptId) + EventUtils.EVENT_PROMPT_SUFFIX_DISPLAYED)
             }
             E.OnPromptLoaded(promptId)
+        }
+    }
+    addTransformer<F.LoadConnectivityState> {
+        connectivityStateProvider.state().mapLatest { state ->
+            E.OnConnectionUpdated(state == ConnectivityState.Connected)
         }
     }
     addConsumer<F.TrackEvent> { effect ->
