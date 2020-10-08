@@ -215,6 +215,8 @@
     <string name="CloudBackup.warningBody">Votre sauvegarde iCloud sera effacée après %1$@ autres tentatives de code PIN incorrectes.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Montant à envoyer :</string>
+    <string name="Confirmation.destinationTag">Balise de destination</string>
+    <string name="Confirmation.destinationTag_EmptyHint">(vide)</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Frais de réseau :</string>
     <!-- Network Fee: (ETH) -->
@@ -522,6 +524,7 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">type de signature non pris en charge</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">certificat non approuvé</string>
+    <string name="Platform.transaction_cancelled">Transaction annulée</string>
     <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
     <string name="Prompts.Email.body">Soyez le premier/la première à recevoir des mises à jour importantes sur l\'assistance et les produits</string>
     <!-- Placeholder text for an email address text field. -->
@@ -794,6 +797,7 @@
     <string name="Segwit.Enable">Activer</string>
     <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
     <string name="Segwit.HomeButton">Vers la Lune</string>
+    <string name="Send_fio_toLabel">FIO</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Montant</string>
     <!-- Balance: $4.00 -->
@@ -818,12 +822,16 @@
     <string name="Send.destinationTag_optional">Étiquette de destination (facultatif)</string>
     <!-- Required Destination Tag label -->
     <string name="Send.destinationTag_required">Étiquette de destination (obligatoire)</string>
+    <string name="Send.destinationTag_required_error">Une balise de destination valide est requise pour l\'adresse cible.</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">Le champ d\'entrée est vide.</string>
     <!-- "(you) can't send (to your)self" -->
     <string name="Send.ethSendSelf">Impossible d\'envoyer à soi-même.</string>
     <!-- Network Fee: $0.01 -->
     <string name="Send.fee">Frais de réseau : %1$s</string>
+    <string name="Send.fio_invalid">Adresse FIO non valide.</string>
+    <string name="Send.fio_noAddress">Aucune adresse %1$s associée à cette adresse FIO.</string>
+    <string name="Send.fio_retrievalError">Une erreur s\'est produite lors de la récupération de l\'adresse de cette adresse FIO. Veuillez réessayer plus tard.</string>
     <!-- Payee identity not certified alert title. -->
     <string name="Send.identityNotCertified">L\'identité du bénéficiaire n\'est pas certifiée.</string>
     <!-- Insufficient funds error -->
@@ -1109,6 +1117,8 @@
     <!-- Block height and confirmations label -->
     <!--eg. 182930 (45061 confirmations)-->
     <string name="TransactionDetails.confirmationsLabel">Confirmations</string>
+    <string name="TransactionDetails.destinationTag">Balise de destination</string>
+    <string name="TransactionDetails.destinationTag_EmptyHint">(vide)</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">Vos transactions apparaîtront ici.</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
@@ -1239,6 +1249,12 @@
     <string name="VerifyPin.title">PIN requis</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">Autoriser cette transaction</string>
+    <string name="Wallet.one_day">1d</string>
+    <string name="Wallet.one_month">1m</string>
+    <string name="Wallet.one_week">1w</string>
+    <string name="Wallet.one_year">1y</string>
+    <string name="Wallet.three_months">3m</string>
+    <string name="Wallet.three_years">3y</string>
     <!-- Turn off fast sync confirmation question -->
     <string name="WalletConnectionSettings.confirmation">Voulez-vous vraiment désactiver Fastsync?</string>
     <!-- Explanation for wallet connection setting -->

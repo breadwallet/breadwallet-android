@@ -215,6 +215,8 @@
     <string name="CloudBackup.warningBody">Your iCloud backup will be erased after %1$@ more incorrect PIN attempts.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Amount to Send:</string>
+    <string name="Confirmation.destinationTag">Destination Tag</string>
+    <string name="Confirmation.destinationTag_EmptyHint">(empty)</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Network Fee:</string>
     <!-- Network Fee: (ETH) -->
@@ -522,6 +524,7 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">unsupported signature type</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">untrusted certificate</string>
+    <string name="Platform.transaction_cancelled">Transaction Cancelled</string>
     <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
     <string name="Prompts.Email.body">Be the first to receive important support and product updates</string>
     <!-- Placeholder text for an email address text field. -->
@@ -794,6 +797,7 @@
     <string name="Segwit.Enable">Enable</string>
     <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
     <string name="Segwit.HomeButton">To the Moon</string>
+    <string name="Send_fio_toLabel">FIO</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Amount</string>
     <!-- Balance: $4.00 -->
@@ -818,12 +822,16 @@
     <string name="Send.destinationTag_optional">Destination Tag (Optional)</string>
     <!-- Required Destination Tag label -->
     <string name="Send.destinationTag_required">Destination Tag (Required)</string>
+    <string name="Send.destinationTag_required_error">A valid Destination Tag is required for the target address.</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">Pasteboard is empty</string>
     <!-- "(you) can't send (to your)self" -->
     <string name="Send.ethSendSelf">Can\'t send to self.</string>
     <!-- Network Fee: $0.01 -->
     <string name="Send.fee">Network Fee: %1$s</string>
+    <string name="Send.fio_invalid">Invalid FIO address.</string>
+    <string name="Send.fio_noAddress">There is no %1$s address associated with this FIO address.</string>
+    <string name="Send.fio_retrievalError">There was an error retrieving the address for this FIO address. Please try again later.</string>
     <!-- Payee identity not certified alert title. -->
     <string name="Send.identityNotCertified">Payee identity isn\'t certified.</string>
     <!-- Insufficient funds error -->
@@ -1109,6 +1117,8 @@
     <!-- Block height and confirmations label -->
     <!--eg. 182930 (45061 confirmations)-->
     <string name="TransactionDetails.confirmationsLabel">Confirmations</string>
+    <string name="TransactionDetails.destinationTag">Destination Tag</string>
+    <string name="TransactionDetails.destinationTag_EmptyHint">(empty)</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">Your transactions will appear here.</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
@@ -1239,6 +1249,12 @@
     <string name="VerifyPin.title">PIN Required</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">Authorize this transaction</string>
+    <string name="Wallet.one_day">1d</string>
+    <string name="Wallet.one_month">1m</string>
+    <string name="Wallet.one_week">1w</string>
+    <string name="Wallet.one_year">1y</string>
+    <string name="Wallet.three_months">3m</string>
+    <string name="Wallet.three_years">3y</string>
     <!-- Turn off fast sync confirmation question -->
     <string name="WalletConnectionSettings.confirmation">Are you sure you want to turn off Fastsync?</string>
     <!-- Explanation for wallet connection setting -->
@@ -1296,60 +1312,4 @@
     <string name="WritePaperPhrase.previous">Previous</string>
     <!-- 1 of 3 -->
     <string name="WritePaperPhrase.step">%1$d of %2$d</string>
-
-    <!-- TODO Missing from native.strings -->
-    <!-- Price Alert List screen title. -->
-    <string name="PriceAlertList.title">Price Alerts</string>
-    <string name="PriceAlertList.priceIncreasedByValue">%1$s is over %2$s</string>
-    <string name="PriceAlertList.priceDecreasedByValue">%1$s is under %2$s</string>
-    <string name="PriceAlertList.percentChanged">%1$s changes %2$s%%</string>
-    <string name="PriceAlertList.percentChangedInDay">%1$s changes %2$s%% in a day</string>
-    <string name="PriceAlertList.percentChangedInDayOrWeek">%1$s changes %2$s%% in a day or week</string>
-    <string name="PriceAlertList.percentIncreased">%1$s increases %2$s%%</string>
-    <string name="PriceAlertList.percentIncreasedInDay">%1$s increases %2$s%% in a day</string>
-    <string name="PriceAlertList.percentIncreasedInDayOrWeek">%1$s increases %2$s%% in a day or week</string>
-    <string name="PriceAlertList.percentDecreased">%1$s decreases %2$s%%</string>
-    <string name="PriceAlertList.percentDecreasedInDay">%1$s decreases %2$s%% in a day</string>
-    <string name="PriceAlertList.percentDecreasedInDayOrWeek">%1$s decreases %2$s%% in a day or week</string>
-    <string name="NewPriceAlert.title">New Price Alert</string>
-    <string name="NewPriceAlert.select">Select</string>
-    <string name="NewPriceAlert.selectCrypto">Select Crypto</string>
-    <string name="NewPriceAlert.selectToCurrency">To Currency</string>
-    <string name="NewPriceAlert.alertWhen">Alert When</string>
-    <string name="NewPriceAlert.priceChangedByValue">Changed</string>
-    <string name="NewPriceAlert.priceChangedByPercent">Changed By %</string>
-    <string name="NewPriceAlert.priceIncreasedByPercent">Increased By %</string>
-    <string name="NewPriceAlert.priceDecreasedByPercent">Decreased By %</string>
-    <string name="NewPriceAlert.value">Value</string>
-    <string name="NewPriceAlert.window">Window</string>
-    <string name="NewPriceAlert.windowAnytime">Anytime</string>
-    <string name="NewPriceAlert.windowInADay">In a Day</string>
-    <string name="NewPriceAlert.windowInADayAndWeek">In a Day and Week</string>
-    <string name="SelectAlertCrypto.title">Select Crypto</string>
-    <string name="SelectForCurrency.title">Select Currency</string>
-    <string name="PriceAlertNotification.title">Price Alert</string>
-    <string name="PriceAlertNotification.channelTitle">Price Alerts</string>
-    <string name="PriceAlertNotification.channelDescription">Price Alerts for your wallets.</string>
-    <string name="PriceAlertNotification.priceTargetUp">%1$s is UP %2$s%% from %3$s to %4$s</string>
-    <string name="PriceAlertNotification.priceTargetDown">%1$s is DOWN %2$s%% from %3$s to %4$s</string>
-    <string name="PriceAlertNotification.percentChangeUp">%1$s is UP %2$s%% from %3$s to %4$s</string>
-    <string name="PriceAlertNotification.percentChangeDown">%1$s is DOWN %2$s%% from %3$s to %4$s</string>
-
-
-    <!-- TODO: Alan - these need translation -->
-    <string name="Wallet.one_day">1d</string>
-    <string name="Wallet.one_week">1w</string>
-    <string name="Wallet.one_month">1m</string>
-    <string name="Wallet.three_months">3m</string>
-    <string name="Wallet.one_year">1y</string>
-    <string name="Wallet.three_years">3y</string>
-
-    <string name="Platform.transaction_cancelled">Transaction Cancelled</string>
-
-    <string name="TransactionDetails.destinationTag">Destination Tag</string>
-    <string name="TransactionDetails.destinationTag_EmptyHint">(empty)</string>
-    <string name="Confirmation.destinationTag">Destination Tag</string>
-    <string name="Confirmation.destinationTag_EmptyHint">(empty)</string>
-    <string name="Send.destinationTag_required_error">A valid Destination Tag is required for the target address.</string>
-
 </resources>

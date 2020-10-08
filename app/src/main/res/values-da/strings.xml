@@ -215,6 +215,8 @@
     <string name="CloudBackup.warningBody">Din iCloud-sikkerhedskopi slettes efter %1$@ flere forkerte PIN-forsøg.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Beløb der skal sendes:</string>
+    <string name="Confirmation.destinationTag">Destinationsmærke</string>
+    <string name="Confirmation.destinationTag_EmptyHint">(tom)</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Netværksgebyr:</string>
     <!-- Network Fee: (ETH) -->
@@ -522,6 +524,7 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">ikke understøttet signaturtype</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">certifikat der ikke er tillid til</string>
+    <string name="Platform.transaction_cancelled">Transaktion annulleret</string>
     <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
     <string name="Prompts.Email.body">Vær den første til at modtage vigtige support- og produktopdateringer</string>
     <!-- Placeholder text for an email address text field. -->
@@ -794,6 +797,7 @@
     <string name="Segwit.Enable">Aktiver</string>
     <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
     <string name="Segwit.HomeButton">Til månen</string>
+    <string name="Send_fio_toLabel">FIO</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Beløb</string>
     <!-- Balance: $4.00 -->
@@ -818,12 +822,16 @@
     <string name="Send.destinationTag_optional">Destinationskode (valgfrit)</string>
     <!-- Required Destination Tag label -->
     <string name="Send.destinationTag_required">Destinationskode (påkrævet)</string>
+    <string name="Send.destinationTag_required_error">Et gyldigt destinationsmærke kræves til måladressen.</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">Tegnebord er tomt</string>
     <!-- "(you) can't send (to your)self" -->
     <string name="Send.ethSendSelf">Kan ikke sende til dig selv.</string>
     <!-- Network Fee: $0.01 -->
     <string name="Send.fee">Netværksafgift: %1$s</string>
+    <string name="Send.fio_invalid">Ugyldig FIO-adresse.</string>
+    <string name="Send.fio_noAddress">Der er ingen %1$s adresse tilknyttet denne FIO-adresse.</string>
+    <string name="Send.fio_retrievalError">Der opstod en fejl under hentning af adressen til denne FIO-adresse. Prøv igen senere.</string>
     <!-- Payee identity not certified alert title. -->
     <string name="Send.identityNotCertified">Betalingsmodtagerens identitet er ikke bekræftet.</string>
     <!-- Insufficient funds error -->
@@ -1109,6 +1117,8 @@
     <!-- Block height and confirmations label -->
     <!--eg. 182930 (45061 confirmations)-->
     <string name="TransactionDetails.confirmationsLabel">Bekræftelser</string>
+    <string name="TransactionDetails.destinationTag">Destinationsmærke</string>
+    <string name="TransactionDetails.destinationTag_EmptyHint">(tom)</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">Dine transaktioner vil vises her.</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
@@ -1239,6 +1249,12 @@
     <string name="VerifyPin.title">PIN påkrævet</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">Godkend denne transaktion</string>
+    <string name="Wallet.one_day">1d</string>
+    <string name="Wallet.one_month">1m</string>
+    <string name="Wallet.one_week">1w</string>
+    <string name="Wallet.one_year">1y</string>
+    <string name="Wallet.three_months">3m</string>
+    <string name="Wallet.three_years">3y</string>
     <!-- Turn off fast sync confirmation question -->
     <string name="WalletConnectionSettings.confirmation">Er du sikker på, at du vil slå Fastsync fra?</string>
     <!-- Explanation for wallet connection setting -->

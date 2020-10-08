@@ -267,6 +267,8 @@ object WalletScreen {
         }
 
         data class CreateAccount(val currencyCode: String) : F()
+
+        object LoadConnectivityState : F()
     }
 }
 

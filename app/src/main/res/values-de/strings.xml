@@ -215,6 +215,8 @@
     <string name="CloudBackup.warningBody">Ihre iCloud-Sicherung wird nach %1$@ mehr falschen PIN-Versuchen gelöscht.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Betrag, welcher versendet werden soll:</string>
+    <string name="Confirmation.destinationTag">Ziel-Tag</string>
+    <string name="Confirmation.destinationTag_EmptyHint">(leer)</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Netzwerkgebühr:</string>
     <!-- Network Fee: (ETH) -->
@@ -522,6 +524,7 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">Nicht unterstützter Signaturtyp</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">Nicht vertrauenswürdiges Zertifikat</string>
+    <string name="Platform.transaction_cancelled">Transaktion abgebrochen</string>
     <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
     <string name="Prompts.Email.body">Erhalten Sie wichtige Hilfe- und Produktupdates als Erster</string>
     <!-- Placeholder text for an email address text field. -->
@@ -794,6 +797,7 @@
     <string name="Segwit.Enable">Aktivieren</string>
     <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
     <string name="Segwit.HomeButton">Zum Mond</string>
+    <string name="Send_fio_toLabel">FIO</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Betrag</string>
     <!-- Balance: $4.00 -->
@@ -818,12 +822,16 @@
     <string name="Send.destinationTag_optional">Ziel-Tag (optional)</string>
     <!-- Required Destination Tag label -->
     <string name="Send.destinationTag_required">Ziel-Tag (erforderlich)</string>
+    <string name="Send.destinationTag_required_error">Für die Zieladresse ist ein gültiges Ziel-Tag erforderlich.</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">Pasteboard ist leer.</string>
     <!-- "(you) can't send (to your)self" -->
     <string name="Send.ethSendSelf">Sie können nichts an sich selbst versenden.</string>
     <!-- Network Fee: $0.01 -->
     <string name="Send.fee">Netzwerkgebühr: %1$s</string>
+    <string name="Send.fio_invalid">Ungültige FIO-Adresse.</string>
+    <string name="Send.fio_noAddress">Dieser FIO-Adresse ist keine %1$s Adresse zugeordnet.</string>
+    <string name="Send.fio_retrievalError">Beim Abrufen der Adresse für diese FIO-Adresse ist ein Fehler aufgetreten. Bitte versuchen Sie es später noch einmal.</string>
     <!-- Payee identity not certified alert title. -->
     <string name="Send.identityNotCertified">die Identität des Zahlungsempfängers ist nicht bestätigt.</string>
     <!-- Insufficient funds error -->
@@ -1109,6 +1117,8 @@
     <!-- Block height and confirmations label -->
     <!--eg. 182930 (45061 confirmations)-->
     <string name="TransactionDetails.confirmationsLabel">Confirmations</string>
+    <string name="TransactionDetails.destinationTag">Ziel-Tag</string>
+    <string name="TransactionDetails.destinationTag_EmptyHint">(leer)</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">Hier werden deine Transaktionen angezeigt.</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
@@ -1239,6 +1249,12 @@
     <string name="VerifyPin.title">PIN erforderlich</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">Diese Transaktion genehmigen</string>
+    <string name="Wallet.one_day">1d</string>
+    <string name="Wallet.one_month">1m</string>
+    <string name="Wallet.one_week">1w</string>
+    <string name="Wallet.one_year">1y</string>
+    <string name="Wallet.three_months">3m</string>
+    <string name="Wallet.three_years">3y</string>
     <!-- Turn off fast sync confirmation question -->
     <string name="WalletConnectionSettings.confirmation">Möchten Sie Fastsync wirklich deaktivieren?</string>
     <!-- Explanation for wallet connection setting -->

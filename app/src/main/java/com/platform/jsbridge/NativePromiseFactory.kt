@@ -133,7 +133,7 @@ class NativePromiseFactory(webView: WebView) {
             """
                 (function() {
                     let callback = window.brdCallbacks["$jsName"]
-                    callback.reject.call(callback.scope, new Error('${e.message}'))
+                    callback.reject.call(callback.scope, new Error('${e.message?.replace("'", "\\'")}'))
                     delete window.brdCallbacks["$jsName"]
                 })()
             """.trimIndent()

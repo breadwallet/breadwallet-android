@@ -215,6 +215,8 @@
     <string name="CloudBackup.warningBody">Ваша резервная копия iCloud будет удалена после еще %1$@ попыток неправильного ввода PIN-кода.</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">Сумма для отправки:</string>
+    <string name="Confirmation.destinationTag">Целевой тег</string>
+    <string name="Confirmation.destinationTag_EmptyHint">(пустой)</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">Комиссия сети:</string>
     <!-- Network Fee: (ETH) -->
@@ -522,6 +524,7 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">неподдерживаемый тип подписи</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">недостоверный сертификат</string>
+    <string name="Platform.transaction_cancelled">Транзакция отменена</string>
     <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
     <string name="Prompts.Email.body">Станьте первым, кто получит существенную поддержку и обновления продукта</string>
     <!-- Placeholder text for an email address text field. -->
@@ -794,6 +797,7 @@
     <string name="Segwit.Enable">Активировать</string>
     <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
     <string name="Segwit.HomeButton">На главный экран</string>
+    <string name="Send_fio_toLabel">FIO</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Сумма</string>
     <!-- Balance: $4.00 -->
@@ -818,12 +822,16 @@
     <string name="Send.destinationTag_optional">Тег назначения (необязательно)</string>
     <!-- Required Destination Tag label -->
     <string name="Send.destinationTag_required">Метка назначения (обязательно)</string>
+    <string name="Send.destinationTag_required_error">Для целевого адреса требуется действительный тег назначения.</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">Буфер обмена пуст</string>
     <!-- "(you) can't send (to your)self" -->
     <string name="Send.ethSendSelf">Не удается отправить себе.</string>
     <!-- Network Fee: $0.01 -->
     <string name="Send.fee">Комиссия сети: %1$s</string>
+    <string name="Send.fio_invalid">Неверный адрес FIO.</string>
+    <string name="Send.fio_noAddress">С этим адресом FIO не связан адрес %1$s .</string>
+    <string name="Send.fio_retrievalError">Произошла ошибка при получении адреса для этого адреса FIO. Пожалуйста, попробуйте позже.</string>
     <!-- Payee identity not certified alert title. -->
     <string name="Send.identityNotCertified">Личность получателя платежа не сертифицирована.</string>
     <!-- Insufficient funds error -->
@@ -1109,6 +1117,8 @@
     <!-- Block height and confirmations label -->
     <!--eg. 182930 (45061 confirmations)-->
     <string name="TransactionDetails.confirmationsLabel">Подтверждений/-ия</string>
+    <string name="TransactionDetails.destinationTag">Целевой тег</string>
+    <string name="TransactionDetails.destinationTag_EmptyHint">(пустой)</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">Ваши транзакции будут отображаться здесь.</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
@@ -1239,6 +1249,12 @@
     <string name="VerifyPin.title">Необходим PIN-код</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">Разрешить эту транзакцию</string>
+    <string name="Wallet.one_day">1d</string>
+    <string name="Wallet.one_month">1m</string>
+    <string name="Wallet.one_week">1w</string>
+    <string name="Wallet.one_year">1y</string>
+    <string name="Wallet.three_months">3m</string>
+    <string name="Wallet.three_years">3y</string>
     <!-- Turn off fast sync confirmation question -->
     <string name="WalletConnectionSettings.confirmation">Вы уверены, что хотите отключить Fastsync?</string>
     <!-- Explanation for wallet connection setting -->

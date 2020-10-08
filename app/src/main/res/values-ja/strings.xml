@@ -215,6 +215,8 @@
     <string name="CloudBackup.warningBody">あなたのiCloudバックアップは、あと%1$@回の間違ったPIN試行の後に消去されます。</string>
     <!-- Amount to Send: ($1.00) -->
     <string name="Confirmation.amountLabel">送る金額：</string>
+    <string name="Confirmation.destinationTag">宛先タグ</string>
+    <string name="Confirmation.destinationTag_EmptyHint">(空)</string>
     <!-- Network Fee: ($1.00) -->
     <string name="Confirmation.feeLabel">ネットワーク手数料：</string>
     <!-- Network Fee: (ETH) -->
@@ -522,6 +524,7 @@
     <string name="PaymentProtocol.Errors.unsupportedSignatureType">サポートされていないタイプの署名です</string>
     <!-- Untrusted certificate payment protocol error message -->
     <string name="PaymentProtocol.Errors.untrustedCertificate">信頼できない証明書</string>
+    <string name="Platform.transaction_cancelled">キャンセルされた取引</string>
     <!-- Body text for a prompt that asks the user to subscribe to email updates to find out product updates. -->
     <string name="Prompts.Email.body">誰よりも早く重要なサポートを受け,製品をアップデートしましょう</string>
     <!-- Placeholder text for an email address text field. -->
@@ -794,6 +797,7 @@
     <string name="Segwit.Enable">有効化する</string>
     <!-- Segwit button label that takes the user back to the home screen once SegWit is enabled. -->
     <string name="Segwit.HomeButton">月へ</string>
+    <string name="Send_fio_toLabel">FIO</string>
     <!-- Send money amount label -->
     <string name="Send.amountLabel">金額</string>
     <!-- Balance: $4.00 -->
@@ -818,12 +822,16 @@
     <string name="Send.destinationTag_optional">宛先タグ（オプション）</string>
     <!-- Required Destination Tag label -->
     <string name="Send.destinationTag_required">宛先タグ（必須）</string>
+    <string name="Send.destinationTag_required_error">ターゲットアドレスには有効な宛先タグが必要です。</string>
     <!-- Emtpy pasteboard error message -->
     <string name="Send.emptyPasteboard">ペーストボードが空です</string>
     <!-- "(you) can't send (to your)self" -->
     <string name="Send.ethSendSelf">自分に送金することはできません。</string>
     <!-- Network Fee: $0.01 -->
     <string name="Send.fee">ネットワーク手数料: %1$s</string>
+    <string name="Send.fio_invalid">無効なFIOアドレス。</string>
+    <string name="Send.fio_noAddress">このFIOアドレスに関連付けられている%1$sアドレスはありません。</string>
+    <string name="Send.fio_retrievalError">このFIOアドレスのアドレスの取得中にエラーが発生しました。後でもう一度やり直してください。</string>
     <!-- Payee identity not certified alert title. -->
     <string name="Send.identityNotCertified">受取人の本人確認が行われていません。</string>
     <!-- Insufficient funds error -->
@@ -1109,6 +1117,8 @@
     <!-- Block height and confirmations label -->
     <!--eg. 182930 (45061 confirmations)-->
     <string name="TransactionDetails.confirmationsLabel">確認</string>
+    <string name="TransactionDetails.destinationTag">宛先タグ</string>
+    <string name="TransactionDetails.destinationTag_EmptyHint">(空)</string>
     <!-- Empty transaction list message. -->
     <string name="TransactionDetails.emptyMessage">あなたの取引はこちらに表示されます。</string>
     <!-- e.g. the users balance after the transaction was compeleted -->
@@ -1239,6 +1249,12 @@
     <string name="VerifyPin.title">PINコードが必要です</string>
     <!-- Authorize transaction with touch id message -->
     <string name="VerifyPin.touchIdMessage">このトランザクションを認証する</string>
+    <string name="Wallet.one_day">1d</string>
+    <string name="Wallet.one_month">1m</string>
+    <string name="Wallet.one_week">1w</string>
+    <string name="Wallet.one_year">1y</string>
+    <string name="Wallet.three_months">3m</string>
+    <string name="Wallet.three_years">3y</string>
     <!-- Turn off fast sync confirmation question -->
     <string name="WalletConnectionSettings.confirmation">Fastsyncをオフにしてもよろしいですか？</string>
     <!-- Explanation for wallet connection setting -->
