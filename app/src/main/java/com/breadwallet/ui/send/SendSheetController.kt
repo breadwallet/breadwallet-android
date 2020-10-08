@@ -137,7 +137,7 @@ class SendSheetController(args: Bundle? = null) :
             metaDataEffectHandler = Connectable {
                 MetaDataEffectHandler(it, direct.instance(), direct.instance())
             },
-            payIdService = direct.instance()
+            addressServiceLocator = direct.instance()
         )
 
     override fun onCreateView(view: View) {
@@ -254,10 +254,12 @@ class SendSheetController(args: Bundle? = null) :
     override fun M.render() {
         val res = checkNotNull(resources)
 
-        ifChanged(M::isPayId, M::isResolvingAddress) {
+        ifChanged(M::addressType, M::isResolvingAddress) {
             addressProgressBar.isVisible = isResolvingAddress
-            if (isPayId) {
-                inputLayoutAddress.hint = res.getString(R.string.Send_payId_toLabel)
+            if (addressType is AddressType.Resolvable) {
+                inputLayoutAddress.hint = res.getString(
+                    if (addressType is AddressType.Resolvable.PayId) R.string.Send_payId_toLabel else R.string.Send_fio_toLabel
+                )
                 inputLayoutAddress.helperText = if (isResolvingAddress) null else {
                     val first = targetAddress.take(RESOLVED_ADDRESS_CHARS)
                     val last = targetAddress.takeLast(RESOLVED_ADDRESS_CHARS)
@@ -289,6 +291,13 @@ class SendSheetController(args: Bundle? = null) :
                     currencyCode.toUpperCase(Locale.ROOT)
                 )
                 is M.InputError.PayIdRetrievalError -> res.getString(R.string.Send_payId_retrievalError)
+                is M.InputError.FioInvalid -> res.getString(R.string.Send_fio_invalid)
+                is M.InputError.FioNoAddress -> res.getString(
+                    R.string.Send_fio_noAddress,
+                    currencyCode.toUpperCase(Locale.ROOT)
+                )
+                is M.InputError.FioRetrievalError -> res.getString(R.string.Send_fio_retrievalError)
+
                 else -> null
             }
         }
@@ -461,12 +470,12 @@ class SendSheetController(args: Bundle? = null) :
                 if ((destinationTag.value.isNullOrBlank() &&
                         !textInputDestinationTag.text.isNullOrBlank()) ||
                     (!destinationTag.value.isNullOrBlank() &&
-                        textInputDestinationTag.text.isNullOrBlank()) || isDestinationTagFromPayId
+                        textInputDestinationTag.text.isNullOrBlank()) || isDestinationTagFromResolvedAddress
                 ) {
                     textInputDestinationTag.setText(currentModel.destinationTag?.value)
                 }
 
-                textInputDestinationTag.isEnabled = !isDestinationTagFromPayId
+                textInputDestinationTag.isEnabled = !isDestinationTagFromResolvedAddress
             }
         }
 

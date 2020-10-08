@@ -55,21 +55,21 @@ fun String?.isPayId() =
         parts.size == 2 && parts[1].isNotBlank()
     } ?: false
 
-class PayIdService(private val httpClient: OkHttpClient) {
+class PayIdService(private val httpClient: OkHttpClient) : AddressResolverService {
 
-    suspend fun getAddress(payId: String, currencyCode: CurrencyCode): PayIdResult {
-        if (!payId.isPayId()) return PayIdResult.InvalidPayId
-        val parts = payId.split(PAY_ID_DELIMITER)
+    override suspend fun resolveAddress(target: String, currencyCode: CurrencyCode, nativeCurrencyCode: CurrencyCode): AddressResult {
+        if (!target.isPayId()) return AddressResult.Invalid
+        val parts = target.split(PAY_ID_DELIMITER)
         val url = "https://${parts[1]}/${parts[0]}"
 
         return try {
             requestAddress(url, currencyCode)?.let {
-                if (it.first.isBlank()) PayIdResult.NoAddress
-                PayIdResult.Success(it.first, it.second)
-            } ?: PayIdResult.NoAddress
+                if (it.first.isBlank()) AddressResult.NoAddress
+                AddressResult.Success(it.first, it.second)
+            } ?: AddressResult.NoAddress
         } catch (ex: Exception) {
             logError("payID: ${ex.message}")
-            PayIdResult.ExternalError
+            AddressResult.ExternalError
         }
     }
 
@@ -139,13 +139,6 @@ class PayIdService(private val httpClient: OkHttpClient) {
         } else {
             payIdCurrency.equals(currencyCode, true)
         }
-}
-
-sealed class PayIdResult {
-    data class Success(val address: String, val destinationTag: String?) : PayIdResult()
-    object InvalidPayId : PayIdResult()
-    object ExternalError : PayIdResult()
-    object NoAddress : PayIdResult()
 }
 
 

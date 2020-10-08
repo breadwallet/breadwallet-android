@@ -1,8 +1,8 @@
 /**
  * BreadWallet
  *
- * Created by Ahsan Butt <ahsan.butt@breadwallet.com> on 8/1/19.
- * Copyright (c) 2019 breadwallet LLC
+ * Created by Ahsan Butt <ahsan.butt@breadwallet.com> on 9/16/20.
+ * Copyright (c) 2020 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.home
+package com.breadwallet.util
 
-import com.breadwallet.ui.home.HomeScreen.F
-import com.breadwallet.ui.home.HomeScreen.M
-import com.spotify.mobius.Effects.effects
-import com.spotify.mobius.First.first
-import com.spotify.mobius.Init
+import com.breadwallet.ui.send.AddressType
 
-val HomeScreenInit = Init<M, F> { model ->
-    first(model, effects(
-            F.LoadEnabledWallets,
-            F.LoadSyncStates,
-            F.LoadIsBuyBellNeeded,
-            F.LoadPrompt,
-            F.CheckIfShowBuyAndSell,
-            F.LoadConnectivityState
-    ))
+sealed class AddressResult {
+    data class Success(val address: String, val destinationTag: String?) : AddressResult()
+    object Invalid : AddressResult()
+    object ExternalError : AddressResult()
+    object NoAddress : AddressResult()
+}
+
+interface AddressResolverService {
+    /** Resolves [target] to an [AddressResult] **/
+    suspend fun resolveAddress(target: String, currencyCode: CurrencyCode, nativeCurrencyCode: CurrencyCode) : AddressResult
+}
+
+class AddressResolverServiceLocator (
+    private val payIdService: PayIdService,
+    private val fioService: FioService
+) {
+
+    /** Returns the appropriate [AddressResolverService] for a given [addressType], null if none found **/
+    fun getService(addressType: AddressType): AddressResolverService? = when (addressType) {
+        is AddressType.Resolvable.PayId -> payIdService
+        is AddressType.Resolvable.Fio -> fioService
+        else -> null
+    }
 }
