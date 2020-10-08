@@ -25,8 +25,8 @@ android {
     ext {
         brdMarketingVersion = 4   // Major version. Usually affected by marketing. Maximum value: 99
         brdProductVersion = 5    // Minor version. Usually affected by product. Maximum value: 99
-        brdEngineeringVersion = 1 // Hot fix version. Usually affected by engineering. Maximum value: 9
-        brdBuildVersion = 3       // Build version. Increase for each new build. Maximum value: 999
+        brdEngineeringVersion = 2 // Hot fix version. Usually affected by engineering. Maximum value: 9
+        brdBuildVersion = 1       // Build version. Increase for each new build. Maximum value: 999
 
         // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
         // relationship between builds with a max value of 2 100 000 000.
