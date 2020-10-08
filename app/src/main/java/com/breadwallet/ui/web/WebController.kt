@@ -222,8 +222,6 @@ class WebController(
             )
             val supportJs = SupportJs(
                 nativePromiseFactory,
-                direct.instance(),
-                direct.instance(),
                 direct.instance()
             )
             val nativeApis = if (BuildConfig.DEBUG) {

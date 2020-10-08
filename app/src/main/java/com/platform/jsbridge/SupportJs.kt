@@ -24,19 +24,19 @@
  */
 package com.platform.jsbridge
 
-import android.content.Context
 import android.webkit.JavascriptInterface
-import com.breadwallet.breadbox.BreadBox
-import com.breadwallet.tools.security.BrdUserManager
-import com.breadwallet.tools.util.SupportUtils
+import com.breadwallet.tools.util.CUSTOM_DATA_KEY_TITLE
+import com.breadwallet.tools.util.DebugInfo
+import com.breadwallet.tools.util.SupportManager
 import org.json.JSONException
 import org.json.JSONObject
 
+private const val SUPPORT_SUBJECT = "BRD Order Inquiry"
+private const val SUPPORT_TEXT = "[Please add any further information about your order that you wish here, otherwise all you need to do is send this email. BRD Support will assist you as soon as possible.]"
+
 class SupportJs(
     private val promise: NativePromiseFactory,
-    private val context: Context,
-    private val breadBox: BreadBox,
-    private val userManager: BrdUserManager
+    private  val supportManager: SupportManager
 ) : JsApi {
 
     @JavascriptInterface
@@ -49,9 +49,16 @@ class SupportJs(
             JSONObject()
         }
         val debugMap = mutableMapOf<String, String>()
+        debugMap[CUSTOM_DATA_KEY_TITLE] = "Order Details"
         debugJson.keys().forEach {
             debugMap[it] = debugJson.getString(it)
         }
-        SupportUtils.submitEmailRequest(context, breadBox, userManager, debugMap)
+        supportManager.submitEmailRequest(
+            subject = SUPPORT_SUBJECT,
+            body =  SUPPORT_TEXT,
+            diagnostics = listOf(DebugInfo.CUSTOM),
+            customData = debugMap,
+            attachLogs = false
+        )
     }
 }

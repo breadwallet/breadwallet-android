@@ -41,8 +41,9 @@ import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
+import com.breadwallet.tools.util.EmailTarget
 import com.breadwallet.tools.util.ServerBundlesHelper
-import com.breadwallet.tools.util.SupportUtils
+import com.breadwallet.tools.util.SupportManager
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.SettingsScreen.E
@@ -69,7 +70,8 @@ class SettingsScreenHandler(
     private val metaDataManager: AccountMetaDataProvider,
     private val userManager: BrdUserManager,
     private val breadBox: BreadBox,
-    private val bdbAuthInterceptor: BdbAuthInterceptor
+    private val bdbAuthInterceptor: BdbAuthInterceptor,
+    private val supportManager: SupportManager
 ) : Connection<F>, CoroutineScope {
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
@@ -80,12 +82,7 @@ class SettingsScreenHandler(
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
             F.SendLogs -> launch(Dispatchers.Main) {
-                SupportUtils.submitEmailRequest(
-                    context,
-                    breadBox,
-                    userManager,
-                    sendToAndroidTeam = true
-                )
+                supportManager.submitEmailRequest(EmailTarget.ANDROID_TEAM)
             }
             is F.SetApiServer -> {
                 if (BuildConfig.DEBUG) {

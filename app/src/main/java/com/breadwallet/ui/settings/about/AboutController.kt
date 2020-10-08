@@ -34,7 +34,8 @@ import com.breadwallet.R
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.tools.util.SupportUtils
+import com.breadwallet.tools.util.EmailTarget
+import com.breadwallet.tools.util.SupportManager
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.home.HomeController
 import kotlinx.android.synthetic.main.controller_about.*
@@ -49,6 +50,7 @@ class AboutController(args: Bundle? = null) : BaseController(args) {
     override val layoutId = R.layout.controller_about
 
     private var versionClickedCount = 0
+    private val supportManager: SupportManager by instance()
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
@@ -69,12 +71,7 @@ class AboutController(args: Bundle? = null) : BaseController(args) {
             versionClickedCount++
             if (versionClickedCount >= VERSION_CLICK_COUNT_FOR_BACKDOOR) {
                 versionClickedCount = 0
-                SupportUtils.submitEmailRequest(
-                    checkNotNull(activity),
-                    direct.instance(),
-                    direct.instance(),
-                    sendToAndroidTeam = true
-                )
+                supportManager.submitEmailRequest(EmailTarget.ANDROID_TEAM)
             }
         }
 
