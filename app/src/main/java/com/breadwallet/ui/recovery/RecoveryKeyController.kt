@@ -91,6 +91,7 @@ class RecoveryKeyController(
     override val flowEffectHandler: FlowTransformer<F, E>
         get() = createRecoveryKeyHandler(
             applicationContext as BreadApp,
+            direct.instance(),
             direct.instance()
         )
 

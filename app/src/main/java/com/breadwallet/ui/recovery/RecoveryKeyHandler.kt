@@ -35,7 +35,9 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.SetupResult
 import com.breadwallet.tools.util.Bip39Reader
-import com.breadwallet.tools.util.SupportUtils
+import com.breadwallet.tools.util.DebugInfo
+import com.breadwallet.tools.util.EmailTarget
+import com.breadwallet.tools.util.SupportManager
 import com.breadwallet.ui.recovery.RecoveryKey.E
 import com.breadwallet.ui.recovery.RecoveryKey.F
 import com.breadwallet.ui.recovery.RecoveryKey.M.Companion.RECOVERY_KEY_WORDS_COUNT
@@ -47,7 +49,8 @@ private const val LOADING_WATCH_DELAY = 8_000L
 
 fun createRecoveryKeyHandler(
     breadApp: BreadApp,
-    userManager: BrdUserManager
+    userManager: BrdUserManager,
+    supportManager: SupportManager
 ) = subtypeEffectHandler<F, E> {
     addFunction<F.Unlink> { effect ->
         val phraseBytes = effect.phrase.asNormalizedString().toByteArray()
@@ -93,7 +96,10 @@ fun createRecoveryKeyHandler(
     }
 
     addAction<F.ContactSupport> {
-        SupportUtils.submitEmailFromOnboarding(breadApp)
+        supportManager.submitEmailRequest(
+            to = EmailTarget.ANDROID_TEAM,
+            diagnostics = listOf(DebugInfo.APPLICATION, DebugInfo.DEVICE)
+        )
     }
 
     addFunction<F.RecoverWallet> { effect ->
