@@ -47,6 +47,7 @@ object TxDetails {
         val isErc20: Boolean = false,
         val cryptoTransferredAmount: BigDecimal = BigDecimal.ZERO,
         val fee: BigDecimal = BigDecimal.ZERO,
+        val feeCurrency: CurrencyCode = "",
         val isReceived: Boolean = false,
         val fiatAmountNow: BigDecimal = BigDecimal.ZERO,
         val gasPrice: BigDecimal = BigDecimal.ZERO,
