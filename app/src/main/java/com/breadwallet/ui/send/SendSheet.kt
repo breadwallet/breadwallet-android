@@ -165,6 +165,9 @@ object SendSheet {
         /** True when a payment request data is being fetched */
         val isFetchingPayment: Boolean = false,
 
+        /**  */
+        val isSendingMax: Boolean = false,
+
         val transferFields: List<TransferField> = emptyList()
     ) {
 
@@ -205,8 +208,7 @@ object SendSheet {
 
         /** True when the necessary inputs to estimate a fee are available. */
         val canEstimateFee: Boolean =
-            targetAddress.isNotBlank() &&
-                balance >= amount &&
+                (balance >= amount || isSendingMax) &&
                 targetInputError == null &&
                 !amount.isZero()
 
@@ -254,7 +256,8 @@ object SendSheet {
                     amount = BigDecimal.ZERO,
                     fiatAmount = BigDecimal.ZERO,
                     isTotalCostOverBalance = false,
-                    amountInputError = null
+                    amountInputError = null,
+                    isSendingMax = false
                 )
             }
             val newAmount: BigDecimal
@@ -292,6 +295,7 @@ object SendSheet {
                 rawAmount = newRawAmount,
                 amount = newAmount,
                 fiatAmount = newFiatAmount,
+                isSendingMax = false,
                 isTotalCostOverBalance = isTotalCostOverBalance,
                 amountInputError = if (isTotalCostOverBalance) {
                     InputError.BalanceTooLow
@@ -361,6 +365,12 @@ object SendSheet {
             ) : OnAmountChange()
         }
 
+        data class OnMaxEstimated(
+            val amount: BigDecimal
+        ) : E()
+
+        object OnMaxEstimateFailed : E()
+
         data class OnTargetStringChanged(
             @Redacted val toAddress: String
         ) : E()
@@ -415,6 +425,7 @@ object SendSheet {
         object OnPasteClicked : E()
         object OnAmountEditClicked : E()
         object OnAmountEditDismissed : E()
+        object OnSendMaxClicked : E()
 
         object OnToggleCurrencyClicked : E()
 
@@ -495,6 +506,12 @@ object SendSheet {
         data class LoadExchangeRate(
             val currencyCode: CurrencyCode,
             val fiatCode: String
+        ) : F()
+
+        data class EstimateMax(
+            val currencyCode: CurrencyCode,
+            @Redacted val address: String,
+            val transferSpeed: TransferSpeed
         ) : F()
 
         data class EstimateFee(
