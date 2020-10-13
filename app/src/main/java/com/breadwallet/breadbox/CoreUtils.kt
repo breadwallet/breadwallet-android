@@ -42,16 +42,15 @@ import com.breadwallet.crypto.TransferFeeBasis
 import com.breadwallet.crypto.Unit
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
-import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.crypto.WalletSweeper
 import com.breadwallet.crypto.errors.AccountInitializationError
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.errors.LimitEstimationError
 import com.breadwallet.crypto.errors.WalletSweeperError
-import com.breadwallet.crypto.utility.CompletionHandler
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.util.asyncApiCall
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isEthereum
@@ -59,14 +58,10 @@ import com.breadwallet.util.isRipple
 import com.google.common.primitives.UnsignedInteger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.mapNotNull
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 /** Default port for [NetworkPeer] */
 private const val DEFAULT_PORT = 8333L
@@ -120,47 +115,20 @@ suspend fun Wallet.estimateFee(
     address: Address,
     amount: Amount,
     networkFee: NetworkFee = walletManager.defaultNetworkFee
-): TransferFeeBasis = suspendCoroutine { continuation ->
-    val handler = object : CompletionHandler<TransferFeeBasis, FeeEstimationError> {
-        override fun handleData(data: TransferFeeBasis) {
-            continuation.resume(data)
-        }
-
-        override fun handleError(error: FeeEstimationError) {
-            continuation.resumeWithException(error)
-        }
-    }
-    estimateFee(address, amount, networkFee, handler)
+): TransferFeeBasis = asyncApiCall<TransferFeeBasis, FeeEstimationError> {
+    estimateFee(address, amount, networkFee, this)
 }
 
 suspend fun WalletManager.createSweeper(
     wallet: Wallet,
     key: Key
-): WalletSweeper = suspendCoroutine { continuation ->
-    val handler = object : CompletionHandler<WalletSweeper, WalletSweeperError> {
-        override fun handleData(sweeper: WalletSweeper) {
-            continuation.resume(sweeper)
-        }
-
-        override fun handleError(error: WalletSweeperError) {
-            continuation.resumeWithException(error)
-        }
-    }
-    createSweeper(wallet, key, handler)
+): WalletSweeper = asyncApiCall<WalletSweeper, WalletSweeperError> {
+    createSweeper(wallet, key, this)
 }
 
 suspend fun WalletSweeper.estimateFee(networkFee: NetworkFee): TransferFeeBasis =
-    suspendCoroutine { continuation ->
-        val handler = object : CompletionHandler<TransferFeeBasis, FeeEstimationError> {
-            override fun handleData(feeBasis: TransferFeeBasis) {
-                continuation.resume(feeBasis)
-            }
-
-            override fun handleError(error: FeeEstimationError) {
-                continuation.resumeWithException(error)
-            }
-        }
-        estimate(networkFee, handler)
+    asyncApiCall<TransferFeeBasis, FeeEstimationError> {
+        estimate(networkFee, this)
     }
 
 fun Wallet.feeForSpeed(speed: TransferSpeed): NetworkFee {
@@ -336,14 +304,6 @@ fun Transfer.getSize(): Double? {
     }
 }
 
-/** Returns a [Flow] providing the default [WalletManagerMode] from [System] for a given [currencyId]. */
-fun Flow<System>.getDefaultWalletManagerMode(currencyId: String): Flow<WalletManagerMode> =
-    mapNotNull { system ->
-        system.networks
-            .find { it.containsCurrency(currencyId) }
-            ?.run { defaultWalletManagerMode }
-    }
-
 /** Returns the default [Unit] for a given [Wallet] */
 val Wallet.defaultUnit: Unit
     get() = walletManager
@@ -362,43 +322,14 @@ suspend fun System.accountInitialize(
     account: Account,
     network: Network,
     create: Boolean
-): ByteArray = suspendCoroutine { continuation ->
-    val handler = object : CompletionHandler<ByteArray, AccountInitializationError> {
-        override fun handleData(data: ByteArray) {
-            continuation.resume(data)
-        }
-
-        override fun handleError(error: AccountInitializationError) {
-            continuation.resumeWithException(error)
-        }
-    }
-    accountInitialize(account, network, create, handler)
+): ByteArray = asyncApiCall<ByteArray, AccountInitializationError> {
+    accountInitialize(account, network, create, this)
 }
 
 suspend fun Wallet.estimateMaximum(
     address: Address,
     networkFee: NetworkFee
-): Amount = suspendCoroutine { continuation ->
-    val handler = object : CompletionHandler<Amount, LimitEstimationError> {
-        override fun handleData(limitMaxAmount: Amount?) {
-            if (limitMaxAmount == null) {
-                continuation.resumeWithException(Exception("Limit Estimation is null"))
-                return
-            }
-            continuation.resume(limitMaxAmount)
-        }
-
-        override fun handleError(error: LimitEstimationError?) {
-            continuation.resumeWithException(
-                error ?: Exception("Unknown Limit Estimation Error")
-            )
-        }
-    }
-
-    estimateLimitMaximum(
-        address,
-        networkFee,
-        handler
-    )
+): Amount = asyncApiCall<Amount, LimitEstimationError> {
+    estimateLimitMaximum(address, networkFee, this)
 }
 
