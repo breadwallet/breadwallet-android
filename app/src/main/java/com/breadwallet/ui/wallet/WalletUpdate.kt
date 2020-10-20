@@ -192,7 +192,7 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
             model.copy(selectedPriceDataPoint = null),
             effects(
                 F.TrackEvent(
-                    String.format(
+                    EventUtils.getEventNameWithCurrencyCode(
                         EventUtils.EVENT_WALLET_CHART_SCRUBBED,
                         model.currencyCode
                     )
@@ -453,7 +453,7 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
             effects(
                 F.LoadChartInterval(event.interval, model.currencyCode),
                 F.TrackEvent(
-                    String.format(
+                    EventUtils.getEventNameWithCurrencyCode(
                         EventUtils.EVENT_WALLET_CHART_AXIS_TOGGLE,
                         model.currencyCode
                     )
