@@ -44,7 +44,7 @@ import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.tools.util.SupportUtils
+import com.breadwallet.tools.util.SupportManager
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.home.HomeScreen.E
@@ -79,7 +79,8 @@ fun createHomeScreenHandler(
     brdUser: BrdUserManager,
     walletProvider: WalletProvider,
     accountMetaDataProvider: AccountMetaDataProvider,
-    connectivityStateProvider: ConnectivityStateProvider
+    connectivityStateProvider: ConnectivityStateProvider,
+    supportManager: SupportManager
 ) = subtypeEffectHandler<F, E> {
     addConsumer<F.SaveEmail> { effect ->
         UserMetricsUtil.makeEmailOptInRequest(context, effect.email)
@@ -214,7 +215,7 @@ fun createHomeScreenHandler(
         AppReviewPromptManager.neverAskAgain()
     }
     addConsumer<F.SubmitSupportForm> { effect ->
-        SupportUtils.submitEmailRequest(context, breadBox, brdUser, feedback = effect.feedback)
+        supportManager.submitEmailRequest(body = effect.feedback)
     }
 }
 

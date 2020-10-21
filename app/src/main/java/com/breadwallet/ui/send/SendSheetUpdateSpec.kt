@@ -42,6 +42,7 @@ interface SendSheetUpdateSpec {
         SendSheet.E.OnAmountEditClicked -> onAmountEditClicked(model)
         SendSheet.E.OnAmountEditDismissed -> onAmountEditDismissed(model)
         SendSheet.E.OnToggleCurrencyClicked -> onToggleCurrencyClicked(model)
+        SendSheet.E.OnSendMaxClicked -> onSendMaxClicked(model)
         is SendSheet.E.OnTransferFieldsUpdated -> onTransferFieldsUpdated(model, event)
         is SendSheet.E.OnRequestScanned -> onRequestScanned(model, event)
         is SendSheet.E.OnExchangeRateUpdated -> onExchangeRateUpdated(model, event)
@@ -57,7 +58,15 @@ interface SendSheetUpdateSpec {
         is SendSheet.E.ConfirmTx -> confirmTx(model, event)
         is SendSheet.E.OnAddressValidated -> onAddressValidated(model, event)
         is SendSheet.E.PaymentProtocol -> paymentProtocol(model, event)
+        is SendSheet.E.OnMaxEstimated -> onMaxEstimated(model, event)
+        SendSheet.E.OnMaxEstimateFailed -> onMaxEstimateFailed(model)
     }
+
+    fun onSendMaxClicked(model: SendSheet.M): Next<SendSheet.M, SendSheet.F>
+
+    fun onMaxEstimated(model: SendSheet.M, event: SendSheet.E.OnMaxEstimated): Next<SendSheet.M, SendSheet.F>
+
+    fun onMaxEstimateFailed(model: SendSheet.M): Next<SendSheet.M, SendSheet.F>
 
     fun onNetworkFeeError(model: SendSheet.M): Next<SendSheet.M, SendSheet.F>
 

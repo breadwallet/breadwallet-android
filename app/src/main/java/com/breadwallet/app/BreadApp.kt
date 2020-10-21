@@ -28,7 +28,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Build
@@ -69,6 +68,7 @@ import com.breadwallet.tools.security.CryptoUserManager
 import com.breadwallet.tools.services.BRDFirebaseMessagingService
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
+import com.breadwallet.tools.util.SupportManager
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.util.AddressResolverServiceLocator
 import com.breadwallet.util.CryptoUriParser
@@ -373,6 +373,14 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
             } else {
                 InternetManager(connectivityManager,this@BreadApp)
             }
+        }
+
+        bind<SupportManager>() with singleton {
+            SupportManager(
+                this@BreadApp,
+                instance(),
+                instance()
+            )
         }
     }
 

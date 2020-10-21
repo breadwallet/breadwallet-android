@@ -68,6 +68,7 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
                 isErc20 = amount.currency.isErc20(),
                 cryptoTransferredAmount = amount.toBigDecimal(wallet.defaultUnit),
                 fee = fee.toBigDecimal(wallet.defaultUnit),
+                feeCurrency = fee.currency.code,
                 isReceived = isReceived(),
                 blockNumber = confirmation.orNull()?.blockNumber?.toInt() ?: 0,
                 toOrFromAddress = when {
