@@ -1,1 +1,3 @@
-include(":app", ":app-core")
+rootProject.name = "breadwallet-android"
+
+include("app", "app-core")

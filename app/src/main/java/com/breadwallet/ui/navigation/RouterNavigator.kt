@@ -35,7 +35,6 @@ import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.logger.logError
-import com.breadwallet.protocols.messageexchange.MessageExchangeService
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
@@ -591,14 +590,6 @@ class RouterNavigator(
                 }
             }
             is Link.WalletPairUrl -> {
-                val context = router.activity!!.applicationContext
-                MessageExchangeService.enqueueWork(
-                    context, MessageExchangeService.createIntent(
-                        context,
-                        MessageExchangeService.ACTION_REQUEST_TO_PAIR,
-                        link.pairingMetaData
-                    )
-                )
                 showLaunchScreen(effect.authenticated)
             }
             else -> {
