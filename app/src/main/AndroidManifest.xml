@@ -127,10 +127,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".legacy.presenter.activities.ConfirmationActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.notification.InAppNotificationActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
