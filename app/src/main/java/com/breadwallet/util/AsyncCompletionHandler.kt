@@ -25,30 +25,32 @@
 package com.breadwallet.util
 
 import com.breadwallet.crypto.utility.CompletionHandler
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.Channel.Factory.RENDEZVOUS
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 
 suspend fun <R, E : Exception> asyncApiCall(
     body: CompletionHandler<R, E>.() -> Unit
 ): R = AsyncCompletionHandler<R, E>().apply(body).await()
 
+private const val VALUE_RECEIVED_ERROR = "A value has already been received."
+
 class AsyncCompletionHandler<R, E : Exception> : CompletionHandler<R, E> {
 
-    private val resultChannel = Channel<R>(RENDEZVOUS)
+    private val result = MutableStateFlow<Pair<R?, E?>?>(null)
 
     override fun handleData(data: R) {
-        check(!resultChannel.isClosedForSend)
-        resultChannel.offer(data)
-        resultChannel.close()
+        check(result.value == null) { VALUE_RECEIVED_ERROR }
+        result.value = data to null
     }
 
     override fun handleError(error: E) {
-        check(!resultChannel.isClosedForSend)
-        resultChannel.close(error)
+        check(result.value == null) { VALUE_RECEIVED_ERROR }
+        result.value = null to error
     }
 
     suspend fun await(): R {
-        check(!resultChannel.isClosedForReceive)
-        return resultChannel.receive()
+        val (data, error) = result.filterNotNull().first()
+        return data ?: throw checkNotNull(error)
     }
 }
