@@ -40,6 +40,7 @@ import com.breadwallet.model.Experiments
 import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
+import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
@@ -62,6 +63,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.util.logging.Level
 import kotlin.text.Charsets.UTF_8
@@ -69,6 +71,7 @@ import kotlin.text.Charsets.UTF_8
 private const val DEVELOPER_OPTIONS_TITLE = "Developer Options"
 private const val DETAILED_LOGGING_MESSAGE = "Detailed logging is enabled for this session."
 private const val CLEAR_BLOCKCHAIN_DATA_MESSAGE = "Clearing blockchain data"
+private const val TEZOS_ID = "tezos-mainnet:__native__"  // TODO: DROID-1854 remove tezos filter
 
 class SettingsScreenHandler(
     private val output: Consumer<E>,
@@ -166,6 +169,23 @@ class SettingsScreenHandler(
                 Logger.setJulLevel(Level.ALL)
                 Main {
                     Toast.makeText(context, DETAILED_LOGGING_MESSAGE, Toast.LENGTH_LONG).show()
+                }
+            }
+            F.CopyPaperKey -> {
+                BreadApp.applicationScope.launch {
+                    val phrase = userManager.getPhrase()?.toString(UTF_8)
+                    withContext(Dispatchers.Main) {
+                        BRClipboardManager.putClipboard(phrase)
+                        Toast.makeText(context, "Paper Key copied!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            F.ToggleTezos -> launch {
+                val enabled = metaDataManager.enabledWallets().first()
+                if (enabled.contains(TEZOS_ID)) {
+                    metaDataManager.disableWallet(TEZOS_ID)
+                } else {
+                    metaDataManager.enableWallet(TEZOS_ID)
                 }
             }
         }
@@ -328,6 +348,10 @@ class SettingsScreenHandler(
         val toggleRateAppPromptAddOn = BRSharedPrefs.appRatePromptShouldPromptDebug
         return listOf(
             SettingsItem(
+                "Copy Paper Key",
+                SettingsOption.COPY_PAPER_KEY
+            ),
+            SettingsItem(
                 "Send Logs",
                 SettingsOption.SEND_LOGS
             ),
@@ -376,6 +400,10 @@ class SettingsScreenHandler(
                 "Toggle Rate App Prompt",
                 SettingsOption.TOGGLE_RATE_APP_PROMPT,
                 addOn = "show=$toggleRateAppPromptAddOn"
+            ),
+            SettingsItem(
+                "Toggle Tezos",
+                SettingsOption.TOGGLE_TEZOS
             )
         ) + getHiddenOptions()
     }

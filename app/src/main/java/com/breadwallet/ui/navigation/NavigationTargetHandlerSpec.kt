@@ -68,6 +68,7 @@ interface NavigationTargetHandlerSpec {
         is NavigationTarget.ATMMap -> aTMMap(effect)
         is NavigationTarget.Signal -> signal(effect)
         NavigationTarget.LogcatViewer -> logcatViewer()
+        is NavigationTarget.XtzStaking -> xtzStaking(effect)
     }
 
     fun logcatViewer()
@@ -153,4 +154,6 @@ interface NavigationTargetHandlerSpec {
     fun aTMMap(effect: NavigationTarget.ATMMap): Unit
 
     fun signal(effect: NavigationTarget.Signal): Unit
+
+    fun xtzStaking(effect: NavigationTarget.XtzStaking)
 }

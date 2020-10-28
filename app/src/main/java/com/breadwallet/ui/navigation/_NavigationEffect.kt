@@ -26,11 +26,7 @@ package com.breadwallet.ui.navigation
 
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.util.isBitcoin
-import com.breadwallet.util.isBitcoinCash
-import com.breadwallet.util.isEthereum
-import com.breadwallet.util.isHedera
-import com.breadwallet.util.isRipple
+import com.breadwallet.util.isErc20
 import com.platform.HTTPServer
 import java.util.Locale
 
@@ -43,17 +39,10 @@ fun NavigationTarget.SupportPage.asSupportUrl() = buildString {
 
         val currencyCode = currencyCode ?: ""
         if (currencyCode.isNotBlank()) {
-            // TODO: Better is Erc20 check
-            val codeOrErc20 = if (
-                currencyCode.isBitcoin()
-                || currencyCode.isEthereum()
-                || currencyCode.isBitcoinCash()
-                || currencyCode.isRipple()
-                || currencyCode.isHedera()
-            ) {
-                currencyCode.toLowerCase(Locale.ROOT)
-            } else {
+            val codeOrErc20 = if (currencyCode.isErc20()) {
                 BRConstants.CURRENCY_ERC20
+            } else {
+                currencyCode.toLowerCase(Locale.ROOT)
             }
 
             append("${UiUtils.CURRENCY_QUERY_STRING}$codeOrErc20")

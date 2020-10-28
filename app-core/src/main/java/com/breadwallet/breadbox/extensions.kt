@@ -57,9 +57,10 @@ fun Wallet.addressFor(address: String): Address? {
 suspend fun Wallet.estimateFee(
     address: Address,
     amount: Amount,
-    networkFee: NetworkFee = walletManager.defaultNetworkFee
+    networkFee: NetworkFee = walletManager.defaultNetworkFee,
+    attrs: Set<TransferAttribute> = emptySet()
 ): TransferFeeBasis = asyncApiCall<TransferFeeBasis, FeeEstimationError> {
-    estimateFee(address, amount, networkFee, this)
+    estimateFee(address, amount, networkFee, attrs, this)
 }
 
 suspend fun WalletManager.createSweeper(wallet: Wallet, key: Key): WalletSweeper =

@@ -77,7 +77,6 @@ import com.breadwallet.util.FioService
 import com.breadwallet.util.PayIdService
 import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isEthereum
-import com.breadwallet.util.trackAddressMismatch
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.platform.APIClient
 import com.platform.HTTPServer
@@ -499,10 +498,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         }
 
         ratesFetcher.start(startedScope)
-
-        applicationScope.launch {
-            trackAddressMismatch(breadBox)
-        }
         
         conversionTracker.start(startedScope)
     }

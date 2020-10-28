@@ -1,8 +1,8 @@
 /**
  * BreadWallet
  *
- * Created by Pablo Budelli <pablo.budelli@breadwallet.com> on 10/17/19.
- * Copyright (c) 2019 breadwallet LLC
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 10/30/20.
+ * Copyright (c) 2020 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,60 +22,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.settings
+package com.breadwallet.ui.staking
 
-enum class SettingsOption {
-    // HOME
-    SCAN_QR,
-    PREFERENCES,
-    SECURITY_SETTINGS,
-    SUPPORT,
-    SUBMIT_REVIEW,
-    REWARDS,
-    ABOUT,
-    ATM_FINDER,
-    DEVELOPER_OPTIONS,
+import com.breadwallet.ui.staking.Staking.F
+import com.breadwallet.ui.staking.Staking.M
+import com.spotify.mobius.First
+import com.spotify.mobius.First.first
+import com.spotify.mobius.Init
 
-    // PREFERENCES
-    CURRENCY,
-    BTC_MENU,
-    BCH_MENU,
-    SHARE_ANONYMOUS_DATA,
-    RESET_DEFAULT_CURRENCIES,
-    NOTIFICATIONS,
-
-    // SECURITY SETTINGS
-    FINGERPRINT_AUTH,
-    UPDATE_PIN,
-    PAPER_KEY,
-    WIPE,
-
-    // DEVELOPER OPTIONS
-    SEND_LOGS,
-    API_SERVER,
-    ONBOARDING_FLOW,
-    WEB_PLAT_DEBUG_URL,
-    WEB_PLAT_BUNDLE,
-    TOKEN_BUNDLE,
-    NATIVE_API_EXPLORER,
-    WIPE_NO_PROMPT,
-    ENABLE_ALL_WALLETS,
-    TOGGLE_RATE_APP_PROMPT,
-    VIEW_LOGS,
-    COPY_PAPER_KEY,
-    TOGGLE_TEZOS,
-
-    // BTC
-    REDEEM_PRIVATE_KEY,
-    SYNC_BLOCKCHAIN_BTC,
-    SYNC_BLOCKCHAIN_BCH,
-    BTC_NODES,
-    ENABLE_SEG_WIT,
-    VIEW_LEGACY_ADDRESS,
-    FAST_SYNC_BTC,
-    // Hidden
-    CLEAR_BLOCKCHAIN_DATA,
-    REFRESH_TOKENS,
-    DETAILED_LOGGING,
+object StakingInit : Init<M, F> {
+    override fun init(model: M): First<M, F> =
+        first(model, setOf(F.LoadAccount))
 }
-

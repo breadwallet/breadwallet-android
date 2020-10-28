@@ -302,12 +302,14 @@ abstract class BaseMobiusController<M, E, F>(
      *
      * [block] supplies the value extracted from [currentModel].
      */
-    inline fun <T> M.ifChanged(
-        crossinline extract: (M) -> T,
+    inline fun <T, reified M2 : M> M2.ifChanged(
+        crossinline extract: (M2) -> T,
         crossinline block: (@ParameterName("value") T) -> Unit
     ) {
         val currentValue = extract(this)
-        val previousValue = previousModel?.let(extract)
+        val previousValue = previousModel?.let { previous ->
+            if (previous is M2) extract(previous)
+        }
         if (currentValue != previousValue) {
             block(currentValue)
         }
@@ -317,15 +319,19 @@ abstract class BaseMobiusController<M, E, F>(
      * Invokes [block] if the result of any extract functions on
      * [this] are not equal to the same function on the [previousModel].
      */
-    inline fun <T1, T2> M.ifChanged(
-        crossinline extract1: (M) -> T1,
-        crossinline extract2: (M) -> T2,
+    inline fun <T1, T2, reified M2 : M> M2.ifChanged(
+        crossinline extract1: (M2) -> T1,
+        crossinline extract2: (M2) -> T2,
         crossinline block: () -> Unit
     ) {
         val currentValue1 = extract1(this)
-        val previousValue1 = previousModel?.let(extract1)
+        val previousValue1 = previousModel?.let { previous ->
+            if (previous is M2) extract1(previous)
+        }
         val currentValue2 = extract2(this)
-        val previousValue2 = previousModel?.let(extract2)
+        val previousValue2 = previousModel?.let { previous ->
+            if (previous is M2) extract2(previous)
+        }
         if (
             currentValue1 != previousValue1 ||
             currentValue2 != previousValue2
@@ -338,18 +344,24 @@ abstract class BaseMobiusController<M, E, F>(
      * Invokes [block] if the result of any extract functions on
      * [this] are not equal to the same function on the [previousModel].
      */
-    inline fun <T1, T2, T3> M.ifChanged(
-        crossinline extract1: (M) -> T1,
-        crossinline extract2: (M) -> T2,
-        crossinline extract3: (M) -> T3,
+    inline fun <T1, T2, T3, reified M2 : M> M2.ifChanged(
+        crossinline extract1: (M2) -> T1,
+        crossinline extract2: (M2) -> T2,
+        crossinline extract3: (M2) -> T3,
         crossinline block: () -> Unit
     ) {
         val currentValue1 = extract1(this)
-        val previousValue1 = previousModel?.let(extract1)
+        val previousValue1 = previousModel?.let { previous ->
+            if (previous is M2) extract1(previous)
+        }
         val currentValue2 = extract2(this)
-        val previousValue2 = previousModel?.let(extract2)
+        val previousValue2 = previousModel?.let { previous ->
+            if (previous is M2) extract2(previous)
+        }
         val currentValue3 = extract3(this)
-        val previousValue3 = previousModel?.let(extract3)
+        val previousValue3 = previousModel?.let { previous ->
+            if (previous is M2) extract3(previous)
+        }
         if (
             currentValue1 != previousValue1 ||
             currentValue2 != previousValue2 ||
@@ -364,21 +376,29 @@ abstract class BaseMobiusController<M, E, F>(
      * [this] are not equal to the same function on the [previousModel].
      */
     @Suppress("ComplexCondition")
-    inline fun <T1, T2, T3, T4> M.ifChanged(
-        crossinline extract1: (M) -> T1,
-        crossinline extract2: (M) -> T2,
-        crossinline extract3: (M) -> T3,
-        crossinline extract4: (M) -> T4,
+    inline fun <T1, T2, T3, T4, reified M2 : M> M2.ifChanged(
+        crossinline extract1: (M2) -> T1,
+        crossinline extract2: (M2) -> T2,
+        crossinline extract3: (M2) -> T3,
+        crossinline extract4: (M2) -> T4,
         crossinline block: () -> Unit
     ) {
         val currentValue1 = extract1(this)
-        val previousValue1 = previousModel?.let(extract1)
+        val previousValue1 = previousModel?.let { previous ->
+            if (previous is M2) extract1(previous)
+        }
         val currentValue2 = extract2(this)
-        val previousValue2 = previousModel?.let(extract2)
+        val previousValue2 = previousModel?.let { previous ->
+            if (previous is M2) extract2(previous)
+        }
         val currentValue3 = extract3(this)
-        val previousValue3 = previousModel?.let(extract3)
+        val previousValue3 = previousModel?.let { previous ->
+            if (previous is M2) extract3(previous)
+        }
         val currentValue4 = extract4(this)
-        val previousValue4 = previousModel?.let(extract4)
+        val previousValue4 = previousModel?.let { previous ->
+            if (previous is M2) extract4(previous)
+        }
         if (
             currentValue1 != previousValue1 ||
             currentValue2 != previousValue2 ||

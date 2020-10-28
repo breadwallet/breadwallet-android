@@ -235,7 +235,8 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
     ): Next<M, F> =
         next(
             model.copy(
-                currencyName = event.name
+                currencyName = event.name,
+                currencyId = event.currencyId
             )
         )
 
