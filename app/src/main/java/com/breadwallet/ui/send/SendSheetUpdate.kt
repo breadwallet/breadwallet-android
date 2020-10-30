@@ -626,8 +626,8 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                 feeCurrencyCode = event.feeCurrencyCode,
                 amount = newAmount,
                 fiatAmount = newFiatAmount,
-                fiatNetworkFee = if (pricePerUnit > BigDecimal.ZERO) {
-                    (model.networkFee * pricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
+                fiatNetworkFee = if (event.fiatPricePerFeeUnit > BigDecimal.ZERO) {
+                    (model.networkFee * event.fiatPricePerFeeUnit).setScale(2, BRConstants.ROUNDING_MODE)
                 } else {
                     model.fiatNetworkFee
                 }
