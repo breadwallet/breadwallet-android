@@ -517,6 +517,9 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
 
     override fun onCreateAccountConfirmationClicked(model: M): Next<M, F> =
         dispatch(effects(F.CreateAccount(model.currencyCode)))
+
+    override fun onStakingCellClicked(model: M): Next<M, F> =
+        dispatch(effects(F.Nav.GoToStaking(model.currencyCode)))
 }
 
 /**

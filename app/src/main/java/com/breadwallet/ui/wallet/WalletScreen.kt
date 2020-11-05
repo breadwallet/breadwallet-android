@@ -175,6 +175,8 @@ object WalletScreen {
         data class OnWalletStateUpdated(val walletState: WalletState) : E()
         object OnCreateAccountClicked : E()
         object OnCreateAccountConfirmationClicked : E()
+
+        object OnStakingCellClicked : E()
     }
 
     sealed class F {

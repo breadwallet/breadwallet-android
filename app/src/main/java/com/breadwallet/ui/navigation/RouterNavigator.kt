@@ -499,10 +499,6 @@ class RouterNavigator(
         )
     }
 
-    override fun xtzStaking(effect: NavigationTarget.XtzStaking) {
-        router.pushController(RouterTransaction.with(XtzStakingController()))
-    }
-
     private inline fun Router.pushWithStackIfEmpty(
         topTransaction: RouterTransaction,
         isAuthenticated: Boolean,
