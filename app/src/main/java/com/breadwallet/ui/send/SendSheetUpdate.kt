@@ -949,20 +949,28 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
     }
 
     override fun onMaxEstimated(model: M, event: E.OnMaxEstimated): Next<M, F> = when {
-        model.isSendingMax -> next(
-            model.copy(
-                amount = event.amount,
-                fiatAmount = event.amount * model.fiatPricePerUnit
-            ),
-            setOf<F>(
-                F.EstimateFee(
-                    model.currencyCode,
-                    model.targetAddress,
-                    event.amount,
-                    model.transferSpeed
+        model.isSendingMax -> {
+            val fiatAmount = (event.amount * model.fiatPricePerUnit).setScale(2, RoundingMode.HALF_DOWN)
+            val amount = event.amount.setScale(MAX_DIGITS, RoundingMode.HALF_DOWN)
+            next(
+                model.copy(
+                    amount = amount,
+                    fiatAmount = fiatAmount,
+                    rawAmount = when {
+                        model.isAmountCrypto -> amount.toPlainString()
+                        else -> fiatAmount.toPlainString()
+                    }
+                ),
+                setOf<F>(
+                    F.EstimateFee(
+                        model.currencyCode,
+                        model.targetAddress,
+                        event.amount,
+                        model.transferSpeed
+                    )
                 )
             )
-        )
+        }
         else -> noChange()
     }
 
