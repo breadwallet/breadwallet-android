@@ -43,7 +43,9 @@ object BrdRelease {
     // The version code must be monotonically increasing. It is used by Android to maintain upgrade/downgrade
     // relationship between builds with a max value of 2 100 000 000.
     const val versionCode = (marketing * 1000000) + (product * 10000) + (engineering * 1000) + build
-    const val versionName = "$marketing.$product.$engineering.$build"
+    const val versionName = "$marketing.$product.$engineering"
+    const val buildVersion = build
+    const val internalVersionName = "$marketing.$product.$engineering.$build"
 
     const val ANDROID_TARGET_SDK = 29
     const val ANDROID_COMPILE_SDK = 29
