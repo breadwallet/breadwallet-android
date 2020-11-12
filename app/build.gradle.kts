@@ -31,7 +31,7 @@ android {
         applicationId = "com.breadwallet"
         minSdkVersion(BrdRelease.ANDROID_MINIMUM_SDK)
         targetSdkVersion(BrdRelease.ANDROID_TARGET_SDK)
-        buildConfigField("int", "BUILD_VERSION", "${BrdRelease.versionCode}")
+        buildConfigField("int", "BUILD_VERSION", "${BrdRelease.buildVersion}")
         buildConfigField("String", "BDB_CLIENT_TOKEN", BDB_CLIENT_TOKEN)
         buildConfigField("Boolean", "USE_REMOTE_CONFIG", useGoogleServices.toString())
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -111,7 +111,7 @@ android {
 
     applicationVariants.all {
         outputs.filterIsInstance<BaseVariantOutputImpl>().forEach { output ->
-            output.outputFileName = "${output.baseName}-${BrdRelease.versionName}.apk"
+            output.outputFileName = "${output.baseName}-${BrdRelease.internalVersionName}.apk"
         }
     }
 
