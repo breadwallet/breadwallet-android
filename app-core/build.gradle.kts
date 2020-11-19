@@ -1,3 +1,6 @@
+import brd.BrdRelease
+import brd.Libs
+
 plugins {
     id("com.android.library")
     kotlin("android")

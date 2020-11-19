@@ -1,3 +1,7 @@
+import brd.BrdRelease
+import brd.DownloadBundles
+import brd.Libs
+import brd.appetize.AppetizePlugin
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.google.firebase.appdistribution.gradle.AppDistributionExtension
 import io.sweers.redacted.gradle.RedactedPluginExtension
@@ -9,6 +13,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.0.1"
 }
 
+plugins.apply(AppetizePlugin::class)
 apply(plugin = "io.sweers.redacted.redacted-plugin")
 apply(from = file("../gradle/google-services.gradle"))
 apply(from = file("../gradle/copy-font-files.gradle"))
@@ -87,7 +92,7 @@ android {
             buildConfigField("boolean", "IS_INTERNAL_BUILD", "false")
             if (useGoogleServices) {
                 configure<AppDistributionExtension> {
-                    releaseNotes = getChangelog()
+                    releaseNotes = brd.getChangelog()
                     groups = "android-team"
                 }
             }
@@ -102,7 +107,7 @@ android {
             buildConfigField("boolean", "IS_INTERNAL_BUILD", "true")
             if (useGoogleServices) {
                 configure<AppDistributionExtension> {
-                    releaseNotes = getChangelog()
+                    releaseNotes = brd.getChangelog()
                     groups = "android-team"
                 }
             }
