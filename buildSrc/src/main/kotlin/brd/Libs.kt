@@ -22,6 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package brd
 
 private const val KOTLIN_VERSION = "1.4.10"
 private const val COROUTINES_VERSION = "1.3.9"
