@@ -143,6 +143,7 @@ dependencies {
 
     // AndroidX
     implementation(Libs.Androidx.LifecycleExtensions)
+    implementation(Libs.Androidx.LifecycleScopeKtx)
     implementation(Libs.Androidx.WorkManagerKtx)
     implementation(Libs.Androidx.CoreKtx)
     implementation(Libs.Androidx.AppCompat)

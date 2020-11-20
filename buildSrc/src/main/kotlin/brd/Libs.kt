@@ -94,6 +94,12 @@ object Libs {
             "androidx.lifecycle"
         )
 
+        val LifecycleScopeKtx = module(
+            "lifecycle-runtime-ktx",
+            LIFECYCLE_EXT_VERSION,
+            "androidx.lifecycle"
+        )
+
         val WorkManagerKtx = module(
             "work-runtime-ktx",
             WORK_MANAGER_VERSION,

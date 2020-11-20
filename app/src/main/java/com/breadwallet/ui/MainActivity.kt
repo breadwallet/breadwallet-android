@@ -24,11 +24,19 @@
  */
 package com.breadwallet.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.security.keystore.UserNotAuthenticatedException
+import android.view.Gravity
 import android.view.MotionEvent
+import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
+import androidx.lifecycle.lifecycleScope
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
@@ -57,14 +65,18 @@ import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
+import com.breadwallet.ui.settings.SettingsController
+import com.breadwallet.ui.settings.SettingsSection
 import com.breadwallet.util.ControllerTrackingListener
 import com.breadwallet.util.errorHandler
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -106,16 +118,18 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         Default + SupervisorJob() + errorHandler("resumedScope")
     )
 
+    private var closeDebugDrawer = { false }
     private var launchedWithInvalidState = false
 
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // The view of this activity is nothing more than a Controller host with animation support
-        setContentView(ChangeHandlerFrameLayout(this).also { view ->
+        val root = ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
             routerNavigator = RouterNavigator { router }
-        })
+        }
+        setContentView(if (BuildConfig.DEBUG) createDebugLayout(root, savedInstanceState) else root)
 
         trackingListener = ControllerTrackingListener(this).also(router::addChangeListener)
 
@@ -175,6 +189,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     override fun onDestroy() {
         super.onDestroy()
+        closeDebugDrawer = { false }
         trackingListener?.run(router::removeChangeListener)
         trackingListener = null
         resumedScope.cancel()
@@ -205,7 +220,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     override fun onBackPressed() {
         // Defer to controller back-press control before exiting.
-        if (!router.handleBack()) {
+        if (!closeDebugDrawer() && !router.handleBack()) {
             super.onBackPressed()
         }
     }
@@ -224,6 +239,48 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
             val isAuthenticated = !isTopLogin && hasRoot
             routerNavigator?.deepLink(NavigationTarget.DeepLink(data, isAuthenticated))
+        }
+    }
+
+    @SuppressLint("RtlHardcoded")
+    private fun createDebugLayout(root: View, bundle: Bundle?): View {
+        val drawerDirection = Gravity.RIGHT
+        val controller = SettingsController(SettingsSection.DEVELOPER_OPTION)
+        return DrawerLayout(this).apply {
+            lifecycleScope.launchWhenCreated {
+                userManager.stateChanges().collect { state ->
+                    val mode = if (state is BrdUserState.Enabled) {
+                        LOCK_MODE_UNLOCKED
+                    } else {
+                        LOCK_MODE_LOCKED_CLOSED
+                    }
+                    setDrawerLockMode(mode, drawerDirection)
+                }
+            }
+            closeDebugDrawer = {
+                isDrawerOpen(drawerDirection).also {
+                    closeDrawer(drawerDirection)
+                }
+            }
+            addView(root, DrawerLayout.LayoutParams(
+                DrawerLayout.LayoutParams.MATCH_PARENT,
+                DrawerLayout.LayoutParams.MATCH_PARENT
+            ))
+            addView(NavigationView(context).apply {
+                addView(ChangeHandlerFrameLayout(context).apply {
+                    id = R.id.drawer_layout_id
+                    Conductor.attachRouter(this@MainActivity, this, bundle)
+                        .setRoot(RouterTransaction.with(controller))
+                }, FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                ))
+            }, DrawerLayout.LayoutParams(
+                DrawerLayout.LayoutParams.WRAP_CONTENT,
+                DrawerLayout.LayoutParams.MATCH_PARENT
+            ).apply {
+                gravity = drawerDirection
+            })
         }
     }
 
