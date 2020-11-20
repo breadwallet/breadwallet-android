@@ -27,12 +27,14 @@ package com.breadwallet.ui.settings
 import android.app.ActivityManager
 import android.content.Context
 import android.security.keystore.UserNotAuthenticatedException
+import android.widget.Toast
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BdbAuthInterceptor
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.logger.Logger
 import com.breadwallet.logger.logDebug
 import com.breadwallet.model.Experiments
 import com.breadwallet.model.TokenItem
@@ -54,14 +56,18 @@ import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.util.logging.Level
 import kotlin.text.Charsets.UTF_8
 
 private const val DEVELOPER_OPTIONS_TITLE = "Developer Options"
+private const val DETAILED_LOGGING_MESSAGE = "Detailed logging is enabled for this session."
 
 class SettingsScreenHandler(
     private val output: Consumer<E>,
@@ -153,6 +159,12 @@ class SettingsScreenHandler(
                 }
                 output.accept(E.OnCloseHiddenMenu)
             }
+            F.DetailedLogging -> launch {
+                Logger.setJulLevel(Level.ALL)
+                Main {
+                    Toast.makeText(context, DETAILED_LOGGING_MESSAGE, Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
@@ -182,6 +194,10 @@ class SettingsScreenHandler(
             SettingsItem(
                 "Clear Blockchain Data",
                 SettingsOption.CLEAR_BLOCKCHAIN_DATA
+            ),
+            SettingsItem(
+                "Enable Detailed Logging",
+                SettingsOption.DETAILED_LOGGING
             )
         )
     }
@@ -354,7 +370,7 @@ class SettingsScreenHandler(
                 SettingsOption.TOGGLE_RATE_APP_PROMPT,
                 addOn = "show=$toggleRateAppPromptAddOn"
             )
-        )
+        ) + getHiddenOptions()
     }
 
     private val btcOptions: List<SettingsItem> =

@@ -72,6 +72,7 @@ enum class SettingsOption {
     FAST_SYNC_BTC,
     // Hidden
     CLEAR_BLOCKCHAIN_DATA,
-    REFRESH_TOKENS
+    REFRESH_TOKENS,
+    DETAILED_LOGGING,
 }
 

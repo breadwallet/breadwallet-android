@@ -146,6 +146,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.CLEAR_BLOCKCHAIN_DATA -> F.ClearBlockchainData
                     SettingsOption.TOGGLE_RATE_APP_PROMPT -> F.ToggleRateAppPrompt
                     SettingsOption.REFRESH_TOKENS -> F.RefreshTokens
+                    SettingsOption.DETAILED_LOGGING -> F.DetailedLogging
                 }
             )
         )
