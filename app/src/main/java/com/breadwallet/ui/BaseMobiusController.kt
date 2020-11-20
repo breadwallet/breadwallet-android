@@ -91,7 +91,9 @@ abstract class BaseMobiusController<M, E, F>(
         SupervisorJob() + Dispatchers.Main + errorHandler("uiBindScope")
     )
 
-    private val routerNavigator = RouterNavigator(::getRouter)
+    private val routerNavigator = RouterNavigator {
+        (checkNotNull(activity) as MainActivity).router
+    }
     private val viewEffectChannel = Channel<ViewEffect>(MAX_QUEUED_VIEW_EFFECTS)
 
     /** The default model used to construct [loopController]. */
