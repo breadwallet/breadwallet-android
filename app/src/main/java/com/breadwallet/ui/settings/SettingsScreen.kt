@@ -79,6 +79,7 @@ object SettingsScreen {
         object ClearBlockchainData : F()
         object ToggleRateAppPrompt : F()
         object RefreshTokens : F()
+        object DetailedLogging : F()
 
         data class SetApiServer(val host: String) : F()
         data class SetPlatformDebugUrl(val url: String) : F()
