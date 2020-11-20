@@ -1,40 +1,59 @@
-![ƀ](/images/icon.png) breadwallet for Android
-----------------------------------
+[![Bread](/images/top-logo.png)](https://play.google.com/store/apps/details?id=com.breadwallet)
 
-[![Get it on Google Play](/images/icon-google-play.png)](https://play.google.com/store/apps/details?id=com.breadwallet)
+BRD is the best way to get started with bitcoin. Our simple, streamlined design is easy for beginners, yet powerful enough for experienced users.
 
-### bitcoin done right
+### Fastsync
+[Fastsync](https://brd.com/blog/fastsync-explained) is a new feature in the BRD app that makes Bitcoin wallets sync in seconds, while also keeping BRD technology ahead of the curve as SPV slowly phases out. When Fastsync is enabled the BRD wallet uses our server technology, [Blockset](https://docs.blockset.com/) to sync, send and receive instantly!
 
-This is the Android port of the breadwallet iOS app, which can be found [here](https://github.com/breadwallet/breadwallet/).
+### Your Decentralized Bitcoin Wallet
 
-### a completely standalone bitcoin wallet
+Unlike other Android bitcoin wallets, **BRD** users have the option to disable Fastsync converting the wallet into a standalone bitcoin client. It connects directly to the bitcoin network using [SPV](https://en.bitcoin.it/wiki/Thin_Client_Security#Header-Only_Clients) mode, and doesn't rely on servers that can be hacked or disabled. If BRD the company disappears, your private key can still be derived from the recovery phrase to recover your funds since your funds exist on the blockchain.
 
-Unlike many other bitcoin wallets, breadwallet is a real standalone bitcoin client. There is no server to get hacked or go down, so you can always access your money. Using [SPV](https://en.bitcoin.it/wiki/Thin_Client_Security#Header-Only_Clients) mode, breadwallet connects directly to the bitcoin network with the fast performance you need on a mobile device.
+### Cutting-edge security
 
-### the next step in wallet security
+**BRD** utilizes the latest Android security features to protect users from malware, browser security holes, and even physical theft. The user’s private key is encrypted using the Android Keystore, inaccessible to anyone other than the user.
 
-breadwallet is designed to protect you from malware, browser security holes, *even physical theft*. With AES hardware encryption, app sandboxing, and verified boot, breadwallet represents a significant security advance over web and desktop wallets.
+### Designed with New Users in Mind
 
-### beautiful simplicity
+Simplicity and ease-of-use is **BRD**'s core design principle. A simple recovery phrase (which we call a recovery key) is all that is needed to restore the user's wallet if they ever lose or replace their device. **BRD** is [deterministic](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki), which means the user's balance and transaction history can be recovered just from the recovery key.
 
-Simplicity is breadwallet's core design principle. A simple backup phrase is all you need to restore your wallet on another device if yours is ever lost or broken.  Because breadwallet is  [deterministic](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki), your balance and transaction history can be recovered from just your backup phrase.
+### Features
 
-## features
+- Supports wallets for Bitcoin, Bitcoin Cash, Ethereum and ERC-20 tokens, Ripple, Hedera, Tezos
+- Single recovery key is all that's needed to backup your wallet
+- Private keys never leave your device and are end-to-end encrypted when using iCloud backup
+- Save a memo for each transaction (off-chain)
 
-- ["simplified payment verification"](https://github.com/bitcoin/bips/blob/master/bip-0037.mediawiki) for fast mobile performance
-- no server to get hacked or go down
-- single backup phrase that works forever
-- private keys never leave your device
-- import [password protected](https://github.com/bitcoin/bips/blob/master/bip-0038.mediawiki) paper wallets
-- ["payment protocol"](https://github.com/bitcoin/bips/blob/master/bip-0070.mediawiki) payee identity certification
+### Bitcoin Specific Features
+- Supports importing [password protected](https://github.com/bitcoin/bips/blob/master/bip-0038.mediawiki) paper wallets
+- Supports [JSON payment protocol](https://bitpay.com/docs/payment-protocol)
+- Supports SegWit and bech32 addresses
 
-## Development setup
+### Localization
+
+**BRD** is available in the following languages:
+
+- Chinese (Simplified and traditional)
+- Danish
+- Dutch
+- English
+- French
+- German
+- Italian
+- Japanese
+- Korean
+- Portuguese
+- Russian
+- Spanish
+- Swedish
+
+## Development Setup
 
 1. Clone the repo: `git clone git@github.com:breadwallet/breadwallet-android.git`
 2. Open `breadwallet-android` in [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) or [Android Studio](https://developer.android.com/studio)
 3. Click Build > Build Project
 
-## Advanced setup
+## Advanced Setup
 
 ### Blockset Client Token
 
@@ -45,3 +64,9 @@ A default token is available for testing.
 
 To enable Firebase services like Crashlytics, add the `google-services.json` file into the `app` directory.
 Without this file, runtime Firebase dependencies are still used but do not start and the Google Services gradle plugin is disabled so builds will succeed.
+
+---
+
+**BRD** is open source and available under the terms of the MIT license.
+
+Source code is available at https://github.com/breadwallet
