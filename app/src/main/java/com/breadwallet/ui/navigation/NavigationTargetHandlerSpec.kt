@@ -67,7 +67,10 @@ interface NavigationTargetHandlerSpec {
         is NavigationTarget.FastSync -> fastSync(effect)
         is NavigationTarget.ATMMap -> aTMMap(effect)
         is NavigationTarget.Signal -> signal(effect)
+        NavigationTarget.LogcatViewer -> logcatViewer()
     }
+
+    fun logcatViewer()
 
     fun back(): Unit
 

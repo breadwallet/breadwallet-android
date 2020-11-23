@@ -147,6 +147,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.TOGGLE_RATE_APP_PROMPT -> F.ToggleRateAppPrompt
                     SettingsOption.REFRESH_TOKENS -> F.RefreshTokens
                     SettingsOption.DETAILED_LOGGING -> F.DetailedLogging
+                    SettingsOption.VIEW_LOGS -> F.ViewLogs
                 }
             )
         )

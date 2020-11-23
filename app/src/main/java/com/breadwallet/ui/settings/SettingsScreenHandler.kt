@@ -68,6 +68,7 @@ import kotlin.text.Charsets.UTF_8
 
 private const val DEVELOPER_OPTIONS_TITLE = "Developer Options"
 private const val DETAILED_LOGGING_MESSAGE = "Detailed logging is enabled for this session."
+private const val CLEAR_BLOCKCHAIN_DATA_MESSAGE = "Clearing blockchain data"
 
 class SettingsScreenHandler(
     private val output: Consumer<E>,
@@ -87,7 +88,7 @@ class SettingsScreenHandler(
         when (value) {
             is F.LoadOptions -> loadOptions(value.section)
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
-            F.SendLogs -> launch(Dispatchers.Main) {
+            F.SendLogs -> launch(Main) {
                 supportManager.submitEmailRequest(EmailTarget.ANDROID_TEAM)
             }
             is F.SetApiServer -> {
@@ -140,12 +141,14 @@ class SettingsScreenHandler(
                     }
             }
             F.ClearBlockchainData -> launch {
-                logDebug("Clearing blockchain data")
+                logDebug(CLEAR_BLOCKCHAIN_DATA_MESSAGE)
                 breadBox.run {
                     close(true)
                     open(checkNotNull(userManager.getAccount()))
                 }
-                output.accept(E.OnCloseHiddenMenu)
+                Main {
+                    Toast.makeText(context, CLEAR_BLOCKCHAIN_DATA_MESSAGE, Toast.LENGTH_LONG).show()
+                }
             }
             F.ToggleRateAppPrompt -> {
                 BRSharedPrefs.appRatePromptShouldPromptDebug =
@@ -327,6 +330,10 @@ class SettingsScreenHandler(
             SettingsItem(
                 "Send Logs",
                 SettingsOption.SEND_LOGS
+            ),
+            SettingsItem(
+                "View Logs",
+                SettingsOption.VIEW_LOGS
             ),
             SettingsItem(
                 "API Server",

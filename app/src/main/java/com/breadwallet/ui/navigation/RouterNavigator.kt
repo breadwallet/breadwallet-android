@@ -64,6 +64,7 @@ import com.breadwallet.ui.settings.analytics.ShareDataController
 import com.breadwallet.ui.settings.currency.DisplayCurrencyController
 import com.breadwallet.ui.settings.fastsync.FastSyncController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
+import com.breadwallet.ui.settings.logview.LogcatController
 import com.breadwallet.ui.settings.nodeselector.NodeSelectorController
 import com.breadwallet.ui.settings.segwit.EnableSegWitController
 import com.breadwallet.ui.settings.segwit.LegacyAddressController
@@ -596,6 +597,12 @@ class RouterNavigator(
                 logError("Failed to route deeplink, going Home.")
                 showLaunchScreen(effect.authenticated)
             }
+        }
+    }
+
+    override fun logcatViewer() {
+        if (router.backstack.none { it.controller() is LogcatController  }) {
+            router.pushController(RouterTransaction.with(LogcatController()))
         }
     }
 }

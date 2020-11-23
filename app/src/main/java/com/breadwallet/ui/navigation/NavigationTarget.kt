@@ -58,6 +58,7 @@ sealed class NavigationTarget {
     object BrdRewards : NavigationTarget()
     object ReviewBrd : NavigationTarget()
     object QRScanner : NavigationTarget()
+    object LogcatViewer : NavigationTarget()
 
     data class DeepLink(
         val url: String? = null,
