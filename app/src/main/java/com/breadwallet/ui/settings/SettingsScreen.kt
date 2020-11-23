@@ -68,6 +68,9 @@ object SettingsScreen {
     sealed class F {
         object SendAtmFinderRequest : F()
         object SendLogs : F()
+        object ViewLogs : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.LogcatViewer
+        }
         object ShowApiServerDialog : F(), ViewEffect
         object ShowPlatformDebugUrlDialog : F(), ViewEffect
         object ShowPlatformBundleDialog : F(), ViewEffect

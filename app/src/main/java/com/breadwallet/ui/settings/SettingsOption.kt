@@ -61,6 +61,7 @@ enum class SettingsOption {
     WIPE_NO_PROMPT,
     ENABLE_ALL_WALLETS,
     TOGGLE_RATE_APP_PROMPT,
+    VIEW_LOGS,
 
     // BTC
     REDEEM_PRIVATE_KEY,
