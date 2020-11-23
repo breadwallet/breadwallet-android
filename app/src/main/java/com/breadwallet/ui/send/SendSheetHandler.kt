@@ -326,7 +326,7 @@ object SendSheetHandler {
         uriParser: CryptoUriParser
     ): suspend (F.ParseClipboardData) -> E = { effect ->
         val text = withContext(Dispatchers.Main) {
-            BRClipboardManager.getClipboard(context)
+            BRClipboardManager.getClipboard()
         }
         validateTargetString(breadBox, uriParser, effect.currencyCode, text, true)
     }

@@ -139,6 +139,7 @@ android {
 
 dependencies {
     implementation(project(":app-core"))
+    implementation(project(":ui:ui-common"))
     implementation(Libs.WalletKit.CoreAndroid)
 
     // AndroidX

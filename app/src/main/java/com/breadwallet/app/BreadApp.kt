@@ -55,6 +55,7 @@ import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.crypto.Base32
 import com.breadwallet.tools.crypto.CryptoHelper
+import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.ConnectivityStateProvider
@@ -399,6 +400,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         mInstance = this
 
         BRKeyStore.provideContext(this)
+        BRClipboardManager.provideContext(this)
         BRSharedPrefs.initialize(this)
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(ApplicationLifecycleObserver())

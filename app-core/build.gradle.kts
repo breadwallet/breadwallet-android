@@ -25,6 +25,8 @@ android {
 
 dependencies {
     implementation(Libs.Kotlin.StdLibJdk8)
+    implementation(Libs.Coroutines.Core)
+    api(Libs.WalletKit.CoreAndroid)
 
     implementation(Libs.Androidx.LifecycleExtensions)
     implementation(Libs.Androidx.AppCompat)

@@ -1,3 +1,7 @@
 rootProject.name = "breadwallet-android"
 
-include("app", "app-core")
+include(
+    "app",
+    "app-core",
+    "ui:ui-common"
+)

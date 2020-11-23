@@ -72,8 +72,6 @@ import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import java.util.concurrent.atomic.AtomicBoolean
 
-interface ViewEffect
-
 private const val MAX_QUEUED_VIEW_EFFECTS = 100
 
 @Suppress("TooManyFunctions")

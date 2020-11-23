@@ -25,11 +25,8 @@
 package com.breadwallet.breadbox
 
 import com.breadwallet.util.isBitcoin
-import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isErc20
 import com.breadwallet.util.isEthereum
-import com.breadwallet.util.isHedera
-import com.breadwallet.util.isRipple
 import java.util.concurrent.TimeUnit
 
 private const val PREFIX_DELIMITER = "-"
