@@ -83,6 +83,8 @@ object SettingsScreen {
         object ToggleRateAppPrompt : F()
         object RefreshTokens : F()
         object DetailedLogging : F()
+        object CopyPaperKey : F()
+        object ToggleTezos : F()
 
         data class SetApiServer(val host: String) : F()
         data class SetPlatformDebugUrl(val url: String) : F()

@@ -43,6 +43,7 @@ object WalletScreen {
 
     data class M(
         val currencyCode: String,
+        val currencyId: String = "",
         val currencyName: String = "",
         @Redacted val address: String = "",
         val fiatPricePerUnit: String = "",
@@ -104,7 +105,7 @@ object WalletScreen {
 
         data class OnQueryChanged(@Redacted val query: String) : E()
 
-        data class OnCurrencyNameUpdated(val name: String) : E()
+        data class OnCurrencyNameUpdated(val name: String, val currencyId: String) : E()
         data class OnBrdRewardsUpdated(val showing: Boolean) : E()
         data class OnBalanceUpdated(val balance: BigDecimal, val fiatBalance: BigDecimal) : E()
 
@@ -174,6 +175,8 @@ object WalletScreen {
         data class OnWalletStateUpdated(val walletState: WalletState) : E()
         object OnCreateAccountClicked : E()
         object OnCreateAccountConfirmationClicked : E()
+
+        object OnStakingCellClicked : E()
     }
 
     sealed class F {
@@ -207,6 +210,12 @@ object WalletScreen {
 
             object GoToBrdRewards : Nav() {
                 override val navigationTarget = NavigationTarget.BrdRewards
+            }
+
+            data class GoToStaking(
+                val currencyId: String
+            ): Nav() {
+                override val navigationTarget = NavigationTarget.Staking(currencyId)
             }
         }
 

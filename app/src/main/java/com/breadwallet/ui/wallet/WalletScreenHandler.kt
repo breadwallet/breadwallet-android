@@ -205,10 +205,11 @@ object WalletScreenHandler {
         flowTransformer<F.LoadCurrencyName, E> { effects ->
             effects
                 .map { effect ->
-                    TokenUtil.tokenForCode(effect.currencyCode)?.name
-                        ?: breadBox.wallet(effect.currencyCode).first().currency.name
+                    val wallet = breadBox.wallet(effect.currencyCode).first()
+                    val name = TokenUtil.tokenForCode(effect.currencyCode)?.name
+                        ?: wallet.currency.name
+                    E.OnCurrencyNameUpdated(name, wallet.currency.uids)
                 }
-                .map { E.OnCurrencyNameUpdated(it) }
         }
 
     private fun handleLoadSyncState(breadBox: BreadBox) =

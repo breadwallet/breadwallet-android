@@ -76,6 +76,7 @@ import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
+import com.breadwallet.ui.staking.StakingController
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.isBrd
 import com.platform.HTTPServer
@@ -601,8 +602,12 @@ class RouterNavigator(
     }
 
     override fun logcatViewer() {
-        if (router.backstack.none { it.controller() is LogcatController  }) {
+        if (router.backstack.none { it.controller() is LogcatController }) {
             router.pushController(RouterTransaction.with(LogcatController()))
         }
+    }
+
+    override fun staking(effect: NavigationTarget.Staking) {
+        router.pushController(RouterTransaction.with(StakingController(effect.currencyId)))
     }
 }

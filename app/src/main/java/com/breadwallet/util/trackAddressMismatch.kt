@@ -64,65 +64,6 @@ fun ByteArray?.pubKeyToEthAddress(): String? = when {
     }
 }
 
-@Suppress("LongMethod", "ReturnCount")
-suspend fun BreadApp.trackAddressMismatch(breadBox: BreadBox) {
-    val userManager by instance<BrdUserManager>()
-    val oldAddressString =
-        (userManager as CryptoUserManager).getEthPublicKey().pubKeyToEthAddress() ?: return
-    val ethWallet = breadBox.wallet(eth).first()
-    val coreAddressOld = ethWallet.addressFor(oldAddressString)
-    if (coreAddressOld == null) {
-        logError("Failed to get core Address for old eth address.")
-        return
-    }
-
-    if (!coreAddressOld.toString().equals(ethWallet.target.toString(), true)) {
-        val oldEthAddress = coreAddressOld.toString()
-        val bdb by instance<BlockchainDb>()
-        val metaDataManager by instance<AccountMetaDataProvider>()
-
-        val ethBalance = try {
-            asyncApiCall<String, QueryError> {
-                bdb.getBalanceAsEth("mainnet", oldEthAddress, this)
-            }
-        } catch (e: QueryError) {
-            logError("Failed to fetch eth balance.", e)
-            "unknown"
-        }
-
-        val tokenBalances = metaDataManager.enabledWallets()
-            .take(1)
-            .flatMapMerge { currencyIds ->
-                currencyIds.asFlow().transform { currencyId ->
-                    val tokenAddress = currencyId.removePrefix("ethereum-mainnet:")
-                    val balance = try {
-                        asyncApiCall<String, QueryError> {
-                            bdb.getBalanceAsTok("mainnet", oldEthAddress, tokenAddress, this)
-                        }
-                    } catch (e: QueryError) {
-                        logError("Failed to fetch token balance", e)
-                        "unknown"
-                    }
-                    val wallet = breadBox.wallets()
-                        .mapNotNull { wallets ->
-                            wallets.firstOrNull { wallet ->
-                                wallet.currencyId.contains(tokenAddress)
-                            }
-                        }
-                        .first()
-                    emit(wallet.currency.code to balance)
-                }
-            }
-            .toList()
-
-        val oldAddressHash = hexEncode(sha256(oldEthAddress.toByteArray()) ?: byteArrayOf())
-        val rewardsId = BRSharedPrefs.getWalletRewardId()
-        val rewardsIdHash = hexEncode(sha256(rewardsId?.toByteArray()) ?: byteArrayOf())
-
-        sendMismatchEvent(oldAddressHash, rewardsIdHash, ethBalance, tokenBalances)
-    }
-}
-
 private fun sendMismatchEvent(
     ethAddressHash: String,
     rewardsIdHash: String,

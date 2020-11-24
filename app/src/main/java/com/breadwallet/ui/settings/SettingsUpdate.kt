@@ -148,6 +148,8 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.REFRESH_TOKENS -> F.RefreshTokens
                     SettingsOption.DETAILED_LOGGING -> F.DetailedLogging
                     SettingsOption.VIEW_LOGS -> F.ViewLogs
+                    SettingsOption.COPY_PAPER_KEY -> F.CopyPaperKey
+                    SettingsOption.TOGGLE_TEZOS -> F.ToggleTezos
                 }
             )
         )

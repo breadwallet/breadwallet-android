@@ -1312,4 +1312,16 @@
     <string name="WritePaperPhrase.previous">Previous</string>
     <!-- 1 of 3 -->
     <string name="WritePaperPhrase.step">%1$d of %2$d</string>
+
+    <!-- Staking cell title on Wallet screen -->
+    <string name="Wallet.stakingTitle">Staking</string>
+    <string name="Staking.title">Stake %1$s</string>
+    <string name="Staking.subTitle">Earn money while holding</string>
+    <string name="Staking.descriptionTezos">Delegate your Tezos account to a validator to earn a reward while keeping full security and control of your coins.</string>
+    <string name="Staking.stake">Stake</string>
+    <string name="Staking.unstake">Unstake</string>
+    <string name="Staking.statusStaked">Staked!</string>
+    <string name="Staking.statusPending">Pending</string>
+    <string name="Staking.changeValidator">Change</string>
+    <string name="Staking.validatorHint">Enter Validator Address</string>
 </resources>

@@ -30,6 +30,7 @@ const val btc = "btc"
 const val eth = "eth"
 const val bch = "bch"
 const val hbar = "hbar"
+const val xtz = "xtz"
 
 object BRConstants {
     /**

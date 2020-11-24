@@ -153,4 +153,8 @@ sealed class NavigationTarget {
         val messageResId: Int,
         val iconResId: Int
     ) : NavigationTarget()
+
+    data class Staking(
+        val currencyId: String
+    ) : NavigationTarget()
 }

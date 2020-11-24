@@ -185,21 +185,12 @@
                 android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <!--android:layout_below="@id/toolbar_layout"-->
-                <LinearLayout
-                    android:id="@+id/list_headers"
+                <include
+                    android:id="@+id/delisted_token_layout"
+                    layout="@layout/view_delisted_token"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <include
-                        android:id="@+id/delisted_token_layout"
-                        layout="@layout/view_delisted_token"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"/>
-
-                </LinearLayout>
+                    android:visibility="gone"/>
 
                 <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:id="@+id/transaction_list_coordinator_layout"

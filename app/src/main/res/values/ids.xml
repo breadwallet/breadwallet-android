@@ -23,4 +23,5 @@
     <item name="transaction_item" type="id"/>
     <item name="syncing_item" type="id"/>
     <item name="drawer_layout_id" type="id"/>
+    <item name="staking_item" type="id"/>
 </resources>
