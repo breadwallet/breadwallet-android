@@ -1,10 +1,8 @@
 /**
  * BreadWallet
  *
- *
  * Created by Ahsan Butt <ahsan.butt@breadwallet.com> on 3/11/20.
  * Copyright (c) 2020 breadwallet LLC
- *
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -13,10 +11,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -28,17 +24,13 @@
  */
 package com.breadwallet.tools.security
 
-sealed class BrdUserState {
-    data class Disabled(
-        val seconds: Int
-    ) : BrdUserState()
-
-    object Enabled : BrdUserState()
-    object Locked : BrdUserState()
-    object Uninitialized : BrdUserState()
-    sealed class KeyStoreInvalid : BrdUserState() {
-        object Wipe : KeyStoreInvalid()
-        object Uninstall : KeyStoreInvalid()
-        object Lock : KeyStoreInvalid()
-    }
+sealed class SetupResult {
+    object Success : SetupResult()
+    object PhraseAlreadyExists : SetupResult()
+    data class FailedToGeneratePhrase(val exception: Exception?) : SetupResult()
+    object FailedToPersistPhrase : SetupResult()
+    object FailedToCreateAccount : SetupResult()
+    object FailedToCreateApiKey : SetupResult()
+    object FailedToCreateValidWallet : SetupResult()
+    data class UnknownFailure(val exception: Exception) : SetupResult()
 }

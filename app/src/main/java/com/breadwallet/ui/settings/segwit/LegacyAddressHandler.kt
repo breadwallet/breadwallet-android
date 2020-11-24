@@ -80,7 +80,7 @@ class LegacyAddressHandler(
         when (effect) {
             is F.CopyAddressToClipboard -> {
                 launch(Dispatchers.Main) {
-                    BRClipboardManager.putClipboard(controller.applicationContext, effect.address)
+                    BRClipboardManager.putClipboard(effect.address)
                     showAddressCopiedAnimation()
                 }
             }

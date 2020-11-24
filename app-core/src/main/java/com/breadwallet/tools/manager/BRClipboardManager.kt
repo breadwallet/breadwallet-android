@@ -1,27 +1,19 @@
-package com.breadwallet.tools.manager;
-
-import android.annotation.SuppressLint;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.ContentResolver;
-import android.content.Context;
-
 /**
  * BreadWallet
- * <p>
+ *
  * Created by Mihail Gutan <mihail@breadwallet.com> on 7/14/15.
  * Copyright (c) 2016 breadwallet LLC
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -30,52 +22,51 @@ import android.content.Context;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.breadwallet.tools.manager
 
-public class BRClipboardManager {
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import java.lang.Exception
+import kotlin.properties.Delegates
 
-    @SuppressLint("NewApi")
-    public static void putClipboard(Context context, String text) {
+object BRClipboardManager {
+    private var context by Delegates.notNull<Context>()
+    private val clipboard by lazy {
+        context.getSystemService(ClipboardManager::class.java)
+    }
+
+    fun provideContext(context: Context) {
+        this.context = context
+    }
+
+    fun putClipboard(text: String?) {
         try {
-            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context
-                    .getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData
-                    .newPlainText("message", text);
-            clipboard.setPrimaryClip(clip);
-        } catch (Exception e) {
-            e.printStackTrace();
+            val clip = ClipData.newPlainText("message", text)
+            clipboard.setPrimaryClip(clip)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    @SuppressLint("NewApi")
-    public static String getClipboard(Context context) {
-        ClipboardManager clipboard = (ClipboardManager) context
-                .getSystemService(Context.CLIPBOARD_SERVICE);
-
+    fun getClipboard(): String {
         // Gets a content resolver instance
-        ContentResolver cr = context.getContentResolver();
+        val cr = context.contentResolver
 
         // Gets the clipboard data from the clipboard
-        ClipData clip = clipboard.getPrimaryClip();
+        val clip = clipboard.primaryClip
         if (clip != null) {
 
             // Gets the first item from the clipboard data
-            ClipData.Item item = clip.getItemAt(0);
-
-            return coerceToText(item).toString();
+            val item = clip.getItemAt(0)
+            return coerceToText(item).toString()
         }
-        return "";
+        return ""
     }
 
-    @SuppressLint("NewApi")
-    private static CharSequence coerceToText(ClipData.Item item) {
+    private fun coerceToText(item: ClipData.Item): CharSequence {
         // If this Item has an explicit textual value, simply return that.
-        CharSequence text = item.getText();
-        if (text != null) {
-            return text;
-        } else {
-            return "no text";
-        }
-
+        val text = item.text
+        return text ?: "no text"
     }
-
 }

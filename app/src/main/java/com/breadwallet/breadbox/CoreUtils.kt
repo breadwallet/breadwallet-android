@@ -27,30 +27,18 @@
 package com.breadwallet.breadbox
 
 import com.breadwallet.BuildConfig
-import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Address
-import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Currency
-import com.breadwallet.crypto.Key
 import com.breadwallet.crypto.Network
 import com.breadwallet.crypto.NetworkFee
 import com.breadwallet.crypto.NetworkPeer
-import com.breadwallet.crypto.System
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferDirection
-import com.breadwallet.crypto.TransferFeeBasis
-import com.breadwallet.crypto.Unit
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerState
-import com.breadwallet.crypto.WalletSweeper
-import com.breadwallet.crypto.errors.AccountInitializationError
-import com.breadwallet.crypto.errors.FeeEstimationError
-import com.breadwallet.crypto.errors.LimitEstimationError
-import com.breadwallet.crypto.errors.WalletSweeperError
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.util.asyncApiCall
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
 import com.breadwallet.util.isEthereum
@@ -66,30 +54,11 @@ import java.util.Locale
 /** Default port for [NetworkPeer] */
 private const val DEFAULT_PORT = 8333L
 
-/** Returns the [Amount] as a [BigDecimal]. */
-fun Amount.toBigDecimal(unit: Unit = this.unit): BigDecimal {
-    return BigDecimal(doubleAmount(unit).or(0.0))
-        .setScale(unit.decimals.toInt(), BRConstants.ROUNDING_MODE)
-}
-
 /** Returns the [Address] string removing any address prefixes. */
 fun Address.toSanitizedString(): String =
     toString()
         .removePrefix("bitcoincash:")
         .removePrefix("bchtest:")
-
-/** True when this is a native currency for the network. */
-fun Currency.isNative() = type.equals("native", true)
-
-/** True when this is an erc20 token for the Ethereum network. */
-fun Currency.isErc20() = type.equals("erc20", true)
-
-/** True when this is Ethereum. */
-fun Currency.isEthereum() = code.isEthereum() && !isErc20()
-
-fun Currency.isBitcoin() = code.isBitcoin()
-
-fun Currency.isBitcoinCash() = code.isBitcoinCash()
 
 /** Returns the [Transfer]'s hash or an empty string. */
 fun Transfer.hashString(): String =
@@ -102,44 +71,24 @@ fun Transfer.hashString(): String =
             }
         }
 
-/** Returns the [Address] object for [address] from the [Wallet]'s [Network]*/
-fun Wallet.addressFor(address: String): Address? {
-    return Address.create(address, walletManager.network).orNull()
-}
-
-/**
- * By default [com.breadwallet.corecrypto.WalletManager.getDefaultNetworkFee]
- * is used for the [networkFee].
- */
-suspend fun Wallet.estimateFee(
-    address: Address,
-    amount: Amount,
-    networkFee: NetworkFee = walletManager.defaultNetworkFee
-): TransferFeeBasis = asyncApiCall<TransferFeeBasis, FeeEstimationError> {
-    estimateFee(address, amount, networkFee, this)
-}
-
-suspend fun WalletManager.createSweeper(
-    wallet: Wallet,
-    key: Key
-): WalletSweeper = asyncApiCall<WalletSweeper, WalletSweeperError> {
-    createSweeper(wallet, key, this)
-}
-
-suspend fun WalletSweeper.estimateFee(networkFee: NetworkFee): TransferFeeBasis =
-    asyncApiCall<TransferFeeBasis, FeeEstimationError> {
-        estimate(networkFee, this)
-    }
-
 fun Wallet.feeForSpeed(speed: TransferSpeed): NetworkFee {
+    if (currency.isTezos()) {
+        return checkNotNull(
+            walletManager.network.fees.minByOrNull {
+                it.confirmationTimeInMilliseconds.toLong()
+            }
+        )
+    }
     val fees = walletManager.network.fees
     return when (fees.size) {
         1 -> fees.single()
         else -> fees
             .filter { it.confirmationTimeInMilliseconds.toLong() <= speed.targetTime }
-            .minBy { fee ->
+            .minByOrNull { fee ->
                 speed.targetTime - fee.confirmationTimeInMilliseconds.toLong()
-            } ?: fees.minBy { it.confirmationTimeInMilliseconds } ?: walletManager.defaultNetworkFee
+            }
+            ?: fees.minByOrNull { it.confirmationTimeInMilliseconds }
+            ?: walletManager.defaultNetworkFee
     }
 }
 
@@ -303,33 +252,3 @@ fun Transfer.getSize(): Double? {
         else -> null
     }
 }
-
-/** Returns the default [Unit] for a given [Wallet] */
-val Wallet.defaultUnit: Unit
-    get() = walletManager
-        .network
-        .defaultUnitFor(currency)
-        .get()
-
-/** Returns the base [Unit] for a given [Wallet] */
-val Wallet.baseUnit: Unit
-    get() = walletManager
-        .network
-        .baseUnitFor(currency)
-        .get()
-
-suspend fun System.accountInitialize(
-    account: Account,
-    network: Network,
-    create: Boolean
-): ByteArray = asyncApiCall<ByteArray, AccountInitializationError> {
-    accountInitialize(account, network, create, this)
-}
-
-suspend fun Wallet.estimateMaximum(
-    address: Address,
-    networkFee: NetworkFee
-): Amount = asyncApiCall<Amount, LimitEstimationError> {
-    estimateLimitMaximum(address, networkFee, this)
-}
-

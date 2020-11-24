@@ -119,7 +119,7 @@ class SendTransactionTest : BaseTestCase() {
                 onScreen<KSendScreen> {
                     val context = InstrumentationRegistry.getInstrumentation().targetContext
                     GlobalScope.launch(Dispatchers.Main) {
-                        BRClipboardManager.putClipboard(context, address)
+                        BRClipboardManager.putClipboard(address)
                     }
 
                     paste.click()

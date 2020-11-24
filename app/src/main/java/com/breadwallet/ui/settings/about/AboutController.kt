@@ -39,7 +39,6 @@ import com.breadwallet.tools.util.SupportManager
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.home.HomeController
 import kotlinx.android.synthetic.main.controller_about.*
-import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.util.Locale
 
@@ -90,7 +89,7 @@ class AboutController(args: Bundle? = null) : BaseController(args) {
 
         brd_rewards_id.text = BRSharedPrefs.getWalletRewardId()
         brd_copy.setOnClickListener {
-            BRClipboardManager.putClipboard(activity, brd_rewards_id.text.toString())
+            BRClipboardManager.putClipboard(brd_rewards_id.text.toString())
             toast(R.string.Receive_copied)
         }
     }

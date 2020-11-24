@@ -82,45 +82,6 @@ private const val JWT_EXP_PADDING_MS = 10_000L
 private const val ANDROID_KEY_STORE = "AndroidKeyStore"
 private const val NEW_CIPHER_ALGORITHM = "AES/GCM/NoPadding"
 
-/** Manages creation, recovery, and access to an [Account]. */
-@Suppress("TooManyFunctions")
-interface BrdUserManager {
-    suspend fun setupWithGeneratedPhrase(): SetupResult
-    suspend fun setupWithPhrase(phrase: ByteArray): SetupResult
-    suspend fun migrateKeystoreData(): Boolean
-
-    suspend fun checkAccountInvalidated()
-
-    fun isInitialized(): Boolean
-    fun getState(): BrdUserState
-    fun stateChanges(disabledUpdates: Boolean = false): Flow<BrdUserState>
-
-    fun isMigrationRequired(): Boolean
-
-    suspend fun getPhrase(): ByteArray?
-    fun getAccount(): Account?
-    fun updateAccount(accountBytes: ByteArray)
-    fun getAuthKey(): ByteArray?
-
-    suspend fun configurePinCode(pinCode: String)
-    suspend fun clearPinCode(phrase: ByteArray)
-    fun verifyPinCode(pinCode: String): Boolean
-    fun hasPinCode(): Boolean
-    fun pinCodeNeedsUpgrade(): Boolean
-
-    fun lock()
-    fun unlock()
-
-    fun getToken(): String?
-    fun putToken(token: String)
-    fun removeToken()
-
-    fun getBdbJwt(): String?
-    fun putBdbJwt(jwt: String, exp: Long)
-
-    fun onActivityResult(requestCode: Int, resultCode: Int)
-}
-
 private const val POLL_ATTEMPTS_MAX = 15
 private const val POLL_TIMEOUT_MS = 1000L
 
