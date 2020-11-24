@@ -27,21 +27,11 @@ package com.breadwallet.ui.navigation
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.tools.util.Link
-import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.auth.AuthenticationController.Mode
 import com.breadwallet.ui.settings.SettingsSection
 import io.sweers.redacted.annotation.Redacted
 
-/**
- * [NavigationEffect] can be applied to a screen specific
- * navigation effect to support [RouterNavigator]
- * without needing to map every effect to a [NavigationTarget].
- */
-interface NavigationEffect : ViewEffect {
-    val navigationTarget: NavigationTarget
-}
-
-sealed class NavigationTarget {
+sealed class NavigationTarget : INavigationTarget {
     data class SendSheet(
         val currencyId: String,
         val cryptoRequest: CryptoRequest? = null,

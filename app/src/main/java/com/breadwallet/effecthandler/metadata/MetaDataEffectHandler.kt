@@ -32,8 +32,7 @@ import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.WalletManagerMode
-import com.breadwallet.ext.bindConsumerIn
-import com.breadwallet.logger.logError
+import com.breadwallet.mobius.bindConsumerIn
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.util.errorHandler
 import com.platform.entities.TxMetaDataValue
@@ -51,7 +50,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach

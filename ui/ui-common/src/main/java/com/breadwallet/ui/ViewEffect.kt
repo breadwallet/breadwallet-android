@@ -24,4 +24,5 @@
  */
 package com.breadwallet.ui
 
+
 interface ViewEffect

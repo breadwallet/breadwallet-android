@@ -93,7 +93,7 @@ import java.util.Locale
 @Suppress("TooManyFunctions")
 class RouterNavigator(
     private val routerProvider: () -> Router
-) : NavigationTargetHandlerSpec, KodeinAware {
+) : Navigator, NavigationTargetHandlerSpec, KodeinAware {
 
     private val router get() = routerProvider()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -105,7 +105,8 @@ class RouterNavigator(
     private val breadBox by instance<BreadBox>()
     private val uriParser by instance<CryptoUriParser>()
 
-    fun navigateTo(target: NavigationTarget) = patch(target)
+    override fun navigateTo(target: INavigationTarget) =
+        patch(target as NavigationTarget)
 
     fun Controller.asTransaction(
         popChangeHandler: ControllerChangeHandler? = FadeChangeHandler(),
