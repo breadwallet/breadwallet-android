@@ -60,9 +60,9 @@ abstract class BaseController(
         SupervisorJob() + Dispatchers.Default + errorHandler("viewCreatedScope")
     )
 
-    /** Provides the root Application Kodein instance. */
+    /** Provides the Activity Kodein instance. */
     override val kodein by closestKodein {
-        checkNotNull(applicationContext) {
+        checkNotNull(activity) {
             "Controller cannot access Kodein bindings until attached to an Activity."
         }
     }

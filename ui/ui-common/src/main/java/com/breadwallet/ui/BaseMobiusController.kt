@@ -26,12 +26,11 @@ package com.breadwallet.ui
 
 import android.os.Bundle
 import android.view.View
-import com.breadwallet.app.BreadApp
 import com.breadwallet.ext.throttleFirst
 import com.breadwallet.mobius.ConsumerDelegate
 import com.breadwallet.mobius.QueuedConsumer
 import com.breadwallet.ui.navigation.NavigationEffect
-import com.breadwallet.ui.navigation.RouterNavigator
+import com.breadwallet.ui.navigation.Navigator
 import com.breadwallet.util.errorHandler
 import com.spotify.mobius.Connectable
 import com.spotify.mobius.Connection
@@ -53,6 +52,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart.ATOMIC
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Unconfined
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -70,6 +70,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
+import org.kodein.di.erased.instance
 import java.util.concurrent.atomic.AtomicBoolean
 
 private const val MAX_QUEUED_VIEW_EFFECTS = 100
@@ -89,9 +90,7 @@ abstract class BaseMobiusController<M, E, F>(
         SupervisorJob() + Dispatchers.Main + errorHandler("uiBindScope")
     )
 
-    private val routerNavigator = RouterNavigator {
-        (checkNotNull(activity) as MainActivity).router
-    }
+    private val navigator by instance<Navigator>()
     private val viewEffectChannel = Channel<ViewEffect>(MAX_QUEUED_VIEW_EFFECTS)
 
     /** The default model used to construct [loopController]. */
@@ -135,7 +134,7 @@ abstract class BaseMobiusController<M, E, F>(
                     connection.dispose()
                     // Dispose any queued effects
                     viewEffectChannel.receiveAsFlow()
-                        .launchIn(BreadApp.applicationScope)
+                        .launchIn(GlobalScope)
                 }
             }
         }
@@ -290,7 +289,7 @@ abstract class BaseMobiusController<M, E, F>(
             .filterIsInstance<NavigationEffect>()
             .throttleFirst(500L)
             .onEach { effect ->
-                routerNavigator.navigateTo(effect.navigationTarget)
+                navigator.navigateTo(effect.navigationTarget)
             }
             .flowOn(Dispatchers.Main)
             .launchIn(viewAttachScope)
@@ -307,9 +306,7 @@ abstract class BaseMobiusController<M, E, F>(
         crossinline block: (@ParameterName("value") T) -> Unit
     ) {
         val currentValue = extract(this)
-        val previousValue = previousModel?.let { previous ->
-            if (previous is M2) extract(previous)
-        }
+        val previousValue = (previousModel as? M2)?.run(extract)
         if (currentValue != previousValue) {
             block(currentValue)
         }
@@ -324,17 +321,9 @@ abstract class BaseMobiusController<M, E, F>(
         crossinline extract2: (M2) -> T2,
         crossinline block: () -> Unit
     ) {
-        val currentValue1 = extract1(this)
-        val previousValue1 = previousModel?.let { previous ->
-            if (previous is M2) extract1(previous)
-        }
-        val currentValue2 = extract2(this)
-        val previousValue2 = previousModel?.let { previous ->
-            if (previous is M2) extract2(previous)
-        }
         if (
-            currentValue1 != previousValue1 ||
-            currentValue2 != previousValue2
+            extract1(this) != (previousModel as? M2)?.run(extract1) ||
+            extract2(this) != (previousModel as? M2)?.run(extract2)
         ) {
             block()
         }
@@ -350,22 +339,10 @@ abstract class BaseMobiusController<M, E, F>(
         crossinline extract3: (M2) -> T3,
         crossinline block: () -> Unit
     ) {
-        val currentValue1 = extract1(this)
-        val previousValue1 = previousModel?.let { previous ->
-            if (previous is M2) extract1(previous)
-        }
-        val currentValue2 = extract2(this)
-        val previousValue2 = previousModel?.let { previous ->
-            if (previous is M2) extract2(previous)
-        }
-        val currentValue3 = extract3(this)
-        val previousValue3 = previousModel?.let { previous ->
-            if (previous is M2) extract3(previous)
-        }
         if (
-            currentValue1 != previousValue1 ||
-            currentValue2 != previousValue2 ||
-            currentValue3 != previousValue3
+            extract1(this) != (previousModel as? M2)?.run(extract1) ||
+            extract2(this) != (previousModel as? M2)?.run(extract2) ||
+            extract3(this) != (previousModel as? M2)?.run(extract3)
         ) {
             block()
         }
@@ -383,27 +360,11 @@ abstract class BaseMobiusController<M, E, F>(
         crossinline extract4: (M2) -> T4,
         crossinline block: () -> Unit
     ) {
-        val currentValue1 = extract1(this)
-        val previousValue1 = previousModel?.let { previous ->
-            if (previous is M2) extract1(previous)
-        }
-        val currentValue2 = extract2(this)
-        val previousValue2 = previousModel?.let { previous ->
-            if (previous is M2) extract2(previous)
-        }
-        val currentValue3 = extract3(this)
-        val previousValue3 = previousModel?.let { previous ->
-            if (previous is M2) extract3(previous)
-        }
-        val currentValue4 = extract4(this)
-        val previousValue4 = previousModel?.let { previous ->
-            if (previous is M2) extract4(previous)
-        }
         if (
-            currentValue1 != previousValue1 ||
-            currentValue2 != previousValue2 ||
-            currentValue3 != previousValue3 ||
-            currentValue4 != previousValue4
+            extract1(this) != (previousModel as? M2)?.run(extract1) ||
+            extract2(this) != (previousModel as? M2)?.run(extract2) ||
+            extract3(this) != (previousModel as? M2)?.run(extract3) ||
+            extract4(this) != (previousModel as? M2)?.run(extract4)
         ) {
             block()
         }

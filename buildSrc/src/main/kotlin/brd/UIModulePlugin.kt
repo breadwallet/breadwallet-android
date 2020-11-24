@@ -34,11 +34,18 @@ class UIModulePlugin : Plugin<Project> {
         project.extensions.add(UIModuleExtension::class.java, "UIModule", uiModule)
         project.configureAndroidLibrary(uiModule.basePackage) {
             val uiCommonProject = project(":ui:ui-common")
-            if (project.path != uiCommonProject.dependencyProject.path) {
+            val uiNavigationProject = project(":ui:ui-navigation")
+            if (project.path != uiCommonProject.dependencyProject.path &&
+                project.path != uiNavigationProject.dependencyProject.path) {
                 add("implementation", uiCommonProject)
             }
             add("implementation", Libs.Mobius.Core)
             add("implementation", Libs.Mobius.Coroutines)
+            add("implementation", Libs.Mobius.Android)
+            add("implementation", Libs.Conductor.Core)
+            add("implementation", Libs.Conductor.Support)
+            add("implementation", Libs.Kodein.CoreErasedJvm)
+            add("implementation", Libs.Kodein.FrameworkAndroidX)
             add("testImplementation", Libs.Mobius.Test)
             if (uiModule.includeAppCore) {
                 add("implementation", project(":app-core"))

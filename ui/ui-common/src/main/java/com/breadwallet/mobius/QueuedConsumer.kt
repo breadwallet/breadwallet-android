@@ -1,7 +1,7 @@
 /**
  * BreadWallet
  *
- * Created by Drew Carlson <drew.carlson@breadwallet.com> 7/22/19.
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 8/13/19.
  * Copyright (c) 2019 breadwallet LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,32 +24,22 @@
  */
 package com.breadwallet.mobius
 
-import com.spotify.mobius.Connectable
-import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 
-/**
- * Creates a [Connectable] that delegates connection creation to [effectHandlers]
- * and the corresponding [Connection]s.
- */
-class CompositeEffectHandler<I, O> private constructor(
-    private val effectHandlers: Array<out Connectable<I, O>>
-) : Connectable<I, O> {
 
-    companion object {
-        fun <I, O> from(vararg effectHandlers: Connectable<I, O>) =
-            CompositeEffectHandler(effectHandlers)
+/**
+ * Collects events and passes them in order to a new consumer via [dequeueAll].
+ */
+class QueuedConsumer<V> : Consumer<V> {
+
+    private val queue = arrayListOf<V>()
+
+    override fun accept(value: V) = synchronized<Unit>(queue) {
+        queue.add(value)
     }
 
-    override fun connect(output: Consumer<O>): Connection<I> {
-        val consumers = effectHandlers.map { it.connect(output) }
-
-        return object : Connection<I> {
-            override fun accept(value: I) =
-                consumers.forEach { it.accept(value) }
-
-            override fun dispose() =
-                consumers.forEach { it.dispose() }
-        }
+    fun dequeueAll(target: Consumer<V>) = synchronized(queue) {
+        queue.forEach(target::accept)
+        queue.clear()
     }
 }

@@ -29,7 +29,6 @@ import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.addressFor
-import com.breadwallet.breadbox.containsCurrency
 import com.breadwallet.breadbox.defaultUnit
 import com.breadwallet.breadbox.estimateFee
 import com.breadwallet.breadbox.estimateMaximum

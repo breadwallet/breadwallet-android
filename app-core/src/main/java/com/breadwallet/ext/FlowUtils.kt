@@ -24,35 +24,17 @@
  */
 package com.breadwallet.ext
 
-import com.breadwallet.logger.logError
-import com.spotify.mobius.functions.Consumer
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
-
-/** Dispatch each item emitted by this flow to [consumer], launching in [scope]. */
-fun <T> Flow<T>.bindConsumerIn(consumer: Consumer<T>, scope: CoroutineScope) =
-    onEach { consumer.accept(it) }
-        .catch { e ->
-            if (e is IllegalStateException) {
-                logError("Attempted to dispatch item in dead consumer.", e)
-            } else {
-                throw e
-            }
-        }
-        .launchIn(scope)
 
 fun <T> Flow<T>.throttleFirst(windowDuration: Long): Flow<T> {
     var lastEmissionMs = 0L

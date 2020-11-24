@@ -58,6 +58,7 @@ import com.breadwallet.ui.keystore.KeyStoreController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.migrate.MigrateController
 import com.breadwallet.ui.navigation.NavigationTarget
+import com.breadwallet.ui.navigation.Navigator
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigator
 import com.breadwallet.ui.onboarding.IntroController
@@ -84,7 +85,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.android.retainedSubKodein
+import org.kodein.di.erased.bind
 import org.kodein.di.erased.instance
+import org.kodein.di.erased.singleton
 
 // String extra containing a recovery phrase to bootstrap the recovery process. (debug only)
 private const val EXTRA_RECOVER_PHRASE = "RECOVER_PHRASE"
@@ -104,7 +108,12 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
     }
 
-    override val kodein by closestKodein()
+    override val kodein by retainedSubKodein(closestKodein()) {
+        val router = router
+        bind<Navigator>() with singleton {
+            RouterNavigator { router }
+        }
+    }
 
     private val userManager by instance<BrdUserManager>()
 
@@ -112,7 +121,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     private var trackingListener: ControllerTrackingListener? = null
 
     // NOTE: Used only to centralize deep link navigation handling.
-    private var routerNavigator: RouterNavigator? = null
+    private val navigator by instance<Navigator>()
 
     private val resumedScope = CoroutineScope(
         Default + SupervisorJob() + errorHandler("resumedScope")
@@ -127,7 +136,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         // The view of this activity is nothing more than a Controller host with animation support
         val root = ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
-            routerNavigator = RouterNavigator { router }
         }
         setContentView(if (BuildConfig.DEBUG) createDebugLayout(root, savedInstanceState) else root)
 
@@ -238,7 +246,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             val hasRoot = router.hasRootController()
             val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
             val isAuthenticated = !isTopLogin && hasRoot
-            routerNavigator?.deepLink(NavigationTarget.DeepLink(data, isAuthenticated))
+            navigator.navigateTo(NavigationTarget.DeepLink(data, isAuthenticated))
         }
     }
 
