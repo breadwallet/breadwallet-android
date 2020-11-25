@@ -21,15 +21,22 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    androidExtensions {
+        isExperimental = true
+    }
 }
 
 dependencies {
+    implementation(project(":theme"))
     implementation(Libs.Kotlin.StdLibJdk8)
     implementation(Libs.Coroutines.Core)
     api(Libs.WalletKit.CoreAndroid)
 
     implementation(Libs.Androidx.LifecycleExtensions)
     implementation(Libs.Androidx.AppCompat)
+    implementation(Libs.Androidx.CardView)
+    api(Libs.Androidx.ConstraintLayout)
+    implementation(Libs.Androidx.GridLayout)
 
     implementation(Libs.ApacheCommons.IO)
     implementation(Libs.ApacheCommons.Compress)

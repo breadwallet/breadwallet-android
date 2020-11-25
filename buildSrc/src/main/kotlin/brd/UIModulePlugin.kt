@@ -46,6 +46,7 @@ class UIModulePlugin : Plugin<Project> {
             add("implementation", Libs.Conductor.Support)
             add("implementation", Libs.Kodein.CoreErasedJvm)
             add("implementation", Libs.Kodein.FrameworkAndroidX)
+            add("compileOnly", Libs.Redacted.Annotation)
             add("testImplementation", Libs.Mobius.Test)
             if (uiModule.includeAppCore) {
                 add("implementation", project(":app-core"))

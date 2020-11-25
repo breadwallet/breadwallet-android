@@ -27,6 +27,7 @@ package com.breadwallet.ui.send
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.ext.isZero
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.send.SendSheet.E
 import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.InvalidAddress
 import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.NoAddress
@@ -768,7 +769,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             feeCurrencyCode = model.feeCurrencyCode,
             feeCurrencyBalance = model.feeCurrencyBalance,
             fiatAmount = if (link.amount != null && model.fiatPricePerUnit > BigDecimal.ZERO) {
-                (link.amount * model.fiatPricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
+                (link!!.amount!! * model.fiatPricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
             } else BigDecimal.ZERO
         )
 

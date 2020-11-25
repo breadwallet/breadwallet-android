@@ -31,6 +31,7 @@ import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.PriceChange
 import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.tools.manager.MarketDataResult
+import com.breadwallet.tools.util.asCryptoRequestUrl
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.platform.entities.TxMetaData
@@ -188,7 +189,7 @@ object WalletScreen {
                 val cryptoRequest: CryptoRequest? = null
             ) : Nav() {
                 override val navigationTarget =
-                    NavigationTarget.SendSheet(currencyId, cryptoRequest)
+                    NavigationTarget.SendSheet(currencyId, cryptoRequest?.asCryptoRequestUrl())
             }
 
             data class GoToReceive(val currencyId: String) : Nav() {

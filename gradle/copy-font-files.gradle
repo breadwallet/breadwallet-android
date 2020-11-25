@@ -1,5 +1,5 @@
 afterEvaluate {
-    def fontResDir = rootProject.file("app/src/main/res/font")
+    def fontResDir = rootProject.file("theme/src/main/res/font")
     def needsFontFiles = fontResDir.listFiles().length == 1 // mobile_font.xml
     if (needsFontFiles) {
         def fontFolderName = "mobile-font-default"

@@ -23,7 +23,7 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 
-import com.breadwallet.R;
+import com.breadwallet.appcore.R;
 import com.breadwallet.tools.util.Utils;
 
 /**

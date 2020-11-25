@@ -29,17 +29,12 @@ import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.Key
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
-import com.breadwallet.legacy.presenter.entities.GenericTransactionMetaData
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData
 import com.breadwallet.tools.util.BRConstants.WALLET_LINK_PATH
 import com.breadwallet.tools.util.BRConstants.WALLET_PAIR_PATH
 import com.breadwallet.util.CryptoUriParser
-import com.breadwallet.util.CurrencyCode
 import com.platform.HTTPServer
-import io.sweers.redacted.annotation.Redacted
 import kotlinx.coroutines.flow.first
-import java.io.Serializable
-import java.math.BigDecimal
 import java.net.URLEncoder
 
 private const val SCAN_QR = "scanqr"
@@ -53,53 +48,6 @@ private const val PLATFORM_URL_FORMAT = "/link?to=%s"
 private const val PATH_ENCODING = "utf-8"
 private const val QUERY_PARAM_WEB_BUNDLE = "web_bundle"
 private const val QUERY_PARAM_BUNDLE_DEBUG_URL = "bundle_debug_url"
-
-sealed class Link {
-
-    /**
-     * A request to transfer a crypto via URL.
-     * Loosely observes the following specs:
-     *
-     * https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki
-     * https://github.com/bitcoin/bips/blob/master/bip-0072.mediawiki
-     * https://github.com/ethereum/EIPs/blob/master/EIPS/eip-681.md
-     */
-    data class CryptoRequestUrl(
-        val currencyCode: CurrencyCode,
-        @Redacted val address: String? = null,
-        val amount: BigDecimal? = null,
-        @Redacted val label: String? = null,
-        @Redacted val message: String? = null,
-        @Redacted val reqParam: String? = null,
-        @Redacted val rUrlParam: String? = null,
-        @Redacted val destinationTag: String? = null,
-        val transactionMetaData: GenericTransactionMetaData? = null
-    ) : Link(), Serializable
-
-    data class WalletPairUrl(
-        val pairingMetaData: PairingMetaData
-    ) : Link()
-
-    data class PlatformUrl(
-        val url: String
-    ) : Link()
-
-    data class PlatformDebugUrl(
-        val webBundle: String?,
-        val webBundleUrl: String?
-    ) : Link()
-
-    data class ImportWallet(
-        @Redacted val privateKey: String,
-        val passwordProtected: Boolean
-    ) : Link()
-
-    sealed class BreadUrl : Link() {
-        object ScanQR : BreadUrl()
-        object Address : BreadUrl()
-        object AddressList : BreadUrl()
-    }
-}
 
 /** Turn the url string into a [Link] or null if it is not supported. */
 @Suppress("ComplexMethod")
@@ -154,8 +102,7 @@ fun CryptoRequest.asCryptoRequestUrl() =
         message = message,
         reqParam = reqVariable,
         rUrlParam = rUrl,
-        destinationTag = destinationTag,
-        transactionMetaData = genericTransactionMetaData
+        destinationTag = destinationTag
     )
 
 private fun Uri.asPlatformUrl(): Link.PlatformUrl {

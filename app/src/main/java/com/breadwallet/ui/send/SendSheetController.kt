@@ -50,6 +50,7 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.auth.AuthMode
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
@@ -437,9 +438,9 @@ class SendSheetController(args: Bundle? = null) :
                 router.backstack.lastOrNull()?.controller() is AuthenticationController
             if (isAuthenticating && !isAuthVisible) {
                 val authenticationMode = if (isFingerprintAuthEnable) {
-                    AuthenticationController.Mode.USER_PREFERRED
+                    AuthMode.USER_PREFERRED
                 } else {
-                    AuthenticationController.Mode.PIN_REQUIRED
+                    AuthMode.PIN_REQUIRED
                 }
                 val controller = AuthenticationController(
                     mode = authenticationMode,
