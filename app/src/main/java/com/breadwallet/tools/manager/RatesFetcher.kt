@@ -74,7 +74,7 @@ private const val EUR_AVM_CURRENCY_CODE = "eur.avm"
 private const val AVM_TO_EUR_KEY = "AVM_TO_EUR"
 private const val EUR_AVM_TO_EUR_KEY = "EUR_AVM_TO_EUR"
 
-private const val COINGECKO_API_URL = "https://api.coingecko.com/api/v3/"
+const val COINGECKO_API_URL = "https://api.coingecko.com/api/v3/"
 
 class RatesFetcher(
     private val accountMetaData: AccountMetaDataProvider,

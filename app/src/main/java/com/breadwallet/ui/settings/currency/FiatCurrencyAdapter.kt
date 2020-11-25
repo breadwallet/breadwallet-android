@@ -43,12 +43,12 @@ import kotlinx.coroutines.flow.onEach
 import java.util.Currency
 
 class FiatCurrencyAdapter(
-    private val currenciesFlow: Flow<List<FiatCurrency>>,
+    private val currenciesFlow: Flow<List<String>>,
     private val selectedCurrencyFlow: Flow<String>,
     private val sendChannel: SendChannel<DisplayCurrency.E>
 ) : RecyclerView.Adapter<FiatCurrencyAdapter.CurrencyViewHolder>() {
 
-    private var currencies: List<FiatCurrency> = emptyList()
+    private var currencies: List<String> = emptyList()
     private var selectedCurrencyCode: String = ""
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -80,15 +80,14 @@ class FiatCurrencyAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: CurrencyViewHolder, position: Int) {
         val currency = currencies[position]
-        viewHolder.check.isVisible = currency.code.equals(selectedCurrencyCode, true)
+        viewHolder.check.isVisible = currency.equals(selectedCurrencyCode, true)
         try {
-            viewHolder.label.text =
-                "${currency.code}  (${Currency.getInstance(currency.code).symbol})"
+            viewHolder.label.text = "$currency  (${Currency.getInstance(currency).symbol})"
         } catch (ignored: IllegalArgumentException) {
-            viewHolder.label.text = currency.code
+            viewHolder.label.text = currency
         }
         viewHolder.itemView.setOnClickListener {
-            sendChannel.offer(DisplayCurrency.E.OnCurrencySelected(currencyCode = currency.code))
+            sendChannel.offer(DisplayCurrency.E.OnCurrencySelected(currencyCode = currency))
         }
     }
 
