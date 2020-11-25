@@ -80,7 +80,7 @@
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
         android:padding="10dp"
-        android:text="@string/common_google_play_services_enable_button"
+        android:text="@string/Segwit.Enable"
         android:textColor="@color/white"
         android:textSize="@dimen/button_text_size"
         app:buttonType="1"

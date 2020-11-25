@@ -55,7 +55,6 @@ public class CryptoRequest implements Serializable {
         mMessage = builder.getMessage();
         mReqVariable = builder.getReqVariable();
         mValue = builder.getValue(); // ETH payment request amounts are called `value`
-        mGenericTransactionMetaData = builder.getGenericTransactionMetaData();
         destinationTag = builder.destinationTag;
     }
 
@@ -65,14 +64,6 @@ public class CryptoRequest implements Serializable {
 
     public boolean hasAddress() {
         return !Utils.isNullOrEmpty(mAddress);
-    }
-
-    public GenericTransactionMetaData getGenericTransactionMetaData() {
-        return mGenericTransactionMetaData;
-    }
-
-    public void setGenericTransactionMetaData(GenericTransactionMetaData genericTransactionMetaData) {
-        mGenericTransactionMetaData = genericTransactionMetaData;
     }
 
     public String getCurrencyCode() {
@@ -186,7 +177,6 @@ public class CryptoRequest implements Serializable {
         private String mMessage;
         private String mReqVariable;
         private BigDecimal mValue; // ETH payment request amounts are called `value`
-        private GenericTransactionMetaData mGenericTransactionMetaData;
         private String destinationTag;
 
         public String getCurrencyCode() {
@@ -267,15 +257,6 @@ public class CryptoRequest implements Serializable {
 
         public Builder setValue(BigDecimal value) {
             mValue = value;
-            return this;
-        }
-
-        public GenericTransactionMetaData getGenericTransactionMetaData() {
-            return mGenericTransactionMetaData;
-        }
-
-        public Builder setGenericTransactionMetaData(GenericTransactionMetaData genericTransactionMetaData) {
-            mGenericTransactionMetaData = genericTransactionMetaData;
             return this;
         }
 

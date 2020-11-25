@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <!-- App name -->
+    <string name="app_name">BRD</string>
+    <!-- App name -->
     <string name="About.appName.android">BRD</string>
     <!-- About screen blog label -->
     <string name="About.blog">Blog</string>

@@ -24,17 +24,15 @@
  */
 package com.breadwallet.ui.navigation
 
-import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.model.InAppMessage
 import com.breadwallet.tools.util.Link
-import com.breadwallet.ui.auth.AuthenticationController.Mode
+import com.breadwallet.ui.auth.AuthMode
 import com.breadwallet.ui.settings.SettingsSection
 import io.sweers.redacted.annotation.Redacted
 
 sealed class NavigationTarget : INavigationTarget {
     data class SendSheet(
         val currencyId: String,
-        val cryptoRequest: CryptoRequest? = null,
         val cryptoRequestUrl: Link.CryptoRequestUrl? = null
     ) : NavigationTarget()
 
@@ -84,7 +82,7 @@ sealed class NavigationTarget : INavigationTarget {
 
     object BrdLogin : NavigationTarget()
     data class Authentication(
-        val mode: Mode = Mode.PIN_REQUIRED,
+        val mode: AuthMode = AuthMode.PIN_REQUIRED,
         val titleResId: Int? = null,
         val messageResId: Int? = null
     ) : NavigationTarget()
