@@ -25,6 +25,7 @@
 package com.breadwallet.tools.util
 
 import android.net.Uri
+import android.util.Base64
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.Key
@@ -42,6 +43,7 @@ private const val ADDRESS_LIST = "addressList"
 private const val ADDRESS = "address"
 private const val BRD_HOST = "brd.com"
 private const val BRD_PROTOCOL = "https"
+private const val GIFT_PATH_PREFIX = "/x/gift/"
 private const val PLATFORM_PATH_PREFIX = "/x/platform/"
 private const val PLATFORM_DEBUG_PATH_PREFIX = "/x/debug"
 private const val PLATFORM_URL_FORMAT = "/link?to=%s"
@@ -77,6 +79,7 @@ suspend fun String.asLink(
             )
         uriParser.isCryptoUrl(this) ->
             uriParser.parseRequest(this)?.asCryptoRequestUrl()
+        isGiftUrl(uri) -> uri.asGiftUrl()
         isPlatformUrl(uri) -> uri.asPlatformUrl()
         isPlatformDebugUrl(uri) -> uri.asPlatformDebugUrl()
         isWalletPairUrl(uri) -> Link.WalletPairUrl(PairingMetaData(this))
@@ -104,6 +107,11 @@ fun CryptoRequest.asCryptoRequestUrl() =
         rUrlParam = rUrl,
         destinationTag = destinationTag
     )
+
+private fun Uri.asGiftUrl(): Link.ImportWallet {
+    val key = Base64.decode(lastPathSegment ?: "", Base64.DEFAULT)
+    return Link.ImportWallet(key.toString(Charsets.UTF_8), false)
+}
 
 private fun Uri.asPlatformUrl(): Link.PlatformUrl {
     val rawPath = "/${checkNotNull(path).replace(PLATFORM_PATH_PREFIX, "")}"
@@ -156,6 +164,15 @@ private fun isBreadUrl(uri: Uri): Boolean {
         }
 
     return isBrdDomain && isValidPath
+}
+
+private fun isGiftUrl(uri: Uri): Boolean {
+    val isProtocolValid = uri.toString().startsWith(BRD_PROTOCOL)
+    val isHostValid = BRD_HOST.equals(uri.host, ignoreCase = true)
+    val isPathValid = (uri.path ?: "").run {
+        isNotBlank() && startsWith(GIFT_PATH_PREFIX)
+    }
+    return isProtocolValid && isHostValid && isPathValid
 }
 
 /** Returns true if [uri] will produce a [Link.PlatformUrl] */

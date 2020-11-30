@@ -86,17 +86,13 @@ val ImportUpdate = Update<M, E, F> { model, event ->
                 privateKey = event.privateKey,
                 keyRequiresPassword = event.isPasswordProtected,
                 isKeyValid = true,
-                loadingState = if (event.isPasswordProtected) {
-                    M.LoadingState.VALIDATING
-                } else {
-                    M.LoadingState.ESTIMATING
-                }
+                loadingState = M.LoadingState.VALIDATING
             ),
             setOf(
                 if (event.isPasswordProtected) {
                     F.ShowPasswordInput
                 } else {
-                    F.EstimateImport.Key(event.privateKey)
+                    F.ValidateKey(event.privateKey, null)
                 }
             )
         )
