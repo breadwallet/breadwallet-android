@@ -34,6 +34,7 @@ import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BdbAuthInterceptor
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.ext.throttleLatest
 import com.breadwallet.logger.Logger
 import com.breadwallet.logger.logDebug
 import com.breadwallet.model.Experiments
@@ -61,9 +62,13 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.util.logging.Level
 import kotlin.text.Charsets.UTF_8
@@ -72,6 +77,7 @@ private const val DEVELOPER_OPTIONS_TITLE = "Developer Options"
 private const val DETAILED_LOGGING_MESSAGE = "Detailed logging is enabled for this session."
 private const val CLEAR_BLOCKCHAIN_DATA_MESSAGE = "Clearing blockchain data"
 private const val TEZOS_ID = "tezos-mainnet:__native__"  // TODO: DROID-1854 remove tezos filter
+private const val OPTION_UPDATE_THROTTLE = 1000L
 
 class SettingsScreenHandler(
     private val output: Consumer<E>,
@@ -89,7 +95,15 @@ class SettingsScreenHandler(
     @Suppress("ComplexMethod")
     override fun accept(value: F) {
         when (value) {
-            is F.LoadOptions -> loadOptions(value.section)
+            is F.LoadOptions -> {
+                merge(
+                    BRSharedPrefs.promptChanges(),
+                    BRSharedPrefs.preferredFiatIsoChanges().map { }
+                ).onStart { emit(Unit) }
+                    .throttleLatest(OPTION_UPDATE_THROTTLE)
+                    .onEach { loadOptions(value.section) }
+                    .launchIn(this)
+            }
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
             F.SendLogs -> launch(Main) {
                 supportManager.submitEmailRequest(EmailTarget.ANDROID_TEAM)
@@ -174,7 +188,7 @@ class SettingsScreenHandler(
             F.CopyPaperKey -> {
                 BreadApp.applicationScope.launch {
                     val phrase = userManager.getPhrase()?.toString(UTF_8)
-                    withContext(Dispatchers.Main) {
+                    Main {
                         BRClipboardManager.putClipboard(phrase)
                         Toast.makeText(context, "Paper Key copied!", Toast.LENGTH_SHORT).show()
                     }
@@ -284,7 +298,7 @@ class SettingsScreenHandler(
         }
     }
 
-    private val preferences = listOf(
+    private val preferences get() = listOf(
         SettingsItem(
             context.getString(R.string.Settings_currency),
             SettingsOption.CURRENCY,
