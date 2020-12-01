@@ -30,7 +30,7 @@ object BrdRelease {
     /** Minor version. Usually affected by product. Maximum value: 99 */
     private const val product = 5
     /** Hot fix version. Usually affected by engineering. Maximum value: 9 */
-    private const val engineering = 5
+    private const val engineering = 6
     /** Build version. Increase for each new build. Maximum value: 999 */
     private const val build = 1
 
