@@ -71,242 +71,151 @@ private const val DETEKT_VERSION = "1.0.1"
 private const val COMMONS_COMPRESS_VERSION = "1.20"
 
 object Libs {
-    open class ArtifactGroup(
-        val packageName: String = "",
-        val versionNumber: String = ""
-    )
-
-    private fun ArtifactGroup.module(
-        artifactName: String,
-        versionNumber: String = this.versionNumber,
-        packageName: String = this.packageName
-    ): String = "$packageName:$artifactName:$versionNumber"
-
-    object WalletKit : ArtifactGroup("com.breadwallet.core", WALLETKIT_VERSION) {
-        val CoreAndroid = module("corecrypto-android")
+    object WalletKit {
+        const val CoreAndroid = "com.breadwallet.core:corecrypto-android:$WALLETKIT_VERSION"
+    }
+    object Androidx {
+        const val LifecycleExtensions = "androidx.lifecycle:lifecycle-extensions:$LIFECYCLE_EXT_VERSION"
+        const val LifecycleScopeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:$LIFECYCLE_EXT_VERSION"
+        const val WorkManagerKtx = "androidx.work:work-runtime-ktx:$WORK_MANAGER_VERSION"
+        const val WorkManagerTesting = "androidx.work:work-testing:$WORK_MANAGER_VERSION"
+        const val CoreKtx = "androidx.core:core-ktx:$CORE_VERSION"
+        const val AppCompat = "androidx.appcompat:appcompat:$APPCOMPAT_VERSION"
+        const val CardView = "androidx.cardview:cardview:$CARDVIEW_VERSION"
+        const val ConstraintLayout = "androidx.constraintlayout:constraintlayout:$CONSTRAINT_LAYOUT_VERSION"
+        const val GridLayout = "androidx.gridlayout:gridlayout:$GRID_LAYOUT_VERSION"
+        const val RecyclerView = "androidx.recyclerview:recyclerview:$RECYCLER_VERSION"
+        const val Security = "androidx.security:security-crypto:$SECURITY_VERSION"
+        const val LegacyV13 = "androidx.legacy:legacy-support-v13:$LEGACY_V13"
     }
 
-    object Androidx : ArtifactGroup() {
-
-        val LifecycleExtensions = module(
-            "lifecycle-extensions",
-            LIFECYCLE_EXT_VERSION,
-            "androidx.lifecycle"
-        )
-
-        val LifecycleScopeKtx = module(
-            "lifecycle-runtime-ktx",
-            LIFECYCLE_EXT_VERSION,
-            "androidx.lifecycle"
-        )
-
-        val WorkManagerKtx = module(
-            "work-runtime-ktx",
-            WORK_MANAGER_VERSION,
-            "androidx.work"
-        )
-
-        val WorkManagerTesting = module(
-            "work-testing",
-            WORK_MANAGER_VERSION,
-            "androidx.work"
-        )
-
-        val CoreKtx = module(
-            "core-ktx",
-            CORE_VERSION,
-            "androidx.core"
-        )
-
-        val AppCompat = module(
-            "appcompat",
-            APPCOMPAT_VERSION,
-            "androidx.appcompat"
-        )
-
-        val CardView = module(
-            "cardview",
-            CARDVIEW_VERSION,
-            "androidx.cardview"
-        )
-
-        val ConstraintLayout = module(
-            "constraintlayout",
-            CONSTRAINT_LAYOUT_VERSION,
-            "androidx.constraintlayout"
-        )
-
-        val GridLayout = module(
-            "gridlayout",
-            GRID_LAYOUT_VERSION,
-            "androidx.gridlayout"
-        )
-
-        val RecyclerView = module(
-            "recyclerview",
-            RECYCLER_VERSION,
-            "androidx.recyclerview"
-        )
-
-        val Security = module(
-            "security-crypto",
-            SECURITY_VERSION,
-            "androidx.security"
-        )
-
-        val LegacyV13 = module(
-            "legacy-support-v13",
-            LEGACY_V13,
-            "androidx.legacy"
-        )
+    object AndroidxTest {
+        const val Runner = "androidx.test:runner:$ANDROIDX_TEST_VERSION"
+        const val Rules = "androidx.test:rules:$ANDROIDX_TEST_VERSION"
+        const val EspressoCore = "androidx.test.espresso:espresso-core:$ESPRESSO_VERSION"
+        const val JunitKtx = "androidx.test.ext:junit-ktx:$JUNIT_KTX_VERSION"
     }
 
-    object AndroidxTest : ArtifactGroup(
-        "androidx.test",
-        ANDROIDX_TEST_VERSION
-    ) {
-        val Runner = module("runner")
-        val Rules = module("rules")
-        val EspressoCore = module(
-            "espresso-core",
-            ESPRESSO_VERSION,
-            "androidx.test.espresso"
-        )
-        val JunitKtx = module(
-            "junit-ktx",
-            JUNIT_KTX_VERSION,
-            "androidx.test.ext"
-        )
+    object AndroidxCamera {
+        const val Core = "androidx.camera:camera-core:$CAMERAX_VERSION"
+        const val Camera2 = "androidx.camera:camera-camera2:$CAMERAX_VERSION"
+        const val Lifecycle = "androidx.camera:camera-lifecycle:$CAMERAX_VERSION"
+        const val View = "androidx.camera:camera-view:$CAMERAX_VIEW_VERSION"
     }
 
-    object AndroidxCamera : ArtifactGroup("androidx.camera", CAMERAX_VERSION) {
-        val Core = module("camera-core")
-        val Camera2 = module("camera-camera2")
-        val Lifecycle = module("camera-lifecycle")
-        val View = module("camera-view", CAMERAX_VIEW_VERSION)
+    object Firebase {
+        const val Messaging = "com.google.firebase:firebase-messaging:$FIREBASE_MESSAGING_VERSION"
+        const val Analytics = "com.google.firebase:firebase-analytics:$FIREBASE_ANALYTICS_VERSION"
+        const val ConfigKtx = "com.google.firebase:firebase-config-ktx:$FIREBASE_CONFIG_VERSION"
+        const val Crashlytics = "com.google.firebase:firebase-crashlytics:$CRASHLYTICS_VERSION"
     }
 
-    object Firebase : ArtifactGroup("com.google.firebase") {
-        val Messaging = module("firebase-messaging", FIREBASE_MESSAGING_VERSION)
-        val Analytics = module("firebase-analytics", FIREBASE_ANALYTICS_VERSION)
-        val ConfigKtx = module("firebase-config-ktx", FIREBASE_CONFIG_VERSION)
-        val Crashlytics = module("firebase-crashlytics", CRASHLYTICS_VERSION)
+    object Material {
+        const val Core = "com.google.android.material:material:$MATERIAL_VERSION"
     }
 
-    object Material : ArtifactGroup("com.google.android.material", MATERIAL_VERSION) {
-        val Core = module("material")
+    object Guava {
+        const val Core = "com.google.guava:guava:$GUAVA_VERSION"
     }
 
-    object Guava : ArtifactGroup("com.google.guava", GUAVA_VERSION) {
-        val Core = module("guava")
+    object Zxing {
+        const val Core = "com.google.zxing:core:$ZXING_VERSION"
     }
 
-    object Zxing : ArtifactGroup("com.google.zxing", ZXING_VERSION) {
-        val Core = module("core")
+    object FastAdapter {
+        const val Core = "com.mikepenz:fastadapter:$FASTADAPTER_VERSION"
+        const val DiffExtensions = "com.mikepenz:fastadapter-extensions-diff:$FASTADAPTER_VERSION"
+        const val DragExtensions = "com.mikepenz:fastadapter-extensions-drag:$FASTADAPTER_VERSION"
+        const val UtilExtensions = "com.mikepenz:fastadapter-extensions-utils:$FASTADAPTER_VERSION"
     }
 
-    object FastAdapter : ArtifactGroup("com.mikepenz", FASTADAPTER_VERSION) {
-        val Core = module("fastadapter")
-        val DiffExtensions = module("fastadapter-extensions-diff")
-        val DragExtensions = module("fastadapter-extensions-drag")
-        val UtilExtensions = module("fastadapter-extensions-utils")
+    object Conductor {
+        const val Core = "com.bluelinelabs:conductor:$CONDUCTOR_VERSION"
+        const val Support = "com.bluelinelabs:conductor-support:$CONDUCTOR_VERSION"
     }
 
-    object Conductor : ArtifactGroup("com.bluelinelabs", CONDUCTOR_VERSION) {
-        val Core = module("conductor")
-        val Support = module("conductor-support")
+    object Kodein {
+        const val CoreErasedJvm = "org.kodein.di:kodein-di-erased-jvm:$KODEIN_VERSION"
+        const val FrameworkAndroidX = "org.kodein.di:kodein-di-framework-android-x:$KODEIN_VERSION"
     }
 
-    object Kodein : ArtifactGroup("org.kodein.di", KODEIN_VERSION) {
-        val CoreErasedJvm = module("kodein-di-erased-jvm")
-        val FrameworkAndroidX = module("kodein-di-framework-android-x")
+    object Mobius {
+        const val Core = "com.spotify.mobius:mobius-core:$MOBIUS_VERSION"
+        const val Android = "com.spotify.mobius:mobius-android:$MOBIUS_VERSION"
+        const val Test = "com.spotify.mobius:mobius-test:$MOBIUS_VERSION"
+        const val Coroutines = "drewcarlson.mobius:mobius-coroutines:$MOBIUS_COROUTINES_VERSION"
     }
 
-    object Mobius : ArtifactGroup("com.spotify.mobius", MOBIUS_VERSION) {
-        val Core = module("mobius-core")
-        val Android = module("mobius-android")
-        val Test = module("mobius-test")
-        val Coroutines = module(
-            "mobius-coroutines",
-            MOBIUS_COROUTINES_VERSION,
-            "drewcarlson.mobius"
-        )
+    object OkHttp {
+        const val Core = "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
+        const val LoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$OKHTTP_VERSION"
+        const val MockWebServer = "com.squareup.okhttp3:mockwebserver:$OKHTTP_VERSION"
     }
 
-    object OkHttp : ArtifactGroup("com.squareup.okhttp3", OKHTTP_VERSION) {
-        val Core = module("okhttp")
-        val LoggingInterceptor = module("logging-interceptor")
-        val MockWebServer = module("mockwebserver")
+    object Picasso {
+        const val Core = "com.squareup.picasso:picasso:$PICASSO_VERSION"
     }
 
-    object Picasso : ArtifactGroup("com.squareup.picasso", PICASSO_VERSION) {
-        val Core = module("picasso")
+    object Coroutines {
+        const val Core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$COROUTINES_VERSION"
+        const val Android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$COROUTINES_VERSION"
+        const val Test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$COROUTINES_VERSION"
     }
 
-    object Coroutines : ArtifactGroup("org.jetbrains.kotlinx", COROUTINES_VERSION) {
-        val Core = module("kotlinx-coroutines-core")
-        val Android = module("kotlinx-coroutines-android")
-        val Test = module("kotlinx-coroutines-test")
+    object Kotlin {
+        const val StdLibJdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$KOTLIN_VERSION"
+        const val Test = "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
+        const val TestJunit = "org.jetbrains.kotlin:kotlin-test-junit:$KOTLIN_VERSION"
     }
 
-    object Kotlin : ArtifactGroup("org.jetbrains.kotlin", KOTLIN_VERSION) {
-        val StdLibJdk8 = module("kotlin-stdlib-jdk8")
-        val Test = module("kotlin-test")
-        val TestJunit = module("kotlin-test-junit")
+    object Jetty {
+        const val Continuations = "org.eclipse.jetty:jetty-continuation:$JETTY_VERSION"
+        const val Webapp = "org.eclipse.jetty:jetty-webapp:$JETTY_VERSION"
+        const val WebSocket = "org.eclipse.jetty.websocket:websocket-server:$JETTY_VERSION"
     }
 
-    object Jetty : ArtifactGroup("org.eclipse.jetty", JETTY_VERSION) {
-        val Continuations = module("jetty-continuation")
-        val Webapp = module("jetty-webapp")
-        val WebSocket = module(
-            "websocket-server",
-            JETTY_VERSION,
-            "$packageName.websocket"
-        )
+    object LeakCanary {
+        const val Core = "com.squareup.leakcanary:leakcanary-android:$LEAKCANARY_VERSION"
     }
 
-    object LeakCanary : ArtifactGroup("com.squareup.leakcanary", LEAKCANARY_VERSION) {
-        val Core = module("leakcanary-android")
+    object AnrWatchdog {
+        const val Core = "com.github.anrwatchdog:anrwatchdog:$ANR_WATCHDOG_VERSION"
     }
 
-    object AnrWatchdog : ArtifactGroup("com.github.anrwatchdog", ANR_WATCHDOG_VERSION) {
-        val Core = module("anrwatchdog")
+    object ApacheCommons {
+        const val IO = "commons-io:commons-io:$COMMONS_IO_VERSION"
+        const val Compress = "org.apache.commons:commons-compress:$COMMONS_COMPRESS_VERSION"
     }
 
-    object ApacheCommons : ArtifactGroup() {
-        val IO = module("commons-io", COMMONS_IO_VERSION, "commons-io")
-        val Compress = module("commons-compress", COMMONS_COMPRESS_VERSION, "org.apache.commons")
+    object Jbsdiff {
+        const val Core = "io.sigpipe:jbsdiff:$JBSDIFF_VERSION"
     }
 
-    object Jbsdiff : ArtifactGroup("io.sigpipe", JBSDIFF_VERSION) {
-        val Core = module("jbsdiff")
+    object Slf4j {
+        const val Api = "org.slf4j:slf4j-api:$SLF4J_VERSION"
     }
 
-    object Slf4j : ArtifactGroup("org.slf4j", SLF4J_VERSION) {
-        val Api = module("slf4j-api")
+    object JUnit {
+        const val Core = "junit:junit:$JUNIT_VERSION"
     }
 
-    object JUnit : ArtifactGroup("junit", JUNIT_VERSION) {
-        val Core = module("junit")
+    object Mockito {
+        const val Android = "org.mockito:mockito-android:$MOCKITO_VERSION"
     }
 
-    object Mockito : ArtifactGroup("org.mockito", MOCKITO_VERSION) {
-        val Android = module("mockito-android")
+    object Kaspresso {
+        const val Core = "com.kaspersky.android-components:kaspresso:$KASPRESSO_VERSION"
     }
 
-    object Kaspresso : ArtifactGroup("com.kaspersky.android-components", KASPRESSO_VERSION) {
-        val Core = module("kaspresso")
+    object Kakao {
+        const val Core = "com.agoda.kakao:kakao:$KAKAO_VERSION"
     }
 
-    object Kakao : ArtifactGroup("com.agoda.kakao", KAKAO_VERSION) {
-        val Core = module("kakao")
+    object Redacted {
+        const val Annotation = "io.sweers.redacted:redacted-compiler-plugin-annotation:$REDACTED_VERSION"
     }
 
-    object Redacted : ArtifactGroup("io.sweers.redacted", REDACTED_VERSION) {
-        val Annotation = module("redacted-compiler-plugin-annotation")
-    }
-
-    object Detekt : ArtifactGroup("io.gitlab.arturbosch.detekt", DETEKT_VERSION) {
-        val Formatting = module("detekt-formatting")
+    object Detekt {
+        const val Formatting = "io.gitlab.arturbosch.detekt:detekt-formatting:$DETEKT_VERSION"
     }
 }
