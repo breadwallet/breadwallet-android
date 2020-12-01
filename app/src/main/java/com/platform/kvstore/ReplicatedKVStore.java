@@ -46,6 +46,8 @@ import com.breadwallet.tools.util.Utils;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVItem;
 import com.platform.sqlite.PlatformSqliteHelper;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,7 +60,7 @@ import java.util.regex.Pattern;
 import static com.platform.sqlite.PlatformSqliteHelper.KV_STORE_TABLE_NAME;
 import static org.kodein.di.TypesKt.TT;
 
-public class ReplicatedKVStore implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
+public class ReplicatedKVStore implements Function1<Lifecycle.Event, Unit> {
     private static final String TAG = ReplicatedKVStore.class.getName();
 
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
@@ -180,7 +182,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
             BrdUserManager userManager = BreadApp.getKodeinInstance().Instance(TT(BrdUserManager.class), null);
             mTempAuthKey = userManager.getAuthKey();
             if (mTempAuthKey == null) Log.e(TAG, "cacheKeyIfNeeded: FAILED, still null!");
-            ApplicationLifecycleObserver.addApplicationLifecycleListener(instance);
+            ApplicationLifecycleObserver.Companion.addApplicationLifecycleListener(instance);
         }
     }
 
@@ -967,11 +969,12 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
     }
 
     @Override
-    public void onLifeCycle(Lifecycle.Event event) {
+    public Unit invoke(Lifecycle.Event event) {
         switch (event) {
             case ON_STOP:
                 mTempAuthKey = null;
                 break;
         }
+        return Unit.INSTANCE;
     }
 }

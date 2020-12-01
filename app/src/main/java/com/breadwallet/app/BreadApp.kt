@@ -409,7 +409,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
                 Lifecycle.Event.ON_START -> handleOnStart()
                 Lifecycle.Event.ON_STOP -> handleOnStop()
                 Lifecycle.Event.ON_DESTROY -> handleOnDestroy()
-                else -> Unit
             }
         }
 
