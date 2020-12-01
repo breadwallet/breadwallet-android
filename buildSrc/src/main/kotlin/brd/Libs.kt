@@ -26,7 +26,7 @@ package brd
 
 const val KOTLIN_VERSION = "1.4.10"
 private const val COROUTINES_VERSION = "1.4.1"
-private const val WALLETKIT_VERSION = "6.3.0-beta02"
+private const val WALLETKIT_VERSION = "6.3.0-beta03"
 private const val FIREBASE_MESSAGING_VERSION = "20.2.4"
 private const val FIREBASE_ANALYTICS_VERSION = "17.5.0"
 private const val FIREBASE_CONFIG_VERSION = "19.2.0"
