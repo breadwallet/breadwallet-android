@@ -76,7 +76,6 @@ stop-review:
 
 deploy-firebase:
   stage: deploy
-  needs: [ "build" ]
   variables:
     ORG_GRADLE_DEPENDENCY_VERIFICATION: "off"
   script:

@@ -49,10 +49,19 @@ open class AppetizeUpload @Inject constructor(
 
     private val http = OkHttpClient()
 
+    private val apkOutput = buildVariant.outputs.single()
+
     init {
         group = "Appetize Deployment"
         description = "Upload '${buildVariant.name}' to appetize."
-        dependsOn(buildVariant.assembleProvider)
+        val noBuild = !apkOutput.outputFile.exists()
+        val versionChanged = buildVariant.versionCode != apkOutput.versionCode
+        if (noBuild || versionChanged) {
+            logger.lifecycle("Exisiting APK not found for ${buildVariant.name}")
+            dependsOn(buildVariant.assembleProvider)
+        } else {
+            logger.lifecycle("Uploading existing APK file from ${apkOutput.outputFile}")
+        }
     }
 
     @TaskAction
@@ -66,8 +75,7 @@ open class AppetizeUpload @Inject constructor(
             "APPETIZE_CALLBACK or -PappetizeCallback=<value> must be provided."
         }
 
-        val apkFile = buildVariant.outputs.single().outputFile
-        val apkReqBody = apkFile.asRequestBody()
+        val apkReqBody = apkOutput.outputFile.asRequestBody()
         val body = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("platform", "android")
