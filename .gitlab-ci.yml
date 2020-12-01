@@ -64,7 +64,7 @@ stop-review:
   variables:
     GIT_SUBMODULE_STRATEGY: none
   script:
-    - cd $CI_PROJECT_DIR; ./gradlew appetizeRemove -Pmerge:$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+    - cd $CI_PROJECT_DIR; ./gradlew appetizeRemove -Pmerge=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
   when: manual
   only:
     - merge_requests
