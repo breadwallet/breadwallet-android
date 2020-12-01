@@ -25,8 +25,6 @@ configure<RedactedPluginExtension> {
     replacementString = "***"
 }
 
-project.tasks.register<DownloadBundles>("downloadBundles")
-
 android {
     compileSdkVersion(BrdRelease.ANDROID_COMPILE_SDK)
     buildToolsVersion(BrdRelease.ANDROID_BUILD_TOOLS)
