@@ -31,6 +31,7 @@ import com.breadwallet.breadbox.isBitcoinCash
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Key
 import com.breadwallet.crypto.Wallet
+import com.breadwallet.crypto.WalletManagerState
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterIsInstance
@@ -57,7 +58,12 @@ private fun handleValidateKey(
 ): suspend (Import.F.ValidateKey) -> Import.E = { effect ->
     val keyBytes = effect.privateKey.toByteArray()
     val passwordBytes = effect.password?.toByteArray() ?: byteArrayOf()
-    val wallets = breadBox.wallets().first().filter(filterBtcLike)
+    val wallets = breadBox.wallets()
+        .map { it.filter(filterBtcLike) }
+        .first { wallets ->
+            val btc = wallets.firstOrNull { it.currency.isBitcoin() }
+            btc?.walletManager?.state?.type == WalletManagerState.Type.CONNECTED
+        }
 
     // Sweeping only supports BTC and BCH, ensure one is active.
     when {
