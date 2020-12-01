@@ -7,6 +7,8 @@ plugins {
     kotlin("android.extensions")
 }
 
+project.tasks.register<brd.DownloadBundles>("downloadBundles")
+
 android {
     compileSdkVersion(BrdRelease.ANDROID_COMPILE_SDK)
     buildToolsVersion(BrdRelease.ANDROID_BUILD_TOOLS)
