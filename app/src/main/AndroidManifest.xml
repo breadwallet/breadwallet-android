@@ -107,6 +107,11 @@
 
                 <data
                     android:host="brd.com"
+                    android:pathPrefix="/x/gift"
+                    android:scheme="https" />
+
+                <data
+                    android:host="brd.com"
                     android:pathPrefix="/x/debug"
                     android:scheme="https" />
             </intent-filter>
