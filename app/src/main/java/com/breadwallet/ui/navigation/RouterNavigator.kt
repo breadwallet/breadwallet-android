@@ -35,12 +35,10 @@ import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.legacy.presenter.settings.NotificationSettingsController
 import com.breadwallet.logger.logError
-import com.breadwallet.protocols.messageexchange.MessageExchangeService
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.ServerBundlesHelper
-import com.breadwallet.tools.util.asCryptoRequestUrl
 import com.breadwallet.tools.util.asLink
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.addwallets.AddWalletsController
@@ -65,6 +63,7 @@ import com.breadwallet.ui.settings.analytics.ShareDataController
 import com.breadwallet.ui.settings.currency.DisplayCurrencyController
 import com.breadwallet.ui.settings.fastsync.FastSyncController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
+import com.breadwallet.ui.settings.logview.LogcatController
 import com.breadwallet.ui.settings.nodeselector.NodeSelectorController
 import com.breadwallet.ui.settings.segwit.EnableSegWitController
 import com.breadwallet.ui.settings.segwit.LegacyAddressController
@@ -76,6 +75,7 @@ import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
+import com.breadwallet.ui.staking.StakingController
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.isBrd
 import com.platform.HTTPServer
@@ -92,7 +92,7 @@ import java.util.Locale
 @Suppress("TooManyFunctions")
 class RouterNavigator(
     private val routerProvider: () -> Router
-) : NavigationTargetHandlerSpec, KodeinAware {
+) : Navigator, NavigationTargetHandlerSpec, KodeinAware {
 
     private val router get() = routerProvider()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -104,7 +104,8 @@ class RouterNavigator(
     private val breadBox by instance<BreadBox>()
     private val uriParser by instance<CryptoUriParser>()
 
-    fun navigateTo(target: NavigationTarget) = patch(target)
+    override fun navigateTo(target: INavigationTarget) =
+        patch(target as NavigationTarget)
 
     fun Controller.asTransaction(
         popChangeHandler: ControllerChangeHandler? = FadeChangeHandler(),
@@ -200,10 +201,7 @@ class RouterNavigator(
 
     override fun sendSheet(effect: NavigationTarget.SendSheet) {
         val controller = when {
-            effect.cryptoRequest != null -> SendSheetController(
-                effect.cryptoRequest.asCryptoRequestUrl()
-            )
-            effect.cryptoRequestUrl != null -> SendSheetController(effect.cryptoRequestUrl)
+            effect.cryptoRequestUrl != null -> SendSheetController(effect.cryptoRequestUrl!!)
             else -> SendSheetController(effect.currencyId)
         }
         router.pushController(RouterTransaction.with(controller))
@@ -591,14 +589,6 @@ class RouterNavigator(
                 }
             }
             is Link.WalletPairUrl -> {
-                val context = router.activity!!.applicationContext
-                MessageExchangeService.enqueueWork(
-                    context, MessageExchangeService.createIntent(
-                        context,
-                        MessageExchangeService.ACTION_REQUEST_TO_PAIR,
-                        link.pairingMetaData
-                    )
-                )
                 showLaunchScreen(effect.authenticated)
             }
             else -> {
@@ -606,5 +596,15 @@ class RouterNavigator(
                 showLaunchScreen(effect.authenticated)
             }
         }
+    }
+
+    override fun logcatViewer() {
+        if (router.backstack.none { it.controller() is LogcatController }) {
+            router.pushController(RouterTransaction.with(LogcatController()))
+        }
+    }
+
+    override fun staking(effect: NavigationTarget.Staking) {
+        router.pushController(RouterTransaction.with(StakingController(effect.currencyId)))
     }
 }

@@ -42,11 +42,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import okhttp3.MediaType;
 import okhttp3.Request;
@@ -186,6 +182,10 @@ public final class EventUtils {
     private EventUtils() {
         //SessionId needs to be renewed for every app session.
         mSessionId = UUID.randomUUID().toString();
+    }
+
+    public static final String getEventNameWithCurrencyCode(String eventName, String currencyCode) {
+        return String.format(eventName, currencyCode.toUpperCase(Locale.ROOT));
     }
 
     public static synchronized void pushEvent(String eventName, Map<String, String> attributes) {

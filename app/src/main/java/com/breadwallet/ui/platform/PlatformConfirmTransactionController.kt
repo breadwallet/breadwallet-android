@@ -36,6 +36,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.auth.AuthMode
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.breadwallet.ui.send.ConfirmTxController
 import com.platform.ConfirmTransactionMessage
@@ -105,9 +106,9 @@ class PlatformConfirmTransactionController(
         val res = checkNotNull(resources)
         val authenticationMode =
             if (isFingerPrintAvailableAndSetup(activity!!) && BRSharedPrefs.sendMoneyWithFingerprint) {
-                AuthenticationController.Mode.USER_PREFERRED
+                AuthMode.USER_PREFERRED
             } else {
-                AuthenticationController.Mode.PIN_REQUIRED
+                AuthMode.PIN_REQUIRED
             }
 
         val controller = AuthenticationController(

@@ -55,6 +55,7 @@ import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.crypto.Base32
 import com.breadwallet.tools.crypto.CryptoHelper
+import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.ConnectivityStateProvider
@@ -76,7 +77,6 @@ import com.breadwallet.util.FioService
 import com.breadwallet.util.PayIdService
 import com.breadwallet.util.errorHandler
 import com.breadwallet.util.isEthereum
-import com.breadwallet.util.trackAddressMismatch
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.platform.APIClient
 import com.platform.HTTPServer
@@ -399,6 +399,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         mInstance = this
 
         BRKeyStore.provideContext(this)
+        BRClipboardManager.provideContext(this)
         BRSharedPrefs.initialize(this)
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(ApplicationLifecycleObserver())
@@ -408,7 +409,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
                 Lifecycle.Event.ON_START -> handleOnStart()
                 Lifecycle.Event.ON_STOP -> handleOnStop()
                 Lifecycle.Event.ON_DESTROY -> handleOnDestroy()
-                else -> Unit
             }
         }
 
@@ -497,10 +497,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         }
 
         ratesFetcher.start(startedScope)
-
-        applicationScope.launch {
-            trackAddressMismatch(breadBox)
-        }
         
         conversionTracker.start(startedScope)
     }

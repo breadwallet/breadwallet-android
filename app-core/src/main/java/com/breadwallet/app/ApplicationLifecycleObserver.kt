@@ -29,6 +29,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 
+typealias ApplicationLifecycleListener = (Lifecycle.Event) -> Unit
+
 /**
  * Use the [ApplicationLifecycleObserver] to listen for application lifecycle events.
  */
@@ -72,14 +74,7 @@ class ApplicationLifecycleObserver : LifecycleObserver {
      * @param event The lifecycle event that has just occurred.
      */
     private fun onLifeCycleEvent(event: Lifecycle.Event) {
-        listeners.forEach { it.onLifeCycle(event) }
-    }
-
-    /**
-     * The interface to implement to register for lifecycle events.
-     */
-    fun interface ApplicationLifecycleListener {
-        fun onLifeCycle(event: Lifecycle.Event)
+        listeners.forEach { it.invoke(event) }
     }
 
     companion object {
@@ -91,7 +86,6 @@ class ApplicationLifecycleObserver : LifecycleObserver {
          *
          * @param listener The listener to register.
          */
-        @JvmStatic
         fun addApplicationLifecycleListener(listener: ApplicationLifecycleListener) {
             if (!listeners.contains(listener)) {
                 listeners.add(listener)
@@ -103,7 +97,6 @@ class ApplicationLifecycleObserver : LifecycleObserver {
          *
          * @param listener The listener to unregister.
          */
-        @JvmStatic
         fun removeApplicationLifecycleListener(listener: ApplicationLifecycleListener?) {
             if (listeners.contains(listener)) {
                 listeners.remove(listener)

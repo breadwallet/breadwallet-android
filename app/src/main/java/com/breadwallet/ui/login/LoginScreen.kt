@@ -26,7 +26,7 @@ package com.breadwallet.ui.login
 
 import com.breadwallet.R
 import com.breadwallet.ui.ViewEffect
-import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.auth.AuthMode
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import io.sweers.redacted.annotation.Redacted
@@ -78,7 +78,7 @@ object LoginScreen {
         }
         object ShowFingerprintController : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Authentication(
-                mode = AuthenticationController.Mode.BIOMETRIC_REQUIRED,
+                mode = AuthMode.BIOMETRIC_REQUIRED,
                 titleResId = R.string.UnlockScreen_touchIdTitle_android
             )
         }

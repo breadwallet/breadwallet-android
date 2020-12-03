@@ -68,6 +68,7 @@ import com.breadwallet.ui.wallet.spark.SparkAdapter
 import com.breadwallet.ui.wallet.spark.SparkView
 import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
 import com.breadwallet.ui.web.WebController
+import com.breadwallet.util.isTezos
 import com.google.android.material.appbar.AppBarLayout
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.GenericFastAdapter
@@ -131,6 +132,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
     private var fastAdapter: GenericFastAdapter? = null
     private var txAdapter: GenericModelAdapter<WalletTransaction>? = null
     private var syncAdapter: ItemAdapter<SyncingItem>? = null
+    private var stakingAdapter: ItemAdapter<StakingItem>? = null
     private var mPriceDataAdapter = SparkAdapter()
     private val mIntervalButtons: List<BaseTextView>
         get() = listOf<BaseTextView>(
@@ -159,14 +161,22 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
 
         txAdapter = ModelAdapter { TransactionListItem(it, currentModel.isCryptoPreferred) }
         syncAdapter = ItemAdapter()
-        fastAdapter = FastAdapter.with(listOf(syncAdapter!!, txAdapter!!))
+        stakingAdapter = ItemAdapter()
+        fastAdapter = FastAdapter.with(listOf(syncAdapter!!, stakingAdapter!!, txAdapter!!))
         checkNotNull(fastAdapter).onClickListener = { _, _, item, _ ->
             when (item) {
                 is TransactionListItem ->
                     eventConsumer.accept(E.OnTransactionClicked(item.model.txHash))
+                is StakingItem -> eventConsumer.accept(E.OnStakingCellClicked)
             }
             true
         }
+
+        // TODO: When we get another staking currency, should re-assess how to perform this check
+        if (currencyCode.isTezos()) {
+            stakingAdapter!!.setNewList(listOf(StakingItem(currencyCode)))
+        }
+
         tx_list.adapter = fastAdapter
         tx_list.itemAnimator = DefaultItemAnimator()
         tx_list.layoutManager = object : LinearLayoutManager(applicationContext) {
@@ -299,9 +309,10 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
         output: SendChannel<E>
     ) {
         val syncItemCount = syncAdapter!!.adapterItemCount
-        val firstIndex = layoutManager.findFirstVisibleItemPosition() - syncItemCount
-        val lastIndex = layoutManager.findLastVisibleItemPosition() - syncItemCount
-        if (firstIndex != RecyclerView.NO_POSITION) {
+        val stakingItemCount = stakingAdapter!!.adapterItemCount
+        val firstIndex = layoutManager.findFirstVisibleItemPosition() - syncItemCount - stakingItemCount
+        val lastIndex = layoutManager.findLastVisibleItemPosition() - syncItemCount - stakingItemCount
+        if (firstIndex > RecyclerView.NO_POSITION) {
             output.offer(
                 E.OnVisibleTransactionsChanged(
                     adapter.models

@@ -397,10 +397,7 @@ class TxDetailsController(
     }
 
     private fun copyToClipboard(text: String) {
-        BRClipboardManager.putClipboard(
-            activity,
-            text
-        )
+        BRClipboardManager.putClipboard(text)
         toastLong(R.string.Receive_copied)
     }
 }

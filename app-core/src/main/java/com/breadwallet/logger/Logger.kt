@@ -31,6 +31,11 @@ import android.util.Log
 import com.breadwallet.logger.Logger.Companion
 import com.breadwallet.logger.Logger.Companion.create
 import com.breadwallet.logger.Logger.Companion.tag
+import java.util.logging.Formatter
+import java.util.logging.Handler
+import java.util.logging.Level
+import java.util.logging.LogManager
+import java.util.logging.LogRecord
 
 /**
  * A simple and instantiable logger with a default implementation
@@ -66,6 +71,10 @@ interface Logger {
 
         override fun wtf(message: String, vararg data: Any?) =
                 defaultLogger.wtf(message, *data)
+
+        fun setJulLevel(level: Level) {
+            defaultLogger.initialize(level)
+        }
     }
 
     /** Log verbose [message] and any [data] objects. */
@@ -99,13 +108,35 @@ inline fun logWtf(message: String, vararg data: Any?) = Logger.wtf(message, *dat
 private class DefaultLogger(
         /** Used instead of looking up the calling element's name. */
         private val manualTag: String? = null
-) : Logger {
+) : Handler(), Logger {
 
     companion object {
         /** Max character count for Logcat tags below Android N. */
         private const val MAX_TAG_LENGTH = 23
         /** Pattern matching anonymous class name. */
         private val ANONYMOUS_CLASS = "(\\$\\d+)+$".toPattern()
+    }
+
+    private val recordFormatter = object : Formatter() {
+        override fun format(record: LogRecord): String = buildString {
+            appendLine(record.message)
+            record.thrown
+                ?.run(Log::getStackTraceString)
+                ?.run(::appendLine)
+        }
+    }
+
+    init {
+        formatter = recordFormatter
+        initialize()
+    }
+
+    internal fun initialize(minimumLevel: Level = Level.INFO) {
+        LogManager.getLogManager().reset()
+        java.util.logging.Logger.getLogger("").apply {
+            addHandler(this@DefaultLogger)
+            level = minimumLevel
+        }
     }
 
     /** Holds a tag that will be used once after [withTagForCall]. */
@@ -235,4 +266,26 @@ private class DefaultLogger(
                     }
                 }
     }
+
+    override fun publish(record: LogRecord) {
+        val julInt = level.intValue()
+        val priority = when {
+            julInt >= Level.SEVERE.intValue() -> Log.ERROR
+            julInt >= Level.WARNING.intValue() -> Log.WARN
+            julInt >= Level.INFO.intValue() -> Log.INFO
+            else -> Log.DEBUG
+        }
+        val tag = record.loggerName
+            .substringAfterLast('.')
+            .takeLast(MAX_TAG_LENGTH)
+        try {
+            Log.println(priority, tag, formatter.format(record))
+        } catch (e: RuntimeException) {
+            error("Failed to print log record", e)
+        }
+    }
+
+    override fun flush() = Unit
+
+    override fun close() = Unit
 }

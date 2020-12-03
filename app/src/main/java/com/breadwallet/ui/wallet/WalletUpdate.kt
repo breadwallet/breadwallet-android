@@ -192,7 +192,7 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
             model.copy(selectedPriceDataPoint = null),
             effects(
                 F.TrackEvent(
-                    String.format(
+                    EventUtils.getEventNameWithCurrencyCode(
                         EventUtils.EVENT_WALLET_CHART_SCRUBBED,
                         model.currencyCode
                     )
@@ -235,7 +235,8 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
     ): Next<M, F> =
         next(
             model.copy(
-                currencyName = event.name
+                currencyName = event.name,
+                currencyId = event.currencyId
             )
         )
 
@@ -453,7 +454,7 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
             effects(
                 F.LoadChartInterval(event.interval, model.currencyCode),
                 F.TrackEvent(
-                    String.format(
+                    EventUtils.getEventNameWithCurrencyCode(
                         EventUtils.EVENT_WALLET_CHART_AXIS_TOGGLE,
                         model.currencyCode
                     )
@@ -516,6 +517,9 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
 
     override fun onCreateAccountConfirmationClicked(model: M): Next<M, F> =
         dispatch(effects(F.CreateAccount(model.currencyCode)))
+
+    override fun onStakingCellClicked(model: M): Next<M, F> =
+        dispatch(effects(F.Nav.GoToStaking(model.currencyCode)))
 }
 
 /**

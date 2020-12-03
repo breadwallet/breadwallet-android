@@ -67,7 +67,11 @@ interface NavigationTargetHandlerSpec {
         is NavigationTarget.FastSync -> fastSync(effect)
         is NavigationTarget.ATMMap -> aTMMap(effect)
         is NavigationTarget.Signal -> signal(effect)
+        NavigationTarget.LogcatViewer -> logcatViewer()
+        is NavigationTarget.Staking -> staking(effect)
     }
+
+    fun logcatViewer()
 
     fun back(): Unit
 
@@ -150,4 +154,6 @@ interface NavigationTargetHandlerSpec {
     fun aTMMap(effect: NavigationTarget.ATMMap): Unit
 
     fun signal(effect: NavigationTarget.Signal): Unit
+
+    fun staking(effect: NavigationTarget.Staking): Unit
 }

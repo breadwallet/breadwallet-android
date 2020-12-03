@@ -68,6 +68,9 @@ object SettingsScreen {
     sealed class F {
         object SendAtmFinderRequest : F()
         object SendLogs : F()
+        object ViewLogs : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.LogcatViewer
+        }
         object ShowApiServerDialog : F(), ViewEffect
         object ShowPlatformDebugUrlDialog : F(), ViewEffect
         object ShowPlatformBundleDialog : F(), ViewEffect
@@ -79,6 +82,9 @@ object SettingsScreen {
         object ClearBlockchainData : F()
         object ToggleRateAppPrompt : F()
         object RefreshTokens : F()
+        object DetailedLogging : F()
+        object CopyPaperKey : F()
+        object ToggleTezos : F()
 
         data class SetApiServer(val host: String) : F()
         data class SetPlatformDebugUrl(val url: String) : F()

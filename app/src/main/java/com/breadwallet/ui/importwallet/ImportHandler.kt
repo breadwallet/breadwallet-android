@@ -26,11 +26,12 @@ package com.breadwallet.ui.importwallet
 
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.hashString
+import com.breadwallet.breadbox.isBitcoin
+import com.breadwallet.breadbox.isBitcoinCash
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Key
 import com.breadwallet.crypto.Wallet
-import com.breadwallet.util.isBitcoin
-import com.breadwallet.util.isBitcoinCash
+import com.breadwallet.crypto.WalletManagerState
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterIsInstance
@@ -48,21 +49,26 @@ fun createImportHandler(
     addFunction(handleSubmitTransfer(walletImporter))
 }
 
-private fun List<Wallet>.filterBtcLike(): List<Wallet> =
-    filter { wallet ->
-        wallet.currency.code.run { isBitcoin() || isBitcoinCash() }
-    }
+private val filterBtcLike: (Wallet) -> Boolean = {
+    it.currency.run { isBitcoin() || isBitcoinCash() }
+}
 
 private fun handleValidateKey(
     breadBox: BreadBox
 ): suspend (Import.F.ValidateKey) -> Import.E = { effect ->
     val keyBytes = effect.privateKey.toByteArray()
     val passwordBytes = effect.password?.toByteArray() ?: byteArrayOf()
-    val wallets = breadBox.wallets().first().filterBtcLike()
+    val wallets = breadBox.wallets()
+        .map { it.filter(filterBtcLike) }
+        .first { wallets ->
+            val btc = wallets.firstOrNull { it.currency.isBitcoin() }
+            btc?.walletManager?.state?.type == WalletManagerState.Type.CONNECTED
+        }
 
     // Sweeping only supports BTC and BCH, ensure one is active.
     when {
         wallets.isEmpty() -> Import.E.Key.NoWallets
+        keyBytes.isEmpty() -> Import.E.Key.OnInvalid
         passwordBytes.isNotEmpty() -> when {
             Key.createFromPrivateKeyString(keyBytes, passwordBytes).isPresent ->
                 Import.E.Key.OnValid(true)
@@ -90,7 +96,7 @@ private fun handleEstimateImport(
 
     walletImporter.setKey(privateKey, password)
 
-    val btcWallets = breadBox.wallets().first().filterBtcLike()
+    val btcWallets = breadBox.wallets().first().filter(filterBtcLike)
 
     check(btcWallets.isNotEmpty()) {
         "Import requires an active BTC or BCH wallet."
