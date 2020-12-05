@@ -27,22 +27,27 @@ package com.breadwallet.ui.settings
 import android.app.ActivityManager
 import android.content.Context
 import android.security.keystore.UserNotAuthenticatedException
+import android.widget.Toast
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BdbAuthInterceptor
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.ext.throttleLatest
+import com.breadwallet.logger.Logger
 import com.breadwallet.logger.logDebug
 import com.breadwallet.model.Experiments
 import com.breadwallet.model.TokenItem
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
+import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
+import com.breadwallet.tools.util.EmailTarget
 import com.breadwallet.tools.util.ServerBundlesHelper
-import com.breadwallet.tools.util.SupportUtils
+import com.breadwallet.tools.util.SupportManager
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.SettingsScreen.E
@@ -53,14 +58,26 @@ import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.util.logging.Level
 import kotlin.text.Charsets.UTF_8
 
 private const val DEVELOPER_OPTIONS_TITLE = "Developer Options"
+private const val DETAILED_LOGGING_MESSAGE = "Detailed logging is enabled for this session."
+private const val CLEAR_BLOCKCHAIN_DATA_MESSAGE = "Clearing blockchain data"
+private const val TEZOS_ID = "tezos-mainnet:__native__"  // TODO: DROID-1854 remove tezos filter
+private const val OPTION_UPDATE_THROTTLE = 1000L
 
 class SettingsScreenHandler(
     private val output: Consumer<E>,
@@ -69,7 +86,8 @@ class SettingsScreenHandler(
     private val metaDataManager: AccountMetaDataProvider,
     private val userManager: BrdUserManager,
     private val breadBox: BreadBox,
-    private val bdbAuthInterceptor: BdbAuthInterceptor
+    private val bdbAuthInterceptor: BdbAuthInterceptor,
+    private val supportManager: SupportManager
 ) : Connection<F>, CoroutineScope {
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Default + errorHandler()
@@ -77,15 +95,18 @@ class SettingsScreenHandler(
     @Suppress("ComplexMethod")
     override fun accept(value: F) {
         when (value) {
-            is F.LoadOptions -> loadOptions(value.section)
+            is F.LoadOptions -> {
+                merge(
+                    BRSharedPrefs.promptChanges(),
+                    BRSharedPrefs.preferredFiatIsoChanges().map { }
+                ).onStart { emit(Unit) }
+                    .throttleLatest(OPTION_UPDATE_THROTTLE)
+                    .onEach { loadOptions(value.section) }
+                    .launchIn(this)
+            }
             F.SendAtmFinderRequest -> sendAtmFinderRequest()
-            F.SendLogs -> launch(Dispatchers.Main) {
-                SupportUtils.submitEmailRequest(
-                    context,
-                    breadBox,
-                    userManager,
-                    sendToAndroidTeam = true
-                )
+            F.SendLogs -> launch(Main) {
+                supportManager.submitEmailRequest(EmailTarget.ANDROID_TEAM)
             }
             is F.SetApiServer -> {
                 if (BuildConfig.DEBUG) {
@@ -137,12 +158,14 @@ class SettingsScreenHandler(
                     }
             }
             F.ClearBlockchainData -> launch {
-                logDebug("Clearing blockchain data")
+                logDebug(CLEAR_BLOCKCHAIN_DATA_MESSAGE)
                 breadBox.run {
                     close(true)
                     open(checkNotNull(userManager.getAccount()))
                 }
-                output.accept(E.OnCloseHiddenMenu)
+                Main {
+                    Toast.makeText(context, CLEAR_BLOCKCHAIN_DATA_MESSAGE, Toast.LENGTH_LONG).show()
+                }
             }
             F.ToggleRateAppPrompt -> {
                 BRSharedPrefs.appRatePromptShouldPromptDebug =
@@ -155,6 +178,29 @@ class SettingsScreenHandler(
                     bdbAuthInterceptor.refreshClientToken()
                 }
                 output.accept(E.OnCloseHiddenMenu)
+            }
+            F.DetailedLogging -> launch {
+                Logger.setJulLevel(Level.ALL)
+                Main {
+                    Toast.makeText(context, DETAILED_LOGGING_MESSAGE, Toast.LENGTH_LONG).show()
+                }
+            }
+            F.CopyPaperKey -> {
+                BreadApp.applicationScope.launch {
+                    val phrase = userManager.getPhrase()?.toString(UTF_8)
+                    Main {
+                        BRClipboardManager.putClipboard(phrase)
+                        Toast.makeText(context, "Paper Key copied!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            F.ToggleTezos -> launch {
+                val enabled = metaDataManager.enabledWallets().first()
+                if (enabled.contains(TEZOS_ID)) {
+                    metaDataManager.disableWallet(TEZOS_ID)
+                } else {
+                    metaDataManager.enableWallet(TEZOS_ID)
+                }
             }
         }
     }
@@ -185,6 +231,10 @@ class SettingsScreenHandler(
             SettingsItem(
                 "Clear Blockchain Data",
                 SettingsOption.CLEAR_BLOCKCHAIN_DATA
+            ),
+            SettingsItem(
+                "Enable Detailed Logging",
+                SettingsOption.DETAILED_LOGGING
             )
         )
     }
@@ -248,7 +298,7 @@ class SettingsScreenHandler(
         }
     }
 
-    private val preferences = listOf(
+    private val preferences get() = listOf(
         SettingsItem(
             context.getString(R.string.Settings_currency),
             SettingsOption.CURRENCY,
@@ -312,8 +362,16 @@ class SettingsScreenHandler(
         val toggleRateAppPromptAddOn = BRSharedPrefs.appRatePromptShouldPromptDebug
         return listOf(
             SettingsItem(
+                "Copy Paper Key",
+                SettingsOption.COPY_PAPER_KEY
+            ),
+            SettingsItem(
                 "Send Logs",
                 SettingsOption.SEND_LOGS
+            ),
+            SettingsItem(
+                "View Logs",
+                SettingsOption.VIEW_LOGS
             ),
             SettingsItem(
                 "API Server",
@@ -356,8 +414,12 @@ class SettingsScreenHandler(
                 "Toggle Rate App Prompt",
                 SettingsOption.TOGGLE_RATE_APP_PROMPT,
                 addOn = "show=$toggleRateAppPromptAddOn"
+            ),
+            SettingsItem(
+                "Toggle Tezos",
+                SettingsOption.TOGGLE_TEZOS
             )
-        )
+        ) + getHiddenOptions()
     }
 
     private val btcOptions: List<SettingsItem> =

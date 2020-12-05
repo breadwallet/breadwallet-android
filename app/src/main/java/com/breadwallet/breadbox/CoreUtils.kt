@@ -27,29 +27,16 @@
 package com.breadwallet.breadbox
 
 import com.breadwallet.BuildConfig
-import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Address
-import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Currency
-import com.breadwallet.crypto.Key
 import com.breadwallet.crypto.Network
 import com.breadwallet.crypto.NetworkFee
 import com.breadwallet.crypto.NetworkPeer
-import com.breadwallet.crypto.System
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferDirection
-import com.breadwallet.crypto.TransferFeeBasis
-import com.breadwallet.crypto.Unit
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
-import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.WalletManagerState
-import com.breadwallet.crypto.WalletSweeper
-import com.breadwallet.crypto.errors.AccountInitializationError
-import com.breadwallet.crypto.errors.FeeEstimationError
-import com.breadwallet.crypto.errors.LimitEstimationError
-import com.breadwallet.crypto.errors.WalletSweeperError
-import com.breadwallet.crypto.utility.CompletionHandler
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.util.isBitcoin
@@ -59,42 +46,19 @@ import com.breadwallet.util.isRipple
 import com.google.common.primitives.UnsignedInteger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.mapNotNull
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 /** Default port for [NetworkPeer] */
 private const val DEFAULT_PORT = 8333L
-
-/** Returns the [Amount] as a [BigDecimal]. */
-fun Amount.toBigDecimal(unit: Unit = this.unit): BigDecimal {
-    return BigDecimal(doubleAmount(unit).or(0.0))
-        .setScale(unit.decimals.toInt(), BRConstants.ROUNDING_MODE)
-}
 
 /** Returns the [Address] string removing any address prefixes. */
 fun Address.toSanitizedString(): String =
     toString()
         .removePrefix("bitcoincash:")
         .removePrefix("bchtest:")
-
-/** True when this is a native currency for the network. */
-fun Currency.isNative() = type.equals("native", true)
-
-/** True when this is an erc20 token for the Ethereum network. */
-fun Currency.isErc20() = type.equals("erc20", true)
-
-/** True when this is Ethereum. */
-fun Currency.isEthereum() = code.isEthereum() && !isErc20()
-
-fun Currency.isBitcoin() = code.isBitcoin()
-
-fun Currency.isBitcoinCash() = code.isBitcoinCash()
 
 /** Returns the [Transfer]'s hash or an empty string. */
 fun Transfer.hashString(): String =
@@ -107,71 +71,24 @@ fun Transfer.hashString(): String =
             }
         }
 
-/** Returns the [Address] object for [address] from the [Wallet]'s [Network]*/
-fun Wallet.addressFor(address: String): Address? {
-    return Address.create(address, walletManager.network).orNull()
-}
-
-/**
- * By default [com.breadwallet.corecrypto.WalletManager.getDefaultNetworkFee]
- * is used for the [networkFee].
- */
-suspend fun Wallet.estimateFee(
-    address: Address,
-    amount: Amount,
-    networkFee: NetworkFee = walletManager.defaultNetworkFee
-): TransferFeeBasis = suspendCoroutine { continuation ->
-    val handler = object : CompletionHandler<TransferFeeBasis, FeeEstimationError> {
-        override fun handleData(data: TransferFeeBasis) {
-            continuation.resume(data)
-        }
-
-        override fun handleError(error: FeeEstimationError) {
-            continuation.resumeWithException(error)
-        }
-    }
-    estimateFee(address, amount, networkFee, handler)
-}
-
-suspend fun WalletManager.createSweeper(
-    wallet: Wallet,
-    key: Key
-): WalletSweeper = suspendCoroutine { continuation ->
-    val handler = object : CompletionHandler<WalletSweeper, WalletSweeperError> {
-        override fun handleData(sweeper: WalletSweeper) {
-            continuation.resume(sweeper)
-        }
-
-        override fun handleError(error: WalletSweeperError) {
-            continuation.resumeWithException(error)
-        }
-    }
-    createSweeper(wallet, key, handler)
-}
-
-suspend fun WalletSweeper.estimateFee(networkFee: NetworkFee): TransferFeeBasis =
-    suspendCoroutine { continuation ->
-        val handler = object : CompletionHandler<TransferFeeBasis, FeeEstimationError> {
-            override fun handleData(feeBasis: TransferFeeBasis) {
-                continuation.resume(feeBasis)
-            }
-
-            override fun handleError(error: FeeEstimationError) {
-                continuation.resumeWithException(error)
-            }
-        }
-        estimate(networkFee, handler)
-    }
-
 fun Wallet.feeForSpeed(speed: TransferSpeed): NetworkFee {
+    if (currency.isTezos()) {
+        return checkNotNull(
+            walletManager.network.fees.minByOrNull {
+                it.confirmationTimeInMilliseconds.toLong()
+            }
+        )
+    }
     val fees = walletManager.network.fees
     return when (fees.size) {
         1 -> fees.single()
         else -> fees
             .filter { it.confirmationTimeInMilliseconds.toLong() <= speed.targetTime }
-            .minBy { fee ->
+            .minByOrNull { fee ->
                 speed.targetTime - fee.confirmationTimeInMilliseconds.toLong()
-            } ?: fees.minBy { it.confirmationTimeInMilliseconds } ?: walletManager.defaultNetworkFee
+            }
+            ?: fees.minByOrNull { it.confirmationTimeInMilliseconds }
+            ?: walletManager.defaultNetworkFee
     }
 }
 
@@ -335,70 +252,3 @@ fun Transfer.getSize(): Double? {
         else -> null
     }
 }
-
-/** Returns a [Flow] providing the default [WalletManagerMode] from [System] for a given [currencyId]. */
-fun Flow<System>.getDefaultWalletManagerMode(currencyId: String): Flow<WalletManagerMode> =
-    mapNotNull { system ->
-        system.networks
-            .find { it.containsCurrency(currencyId) }
-            ?.run { defaultWalletManagerMode }
-    }
-
-/** Returns the default [Unit] for a given [Wallet] */
-val Wallet.defaultUnit: Unit
-    get() = walletManager
-        .network
-        .defaultUnitFor(currency)
-        .get()
-
-/** Returns the base [Unit] for a given [Wallet] */
-val Wallet.baseUnit: Unit
-    get() = walletManager
-        .network
-        .baseUnitFor(currency)
-        .get()
-
-suspend fun System.accountInitialize(
-    account: Account,
-    network: Network,
-    create: Boolean
-): ByteArray = suspendCoroutine { continuation ->
-    val handler = object : CompletionHandler<ByteArray, AccountInitializationError> {
-        override fun handleData(data: ByteArray) {
-            continuation.resume(data)
-        }
-
-        override fun handleError(error: AccountInitializationError) {
-            continuation.resumeWithException(error)
-        }
-    }
-    accountInitialize(account, network, create, handler)
-}
-
-suspend fun Wallet.estimateMaximum(
-    address: Address,
-    networkFee: NetworkFee
-): Amount = suspendCoroutine { continuation ->
-    val handler = object : CompletionHandler<Amount, LimitEstimationError> {
-        override fun handleData(limitMaxAmount: Amount?) {
-            if (limitMaxAmount == null) {
-                continuation.resumeWithException(Exception("Limit Estimation is null"))
-                return
-            }
-            continuation.resume(limitMaxAmount)
-        }
-
-        override fun handleError(error: LimitEstimationError?) {
-            continuation.resumeWithException(
-                error ?: Exception("Unknown Limit Estimation Error")
-            )
-        }
-    }
-
-    estimateLimitMaximum(
-        address,
-        networkFee,
-        handler
-    )
-}
-

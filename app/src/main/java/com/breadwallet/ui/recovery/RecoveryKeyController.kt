@@ -91,6 +91,7 @@ class RecoveryKeyController(
     override val flowEffectHandler: FlowTransformer<F, E>
         get() = createRecoveryKeyHandler(
             applicationContext as BreadApp,
+            direct.instance(),
             direct.instance()
         )
 
@@ -164,7 +165,7 @@ class RecoveryKeyController(
         // Bind paste event
         wordInputs.first().addEditTextEventListener { event ->
             if (event == BREdit.EditTextEvent.PASTE) {
-                val clipboardText = BRClipboardManager.getClipboard(activity)
+                val clipboardText = BRClipboardManager.getClipboard()
                 output.accept(E.OnTextPasted(clipboardText))
 
                 val phrase = clipboardText.split("\\s+".toRegex())

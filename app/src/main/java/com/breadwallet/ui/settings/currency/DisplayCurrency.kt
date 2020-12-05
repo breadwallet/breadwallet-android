@@ -30,7 +30,7 @@ import com.breadwallet.ui.navigation.NavigationTarget
 
 object DisplayCurrency {
 
-    data class M(val currencies: List<FiatCurrency>, val selectedCurrency: String) {
+    data class M(val currencies: List<String>, val selectedCurrency: String) {
         companion object {
             fun createDefault(): M = M(emptyList(), "")
         }
@@ -42,7 +42,7 @@ object DisplayCurrency {
         data class OnCurrencySelected(val currencyCode: String) : E()
         data class OnCurrenciesLoaded(
             val selectedCurrencyCode: String,
-            val currencies: List<FiatCurrency>
+            val currencies: List<String>
         ) : E()
 
         data class OnSelectedCurrencyUpdated(val currencyCode: String) : E()

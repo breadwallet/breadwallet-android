@@ -259,9 +259,19 @@ internal class CoreBreadBox(
         walletsChannel
             .asFlow()
             .throttleLatest(DEFAULT_THROTTLE_MS)
-            .mapNotNull {
-                system?.wallets?.firstOrNull {
-                    it.currency.code.equals(currencyCode, true)
+            .run {
+                if (currencyCode.contains(":")) {
+                    mapNotNull {
+                        system?.wallets?.firstOrNull {
+                            it.currency.uids.equals(currencyCode, true)
+                        }
+                    }
+                } else {
+                    mapNotNull {
+                        system?.wallets?.firstOrNull {
+                            it.currency.code.equals(currencyCode, true)
+                        }
+                    }
                 }
             }
 

@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONException
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.Date
@@ -73,7 +74,7 @@ private const val EUR_AVM_CURRENCY_CODE = "eur.avm"
 private const val AVM_TO_EUR_KEY = "AVM_TO_EUR"
 private const val EUR_AVM_TO_EUR_KEY = "EUR_AVM_TO_EUR"
 
-private const val COINGECKO_API_URL = "https://api.coingecko.com/api/v3/"
+const val COINGECKO_API_URL = "https://api.coingecko.com/api/v3/"
 
 class RatesFetcher(
     private val accountMetaData: AccountMetaDataProvider,
@@ -271,12 +272,16 @@ class RatesFetcher(
                 val prices = json.getJSONArray("prices")
                 (0 until prices.length())
                     .filter { interval.keepEvery == 0 || it % interval.keepEvery == 0 }
-                    .map { i ->
-                        val data = prices.getJSONArray(i)
-                        PriceDataPoint(
-                            time = Date(data.getLong(0)),
-                            closePrice = data.getDouble(1)
-                        )
+                    .mapNotNull { i ->
+                        try {
+                            val data = prices.getJSONArray(i)
+                            PriceDataPoint(
+                                time = Date(data.getLong(0)),
+                                closePrice = data.getDouble(1)
+                            )
+                        } catch (e: JSONException) {
+                            null
+                        }
                     }
             }
         }

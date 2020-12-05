@@ -42,6 +42,7 @@ interface WalletScreenUpdateSpec {
         WalletScreen.E.OnChartDataPointReleased -> onChartDataPointReleased(model)
         WalletScreen.E.OnCreateAccountClicked -> onCreateAccountClicked(model)
         WalletScreen.E.OnCreateAccountConfirmationClicked -> onCreateAccountConfirmationClicked(model)
+        WalletScreen.E.OnStakingCellClicked -> onStakingCellClicked(model)
         is WalletScreen.E.OnSyncProgressUpdated -> onSyncProgressUpdated(model, event)
         is WalletScreen.E.OnQueryChanged -> onQueryChanged(model, event)
         is WalletScreen.E.OnCurrencyNameUpdated -> onCurrencyNameUpdated(model, event)
@@ -94,6 +95,8 @@ interface WalletScreenUpdateSpec {
     fun onCreateAccountClicked(model: WalletScreen.M): Next<WalletScreen.M, WalletScreen.F>
 
     fun onCreateAccountConfirmationClicked(model: WalletScreen.M): Next<WalletScreen.M, WalletScreen.F>
+
+    fun onStakingCellClicked(model: WalletScreen.M): Next<WalletScreen.M, WalletScreen.F>
 
     fun onSyncProgressUpdated(model: WalletScreen.M, event: WalletScreen.E.OnSyncProgressUpdated): Next<WalletScreen.M, WalletScreen.F>
 

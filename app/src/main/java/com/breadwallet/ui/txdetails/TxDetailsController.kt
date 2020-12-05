@@ -228,17 +228,7 @@ class TxDetailsController(
                 M::isErc20
             ) {
                 showTotalCost(!isErc20)
-
-                fee_primary.text = when {
-                    isErc20 -> {
-                        String.format(
-                            "%s %s",
-                            fee.stripTrailingZeros().toPlainString(),
-                            "gwei"
-                        )
-                    }
-                    else -> fee.formatCryptoForUi(currencyCode, MAX_CRYPTO_DIGITS)
-                }
+                fee_primary.text = fee.formatCryptoForUi(feeCurrency, MAX_CRYPTO_DIGITS)
             }
         }
 
@@ -407,10 +397,7 @@ class TxDetailsController(
     }
 
     private fun copyToClipboard(text: String) {
-        BRClipboardManager.putClipboard(
-            activity,
-            text
-        )
+        BRClipboardManager.putClipboard(text)
         toastLong(R.string.Receive_copied)
     }
 }

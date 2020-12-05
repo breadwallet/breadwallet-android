@@ -169,6 +169,18 @@ class ImportController(
         controller: AlertDialogController,
         result: AlertDialogController.DialogInputResult
     ) {
+        onDismissOrNegative(dialogId)
+    }
+
+    override fun onNegativeClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
+        onDismissOrNegative(dialogId)
+    }
+
+    private fun onDismissOrNegative(dialogId: String) {
         when (dialogId) {
             CONFIRM_IMPORT_DIALOG -> E.OnImportCancel
             IMPORT_SUCCESS_DIALOG -> E.OnCloseClicked

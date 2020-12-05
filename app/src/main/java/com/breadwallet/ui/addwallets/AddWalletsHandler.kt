@@ -39,6 +39,7 @@ import com.breadwallet.model.TokenItem
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.addwallets.AddWallets.E
 import com.breadwallet.ui.addwallets.AddWallets.F
+import com.breadwallet.util.isTezos
 import com.platform.interfaces.AccountMetaDataProvider
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
@@ -148,7 +149,9 @@ private fun walletIsNeeded(wallet: Wallet, trackedWallets: List<String>) =
 
 private fun List<TokenItem>.applyFilter(query: String) =
     filter { token ->
-        token.name.contains(query, true) || token.symbol.contains(query, true)
+        (token.name.contains(query, true) ||
+            token.symbol.contains(query, true)) &&
+            !token.symbol.isTezos() // TODO: DROID-1854 remove tezos filter
     }
 
 private fun TokenItem.asToken(enabled: Boolean, removable: Boolean): Token {

@@ -27,12 +27,13 @@ package com.breadwallet.ui.send
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.ext.isZero
 import com.breadwallet.tools.util.BRConstants
+import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.send.SendSheet.E
-import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.ValidAddress
-import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.ResolvableAddress
-import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.ResolveError
 import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.InvalidAddress
 import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.NoAddress
+import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.ResolvableAddress
+import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.ResolveError
+import com.breadwallet.ui.send.SendSheet.E.OnAddressValidated.ValidAddress
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.AddDecimal
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.AddDigit
 import com.breadwallet.ui.send.SendSheet.E.OnAmountChange.Clear
@@ -47,6 +48,7 @@ import com.spotify.mobius.Next.next
 import com.spotify.mobius.Next.noChange
 import com.spotify.mobius.Update
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 // TODO: Is this specific to a given currency or just the app?
 const val MAX_DIGITS = 8
@@ -78,7 +80,8 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             )
             else -> next(
                 model.copy(
-                    rawAmount = model.rawAmount + '.'
+                    rawAmount = model.rawAmount + '.',
+                    isSendingMax = false
                 )
             )
         }
@@ -323,6 +326,17 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                 model.amount + event.networkFee > model.balance
             else -> model.amount > model.balance
         }
+        if (model.isSendingMax && isTotalCostOverBalance) {
+            return dispatch(
+                setOf<F>(
+                    F.EstimateMax(
+                        model.currencyCode,
+                        model.targetAddress,
+                        model.transferSpeed
+                    )
+                )
+            )
+        }
         return when {
             model.amount != event.amount -> noChange()
             model.targetAddress != event.targetAddress -> noChange()
@@ -356,7 +370,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         model: M,
         event: E.OnTransferSpeedChanged
     ): Next<M, F> {
-        val transferSpeed = when(event.transferSpeed) {
+        val transferSpeed = when (event.transferSpeed) {
             TransferSpeedInput.ECONOMY -> TransferSpeed.Economy(model.currencyCode)
             TransferSpeedInput.REGULAR -> TransferSpeed.Regular(model.currencyCode)
             TransferSpeedInput.PRIORITY -> TransferSpeed.Priority(model.currencyCode)
@@ -452,15 +466,27 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
         event: E.OnAddressValidated
     ): Next<M, F> {
         val transferFields = when {
-            event is ValidAddress && event.type !is AddressType.NativePublic -> model.transferFields.copy(TransferField.DESTINATION_TAG, event.destinationTag ?: "")
-            model.addressType !is AddressType.NativePublic -> model.transferFields.copy(TransferField.DESTINATION_TAG, "")
+            event is ValidAddress && event.type !is AddressType.NativePublic -> model.transferFields.copy(
+                TransferField.DESTINATION_TAG,
+                event.destinationTag ?: ""
+            )
+            model.addressType !is AddressType.NativePublic -> model.transferFields.copy(
+                TransferField.DESTINATION_TAG,
+                ""
+            )
             else -> model.transferFields
         }
 
         return when {
             model.isConfirmingTx -> noChange()
             else -> when (event) {
-                is ValidAddress -> processValidAddress(model, event.address, event.type, event.targetString, transferFields)
+                is ValidAddress -> processValidAddress(
+                    model,
+                    event.address,
+                    event.type,
+                    event.targetString,
+                    transferFields
+                )
                 is ResolvableAddress -> next(
                     model.copy(
                         targetString = event.targetString,
@@ -518,12 +544,20 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
     ): Next<M, F> {
         val effects = mutableSetOf<F>()
         if (model.canEstimateFee) {
-            F.EstimateFee(
-                model.currencyCode,
-                address,
-                model.amount,
-                model.transferSpeed
-            ).run(effects::add)
+            if (model.isSendingMax) {
+                F.EstimateMax(
+                    model.currencyCode,
+                    address,
+                    model.transferSpeed
+                )
+            } else {
+                F.EstimateFee(
+                    model.currencyCode,
+                    address,
+                    model.amount,
+                    model.transferSpeed
+                )
+            }.run(effects::add)
         }
 
         return next(
@@ -593,8 +627,8 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                 feeCurrencyCode = event.feeCurrencyCode,
                 amount = newAmount,
                 fiatAmount = newFiatAmount,
-                fiatNetworkFee = if (pricePerUnit > BigDecimal.ZERO) {
-                    (model.networkFee * pricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
+                fiatNetworkFee = if (event.fiatPricePerFeeUnit > BigDecimal.ZERO) {
+                    (model.networkFee * event.fiatPricePerFeeUnit).setScale(2, BRConstants.ROUNDING_MODE)
                 } else {
                     model.fiatNetworkFee
                 }
@@ -735,7 +769,7 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
             feeCurrencyCode = model.feeCurrencyCode,
             feeCurrencyBalance = model.feeCurrencyBalance,
             fiatAmount = if (link.amount != null && model.fiatPricePerUnit > BigDecimal.ZERO) {
-                (link.amount * model.fiatPricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
+                (link!!.amount!! * model.fiatPricePerUnit).setScale(2, BRConstants.ROUNDING_MODE)
             } else BigDecimal.ZERO
         )
 
@@ -885,5 +919,64 @@ object SendSheetUpdate : Update<M, E, F>, SendSheetUpdateSpec {
                 )
             else -> next(nextModel)
         }
+    }
+
+    override fun onSendMaxClicked(model: M): Next<M, F> = when {
+        model.isSendingMax -> noChange()
+        else -> {
+            val fiatBalanceAsSendAmount = model.fiatBalance.setScale(2, RoundingMode.HALF_DOWN)
+            val balanceAsSendAmount = model.balance.setScale(MAX_DIGITS, RoundingMode.HALF_DOWN)
+            next(
+                model.copy(
+                    isSendingMax = true,
+                    isAmountEditVisible = false,
+                    amount = balanceAsSendAmount,
+                    fiatAmount = fiatBalanceAsSendAmount,
+                    rawAmount = when {
+                        model.isAmountCrypto -> balanceAsSendAmount.toPlainString()
+                        else -> fiatBalanceAsSendAmount.toPlainString()
+                    },
+                    transferFeeBasis = null
+                ),
+                setOf<F>(
+                    F.EstimateMax(
+                        model.currencyCode,
+                        model.targetAddress,
+                        model.transferSpeed
+                    )
+                )
+            )
+        }
+    }
+
+    override fun onMaxEstimated(model: M, event: E.OnMaxEstimated): Next<M, F> = when {
+        model.isSendingMax -> {
+            val fiatAmount = (event.amount * model.fiatPricePerUnit).setScale(2, RoundingMode.HALF_DOWN)
+            val amount = event.amount.setScale(MAX_DIGITS, RoundingMode.HALF_DOWN)
+            next(
+                model.copy(
+                    amount = amount,
+                    fiatAmount = fiatAmount,
+                    rawAmount = when {
+                        model.isAmountCrypto -> amount.toPlainString()
+                        else -> fiatAmount.toPlainString()
+                    }
+                ),
+                setOf<F>(
+                    F.EstimateFee(
+                        model.currencyCode,
+                        model.targetAddress,
+                        event.amount,
+                        model.transferSpeed
+                    )
+                )
+            )
+        }
+        else -> noChange()
+    }
+
+    override fun onMaxEstimateFailed(model: M): Next<M, F> = when {
+        model.isSendingMax -> next(model.copy(isSendingMax = false))
+        else -> noChange()
     }
 }

@@ -146,6 +146,10 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.CLEAR_BLOCKCHAIN_DATA -> F.ClearBlockchainData
                     SettingsOption.TOGGLE_RATE_APP_PROMPT -> F.ToggleRateAppPrompt
                     SettingsOption.REFRESH_TOKENS -> F.RefreshTokens
+                    SettingsOption.DETAILED_LOGGING -> F.DetailedLogging
+                    SettingsOption.VIEW_LOGS -> F.ViewLogs
+                    SettingsOption.COPY_PAPER_KEY -> F.CopyPaperKey
+                    SettingsOption.TOGGLE_TEZOS -> F.ToggleTezos
                 }
             )
         )

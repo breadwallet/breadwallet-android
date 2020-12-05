@@ -45,15 +45,6 @@ class AuthenticationController(
     args: Bundle
 ) : BaseController(args) {
 
-    enum class Mode {
-        /** Attempt biometric auth if configured, otherwise the pin is required. */
-        USER_PREFERRED,
-        /** Ensures the use of a pin, fails immediately if not set. */
-        PIN_REQUIRED,
-        /** Ensures the use of biometric auth, fails immediately if not available. */
-        BIOMETRIC_REQUIRED
-    }
-
     interface Listener {
         /** Called when the user successfully authenticates. */
         fun onAuthenticationSuccess() = Unit
@@ -74,7 +65,7 @@ class AuthenticationController(
     }
 
     constructor(
-        mode: Mode = Mode.USER_PREFERRED,
+        mode: AuthMode = AuthMode.USER_PREFERRED,
         title: String? = null,
         message: String? = null
     ) : this(
@@ -94,17 +85,17 @@ class AuthenticationController(
         val context = BreadApp.getBreadContext().applicationContext
         val fingerprintManager = context.getSystemService<FingerprintManager>()
         if (fingerprintManager == null) {
-            Mode.PIN_REQUIRED
+            AuthMode.PIN_REQUIRED
         } else {
-            Mode.valueOf(arg(KEY_MODE))
+            AuthMode.valueOf(arg(KEY_MODE))
         }
     }
 
     override val layoutId: Int =
         when (mode) {
-            Mode.USER_PREFERRED -> R.layout.controller_fingerprint
-            Mode.PIN_REQUIRED -> R.layout.controller_pin
-            Mode.BIOMETRIC_REQUIRED -> R.layout.controller_fingerprint
+            AuthMode.USER_PREFERRED -> R.layout.controller_fingerprint
+            AuthMode.PIN_REQUIRED -> R.layout.controller_pin
+            AuthMode.BIOMETRIC_REQUIRED -> R.layout.controller_fingerprint
         }
 
     private var fingerprintUiHelper: FingerprintUiHelper? = null
@@ -113,10 +104,10 @@ class AuthenticationController(
         super.onCreateView(view)
 
         when (mode) {
-            Mode.BIOMETRIC_REQUIRED, Mode.USER_PREFERRED -> {
+            AuthMode.BIOMETRIC_REQUIRED, AuthMode.USER_PREFERRED -> {
                 showFingerprint()
             }
-            Mode.PIN_REQUIRED -> {
+            AuthMode.PIN_REQUIRED -> {
                 title.text = argOptional(KEY_TITLE)
                 message.text = argOptional(KEY_MESSAGE)
                 brkeyboard.setDeleteImage(R.drawable.ic_delete_black)
@@ -127,7 +118,7 @@ class AuthenticationController(
     override fun onAttach(view: View) {
         super.onAttach(view)
         when (mode) {
-            Mode.PIN_REQUIRED -> {
+            AuthMode.PIN_REQUIRED -> {
                 pin_digits.setup(brkeyboard, object : PinLayout.PinLayoutListener {
                     override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
                         if (isPinCorrect) {
@@ -142,7 +133,7 @@ class AuthenticationController(
                     }
                 })
             }
-            Mode.BIOMETRIC_REQUIRED, Mode.USER_PREFERRED -> {
+            AuthMode.BIOMETRIC_REQUIRED, AuthMode.USER_PREFERRED -> {
                 val fingerprintManager = activity!!.getSystemService<FingerprintManager>()
                 val fingerprintUiHelperBuilder =
                     FingerprintUiHelper.FingerprintUiHelperBuilder(fingerprintManager)
@@ -172,10 +163,10 @@ class AuthenticationController(
     override fun onDetach(view: View) {
         super.onDetach(view)
         when (mode) {
-            Mode.PIN_REQUIRED -> {
+            AuthMode.PIN_REQUIRED -> {
                 pin_digits.cleanUp()
             }
-            Mode.BIOMETRIC_REQUIRED, Mode.USER_PREFERRED -> {
+            AuthMode.BIOMETRIC_REQUIRED, AuthMode.USER_PREFERRED -> {
                 fingerprintUiHelper?.stopListening()
             }
         }
@@ -195,9 +186,9 @@ class AuthenticationController(
         }
         second_dialog_button.setText(R.string.Prompts_TouchId_usePin_android)
         second_dialog_button.setOnClickListener {
-            if (mode == Mode.USER_PREFERRED) {
+            if (mode == AuthMode.USER_PREFERRED) {
                 val pinAuthenticationController = AuthenticationController(
-                    mode = Mode.PIN_REQUIRED,
+                    mode = AuthMode.PIN_REQUIRED,
                     title = arg(KEY_TITLE),
                     message = arg(KEY_MESSAGE)
                 )

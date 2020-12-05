@@ -25,6 +25,7 @@
 package com.breadwallet.ui.send
 
 import android.content.Context
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -49,6 +50,7 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.auth.AuthMode
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
@@ -205,7 +207,8 @@ class SendSheetController(args: Bundle? = null) :
             buttonCurrencySelect.clicks().map { E.OnToggleCurrencyClicked },
             buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.REGULAR) },
             buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.ECONOMY) },
-            buttonPriority.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.PRIORITY) }
+            buttonPriority.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.PRIORITY) },
+            labelBalanceValue.clicks().map { E.OnSendMaxClicked }
         )
     }
 
@@ -367,15 +370,22 @@ class SendSheetController(args: Bundle? = null) :
         ifChanged(
             M::balance,
             M::fiatBalance,
-            M::isAmountCrypto
+            M::isAmountCrypto,
+            M::isSendingMax
         ) {
-            labelBalance.text = res.getString(
-                R.string.Send_balance,
-                when {
-                    isAmountCrypto -> balance.formatCryptoForUi(currencyCode)
-                    else -> fiatBalance.formatFiatForUi(fiatCode)
-                }
-            )
+            labelBalanceValue.text = when {
+                isAmountCrypto -> balance.formatCryptoForUi(currencyCode)
+                else -> fiatBalance.formatFiatForUi(fiatCode)
+            }
+            if (isSendingMax) {
+                labelBalanceValue.paintFlags = 0
+                labelBalanceValue.setTextColor(res.getColor(R.color.light_gray, activity!!.theme))
+                labelBalance.setText(R.string.Send_sendingMax)
+            } else {
+                labelBalance.setText(R.string.Send_balanceString)
+                labelBalanceValue.setTextColor(res.getColor(R.color.blue_button_text, activity!!.theme))
+                labelBalanceValue.paintFlags = labelBalanceValue.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            }
         }
 
         ifChanged(M::targetString) {
@@ -428,9 +438,9 @@ class SendSheetController(args: Bundle? = null) :
                 router.backstack.lastOrNull()?.controller() is AuthenticationController
             if (isAuthenticating && !isAuthVisible) {
                 val authenticationMode = if (isFingerprintAuthEnable) {
-                    AuthenticationController.Mode.USER_PREFERRED
+                    AuthMode.USER_PREFERRED
                 } else {
-                    AuthenticationController.Mode.PIN_REQUIRED
+                    AuthMode.PIN_REQUIRED
                 }
                 val controller = AuthenticationController(
                     mode = authenticationMode,
@@ -467,8 +477,8 @@ class SendSheetController(args: Bundle? = null) :
                     }
                 )
 
-                if ((destinationTag.value.isNullOrBlank() &&
-                        !textInputDestinationTag.text.isNullOrBlank()) ||
+                if (destinationTag.value.isNullOrBlank() &&
+                    !textInputDestinationTag.text.isNullOrBlank() ||
                     (!destinationTag.value.isNullOrBlank() &&
                         textInputDestinationTag.text.isNullOrBlank()) || isDestinationTagFromResolvedAddress
                 ) {

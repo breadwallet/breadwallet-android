@@ -1,34 +1,37 @@
-image: drewcarlson/docker-android
+image: alvrme/alpine-android:android-29
 
 variables:
   SIGNING_KEY: /builds/breadwallet/breadwallet-android/FakeSigningKey
   SIGNING_PASSWORD: qwerty
   SIGNING_ALIAS: key0
   SIGNING_ALIAS_PASSWORD: qwerty
+  ORG_GRADLE_DAEMON: "false"
+  ORG_GRADLE_DEPENDENCY_VERIFICATION: "off"
+  ORG_GRADLE_CONSOLE: plain
 
 cache:
-  key: ${CI_PROJECT_ID}-2
+  key: ${CI_PROJECT_ID}-3
   paths:
     - ~/.gradle/
     - /root/.gradle/
 
-detekt:
-  stage: test
-  script:
-    - ./gradlew --console=plain detekt
-  only:
-    - merge_requests
-  artifacts:
-    expose_as: "Detekt Report"
-    paths:
-      - app/build/reports/detekt/detekt.html
+#detekt:
+#  stage: test
+#  script:
+#    - ./gradlew detekt
+#  only:
+#    - merge_requests
+#  artifacts:
+#    expose_as: "Detekt Report"
+#    paths:
+#      - app/build/reports/detekt/detekt.html
 
-debug:test:
-  stage: test
+build:
+  stage: build
   script:
     - git submodule sync
     - git submodule update --init --force --remote
-    - ./gradlew --console=plain assembleDebug testBrdDebugUnitTest testBrdTestnetDebugUnitTest
+    - ./gradlew build -xlint -xdetekt
   only:
     - develop
     - master
@@ -37,18 +40,19 @@ debug:test:
   artifacts:
     paths:
       - app/build/outputs/apk/brd/debug/
+      - app/build/outputs/apk/brd/release/
       - app/build/outputs/apk/brdTestnet/debug/
+      - app/build/outputs/apk/brdTestnet/release/
     reports:
-      junit: app/build/test-results/**/TEST-*.xml
+      junit: ./**/build/test-results/**/TEST-*.xml
 
 deploy-appetize:
   stage: deploy
-  needs: ["debug:test"]
+  needs: [ "build" ]
   script:
     - git submodule sync
     - git submodule update --init --force --remote
-    - fastlane appetizeUpload flavor:brd
-    - fastlane appetizeUpload flavor:brdTestnet
+    - ./gradlew appetizeUpload
   only:
     - merge_requests
   environment:
@@ -58,12 +62,11 @@ deploy-appetize:
 
 stop-review:
   stage: deploy
-  needs: ["debug:test"]
+  needs: [ "build" ]
   variables:
     GIT_SUBMODULE_STRATEGY: none
   script:
-    - cd $CI_PROJECT_DIR; fastlane appetizeRemove flavor:brd merge:$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
-    - cd $CI_PROJECT_DIR; fastlane appetizeRemove flavor:brdTestnet merge:$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+    - cd $CI_PROJECT_DIR; ./gradlew appetizeRemove -Pmerge=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
   when: manual
   only:
     - merge_requests
@@ -71,43 +74,20 @@ stop-review:
     name: Review $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
     action: stop
 
-release:test:
-  stage: test
-  script:
-    - git submodule sync
-    - git submodule update --init --force --remote
-    - ./gradlew --console=plain testBrdReleaseUnitTest testBrdTestnetReleaseUnitTest
-  only:
-    - develop
-    - master
-    - /^release.*$/
-    - merge_requests
-  artifacts:
-    reports:
-      junit: app/build/test-results/**/TEST-*.xml
-
-release:deploy-firebase:
+deploy-firebase:
   stage: deploy
+  needs: [ "build" ]
+  variables:
+    ORG_GRADLE_DEPENDENCY_VERIFICATION: "off"
   script:
     - git submodule sync
     - git submodule update --init --force --remote
-    - ./gradlew --console=plain assembleRelease appDistributionUploadBrdRelease appDistributionUploadBrdTestnetRelease
-  rules:
-    - if: '$CI_COMMIT_TAG != null'
-  artifacts:
-    paths:
-      - app/build/outputs/apk/brd/release/
-      - app/build/outputs/apk/brdTestnet/release/
-
-debug:deploy-firebase:
-  stage: deploy
-  script:
-    - git submodule sync
-    - git submodule update --init --force --remote
-    - ./gradlew --console=plain assembleDebug appDistributionUploadBrdDebug appDistributionUploadBrdTestnetDebug
+    - ./gradlew appDistributionUploadBrdRelease appDistributionUploadBrdTestnetRelease appDistributionUploadBrdDebug appDistributionUploadBrdTestnetDebug
   rules:
     - if: '$CI_COMMIT_TAG != null'
   artifacts:
     paths:
       - app/build/outputs/apk/brd/debug/
+      - app/build/outputs/apk/brd/release/
       - app/build/outputs/apk/brdTestnet/debug/
+      - app/build/outputs/apk/brdTestnet/release/

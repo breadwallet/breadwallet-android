@@ -61,6 +61,9 @@ enum class SettingsOption {
     WIPE_NO_PROMPT,
     ENABLE_ALL_WALLETS,
     TOGGLE_RATE_APP_PROMPT,
+    VIEW_LOGS,
+    COPY_PAPER_KEY,
+    TOGGLE_TEZOS,
 
     // BTC
     REDEEM_PRIVATE_KEY,
@@ -72,6 +75,7 @@ enum class SettingsOption {
     FAST_SYNC_BTC,
     // Hidden
     CLEAR_BLOCKCHAIN_DATA,
-    REFRESH_TOKENS
+    REFRESH_TOKENS,
+    DETAILED_LOGGING,
 }
 

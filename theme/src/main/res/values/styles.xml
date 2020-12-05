@@ -1,0 +1,134 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.Bridge">
+        <!-- Customize your theme here. -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:title">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">true</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@android:color/darker_gray</item>
+        <item name="android:actionBarStyle">@style/BreadActionBar</item>
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+        <item name="android:editTextStyle">@style/EditTextStyle</item>
+        <item name="add_wallet_button_text">@color/blue_button_text</item>
+        <item name="colorControlNormal">@color/light_gray</item>
+        <item name="colorControlActivated">@color/prompt_action_button</item>
+        <item name="android:fontFamily">@font/mobile_font</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="BreadActionBar" parent="@style/Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/white_trans</item>
+    </style>
+
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/mobile_font_book</item>
+    </style>
+
+    <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">@font/mobile_font_medium</item>
+        <item name="android:textColor">@color/dark_blue</item>
+    </style>
+
+    <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:fontFamily">@font/mobile_font_medium</item>
+    </style>
+
+    <style name="AppTheme.Dark" parent="AppTheme">
+        <item name="android:windowBackground">@color/primary_background</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="tertiary_background">@color/tertiary_background</item>
+        <item name="primary_background">@color/primary_background</item>
+        <item name="secondary_text_color">@color/almost_black</item>
+        <item name="secondary_background">@color/secondary_background</item>
+        <item name="add_wallet_button_background">@drawable/add_wallet_button_dark</item>
+        <item name="remove_wallet_button_background">@drawable/remove_wallet_button_dark</item>
+        <item name="hide_wallet_button_background">@drawable/remove_wallet_button_dark</item>
+        <item name="show_wallet_button_background">@drawable/add_wallet_button_dark</item>
+        <item name="toolbar_back_arrow">@drawable/ic_arrow_left_white</item>
+        <item name="new_price_alert_button">@drawable/ic_add_wallets</item>
+        <item name="save_price_alert_button">@drawable/ic_check_mark_blue</item>
+        <item name="back_arrow_secondary">@drawable/ic_arrow_left_dark</item>
+        <item name="pin_pad_delete_src">@drawable/ic_delete_dark</item>
+        <item name="pin_dot_filled_background">@drawable/ic_pin_dot_filled</item>
+        <item name="create_new_wallet_background">@color/create_new_wallet_button_dark</item>
+        <item name="recover_wallet_background">@color/recover_wallet_button_dark</item>
+        <item name="fingerprint_icon_background">@drawable/fingerprint_icon_dark</item>
+        <item name="faq_button_primary_color">@drawable/faq_question_white</item>
+        <item name="faq_button_secondary_color">@drawable/ic_faq_button_dark</item>
+        <item name="wallet_footer_button_background">@color/wallet_footer_button_color_dark</item>
+        <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_dark
+        </item>
+        <item name="input_words_text_color">@color/white</item>
+        <item name="token_secondary_text_color">@color/white_60_percent_opaque</item>
+        <item name="approve_wallet_link_button">@color/approve_wallet_link_dark</item>
+        <item name="deny_wallet_link_button">@color/deny_wallet_link_dark</item>
+        <item name="confirmation_footer_background">@color/secondary_background</item>
+        <item name="link_wallet_subtitle_text_color">@color/link_wallet_subtitle_dark</item>
+    </style>
+
+    <style name="AppTheme.Light" parent="AppTheme">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="secondary_text_color">@color/almost_black</item>
+        <item name="tertiary_background">@color/extra_light_blue_background</item>
+        <item name="primary_background">@color/extra_light_blue_background</item>
+        <item name="secondary_background">@color/extra_light_blue_background</item>
+        <item name="add_wallet_button_background">@drawable/add_wallet_button</item>
+        <item name="remove_wallet_button_background">@drawable/remove_wallet_button</item>
+        <item name="hide_wallet_button_background">@drawable/remove_wallet_button</item>
+        <item name="show_wallet_button_background">@drawable/add_wallet_button</item>
+        <item name="toolbar_back_arrow">@drawable/ic_arrow_left</item>
+        <item name="new_price_alert_button">@drawable/ic_add_wallets</item>
+        <item name="save_price_alert_button">@drawable/ic_check_mark_blue</item>
+        <item name="back_arrow_secondary">@drawable/ic_arrow_left</item>
+        <item name="pin_pad_delete_src">@drawable/ic_delete_gray</item>
+        <item name="pin_dot_filled_background">@drawable/ic_pin_dot_black</item>
+        <item name="toolbar_background">@color/white</item>
+        <item name="create_new_wallet_background">@color/create_new_wallet_button_light</item>
+        <item name="recover_wallet_background">@color/recover_wallet_button_light</item>
+        <item name="fingerprint_icon_background">@drawable/fingerprint_icon</item>
+        <item name="faq_button_primary_color">@drawable/faq_question_black</item>
+        <item name="faq_button_secondary_color">@drawable/faq_question_black</item>
+        <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_light
+        </item>
+        <item name="input_words_text_color">@color/almost_black</item>
+        <item name="token_secondary_text_color">@color/almost_black</item>
+        <item name="approve_wallet_link_button">@color/approve_wallet_link_light</item>
+        <item name="deny_wallet_link_button">@color/deny_wallet_link_light</item>
+        <item name="link_wallet_subtitle_text_color">@color/link_wallet_subtitle</item>
+    </style>
+
+    <!-- Custom attributes for dark/light views and drawables -->
+    <attr name="add_wallet_button_background" format="reference" />
+    <attr name="remove_wallet_button_background" format="reference" />
+    <attr name="show_wallet_button_background" format="reference" />
+    <attr name="hide_wallet_button_background" format="reference" />
+    <attr name="tertiary_background" format="reference" />
+    <attr name="secondary_background" format="reference" />
+    <attr name="primary_background" format="reference" />
+    <attr name="secondary_text_color" format="reference" />
+    <attr name="toolbar_background" format="reference" />
+    <attr name="toolbar_back_arrow" format="reference" />
+    <attr name="back_arrow_secondary" format="reference" />
+    <attr name="pin_pad_delete_src" format="reference" />
+    <attr name="pin_dot_filled_background" format="reference" />
+    <attr name="create_new_wallet_background" format="reference" />
+    <attr name="recover_wallet_background" format="reference" />
+    <attr name="fingerprint_icon_background" format="reference" />
+    <attr name="faq_button_primary_color" format="reference" />
+    <attr name="faq_button_secondary_color" format="reference" />
+    <attr name="wallet_footer_button_background" format="reference" />
+    <attr name="spend_limit_list_divider_color" format="reference" />
+    <attr name="input_words_text_color" format="reference" />
+    <attr name="token_secondary_text_color" format="reference" />
+    <attr name="approve_wallet_link_button" format="reference" />
+    <attr name="deny_wallet_link_button" format="reference" />
+    <attr name="confirmation_footer_background" format="reference" />
+    <attr name="link_wallet_subtitle_text_color" format="reference" />
+    <attr name="new_price_alert_button" format="reference" />
+    <attr name="save_price_alert_button" format="reference" />
+    <attr name="add_wallet_button_text" format="reference" />
+</resources>

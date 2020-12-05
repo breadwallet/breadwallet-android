@@ -51,8 +51,16 @@ data class WalletTransaction(
     val isFeeForToken: Boolean = feeToken.isNotBlank()
 
     val truncatedToAddress: String
-        get() = "${toAddress.take(TRUNCATED_ADDRESS_CHARS)}...${toAddress.takeLast(TRUNCATED_ADDRESS_CHARS)}"
+        get() = if (toAddress == "unknown") {
+            toAddress
+        } else {
+            "${toAddress.take(TRUNCATED_ADDRESS_CHARS)}...${toAddress.takeLast(TRUNCATED_ADDRESS_CHARS)}"
+        }
 
     val truncatedFromAddress: String
-        get() = "${fromAddress.take(TRUNCATED_ADDRESS_CHARS)}...${fromAddress.takeLast(TRUNCATED_ADDRESS_CHARS)}"
+        get() = if (fromAddress == "unknown") {
+            fromAddress
+        } else {
+            "${fromAddress.take(TRUNCATED_ADDRESS_CHARS)}...${fromAddress.takeLast(TRUNCATED_ADDRESS_CHARS)}"
+        }
 }

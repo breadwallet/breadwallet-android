@@ -52,7 +52,7 @@ fun createReceiveHandler(
 ) = subtypeEffectHandler<F, E> {
     addConsumer<F.CopyAddressToClipboard> { effect ->
         Dispatchers.Main {
-            BRClipboardManager.putClipboard(context, effect.address)
+            BRClipboardManager.putClipboard(effect.address)
         }
         EventUtils.pushEvent(EventUtils.EVENT_RECEIVE_COPIED_ADDRESS)
     }

@@ -29,8 +29,9 @@ import android.security.keystore.UserNotAuthenticatedException
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.addressFor
-import com.breadwallet.breadbox.containsCurrency
+import com.breadwallet.breadbox.defaultUnit
 import com.breadwallet.breadbox.estimateFee
+import com.breadwallet.breadbox.estimateMaximum
 import com.breadwallet.breadbox.feeForSpeed
 import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.toBigDecimal
@@ -39,6 +40,7 @@ import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferState
 import com.breadwallet.crypto.errors.FeeEstimationError
+import com.breadwallet.crypto.errors.LimitEstimationError
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEvent
 import com.breadwallet.ext.isZero
@@ -104,6 +106,7 @@ object SendSheetHandler {
         addTransformer(handleLoadBalance(breadBox, ratesRepository))
         addTransformer(validateAddress(breadBox, uriParser))
         addTransformer(handleEstimateFee(breadBox))
+        addTransformer(handleEstimateMax(breadBox))
         addTransformer(handleSendTransaction(breadBox, userManager))
         addTransformer(handleAddTransactionMetadata(metaDataEffectHandler))
         addTransformer(handleLoadCryptoRequestData(breadBox, apiClient, context))
@@ -186,6 +189,32 @@ object SendSheetHandler {
                 (feeWallet.balance.toBigDecimal() - feeBalanceMin).coerceAtLeast(BigDecimal.ZERO)
             }
             E.OnBalanceUpdated(balanceBig, fiatBig, feeCurrencyCode, feeCurrencyBalance)
+        }
+    }
+
+    private fun handleEstimateMax(
+        breadBox: BreadBox
+    ) = flowTransformer<F.EstimateMax, E> { effects ->
+        effects.mapNotNull { effect ->
+            val wallet = breadBox.wallet(effect.currencyCode).first()
+
+            // Skip if address is not valid
+            val address = wallet.addressFor(effect.address) ?: return@mapNotNull null
+            if (wallet.containsAddress(address))
+                return@mapNotNull null
+
+            val networkFee = wallet.feeForSpeed(effect.transferSpeed)
+            try {
+                var amount = wallet.estimateMaximum(address, networkFee)
+                if (amount.unit != wallet.defaultUnit) {
+                    amount = checkNotNull(amount.convert(wallet.defaultUnit).orNull())
+                }
+                E.OnMaxEstimated(amount.toBigDecimal())
+            } catch (e: LimitEstimationError) {
+                E.OnMaxEstimateFailed
+            } catch (e: IllegalStateException) {
+                E.OnMaxEstimateFailed
+            }
         }
     }
 
@@ -296,7 +325,7 @@ object SendSheetHandler {
         uriParser: CryptoUriParser
     ): suspend (F.ParseClipboardData) -> E = { effect ->
         val text = withContext(Dispatchers.Main) {
-            BRClipboardManager.getClipboard(context)
+            BRClipboardManager.getClipboard()
         }
         validateTargetString(breadBox, uriParser, effect.currencyCode, text, true)
     }

@@ -24,11 +24,19 @@
  */
 package com.breadwallet.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.security.keystore.UserNotAuthenticatedException
+import android.view.Gravity
 import android.view.MotionEvent
+import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
+import androidx.lifecycle.lifecycleScope
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
@@ -50,6 +58,7 @@ import com.breadwallet.ui.keystore.KeyStoreController
 import com.breadwallet.ui.login.LoginController
 import com.breadwallet.ui.migrate.MigrateController
 import com.breadwallet.ui.navigation.NavigationTarget
+import com.breadwallet.ui.navigation.Navigator
 import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.navigation.RouterNavigator
 import com.breadwallet.ui.onboarding.IntroController
@@ -57,14 +66,18 @@ import com.breadwallet.ui.onboarding.OnBoardingController
 import com.breadwallet.ui.pin.InputPinController
 import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
+import com.breadwallet.ui.settings.SettingsController
+import com.breadwallet.ui.settings.SettingsSection
 import com.breadwallet.util.ControllerTrackingListener
 import com.breadwallet.util.errorHandler
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -72,7 +85,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.android.retainedSubKodein
+import org.kodein.di.erased.bind
 import org.kodein.di.erased.instance
+import org.kodein.di.erased.singleton
 
 // String extra containing a recovery phrase to bootstrap the recovery process. (debug only)
 private const val EXTRA_RECOVER_PHRASE = "RECOVER_PHRASE"
@@ -92,7 +108,12 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             "com.breadwallet.ui.MainActivity.EXTRA_PUSH_CAMPAIGN_ID"
     }
 
-    override val kodein by closestKodein()
+    override val kodein by retainedSubKodein(closestKodein()) {
+        val router = router
+        bind<Navigator>() with singleton {
+            RouterNavigator { router }
+        }
+    }
 
     private val userManager by instance<BrdUserManager>()
 
@@ -100,22 +121,23 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     private var trackingListener: ControllerTrackingListener? = null
 
     // NOTE: Used only to centralize deep link navigation handling.
-    private var routerNavigator: RouterNavigator? = null
+    private val navigator by instance<Navigator>()
 
     private val resumedScope = CoroutineScope(
         Default + SupervisorJob() + errorHandler("resumedScope")
     )
 
+    private var closeDebugDrawer = { false }
     private var launchedWithInvalidState = false
 
     @Suppress("ComplexMethod", "LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // The view of this activity is nothing more than a Controller host with animation support
-        setContentView(ChangeHandlerFrameLayout(this).also { view ->
+        val root = ChangeHandlerFrameLayout(this).also { view ->
             router = Conductor.attachRouter(this, view, savedInstanceState)
-            routerNavigator = RouterNavigator { router }
-        })
+        }
+        setContentView(if (BuildConfig.DEBUG) createDebugLayout(root, savedInstanceState) else root)
 
         trackingListener = ControllerTrackingListener(this).also(router::addChangeListener)
 
@@ -175,6 +197,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     override fun onDestroy() {
         super.onDestroy()
+        closeDebugDrawer = { false }
         trackingListener?.run(router::removeChangeListener)
         trackingListener = null
         resumedScope.cancel()
@@ -205,7 +228,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     override fun onBackPressed() {
         // Defer to controller back-press control before exiting.
-        if (!router.handleBack()) {
+        if (!closeDebugDrawer() && !router.handleBack()) {
             super.onBackPressed()
         }
     }
@@ -223,7 +246,49 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             val hasRoot = router.hasRootController()
             val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
             val isAuthenticated = !isTopLogin && hasRoot
-            routerNavigator?.deepLink(NavigationTarget.DeepLink(data, isAuthenticated))
+            navigator.navigateTo(NavigationTarget.DeepLink(data, isAuthenticated))
+        }
+    }
+
+    @SuppressLint("RtlHardcoded")
+    private fun createDebugLayout(root: View, bundle: Bundle?): View {
+        val drawerDirection = Gravity.RIGHT
+        val controller = SettingsController(SettingsSection.DEVELOPER_OPTION)
+        return DrawerLayout(this).apply {
+            lifecycleScope.launchWhenCreated {
+                userManager.stateChanges().collect { state ->
+                    val mode = if (state is BrdUserState.Enabled) {
+                        LOCK_MODE_UNLOCKED
+                    } else {
+                        LOCK_MODE_LOCKED_CLOSED
+                    }
+                    setDrawerLockMode(mode, drawerDirection)
+                }
+            }
+            closeDebugDrawer = {
+                isDrawerOpen(drawerDirection).also {
+                    closeDrawer(drawerDirection)
+                }
+            }
+            addView(root, DrawerLayout.LayoutParams(
+                DrawerLayout.LayoutParams.MATCH_PARENT,
+                DrawerLayout.LayoutParams.MATCH_PARENT
+            ))
+            addView(NavigationView(context).apply {
+                addView(ChangeHandlerFrameLayout(context).apply {
+                    id = R.id.drawer_layout_id
+                    Conductor.attachRouter(this@MainActivity, this, bundle)
+                        .setRoot(RouterTransaction.with(controller))
+                }, FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                ))
+            }, DrawerLayout.LayoutParams(
+                DrawerLayout.LayoutParams.WRAP_CONTENT,
+                DrawerLayout.LayoutParams.MATCH_PARENT
+            ).apply {
+                gravity = drawerDirection
+            })
         }
     }
 
