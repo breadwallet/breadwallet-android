@@ -139,7 +139,7 @@ android {
 dependencies {
     implementation(project(":app-core"))
     implementation(project(":ui:ui-common"))
-    implementation(project(":ui:staking"))
+    implementation(project(":ui:ui-staking"))
     implementation(Libs.WalletKit.CoreAndroid)
 
     // AndroidX

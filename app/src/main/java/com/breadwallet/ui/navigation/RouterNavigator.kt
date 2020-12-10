@@ -75,7 +75,7 @@ import com.breadwallet.ui.wallet.BrdWalletController
 import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
-import com.breadwallet.ui.staking.StakingController
+import com.breadwallet.ui.uistaking.StakingController
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.isBrd
 import com.platform.HTTPServer

@@ -22,10 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.staking
+package com.breadwallet.ui.uistaking
 
-import com.breadwallet.ui.staking.Staking.F
-import com.breadwallet.ui.staking.Staking.M
+import com.breadwallet.ui.uistaking.Staking.F
+import com.breadwallet.ui.uistaking.Staking.M
 import com.spotify.mobius.First
 import com.spotify.mobius.First.first
 import com.spotify.mobius.Init

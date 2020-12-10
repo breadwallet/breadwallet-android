@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.breadwallet.ui.staking
+package com.breadwallet.ui.uistaking
 
 import android.content.res.ColorStateList
 import android.content.res.Resources
@@ -42,12 +42,12 @@ import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.flowbind.textChanges
 import com.breadwallet.ui.web.WebController
-import com.breadwallet.ui.staking.Staking.E
-import com.breadwallet.ui.staking.Staking.F
-import com.breadwallet.ui.staking.Staking.M
-import com.breadwallet.ui.staking.Staking.M.ViewValidator.State.PENDING_STAKE
-import com.breadwallet.ui.staking.Staking.M.ViewValidator.State.PENDING_UNSTAKE
-import com.breadwallet.ui.staking.Staking.M.ViewValidator.State.STAKED
+import com.breadwallet.ui.uistaking.Staking.E
+import com.breadwallet.ui.uistaking.Staking.F
+import com.breadwallet.ui.uistaking.Staking.M
+import com.breadwallet.ui.uistaking.Staking.M.ViewValidator.State.PENDING_STAKE
+import com.breadwallet.ui.uistaking.Staking.M.ViewValidator.State.PENDING_UNSTAKE
+import com.breadwallet.ui.uistaking.Staking.M.ViewValidator.State.STAKED
 import com.platform.HTTPServer
 import kotlinx.android.synthetic.main.controller_confirm_tx_details.*
 import kotlinx.android.synthetic.main.controller_staking.*
