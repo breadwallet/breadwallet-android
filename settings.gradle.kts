@@ -5,6 +5,6 @@ include(
     "app-core",
     "ui:ui-common",
     "ui:ui-navigation",
-    "ui:staking",
+    "ui:ui-staking",
     "theme"
 )
