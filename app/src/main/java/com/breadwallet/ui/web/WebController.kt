@@ -176,7 +176,6 @@ class WebController(
     override fun onCreateView(view: View) {
         super.onCreateView(view)
 
-
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
 
         HTTPServer.setOnCloseListener {
@@ -192,56 +191,6 @@ class WebController(
             mediaPlaybackRequiresUserGesture = false
         }
 
-        val url: String = arg(ARG_URL)
-        val jsonRequest: String? = argOptional(ARG_JSON_REQUEST)
-
-        val isPlatformUrl =
-            url.startsWith("http://127.0.0.1:" + BRSharedPrefs.getHttpServerPort())
-
-        nativePromiseFactory = NativePromiseFactory(web_view)
-        if ((isPlatformUrl || url.startsWith("file:///"))) {
-            web_view.setBackgroundResource(R.color.platform_webview_bg)
-            val locationManager = applicationContext!!.getSystemService<LocationManager>()
-            val brdApiJs = BrdApiJs(nativePromiseFactory, direct.instance())
-            val cameraJs = CameraJs(nativePromiseFactory, imageRequestFlow)
-            val locationJs =
-                LocationJs(nativePromiseFactory, locationPermissionFlow, locationManager)
-            val kvStoreJs = KVStoreJs(
-                nativePromiseFactory,
-                direct.instance()
-            )
-            val linkJs = LinkJs(nativePromiseFactory)
-            val walletJs = WalletJs(
-                nativePromiseFactory,
-                direct.instance(),
-                direct.instance(),
-                direct.instance(),
-                direct.instance(),
-                direct.instance(),
-                direct.instance()
-            )
-            val supportJs = SupportJs(
-                nativePromiseFactory,
-                direct.instance()
-            )
-            val nativeApis = if (BuildConfig.DEBUG) {
-                NativeApisJs.with(
-                    cameraJs,
-                    locationJs,
-                    kvStoreJs,
-                    linkJs,
-                    walletJs,
-                    brdApiJs,
-                    supportJs
-                )
-            } else {
-                NativeApisJs.with(walletJs, linkJs, supportJs)
-            }
-
-            nativeApis.attachToWebView(web_view)
-            web_view.addJavascriptInterface(BrdNativeJs, BrdNativeJs.JS_NAME)
-        }
-
         web_view.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(
                 view: WebView,
@@ -249,7 +198,8 @@ class WebController(
             ): Boolean {
                 val trimmedUrl = request.url.toString().trimEnd('/')
 
-                if (mOnCloseUrl != null && trimmedUrl.equals(mOnCloseUrl, true)) {
+                val onCloseUrl = mOnCloseUrl?.trim('/')
+                if (onCloseUrl != null && trimmedUrl.startsWith(onCloseUrl, true)) {
                     router.popController(this@WebController)
                     LinkPlugin.hasBrowser = false
                     mOnCloseUrl = null
@@ -267,21 +217,73 @@ class WebController(
         }
 
         web_view.webChromeClient = BRWebChromeClient()
+    }
 
-        if (jsonRequest.isNullOrEmpty()) {
-            web_view.loadUrl(url)
-            handlePlatformMessages().launchIn(viewCreatedScope)
-        } else {
-            try {
-                handleJsonRequest(jsonRequest)
-                LinkBus.sendMessage(LinkResultMessage.LinkSuccess)
-            } catch (e: Exception) {
-                logError("Handling json request failed", e)
-                router.popController(this@WebController)
-                LinkBus.sendMessage(LinkResultMessage.LinkFailure(e))
+    override fun onAttach(view: View) {
+        super.onAttach(view)
+        if (!::nativePromiseFactory.isInitialized) {
+            val url: String = arg(ARG_URL)
+            nativePromiseFactory = NativePromiseFactory(web_view)
+            val isPlatformUrl =
+                url.startsWith("http://127.0.0.1:" + BRSharedPrefs.getHttpServerPort())
+            if ((isPlatformUrl || url.startsWith("file:///"))) {
+                web_view.setBackgroundResource(R.color.platform_webview_bg)
+                val locationManager = applicationContext!!.getSystemService<LocationManager>()
+                val brdApiJs = BrdApiJs(nativePromiseFactory, direct.instance())
+                val cameraJs = CameraJs(nativePromiseFactory, imageRequestFlow)
+                val locationJs =
+                    LocationJs(nativePromiseFactory, locationPermissionFlow, locationManager)
+                val kvStoreJs = KVStoreJs(
+                    nativePromiseFactory,
+                    direct.instance()
+                )
+                val linkJs = LinkJs(nativePromiseFactory)
+                val walletJs = WalletJs(
+                    nativePromiseFactory,
+                    direct.instance(),
+                    direct.instance(),
+                    direct.instance(),
+                    direct.instance(),
+                    direct.instance(),
+                    direct.instance()
+                )
+                val supportJs = SupportJs(
+                    nativePromiseFactory,
+                    direct.instance()
+                )
+                val nativeApis = if (BuildConfig.DEBUG) {
+                    NativeApisJs.with(
+                        cameraJs,
+                        locationJs,
+                        kvStoreJs,
+                        linkJs,
+                        walletJs,
+                        brdApiJs,
+                        supportJs
+                    )
+                } else {
+                    NativeApisJs.with(walletJs, linkJs, supportJs)
+                }
+
+                nativeApis.attachToWebView(web_view)
+                web_view.addJavascriptInterface(BrdNativeJs, BrdNativeJs.JS_NAME)
             }
+            val jsonRequest: String? = argOptional(ARG_JSON_REQUEST)
+            if (jsonRequest.isNullOrEmpty()) {
+                web_view.loadUrl(url)
+                handlePlatformMessages().launchIn(viewCreatedScope)
+            } else {
+                try {
+                    handleJsonRequest(jsonRequest)
+                    LinkBus.sendMessage(LinkResultMessage.LinkSuccess)
+                } catch (e: Exception) {
+                    logError("Handling json request failed", e)
+                    router.popController(this@WebController)
+                    LinkBus.sendMessage(LinkResultMessage.LinkFailure(e))
+                }
+            }
+            handleLinkMessages().launchIn(viewCreatedScope)
         }
-        handleLinkMessages().launchIn(viewCreatedScope)
     }
 
     private fun handleJsonRequest(jsonRequest: String) {
