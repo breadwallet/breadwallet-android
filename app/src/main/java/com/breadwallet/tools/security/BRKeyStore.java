@@ -44,8 +44,8 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.platform.entities.WalletInfoData;
-import com.platform.interfaces.AccountMetaDataProvider;
+import com.breadwallet.platform.entities.WalletInfoData;
+import com.breadwallet.platform.interfaces.AccountMetaDataProvider;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;

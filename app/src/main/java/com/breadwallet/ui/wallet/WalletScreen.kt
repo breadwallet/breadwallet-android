@@ -34,7 +34,7 @@ import com.breadwallet.tools.manager.MarketDataResult
 import com.breadwallet.tools.util.asCryptoRequestUrl
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
-import com.platform.entities.TxMetaData
+import com.breadwallet.platform.entities.TxMetaData
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
@@ -147,6 +147,8 @@ object WalletScreen {
         object OnSearchDismissClicked : E()
         object OnBackClicked : E()
 
+        object OnGiftClicked : E()
+
         object OnChangeDisplayCurrencyClicked : E()
 
         object OnSendClicked : E()
@@ -217,6 +219,12 @@ object WalletScreen {
                 val currencyId: String
             ): Nav() {
                 override val navigationTarget = NavigationTarget.Staking(currencyId)
+            }
+
+            data class GoToCreateGift(
+                val currencyId: String
+            ): Nav() {
+                override val navigationTarget = NavigationTarget.CreateGift(currencyId)
             }
         }
 

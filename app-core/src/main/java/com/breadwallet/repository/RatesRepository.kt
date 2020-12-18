@@ -138,7 +138,7 @@ class RatesRepository private constructor(private val mContext: Context) {
         return if (fromCurrency.isNullOrBlank() || toCurrency.isNullOrBlank()) {
             null
         } else {
-            "$fromCurrency${CACHE_KEY_DELIMITER}$toCurrency".toLowerCase(Locale.ROOT)
+            "$fromCurrency$CACHE_KEY_DELIMITER$toCurrency".toLowerCase(Locale.ROOT)
         }
     }
 

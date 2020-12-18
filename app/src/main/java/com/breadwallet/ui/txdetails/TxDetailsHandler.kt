@@ -32,8 +32,8 @@ import com.breadwallet.ext.throttleLatest
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.ui.txdetails.TxDetails.E
 import com.breadwallet.ui.txdetails.TxDetails.F
-import com.platform.entities.TxMetaDataValue
-import com.platform.interfaces.AccountMetaDataProvider
+import com.breadwallet.platform.entities.TxMetaDataValue
+import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first

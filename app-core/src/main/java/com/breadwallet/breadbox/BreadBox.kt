@@ -39,6 +39,8 @@ interface BreadBox {
     /** True when all systems are expected to be running and a [System] is available. */
     val isOpen: Boolean
 
+    val isMainnet: Boolean
+
     /** Create and configure [System] and start receiving events. */
     fun open(account: Account)
 

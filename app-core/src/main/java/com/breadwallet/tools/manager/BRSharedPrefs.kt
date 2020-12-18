@@ -29,13 +29,11 @@ import android.content.SharedPreferences
 import android.text.format.DateUtils
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
-import com.breadwallet.app.BreadApp
 import com.breadwallet.app.Conversion
 import com.breadwallet.model.PriceAlert
-import com.breadwallet.repository.asJsonArrayString
-import com.breadwallet.repository.fromJsonArrayString
 import com.breadwallet.tools.util.Bip39Reader
 import com.breadwallet.tools.util.ServerBundlesHelper
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
@@ -119,9 +117,9 @@ object BRSharedPrefs {
      * Call when Application is initialized to setup [brdPrefs].
      * This removes the need for a context parameter.
      */
-    fun initialize(context: Context) {
+    fun initialize(context: Context, applicationScope: CoroutineScope) {
         brdPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        BreadApp.applicationScope.launch {
+        applicationScope.launch {
             _trackedConversionChanges.value = getTrackedConversions()
         }
     }
@@ -485,18 +483,12 @@ object BRSharedPrefs {
     /**
      * Gets the set of user defined price alerts.
      */
-    fun getPriceAlerts(): Set<PriceAlert> =
-        brdPrefs.getStringSet(PRICE_ALERTS, emptySet())!!
-            .map { PriceAlert.fromJsonArrayString(it) }
-            .toSet()
+    fun getPriceAlerts(): Set<PriceAlert> = emptySet()
 
     /**
      * Save a set of user defined price alerts.
      */
-    fun putPriceAlerts(priceAlerts: Set<PriceAlert>) =
-        brdPrefs.edit {
-            putStringSet(PRICE_ALERTS, priceAlerts.map(PriceAlert::asJsonArrayString).toSet())
-        }
+    fun putPriceAlerts(priceAlerts: Set<PriceAlert>) = Unit
 
     /**
      * Gets the user defined interval in minutes between price

@@ -26,18 +26,16 @@
 
 package com.breadwallet.breadbox
 
-import com.breadwallet.BuildConfig
+import com.breadwallet.appcore.BuildConfig
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.Currency
 import com.breadwallet.crypto.Network
-import com.breadwallet.crypto.NetworkFee
 import com.breadwallet.crypto.NetworkPeer
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.TransferDirection
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletManagerState
-import com.breadwallet.logger.logError
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isBitcoinCash
@@ -48,7 +46,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.math.BigDecimal
 import java.text.DecimalFormat
-import java.text.NumberFormat
 import java.util.Locale
 
 /** Default port for [NetworkPeer] */
@@ -71,27 +68,6 @@ fun Transfer.hashString(): String =
             }
         }
 
-fun Wallet.feeForSpeed(speed: TransferSpeed): NetworkFee {
-    if (currency.isTezos()) {
-        return checkNotNull(
-            walletManager.network.fees.minByOrNull {
-                it.confirmationTimeInMilliseconds.toLong()
-            }
-        )
-    }
-    val fees = walletManager.network.fees
-    return when (fees.size) {
-        1 -> fees.single()
-        else -> fees
-            .filter { it.confirmationTimeInMilliseconds.toLong() <= speed.targetTime }
-            .minByOrNull { fee ->
-                speed.targetTime - fee.confirmationTimeInMilliseconds.toLong()
-            }
-            ?: fees.minByOrNull { it.confirmationTimeInMilliseconds }
-            ?: walletManager.defaultNetworkFee
-    }
-}
-
 // TODO: Move somewhere UI related
 fun BigDecimal.formatCryptoForUi(
     currencyCode: String,
@@ -109,27 +85,6 @@ fun BigDecimal.formatCryptoForUi(
     currencyFormat.maximumFractionDigits = scale
     currencyFormat.minimumFractionDigits = 0
     return "${currencyFormat.format(amount)} ${currencyCode.toUpperCase()}"
-}
-
-// TODO: Move somewhere UI related
-fun BigDecimal.formatFiatForUi(currencyCode: String, scale: Int? = null): String {
-    val currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault()) as DecimalFormat
-    val decimalFormatSymbols = currencyFormat.decimalFormatSymbols
-    currencyFormat.isGroupingUsed = true
-    currencyFormat.roundingMode = BRConstants.ROUNDING_MODE
-    try {
-        val currency = java.util.Currency.getInstance(currencyCode)
-        val symbol = currency.symbol
-        decimalFormatSymbols.currencySymbol = symbol
-        currencyFormat.decimalFormatSymbols = decimalFormatSymbols
-        currencyFormat.negativePrefix = "-$symbol"
-        currencyFormat.maximumFractionDigits = scale ?: currency.defaultFractionDigits
-        currencyFormat.minimumFractionDigits = scale ?: currency.defaultFractionDigits
-    } catch (e: IllegalArgumentException) {
-        logError("Illegal Currency code: $currencyCode")
-    }
-
-    return currencyFormat.format(this)
 }
 
 val Wallet.currencyId: String
@@ -215,8 +170,8 @@ val Wallet.urlScheme: String?
         currency.code.isRipple() -> "xrp"
         currency.code.isBitcoin() -> "bitcoin"
         currency.code.isBitcoinCash() -> when {
-            BuildConfig.BITCOIN_TESTNET -> "bchtest"
-            else -> "bitcoincash"
+            walletManager.network.isMainnet -> "bitcoincash"
+            else -> "bchtest"
         }
         else -> null
     }

@@ -29,6 +29,7 @@ import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.auth.AuthMode
 import com.breadwallet.ui.settings.SettingsSection
 import io.sweers.redacted.annotation.Redacted
+import java.math.BigDecimal
 
 sealed class NavigationTarget : INavigationTarget {
     data class SendSheet(
@@ -47,6 +48,7 @@ sealed class NavigationTarget : INavigationTarget {
     object ReviewBrd : NavigationTarget()
     object QRScanner : NavigationTarget()
     object LogcatViewer : NavigationTarget()
+    object MetadataViewer : NavigationTarget()
 
     data class DeepLink(
         val url: String? = null,
@@ -120,6 +122,10 @@ sealed class NavigationTarget : INavigationTarget {
     object WipeWallet : NavigationTarget()
     object OnBoarding : NavigationTarget()
     object ImportWallet : NavigationTarget()
+    data class ImportWalletWithKey(
+        val privateKey: String,
+        val isPasswordProtected: Boolean
+    ) : NavigationTarget()
     object BitcoinNodeSelector : NavigationTarget()
     object EnableSegWit : NavigationTarget()
     object LegacyAddress : NavigationTarget()
@@ -144,5 +150,19 @@ sealed class NavigationTarget : INavigationTarget {
 
     data class Staking(
         val currencyId: String
+    ) : NavigationTarget()
+
+    data class CreateGift(
+        val currencyId: String
+    ) : NavigationTarget()
+
+    data class ShareGift(
+        @Redacted val giftUrl: String,
+        @Redacted val txHash: String,
+        @Redacted val recipientName: String,
+        val giftAmount: BigDecimal,
+        val giftAmountFiat: BigDecimal,
+        val pricePerUnit: BigDecimal,
+        val replaceTop: Boolean = false
     ) : NavigationTarget()
 }

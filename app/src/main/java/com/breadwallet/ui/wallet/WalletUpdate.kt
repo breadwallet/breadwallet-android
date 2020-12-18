@@ -31,8 +31,8 @@ import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.wallet.WalletScreen.E
 import com.breadwallet.ui.wallet.WalletScreen.F
 import com.breadwallet.ui.wallet.WalletScreen.M
-import com.platform.entities.TxMetaDataEmpty
-import com.platform.entities.TxMetaDataValue
+import com.breadwallet.platform.entities.TxMetaDataEmpty
+import com.breadwallet.platform.entities.TxMetaDataValue
 import com.spotify.mobius.Effects.effects
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
@@ -347,6 +347,10 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
             memo = when (event.transactionMetaData) {
                 is TxMetaDataValue -> event.transactionMetaData.comment ?: ""
                 is TxMetaDataEmpty -> ""
+            },
+            recipientName = when (event.transactionMetaData){
+                is TxMetaDataValue -> event.transactionMetaData.gift?.recipientName
+                is TxMetaDataEmpty -> null
             }
         )
         val transactions = model.transactions.replaceAt(index, transaction)
@@ -369,6 +373,10 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
                                 is TxMetaDataValue -> metadata.comment ?: ""
                                 is TxMetaDataEmpty -> ""
                                 null -> transaction.memo
+                            },
+                            recipientName = when (metadata) {
+                                is TxMetaDataValue -> metadata.gift?.recipientName
+                                else -> null
                             }
                         )
                     }
@@ -520,6 +528,9 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
 
     override fun onStakingCellClicked(model: M): Next<M, F> =
         dispatch(effects(F.Nav.GoToStaking(model.currencyCode)))
+
+    override fun onGiftClicked(model: M, event: E.OnGiftClicked): Next<M, F> =
+        dispatch(effects(F.Nav.GoToCreateGift(model.currencyId)))
 }
 
 /**

@@ -95,7 +95,7 @@ private const val AGGRESSIVE_THROTTLE_MS = 800L
 @Suppress("TooManyFunctions")
 internal class CoreBreadBox(
     private val storageFile: File,
-    private val isMainnet: Boolean = false,
+    override val isMainnet: Boolean = false,
     private val walletProvider: WalletProvider,
     private val blockchainDb: BlockchainDb,
     private val userManager: BrdUserManager
@@ -329,13 +329,16 @@ internal class CoreBreadBox(
             .asFlow()
             .filter { transfer ->
                 transfer.wallet.currency.code.equals(currencyCode, true) &&
+                    transfer.hash.isPresent &&
                     transfer.hashString().equals(transferHash, true)
             }
             .onStart {
                 system?.wallets
                     ?.find { it.currency.code.equals(currencyCode, true) }
                     ?.transfers
-                    ?.firstOrNull { it.hashString() == transferHash }
+                    ?.firstOrNull {
+                        it.hash.isPresent && it.hashString() == transferHash
+                    }
                     ?.also { emit(it) }
             }
     }

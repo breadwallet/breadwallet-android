@@ -40,8 +40,7 @@ import android.os.Build
 import android.os.NetworkOnMainThreadException
 import androidx.annotation.VisibleForTesting
 
-import com.breadwallet.BuildConfig
-import com.breadwallet.app.BreadApp
+import com.breadwallet.appcore.BuildConfig
 import com.breadwallet.crypto.Key
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
@@ -58,7 +57,6 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.platform.tools.TokenHolder
 
-import org.eclipse.jetty.http.HttpStatus
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -81,16 +79,35 @@ import com.breadwallet.tools.util.BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8
 import com.breadwallet.tools.util.BRConstants.FALSE
 import com.breadwallet.tools.util.BRConstants.HEADER_ACCEPT
 import com.breadwallet.tools.util.BRConstants.TRUE
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody.Companion.toResponseBody
+import org.kodein.di.android.closestKodein
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
 private const val UNAUTHED_HTTP_STATUS = 401
 
-class APIClient(private var context: Context, private val userManager: BrdUserManager) {
+// The server(s) on which the API is hosted
+private val HOST = when {
+    BuildConfig.DEBUG -> "stage2.breadwallet.com"
+    else -> "api.breadwallet.com"
+}
+
+class APIClient(
+    private var context: Context,
+    private val userManager: BrdUserManager,
+    headers: Map<String, String>
+) {
+
+    private val httpHeaders: MutableMap<String, String> = mutableMapOf()
+
+    init {
+        httpHeaders.putAll(headers)
+        httpHeaders[HEADER_ACCEPT_LANGUAGE] = getCurrentLanguageCode(context)
+    }
 
     private var authKey: Key? = null
         get() {
@@ -161,26 +178,6 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
             return null
         }
 
-    init {
-        // Split the default device user agent string by spaces and take the first string.
-        // Example user agent string: "Dalvik/1.6.0 (Linux; U;Android 5.1; LG-F320SBuild/KOT49I.F320S22g) Android/9"
-        // We only want: "Dalvik/1.6.0"
-        val deviceUserAgent =
-            (System.getProperty(SYSTEM_PROPERTY_USER_AGENT) ?: "")
-                .split("\\s".toRegex())
-                .firstOrNull()
-
-        // The BRD server expects the following user agent: appName/appVersion engine/engineVersion plaform/plaformVersion
-        val brdUserAgent =
-            "$UA_APP_NAME${BuildConfig.VERSION_CODE} $deviceUserAgent $UA_PLATFORM${Build.VERSION.RELEASE}"
-
-        mHttpHeaders[HEADER_IS_INTERNAL] = if (BuildConfig.IS_INTERNAL_BUILD) TRUE else FALSE
-        mHttpHeaders[HEADER_TESTFLIGHT] = if (BuildConfig.DEBUG) TRUE else FALSE
-        mHttpHeaders[HEADER_TESTNET] = if (BuildConfig.BITCOIN_TESTNET) TRUE else FALSE
-        mHttpHeaders[HEADER_ACCEPT_LANGUAGE] = getCurrentLanguageCode(context)
-        mHttpHeaders[HEADER_USER_AGENT] = brdUserAgent
-    }
-
     /**
      * Return the current language code i.e. "en_US" for US English.
      */
@@ -235,8 +232,8 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
         check(!UiUtils.isMainThread()) { "urlGET: network on main thread" }
 
         val newBuilder = locRequest.newBuilder()
-        for (key in mHttpHeaders.keys) {
-            val value = mHttpHeaders[key]
+        for (key in httpHeaders.keys) {
+            val value = httpHeaders[key]
             newBuilder.header(key, value!!)
         }
 
@@ -303,7 +300,7 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
     }
 
     fun sendRequest(request: Request, withAuth: Boolean): BRResponse {
-        val tokenUsed = if (withAuth) TokenHolder.retrieveToken(context) else null
+        val tokenUsed = if (withAuth) TokenHolder.retrieveToken() else null
         sendHttpRequest(request, withAuth, tokenUsed).use { response ->
             if (response == null) {
                 BRReportsManager.reportBug(AuthenticatorException("Request: ${request.url} response is null"))
@@ -323,13 +320,13 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
                     logError("redirect uri is null")
                     return createBrResponse(response)
                 } else if (!BuildConfig.DEBUG &&
-                    (!newUri.host!!.equals(BreadApp.host, true) ||
+                    (!newUri.host!!.equals(host, true) ||
                         !newUri.scheme!!.equals(PROTO, true))
                 ) {
                     logError("WARNING: redirect is NOT safe: $newLocation")
                     return createBrResponse(
                         Response.Builder()
-                            .code(HttpStatus.INTERNAL_SERVER_ERROR_500)
+                            .code(500)
                             .request(request)
                             .body(ByteArray(0).toResponseBody(null))
                             .message("")
@@ -348,7 +345,7 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
                 }
             } else if (withAuth && isBreadChallenge(response)) {
                 logDebug("got authentication challenge from API - will attempt to get token, url -> ${request.url}")
-                val newToken = TokenHolder.updateToken(context, tokenUsed)
+                val newToken = TokenHolder.updateToken(tokenUsed)
                 return if (newToken == null) {
                     logError("Token update failed, will not re-attempt")
                     BRResponse()
@@ -453,7 +450,7 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
     /**
      * Launch in separate threads updates for bundles, feature flags, KVStore entries and fees.
      */
-    fun updatePlatform() {
+    fun updatePlatform(scope: CoroutineScope) {
         if (mIsPlatformUpdating) {
             logError("updatePlatform: platform already Updating!")
             return
@@ -461,7 +458,7 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
         mIsPlatformUpdating = true
 
         //update Bundle
-        BreadApp.applicationScope.launch {
+        scope.launch {
             val startTime = System.currentTimeMillis()
             ServerBundlesHelper.updateBundles(context)
             val endTime = System.currentTimeMillis()
@@ -471,7 +468,7 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
         }
 
         //update feature flags
-        BreadApp.applicationScope.launch {
+        scope.launch {
             val startTime = System.currentTimeMillis()
             ExperimentsRepositoryImpl.refreshExperiments(context)
             val endTime = System.currentTimeMillis()
@@ -503,7 +500,7 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
             get() = body?.run { toString(Charsets.UTF_8) } ?: ""
 
         val isSuccessful: Boolean
-            get() = code >= HttpStatus.OK_200 && code < HttpStatus.MULTIPLE_CHOICES_300
+            get() = code in 200..299
 
         init {
             if (contentType.isNullOrBlank()) {
@@ -568,7 +565,7 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
         private const val DEVICE_ID = "deviceID"
 
         // convenience getter for the API endpoint
-        private val BASE_URL = HTTPS_SCHEME + BreadApp.host
+        private val BASE_URL = HTTPS_SCHEME + host
 
         //Fee per kb url
         private const val FEE_PER_KB_URL = "/v1/fee-per-kb"
@@ -582,19 +579,17 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
 
         // Http Header constants
         private const val HEADER_WALLET_ID = "X-Wallet-Id"
-        private const val HEADER_IS_INTERNAL = "X-Is-Internal"
-        private const val HEADER_TESTFLIGHT = "X-Testflight"
-        private const val HEADER_TESTNET = "X-Bitcoin-Testnet"
+        const val HEADER_IS_INTERNAL = "X-Is-Internal"
+        const val HEADER_TESTFLIGHT = "X-Testflight"
+        const val HEADER_TESTNET = "X-Bitcoin-Testnet"
         private const val HEADER_ACCEPT_LANGUAGE = "Accept-Language"
-        private const val HEADER_USER_AGENT = "User-agent"
+        const val HEADER_USER_AGENT = "User-agent"
         private const val HEADER_CONTENT_TYPE = "content-type"
 
         // User Agent constants
         const val SYSTEM_PROPERTY_USER_AGENT = "http.agent"
-        private const val UA_APP_NAME = "breadwallet/"
-        private const val UA_PLATFORM = "android/"
-
-        private val mHttpHeaders = HashMap<String, String>()
+        const val UA_APP_NAME = "breadwallet/"
+        const val UA_PLATFORM = "android/"
 
         private val DATE_FORMAT = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US)
         private const val CONNECTION_TIMEOUT_SECONDS = 30
@@ -603,17 +598,26 @@ class APIClient(private var context: Context, private val userManager: BrdUserMa
         @Synchronized
         @Deprecated("Retrieve from the Application Kodein instance.")
         fun getInstance(context: Context): APIClient {
-            return (context.applicationContext as BreadApp).kodein.direct.instance()
+            val kodein by closestKodein(context)
+            return kodein.direct.instance()
         }
+
+        val host: String
+            get() {
+                if (BuildConfig.DEBUG) {
+                    val host = BRSharedPrefs.getDebugHost()
+                    if (!host.isNullOrBlank()) {
+                        return host
+                    }
+                }
+                return HOST
+            }
 
         @JvmStatic
         fun getBaseURL(): String {
             // In the debug case, the user may have changed the host.
             if (BuildConfig.DEBUG) {
-                val host = BreadApp.host
-                return if (host.startsWith("http")) {
-                    host
-                } else HTTPS_SCHEME + host
+                return if (host.startsWith("http")) host else HTTPS_SCHEME + host
             }
             return BASE_URL
         }

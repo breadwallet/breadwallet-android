@@ -5,10 +5,9 @@ import android.os.Build
 import android.text.format.DateUtils
 import android.view.View
 import androidx.core.view.isVisible
-import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
-import com.breadwallet.breadbox.formatFiatForUi
+import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRDateUtil
 import com.breadwallet.tools.util.Utils
@@ -62,6 +61,8 @@ class TransactionListItem(
                         R.drawable.transfer_in_progress
                     transaction.isErrored -> R.drawable.transfer_failed
                     received -> R.drawable.transfer_receive
+                    transaction.recipientName != null ->
+                        R.drawable.transfer_gift_claimed
                     else -> R.drawable.transfer_send
                 }
             )
@@ -92,6 +93,8 @@ class TransactionListItem(
             tx_amount.text = formattedAmount
 
             tx_description.text = when {
+                !transaction.recipientName.isNullOrBlank() ->
+                    context.getString(R.string.Transaction_toRecipient, transaction.recipientName)
                 commentString == null -> ""
                 commentString.isNotEmpty() -> commentString
                 transaction.isFeeForToken ->

@@ -26,6 +26,7 @@ package com.breadwallet.ui.settings
 
 import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.navigation.INavigationTarget
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
@@ -70,6 +71,9 @@ object SettingsScreen {
         object SendLogs : F()
         object ViewLogs : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.LogcatViewer
+        }
+        object ViewMetadata : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.MetadataViewer
         }
         object ShowApiServerDialog : F(), ViewEffect
         object ShowPlatformDebugUrlDialog : F(), ViewEffect

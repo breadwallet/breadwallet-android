@@ -40,7 +40,7 @@ import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.addwallets.AddWallets.E
 import com.breadwallet.ui.addwallets.AddWallets.F
 import com.breadwallet.util.isTezos
-import com.platform.interfaces.AccountMetaDataProvider
+import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import drewcarlson.mobius.flow.flowTransformer
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.flow.first

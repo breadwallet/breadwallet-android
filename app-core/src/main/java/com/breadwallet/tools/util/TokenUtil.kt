@@ -25,10 +25,10 @@
 package com.breadwallet.tools.util
 
 import android.content.Context
-import com.breadwallet.BuildConfig
-import com.breadwallet.R
+import com.breadwallet.appcore.BuildConfig
 import com.breadwallet.logger.logError
 import com.breadwallet.model.TokenItem
+import com.breadwallet.theme.R
 import com.breadwallet.tools.manager.BRReportsManager
 import com.platform.APIClient.BRResponse
 import com.platform.APIClient.Companion.getBaseURL
@@ -48,6 +48,7 @@ import java.io.IOException
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Locale
+import kotlin.properties.Delegates
 
 object TokenUtil {
     private const val ENDPOINT_CURRENCIES = "/currencies"
@@ -70,11 +71,13 @@ object TokenUtil {
     private const val START_COLOR_INDEX = 0
     private const val END_COLOR_INDEX = 1
     private const val TOKENS_FILENAME = "tokens.json"
+    private const val TOKENS_FILENAME_TESTNET = "tokens-testnet.json"
     private const val ETHEREUM = "ethereum"
     private const val ETHEREUM_TESTNET = "ropsten"
     private const val TESTNET = "testnet"
     private const val MAINNET = "mainnet"
 
+    private var isMainnet: Boolean by Delegates.notNull()
     private lateinit var context: Context
     private var tokenItems: List<TokenItem> = ArrayList()
     private var tokenMap: Map<String, TokenItem> = HashMap()
@@ -87,19 +90,25 @@ object TokenUtil {
      *
      * @param context The Context of the caller
      */
-    fun initialize(context: Context, forceLoad: Boolean) {
-        this.context = context
-        val tokensFile = File(context.filesDir, TOKENS_FILENAME)
+    fun initialize(context: Context, forceLoad: Boolean, isMainnet: Boolean) {
+        TokenUtil.isMainnet = isMainnet
+        TokenUtil.context = context
+        val fileName = if (isMainnet) TOKENS_FILENAME else TOKENS_FILENAME_TESTNET
+        val tokensFile = File(context.filesDir, fileName)
         if (!tokensFile.exists() || forceLoad) {
             try {
                 initLock.tryLock()
                 val tokens = context.resources
-                    .openRawResource(R.raw.tokens)
-                    .reader()
-                    .use { it.readText() }
+                    .openRawResource(
+                        if (isMainnet) {
+                            com.breadwallet.appcore.R.raw.tokens
+                        } else {
+                            com.breadwallet.appcore.R.raw.tokens_testnet
+                        }
+                    ).reader().use { it.readText() }
 
                 // Copy the APK tokens.json to a file on internal storage
-                saveDataToFile(context, tokens, TOKENS_FILENAME)
+                saveDataToFile(context, tokens, fileName)
                 loadTokens(parseJsonToTokenList(tokens))
                 initLock.unlock()
             } catch (e: IOException) {
@@ -148,7 +157,7 @@ object TokenUtil {
 
     fun tokenForCoingeckoId(coingeckoId: String): TokenItem? {
         val matches = coingeckoIdMap.filterValues { coingeckoId.equals(it, true) }
-        return matches.keys.firstOrNull()?.run(::tokenForCode)
+        return matches.keys.firstOrNull()?.run(TokenUtil::tokenForCode)
             ?: tokenItems.firstOrNull {
                 coingeckoId.equals(it.coingeckoId, true)
             }
@@ -164,6 +173,7 @@ object TokenUtil {
     }
 
     private fun fetchTokensFromServer() {
+        if (!isMainnet) return
         val response = fetchTokensFromServer(getBaseURL() + ENDPOINT_CURRENCIES)
         if (response.isSuccessful && response.bodyText.isNotEmpty()) {
             // Synchronize on the class object since getTokenItems is static and also synchronizes
@@ -208,7 +218,8 @@ object TokenUtil {
     }
 
     private fun getTokensFromFile(): List<TokenItem> = try {
-        val file = File(context.filesDir.path, TOKENS_FILENAME)
+        val fileName = if (isMainnet) TOKENS_FILENAME else TOKENS_FILENAME_TESTNET
+        val file = File(context.filesDir.path, fileName)
         parseJsonToTokenList(file.readText())
     } catch (e: IOException) {
         BRReportsManager.error("Failed to read tokens.json file", e)
@@ -258,8 +269,8 @@ object TokenUtil {
     private fun loadTokens(tokenItems: List<TokenItem>) {
         val native = tokenItems.filter(TokenItem::isNative).sortedBy { it.name }
         val tokens = tokenItems.filterNot(TokenItem::isNative).sortedBy { it.symbol }
-        this.tokenItems = native + tokens
-        tokenMap = this.tokenItems.associateBy { item ->
+        TokenUtil.tokenItems = native + tokens
+        tokenMap = TokenUtil.tokenItems.associateBy { item ->
             item.symbol.toLowerCase(Locale.ROOT)
         }
     }
@@ -268,14 +279,6 @@ object TokenUtil {
         val (startColor, endColor) = getJSONArrayOrNull(FIELD_COLORS)?.run {
             getStringOrNull(START_COLOR_INDEX) to getStringOrNull(END_COLOR_INDEX)
         } ?: null to null
-        val currencyId = getString(FIELD_CURRENCY_ID).run {
-            if (BuildConfig.BITCOIN_TESTNET) {
-                replace(
-                    MAINNET,
-                    if (contains(ETHEREUM)) ETHEREUM_TESTNET else TESTNET
-                )
-            } else this
-        }
 
         val name = getString(FIELD_NAME)
         TokenItem(
@@ -284,7 +287,7 @@ object TokenUtil {
             name = name,
             image = null,
             isSupported = getBooleanOrDefault(FIELD_IS_SUPPORTED, true),
-            currencyId = currencyId,
+            currencyId = getString(FIELD_CURRENCY_ID),
             type = getString(FIELD_TYPE),
             startColor = startColor,
             endColor = endColor,

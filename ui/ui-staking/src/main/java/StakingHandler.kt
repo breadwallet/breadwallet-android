@@ -210,7 +210,7 @@ private suspend fun BreadBox.changeValidator(
                         E.OnTransferFailed(M.TransactionError.Unknown)
                     }
                 }
-            }.single()
+            }.first()
     } catch (e: TransferSubmitError) {
         logError("Failed to submit transfer", e)
         E.OnTransferFailed(M.TransactionError.TransferFailed)

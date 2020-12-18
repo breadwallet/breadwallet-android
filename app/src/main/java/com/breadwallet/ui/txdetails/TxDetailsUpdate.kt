@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.txdetails
 
+import android.util.Base64
 import com.breadwallet.breadbox.defaultUnit
 import com.breadwallet.breadbox.feeForToken
 import com.breadwallet.breadbox.isErc20
@@ -37,8 +38,9 @@ import com.breadwallet.ui.txdetails.TxDetails.E
 import com.breadwallet.ui.txdetails.TxDetails.F
 import com.breadwallet.ui.txdetails.TxDetails.M
 import com.breadwallet.util.isBitcoinLike
-import com.platform.entities.TxMetaDataEmpty
-import com.platform.entities.TxMetaDataValue
+import com.breadwallet.platform.entities.TxMetaDataEmpty
+import com.breadwallet.platform.entities.TxMetaDataValue
+import com.breadwallet.tools.util.GIFT_BASE_URL
 import com.spotify.mobius.Next
 import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
@@ -133,7 +135,9 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
                         memo = event.metaData.comment ?: "",
                         memoLoaded = true,
                         exchangeCurrencyCode = event.metaData.exchangeCurrency ?: "",
-                        exchangeRate = event.metaData.exchangeRate.toBigDecimal()
+                        exchangeRate = event.metaData.exchangeRate.toBigDecimal(),
+                        giftRecipientName =  event.metaData.gift?.recipientName,
+                        giftPrivateKey = event.metaData.gift?.keyData
                     )
                 )
             }
@@ -179,4 +183,25 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
 
     override fun onTransactionHashClicked(model: M): Next<M, F> =
         dispatch(setOf(F.CopyToClipboard(model.transactionHash)))
+
+    override fun onGiftResendClicked(model: M): Next<M, F> {
+        val key = model.giftPrivateKey!!.toByteArray()
+        val encodedPrivateKey = Base64.encode(key, Base64.NO_PADDING).toString(Charsets.UTF_8)
+        val giftUrl = "$GIFT_BASE_URL$encodedPrivateKey"
+        return dispatch(
+            setOf(
+                F.ShareGift(
+                    giftUrl,
+                    model.transactionHash,
+                    model.giftRecipientName!!,
+                    model.cryptoTransferredAmount,
+                    model.fiatAmountNow,
+                    model.exchangeRate
+                )
+            )
+        )
+    }
+
+    override fun onGiftReclaimClicked(model: M): Next<M, F> =
+        dispatch(setOf(F.ImportGift(model.giftPrivateKey!!)))
 }

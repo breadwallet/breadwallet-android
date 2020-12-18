@@ -27,7 +27,6 @@ package com.platform.tools
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import android.util.Log
-import com.breadwallet.app.BreadApp
 import com.breadwallet.logger.logError
 
 import com.breadwallet.tools.security.BrdUserManager
@@ -41,13 +40,18 @@ object TokenHolder : KodeinAware {
     private val TAG = TokenHolder::class.java.simpleName
     private var mApiToken: String? = null
     private var mOldApiToken: String? = null
-    override val kodein by closestKodein {
-        BreadApp.getBreadContext()
+    private lateinit var context: Context
+
+    fun provideContext(context: Context) {
+        this.context = context
     }
+
+    override val kodein by closestKodein { context }
     private val userManager by instance<BrdUserManager>()
+    private val apiClient: APIClient by instance()
 
     @Synchronized
-    fun retrieveToken(app: Context): String? {
+    fun retrieveToken(): String? {
         //If token is not present
         if (mApiToken.isNullOrBlank()) {
             //Check BrdUserManager
@@ -58,7 +62,7 @@ object TokenHolder : KodeinAware {
             }
             //Not in the BrdUserManager, update from server.
             if (token.isNullOrEmpty()) {
-                fetchNewToken(app)
+                fetchNewToken()
             } else {
                 mApiToken = token
             }
@@ -67,18 +71,18 @@ object TokenHolder : KodeinAware {
     }
 
     @Synchronized
-    fun updateToken(app: Context, expiredToken: String?): String? {
+    fun updateToken(expiredToken: String?): String? {
         if (mOldApiToken == null || mOldApiToken != expiredToken) {
             Log.e(TAG, "updateToken: updating the token")
             mOldApiToken = mApiToken
-            fetchNewToken(app)
+            fetchNewToken()
         }
         return mApiToken
     }
 
     @Synchronized
-    fun fetchNewToken(app: Context) {
-        mApiToken = APIClient.getInstance(app).token
+    fun fetchNewToken() {
+        mApiToken = apiClient.token
         logError("fetchNewToken: $mApiToken")
         if (!mApiToken.isNullOrEmpty()) {
             userManager.putToken(mApiToken!!)
@@ -88,7 +92,6 @@ object TokenHolder : KodeinAware {
     @VisibleForTesting
     @Synchronized
     fun reset() {
-        mApiToken = null
         mOldApiToken = null
     }
 }

@@ -46,6 +46,7 @@ interface NavigationTargetHandlerSpec {
         NavigationTarget.WipeWallet -> wipeWallet()
         NavigationTarget.OnBoarding -> onBoarding()
         NavigationTarget.ImportWallet -> importWallet()
+        is NavigationTarget.ImportWalletWithKey -> importWallet(effect)
         NavigationTarget.BitcoinNodeSelector -> bitcoinNodeSelector()
         NavigationTarget.EnableSegWit -> enableSegWit()
         NavigationTarget.LegacyAddress -> legacyAddress()
@@ -68,8 +69,13 @@ interface NavigationTargetHandlerSpec {
         is NavigationTarget.ATMMap -> aTMMap(effect)
         is NavigationTarget.Signal -> signal(effect)
         NavigationTarget.LogcatViewer -> logcatViewer()
+        NavigationTarget.MetadataViewer -> metadataViewer()
         is NavigationTarget.Staking -> staking(effect)
+        is NavigationTarget.CreateGift -> createGift(effect)
+        is NavigationTarget.ShareGift -> shareGift(effect)
     }
+
+    fun metadataViewer()
 
     fun logcatViewer()
 
@@ -112,6 +118,8 @@ interface NavigationTargetHandlerSpec {
     fun onBoarding(): Unit
 
     fun importWallet(): Unit
+
+    fun importWallet(effect: NavigationTarget.ImportWalletWithKey): Unit
 
     fun bitcoinNodeSelector(): Unit
 
@@ -156,4 +164,8 @@ interface NavigationTargetHandlerSpec {
     fun signal(effect: NavigationTarget.Signal): Unit
 
     fun staking(effect: NavigationTarget.Staking): Unit
+
+    fun createGift(effect: NavigationTarget.CreateGift): Unit
+
+    fun shareGift(effect: NavigationTarget.ShareGift): Unit
 }

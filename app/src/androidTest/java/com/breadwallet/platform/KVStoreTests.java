@@ -27,21 +27,15 @@ package com.breadwallet.platform;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 
-import android.util.Base64;
-
 import androidx.test.runner.AndroidJUnit4;
 
 import com.breadwallet.legacy.presenter.activities.settings.TestActivity;
-import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
-import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.platform.entities.TxMetaData;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.sqlite.KVItem;
 import com.platform.sqlite.PlatformSqliteHelper;
-import com.platform.tools.KVStoreManager;
 
 import org.junit.After;
 import org.junit.Assert;

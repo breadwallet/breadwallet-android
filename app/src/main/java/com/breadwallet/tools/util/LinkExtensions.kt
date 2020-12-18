@@ -51,6 +51,8 @@ private const val PATH_ENCODING = "utf-8"
 private const val QUERY_PARAM_WEB_BUNDLE = "web_bundle"
 private const val QUERY_PARAM_BUNDLE_DEBUG_URL = "bundle_debug_url"
 
+const val GIFT_BASE_URL = "$BRD_PROTOCOL://$BRD_HOST$GIFT_PATH_PREFIX"
+
 /** Turn the url string into a [Link] or null if it is not supported. */
 @Suppress("ComplexMethod")
 suspend fun String.asLink(

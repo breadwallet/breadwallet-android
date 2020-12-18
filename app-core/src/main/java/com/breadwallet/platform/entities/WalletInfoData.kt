@@ -1,4 +1,4 @@
-package com.platform.entities
+package com.breadwallet.platform.entities
 
 import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.logger.logError
