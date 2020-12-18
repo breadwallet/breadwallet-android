@@ -36,7 +36,7 @@ import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.wallet.Interval
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
-import com.platform.interfaces.AccountMetaDataProvider
+import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import com.platform.util.getDoubleOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -22,16 +22,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.platform.interfaces
+package com.breadwallet.platform.interfaces
 
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData
 import kotlinx.coroutines.flow.Flow
-import com.platform.entities.TxMetaData
-import com.platform.entities.WalletInfoData
+import com.breadwallet.platform.entities.TxMetaData
+import com.breadwallet.platform.entities.WalletInfoData
 import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Transfer
 import com.breadwallet.crypto.WalletManagerMode
-import com.platform.entities.TxMetaDataValue
+import com.breadwallet.platform.entities.TxMetaDataValue
 import java.util.Date
 
 @Suppress("TooManyFunctions")

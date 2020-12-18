@@ -6,5 +6,6 @@ include(
     "ui:ui-common",
     "ui:ui-navigation",
     "ui:ui-staking",
+    "ui:ui-gift",
     "theme"
 )

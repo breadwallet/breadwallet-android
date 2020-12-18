@@ -14,7 +14,7 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.breadwallet.R;
+import com.breadwallet.appcore.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -64,7 +64,7 @@ public class QRUtils {
     private static String mQrDataToShare; // TODO to fix this later in the code.
     private static String mTextToShare; // TODO same as above
 
-    private static Bitmap encodeAsBitmap(String content, int dimension) {
+    public static Bitmap encodeAsBitmap(String content, int dimension) {
         if (content == null) {
             return null;
         }

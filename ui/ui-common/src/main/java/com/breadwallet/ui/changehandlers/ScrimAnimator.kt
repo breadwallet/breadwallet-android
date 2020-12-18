@@ -29,10 +29,10 @@ import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.graphics.drawable.ColorDrawable
 import android.view.View
-import com.breadwallet.R
+import com.breadwallet.theme.R
 
 /** The default scrim color resource id. */
-private const val DEFAULT_SCRIM_COLOR_RES = R.color.black_trans
+private val DEFAULT_SCRIM_COLOR_RES = R.color.black_trans
 
 /** The default scrim fade animation duration. */
 private const val DEFAULT_SCRIM_FADE_DURATION = 250L

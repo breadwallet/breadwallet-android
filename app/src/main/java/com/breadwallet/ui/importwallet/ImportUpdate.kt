@@ -37,7 +37,10 @@ val ImportUpdate = Update<M, E, F> { model, event ->
     when (event) {
         is E.OnScanClicked -> dispatch(setOf(F.Nav.GoToScan))
         E.OnFaqClicked -> dispatch(setOf(F.Nav.GoToFaq))
-        E.OnCloseClicked -> dispatch(setOf(F.Nav.GoBack))
+        E.OnCloseClicked -> when (model.loadingState) {
+            M.LoadingState.IDLE -> dispatch(setOf<F>(F.Nav.GoBack))
+            else -> noChange()
+        }
         E.Key.NoWallets -> dispatch(setOf(F.Nav.GoBack))
         is E.Key.OnValid -> when {
             event.isPasswordProtected -> when {

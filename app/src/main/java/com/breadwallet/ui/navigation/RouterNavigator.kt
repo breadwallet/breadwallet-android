@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.navigation
 
+import android.util.Base64
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router
@@ -44,6 +45,7 @@ import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.addwallets.AddWalletsController
 import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
+import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.controllers.SignalController
 import com.breadwallet.ui.disabled.DisabledController
@@ -64,6 +66,7 @@ import com.breadwallet.ui.settings.currency.DisplayCurrencyController
 import com.breadwallet.ui.settings.fastsync.FastSyncController
 import com.breadwallet.ui.settings.fingerprint.FingerprintSettingsController
 import com.breadwallet.ui.settings.logview.LogcatController
+import com.breadwallet.ui.settings.logview.MetadataViewer
 import com.breadwallet.ui.settings.nodeselector.NodeSelectorController
 import com.breadwallet.ui.settings.segwit.EnableSegWitController
 import com.breadwallet.ui.settings.segwit.LegacyAddressController
@@ -76,6 +79,8 @@ import com.breadwallet.ui.wallet.WalletController
 import com.breadwallet.ui.web.WebController
 import com.breadwallet.ui.writedownkey.WriteDownKeyController
 import com.breadwallet.ui.uistaking.StakingController
+import com.breadwallet.ui.uigift.CreateGiftController
+import com.breadwallet.ui.uigift.ShareGiftController
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.isBrd
 import com.platform.HTTPServer
@@ -420,6 +425,16 @@ class RouterNavigator(
         )
     }
 
+    override fun importWallet(effect: NavigationTarget.ImportWalletWithKey) {
+        router.pushController(
+            ImportController(effect.privateKey, effect.isPasswordProtected)
+                .asTransaction(
+                    HorizontalChangeHandler(),
+                    HorizontalChangeHandler()
+                )
+        )
+    }
+
     override fun syncBlockchain(effect: NavigationTarget.SyncBlockchain) {
         router.pushController(
             RouterTransaction.with(SyncBlockchainController(effect.currencyCode))
@@ -599,12 +614,45 @@ class RouterNavigator(
     }
 
     override fun logcatViewer() {
-        if (router.backstack.none { it.controller() is LogcatController }) {
-            router.pushController(RouterTransaction.with(LogcatController()))
-        }
+        pushSingleInstance { LogcatController() }
+    }
+
+    override fun metadataViewer() {
+        pushSingleInstance { MetadataViewer() }
     }
 
     override fun staking(effect: NavigationTarget.Staking) {
         router.pushController(RouterTransaction.with(StakingController(effect.currencyId)))
+    }
+
+    override fun createGift(effect: NavigationTarget.CreateGift) {
+        router.pushController(RouterTransaction.with(CreateGiftController(effect.currencyId)))
+    }
+
+    override fun shareGift(effect: NavigationTarget.ShareGift) {
+        val controller = ShareGiftController(
+            txHash = effect.txHash,
+            giftUrl = effect.giftUrl,
+            recipientName = effect.recipientName,
+            giftAmount = effect.giftAmount,
+            giftAmountFiat = effect.giftAmountFiat,
+            pricePerUnit = effect.pricePerUnit
+        )
+        val transaction = RouterTransaction.with(controller)
+                .popChangeHandler(DialogChangeHandler())
+                .pushChangeHandler(DialogChangeHandler())
+        if (effect.replaceTop) {
+            router.replaceTopController(transaction)
+        } else {
+            router.pushController(transaction)
+        }
+    }
+
+    private inline fun <reified T : Controller> pushSingleInstance(
+        crossinline controller: () -> T
+    ) {
+        if (router.backstack.none { it.controller() is T }) {
+            router.pushController(RouterTransaction.with(controller()))
+        }
     }
 }

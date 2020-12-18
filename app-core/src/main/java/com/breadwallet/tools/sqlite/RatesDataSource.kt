@@ -29,15 +29,18 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import com.breadwallet.app.BreadApp
+import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.legacy.presenter.entities.CurrencyEntity
 import com.breadwallet.tools.manager.BRReportsManager
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.Utils
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.erased.instance
 import java.util.ArrayList
 import java.util.Locale
 
-class RatesDataSource private constructor(context: Context) : BRDataSourceInterface {
+class RatesDataSource private constructor(context: Context) : BRDataSourceInterface, KodeinAware {
 
     // Database fields
     private var database: SQLiteDatabase? = null
@@ -48,6 +51,9 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
         BRSQLiteHelper.CURRENCY_RATE,
         BRSQLiteHelper.CURRENCY_ISO
     )
+
+    override val kodein by closestKodein { context }
+    private val breadBox by instance<BreadBox>()
 
     fun putCurrencies(currencyEntities: Collection<CurrencyEntity>): Boolean {
         if (currencyEntities.isEmpty()) {
@@ -122,7 +128,6 @@ class RatesDataSource private constructor(context: Context) : BRDataSourceInterf
                 "\'" + BRSQLiteHelper.CURRENCY_CODE + "\'"
             )
             cursor.moveToFirst()
-            val breadBox = BreadApp.getBreadBox()
             val system = breadBox.getSystemUnsafe()
             while (!cursor.isAfterLast) {
                 val curEntity = cursorToCurrency(cursor)

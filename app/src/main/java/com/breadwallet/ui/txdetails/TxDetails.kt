@@ -31,7 +31,7 @@ import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.send.TransferField
 import com.breadwallet.util.CurrencyCode
-import com.platform.entities.TxMetaData
+import com.breadwallet.platform.entities.TxMetaData
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 import java.util.Date
@@ -64,7 +64,9 @@ object TxDetails {
         val isCompleted: Boolean = false,
         val feeToken: String = "",
         val confirmations: Int = 0,
-        val transferFields: List<TransferField> = emptyList()
+        val transferFields: List<TransferField> = emptyList(),
+        val giftRecipientName: String? = null,
+        val giftPrivateKey: String? = null
     ) {
         companion object {
             /** Create a [TxDetails.M] using only the required values. */
@@ -111,6 +113,8 @@ object TxDetails {
         object OnAddressClicked : E()
         object OnClosedClicked : E()
         object OnShowHideDetailsClicked : E()
+        object OnGiftResendClicked : E()
+        object OnGiftReclaimClicked : E()
     }
 
     sealed class F {
@@ -143,6 +147,21 @@ object TxDetails {
 
         object Close : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Back
+        }
+
+        data class ImportGift(@Redacted val privateKey: String) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.ImportWalletWithKey(privateKey, false)
+        }
+
+        data class ShareGift(
+            @Redacted val giftUrl: String,
+            @Redacted val txHash: String,
+            @Redacted val recipientName: String,
+            val giftAmount: BigDecimal,
+            val giftAmountFiat: BigDecimal,
+            val pricePerUnit: BigDecimal
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.ShareGift(giftUrl, txHash, recipientName, giftAmount, giftAmountFiat, pricePerUnit)
         }
     }
 }

@@ -30,7 +30,7 @@ import android.os.NetworkOnMainThreadException;
 import androidx.annotation.Nullable;
 import android.util.Log;
 
-import com.breadwallet.BuildConfig;
+import com.breadwallet.appcore.BuildConfig;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;

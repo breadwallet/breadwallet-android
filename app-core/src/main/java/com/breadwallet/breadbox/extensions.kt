@@ -29,6 +29,7 @@ import com.breadwallet.crypto.Account
 import com.breadwallet.crypto.Address
 import com.breadwallet.crypto.Amount
 import com.breadwallet.crypto.Currency
+import com.breadwallet.crypto.ExportablePaperWallet
 import com.breadwallet.crypto.Key
 import com.breadwallet.crypto.Network
 import com.breadwallet.crypto.NetworkFee
@@ -39,6 +40,7 @@ import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManager
 import com.breadwallet.crypto.WalletSweeper
 import com.breadwallet.crypto.errors.AccountInitializationError
+import com.breadwallet.crypto.errors.ExportablePaperWalletError
 import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.errors.LimitEstimationError
 import com.breadwallet.crypto.errors.WalletSweeperError
@@ -84,6 +86,11 @@ suspend fun Wallet.estimateMaximum(
     estimateLimitMaximum(address, networkFee, this)
 }
 
+suspend fun WalletManager.createExportablePaperWallet(): ExportablePaperWallet =
+    asyncApiCall<ExportablePaperWallet, ExportablePaperWalletError> {
+        createExportablePaperWallet(this)
+    }
+
 /** Returns the [Amount] as a [BigDecimal]. */
 fun Amount.toBigDecimal(
     unit: Unit = this.unit,
@@ -118,3 +125,24 @@ val Wallet.defaultUnit: Unit
 /** Returns the base [Unit] for the [Wallet]'s [Network] */
 val Wallet.baseUnit: Unit
     get() = walletManager.network.baseUnitFor(currency).get()
+
+fun Wallet.feeForSpeed(speed: TransferSpeed): NetworkFee {
+    if (currency.isTezos()) {
+        return checkNotNull(
+            walletManager.network.fees.minByOrNull {
+                it.confirmationTimeInMilliseconds.toLong()
+            }
+        )
+    }
+    val fees = walletManager.network.fees
+    return when (fees.size) {
+        1 -> fees.single()
+        else -> fees
+            .filter { it.confirmationTimeInMilliseconds.toLong() <= speed.targetTime }
+            .minByOrNull { fee ->
+                speed.targetTime - fee.confirmationTimeInMilliseconds.toLong()
+            }
+            ?: fees.minByOrNull { it.confirmationTimeInMilliseconds }
+            ?: walletManager.defaultNetworkFee
+    }
+}

@@ -53,7 +53,8 @@ import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.util.errorHandler
-import com.platform.interfaces.AccountMetaDataProvider
+import com.platform.APIClient
+import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -374,9 +375,13 @@ class SettingsScreenHandler(
                 SettingsOption.VIEW_LOGS
             ),
             SettingsItem(
+                "View Metadata",
+                SettingsOption.METADATA_VIEWER
+            ),
+            SettingsItem(
                 "API Server",
                 SettingsOption.API_SERVER,
-                subHeader = BreadApp.host
+                subHeader = APIClient.host
             ),
             SettingsItem(
                 "Onboarding flow",

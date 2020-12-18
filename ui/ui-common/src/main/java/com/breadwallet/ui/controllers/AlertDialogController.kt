@@ -29,9 +29,9 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.breadwallet.R
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
+import com.breadwallet.ui.uicommon.R
 import kotlinx.android.synthetic.main.controller_alert_dialog.*
 
 /** */
