@@ -35,6 +35,8 @@ interface KVStoreProvider {
     /** Put [value] for [key]. */
     fun put(key: String, value: JSONObject): Boolean
 
+    fun getKeys(): List<String>
+
     /** Syncs the value for [key] and returns it, null if sync failed. */
     suspend fun sync(key: String): JSONObject?
 
@@ -43,4 +45,6 @@ interface KVStoreProvider {
 
     /** Returns a [Flow] for a given [key]. */
     fun keyFlow(key: String): Flow<JSONObject>
+
+    fun keysFlow(): Flow<List<String>>
 }

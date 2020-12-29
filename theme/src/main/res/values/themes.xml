@@ -1,0 +1,30 @@
+<resources>
+    <style name="AltAppTheme" parent="Theme.MaterialComponents">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorSecondary">@color/brd_orange</item>
+        <item name="android:colorBackground">@color/white</item>
+        <item name="colorError">@color/red</item>
+        <!-- New MaterialComponents attributes. -->
+        <item name="fontFamily">@font/mobile_font</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorSecondaryVariant">@color/white</item>
+        <item name="colorSurface">@color/trans_white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorOnBackground">@color/white</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="scrimBackground">#52000000</item>
+
+        <item name="shapeAppearanceSmallComponent">@style/shapeAppearanceSmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/shapeAppearanceMediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/shapeAppearanceLargeComponent</item>
+        <item name="textAppearanceSubtitle1">@style/textAppearanceSubtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/textAppearanceSubtitle2</item>
+        <item name="textAppearanceBody1">@style/textAppearanceBody1</item>
+        <item name="textAppearanceBody2">@style/textAppearanceBody2</item>
+        <item name="textAppearanceButton">@style/textAppearanceButton</item>
+
+        <item name="textAppearanceError">@style/textAppearanceError</item>
+    </style>
+</resources>

@@ -24,6 +24,7 @@
  */
 package com.platform.interfaces
 
+import com.breadwallet.BuildConfig
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.isErc20
@@ -37,10 +38,11 @@ import com.breadwallet.tools.crypto.CryptoHelper
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.tools.util.Utils
 import com.platform.entities.TokenListMetaData
-import com.platform.entities.TxMetaData
-import com.platform.entities.TxMetaDataEmpty
-import com.platform.entities.TxMetaDataValue
-import com.platform.entities.WalletInfoData
+import com.breadwallet.platform.entities.TxMetaData
+import com.breadwallet.platform.entities.TxMetaDataEmpty
+import com.breadwallet.platform.entities.TxMetaDataValue
+import com.breadwallet.platform.entities.WalletInfoData
+import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -260,10 +262,19 @@ class MetaDataManager(
         when (txMetaData) {
             is TxMetaDataEmpty -> {
                 needsUpdate =
-                    !newTxMetaData.comment.isNullOrBlank() || newTxMetaData.exchangeRate != 0.0
+                    !newTxMetaData.comment.isNullOrBlank() ||
+                        newTxMetaData.exchangeRate != 0.0 ||
+                        !newTxMetaData.gift?.keyData.isNullOrBlank()
                 txMetaData = newTxMetaData
             }
             is TxMetaDataValue -> {
+                if (newTxMetaData.gift != txMetaData.gift && newTxMetaData.gift?.keyData != null) {
+                    // Don't overwrite gift unless keyData is  provided
+                    txMetaData = txMetaData.copy(
+                        gift = newTxMetaData.gift
+                    )
+                    needsUpdate = true
+                }
                 if (newTxMetaData.comment != txMetaData.comment) {
                     txMetaData = txMetaData.copy(
                         comment = newTxMetaData.comment
@@ -320,7 +331,7 @@ class MetaDataManager(
                 return
             }
 
-            TokenUtil.initialize(BreadApp.getBreadContext(), true)
+            TokenUtil.initialize(BreadApp.getBreadContext(), true, !BuildConfig.BITCOIN_TESTNET)
             val currencyCodeToToken = TokenUtil.getTokenItems()
                 .associateBy { it.symbol.toLowerCase(Locale.ROOT) }
 

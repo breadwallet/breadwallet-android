@@ -297,6 +297,26 @@
                 app:buttonType="4"
                 app:hasShadow="false"
                 app:isBreadButton="true"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/gift_button"
+                android:layout_width="44dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
+                app:icon="@drawable/ic_gift"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:elevation="0dp"
+                android:shadowRadius="0"
+                android:padding="0dp"
+                android:insetBottom="0dp"
+                android:insetTop="0dp"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                style="@style/Widget.MaterialComponents.Button"/>
         </LinearLayout>
     </LinearLayout>
 

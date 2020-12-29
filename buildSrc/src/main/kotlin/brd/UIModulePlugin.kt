@@ -40,6 +40,9 @@ class UIModulePlugin : Plugin<Project> {
                 project.path != uiNavigationProject.dependencyProject.path) {
                 add("implementation", uiCommonProject)
             }
+            add("implementation", project(":theme"))
+            add("implementation", Libs.Material.Core)
+            add("implementation", Libs.Androidx.CoreKtx)
             add("implementation", Libs.Mobius.Core)
             add("implementation", Libs.Mobius.Coroutines)
             add("implementation", Libs.Mobius.Android)
@@ -48,6 +51,7 @@ class UIModulePlugin : Plugin<Project> {
             add("implementation", Libs.Kodein.CoreErasedJvm)
             add("implementation", Libs.Kodein.FrameworkAndroidX)
             add("compileOnly", Libs.Redacted.Annotation)
+            add("testImplementation", Libs.JUnit.Core)
             add("testImplementation", Libs.Mobius.Test)
             if (uiModule.includeAppCore) {
                 add("implementation", project(":app-core"))

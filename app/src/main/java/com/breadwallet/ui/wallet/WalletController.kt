@@ -27,6 +27,7 @@ package com.breadwallet.ui.wallet
 import android.animation.AnimatorInflater
 import android.animation.LayoutTransition
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.transition.TransitionManager
@@ -44,7 +45,7 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.WalletState
 import com.breadwallet.breadbox.formatCryptoForUi
-import com.breadwallet.breadbox.formatFiatForUi
+import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.logger.logDebug
@@ -68,6 +69,7 @@ import com.breadwallet.ui.wallet.spark.SparkAdapter
 import com.breadwallet.ui.wallet.spark.SparkView
 import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
 import com.breadwallet.ui.web.WebController
+import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isTezos
 import com.google.android.material.appbar.AppBarLayout
 import com.mikepenz.fastadapter.FastAdapter
@@ -198,6 +200,10 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
         }
 
         appbar.addOnOffsetChangedListener(this)
+
+        if (currencyCode.isBitcoin()) {
+            gift_button.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroyView(view: View) {
@@ -219,6 +225,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             buttonCreateAccount.clicks().map { E.OnCreateAccountClicked },
             search_icon.clicks().map { E.OnSearchClicked },
             back_icon.clicks().map { E.OnBackClicked },
+            gift_button.clicks().map { E.OnGiftClicked },
             bindTxList(),
             bindIntervalClicks(),
             bindSparkLineScrubbing(),
@@ -550,6 +557,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             val buttonColor = resources.getColor(R.color.wallet_footer_button_color_dark)
             send_button.setColor(buttonColor)
             receive_button.setColor(buttonColor)
+            gift_button.background = ColorDrawable(buttonColor)
             buttonCreateAccount.setColor(buttonColor)
             progressCreateAccount.indeterminateDrawable.setTint(buttonColor)
 
@@ -560,9 +568,10 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             }
         } else if (endColor != null) {
             Color.parseColor(endColor).let {
-                send_button.setColor(Color.parseColor(endColor))
-                receive_button.setColor(Color.parseColor(endColor))
-                buttonCreateAccount.setColor(Color.parseColor(endColor))
+                send_button.setColor(it)
+                receive_button.setColor(it)
+                gift_button.background = ColorDrawable(it)
+                buttonCreateAccount.setColor(it)
             }
         }
 

@@ -35,11 +35,14 @@ import com.platform.interfaces.KVStoreProvider
 import com.platform.kvstore.CompletionObject
 import com.platform.kvstore.RemoteKVStore
 import com.platform.kvstore.ReplicatedKVStore
+import com.platform.sqlite.KVItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -86,6 +89,10 @@ class KVStoreManager(
         }
     }
 
+    override fun getKeys(): List<String> {
+        return getReplicatedKvStore(context).rawKVs.map(KVItem::key)
+    }
+
     override suspend fun sync(key: String): JSONObject? {
         var value: JSONObject? = null
         try {
@@ -122,6 +129,18 @@ class KVStoreManager(
 
     override fun keyFlow(key: String): Flow<JSONObject> =
         keyChannelMap.getSafe(key).asFlow().onStart { get(key)?.let { emit(it) } }
+
+    override fun keysFlow(): Flow<List<String>> {
+        val kvstore = getReplicatedKvStore(context)
+        return if (mutex.isLocked) {
+            flow {
+                mutex.withLock {  }
+                emit(kvstore.rawKVs.map(KVItem::key))
+            }
+        } else {
+            flowOf(kvstore.rawKVs.map(KVItem::key))
+        }
+    }
 
     private fun setData(context: Context, data: ByteArray, key: String?): CompletionObject? =
         try {

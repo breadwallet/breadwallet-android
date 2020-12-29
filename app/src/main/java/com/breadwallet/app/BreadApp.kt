@@ -67,10 +67,13 @@ import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.BrdUserState
 import com.breadwallet.tools.security.CryptoUserManager
 import com.breadwallet.tools.services.BRDFirebaseMessagingService
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.tools.util.SupportManager
 import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.ui.uigift.GiftBackup
+import com.breadwallet.ui.uigift.SharedPrefsGiftBackup
 import com.breadwallet.util.AddressResolverServiceLocator
 import com.breadwallet.util.CryptoUriParser
 import com.breadwallet.util.FioService
@@ -80,12 +83,13 @@ import com.breadwallet.util.isEthereum
 import com.breadwallet.util.usermetrics.UserMetricsUtil
 import com.platform.APIClient
 import com.platform.HTTPServer
-import com.platform.interfaces.AccountMetaDataProvider
+import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.KVStoreProvider
 import com.platform.interfaces.MetaDataManager
 import com.platform.interfaces.WalletProvider
 import com.platform.sqlite.PlatformSqliteHelper
 import com.platform.tools.KVStoreManager
+import com.platform.tools.TokenHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -119,6 +123,7 @@ import java.util.regex.Pattern
 
 private const val LOCK_TIMEOUT = 180_000L // 3 minutes in milliseconds
 private const val ENCRYPTED_PREFS_FILE = "crypto_shared_prefs"
+private const val ENCRYPTED_GIFT_BACKUP_FILE = "gift_shared_prefs"
 private const val WALLETKIT_DATA_DIR_NAME = "cryptocore"
 
 @Suppress("TooManyFunctions")
@@ -129,12 +134,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         init {
             CryptoApi.initialize(CryptoApiProvider.getInstance())
-        }
-
-        // The server(s) on which the API is hosted
-        private val HOST = when {
-            BuildConfig.DEBUG -> "stage2.breadwallet.com"
-            else -> "api.breadwallet.com"
         }
 
         // The wallet ID is in the form "xxxx xxxx xxxx xxxx" where x is a lowercase letter or a number.
@@ -260,20 +259,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
             mCurrentActivity = app
         }
 
-        /**
-         * @return host or debug host if build is DEBUG
-         */
-        val host: String
-            get() {
-                if (BuildConfig.DEBUG) {
-                    val host = BRSharedPrefs.getDebugHost()
-                    if (!host.isNullOrBlank()) {
-                        return host
-                    }
-                }
-                return HOST
-            }
-
         /** Provides access to [DKodein]. Meant only for Java compatibility. **/
         @JvmStatic
         fun getKodeinInstance(): DKodein {
@@ -289,11 +274,15 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         }
 
         bind<APIClient>() with singleton {
-            APIClient(this@BreadApp, direct.instance())
+            APIClient(this@BreadApp, direct.instance(), createHttpHeaders())
         }
 
         bind<BrdUserManager>() with singleton {
-            CryptoUserManager(this@BreadApp, ::createEncryptedPrefs, instance())
+            CryptoUserManager(this@BreadApp, ::createCryptoEncryptedPrefs, instance())
+        }
+
+        bind<GiftBackup>() with singleton {
+            SharedPrefsGiftBackup(::createGiftBackupEncryptedPrefs)
         }
 
         bind<KVStoreProvider>() with singleton {
@@ -400,7 +389,8 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         BRKeyStore.provideContext(this)
         BRClipboardManager.provideContext(this)
-        BRSharedPrefs.initialize(this)
+        BRSharedPrefs.initialize(this, applicationScope)
+        TokenHolder.provideContext(this)
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(ApplicationLifecycleObserver())
         ApplicationLifecycleObserver.addApplicationLifecycleListener { event ->
@@ -414,7 +404,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         applicationScope.launch {
             ServerBundlesHelper.extractBundlesIfNeeded(mInstance)
-            TokenUtil.initialize(mInstance, false)
+            TokenUtil.initialize(mInstance, false, !BuildConfig.BITCOIN_TESTNET)
         }
 
         // Start our local server as soon as the application instance is created, since we need to
@@ -487,7 +477,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         initializeWalletId()
         BRDFirebaseMessagingService.initialize(context)
         HTTPServer.getInstance().startServer(this)
-        apiClient.updatePlatform()
+        apiClient.updatePlatform(applicationScope)
         applicationScope.launch {
             UserMetricsUtil.makeUserMetricsRequest(context)
         }
@@ -508,7 +498,10 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         )
     }
 
-    private fun createEncryptedPrefs(): SharedPreferences? {
+    private fun createCryptoEncryptedPrefs(): SharedPreferences? = createEncryptedPrefs(ENCRYPTED_PREFS_FILE)
+    private fun createGiftBackupEncryptedPrefs(): SharedPreferences? = createEncryptedPrefs(ENCRYPTED_GIFT_BACKUP_FILE)
+
+    private fun createEncryptedPrefs(fileName: String): SharedPreferences? {
         val masterKeys = runCatching {
             MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
         }.onFailure { e ->
@@ -517,7 +510,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         return runCatching {
             EncryptedSharedPreferences.create(
-                ENCRYPTED_PREFS_FILE,
+                fileName,
                 masterKeys,
                 this@BreadApp,
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
@@ -553,5 +546,25 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         }.onFailure { e ->
             logError("Failed to clear application data", e)
         }
+    }
+
+    fun createHttpHeaders(): Map<String, String> {
+        // Split the default device user agent string by spaces and take the first string.
+        // Example user agent string: "Dalvik/1.6.0 (Linux; U;Android 5.1; LG-F320SBuild/KOT49I.F320S22g) Android/9"
+        // We only want: "Dalvik/1.6.0"
+        val deviceUserAgent =
+            (System.getProperty(APIClient.SYSTEM_PROPERTY_USER_AGENT) ?: "")
+                .split("\\s".toRegex())
+                .firstOrNull()
+
+        // The BRD server expects the following user agent: appName/appVersion engine/engineVersion plaform/plaformVersion
+        val brdUserAgent = "${APIClient.UA_APP_NAME}${BuildConfig.VERSION_CODE} $deviceUserAgent ${APIClient.UA_PLATFORM}${Build.VERSION.RELEASE}"
+
+        return mapOf(
+            APIClient.HEADER_IS_INTERNAL to if (BuildConfig.IS_INTERNAL_BUILD) BRConstants.TRUE else BRConstants.FALSE,
+            APIClient.HEADER_TESTFLIGHT to if (BuildConfig.DEBUG) BRConstants.TRUE else BRConstants.FALSE,
+            APIClient.HEADER_TESTNET to if (BuildConfig.BITCOIN_TESTNET) BRConstants.TRUE else BRConstants.FALSE,
+            APIClient.HEADER_USER_AGENT to brdUserAgent
+        )
     }
 }

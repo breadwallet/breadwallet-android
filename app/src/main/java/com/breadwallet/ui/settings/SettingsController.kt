@@ -46,6 +46,7 @@ import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.settings.SettingsScreen.E
 import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.ui.settings.SettingsScreen.M
+import com.platform.APIClient
 import com.spotify.mobius.Connectable
 import kotlinx.android.synthetic.main.controller_settings.*
 import kotlinx.coroutines.flow.Flow
@@ -149,7 +150,7 @@ class SettingsController(
 
     override fun handleViewEffect(effect: ViewEffect) {
         when (effect) {
-            F.ShowApiServerDialog -> showApiServerDialog(BreadApp.host)
+            F.ShowApiServerDialog -> showApiServerDialog(APIClient.host)
             F.ShowPlatformDebugUrlDialog -> showPlatformDebugUrlDialog(
                 ServerBundlesHelper.getWebPlatformDebugURL()
             )

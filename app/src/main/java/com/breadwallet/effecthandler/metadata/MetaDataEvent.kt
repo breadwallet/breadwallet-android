@@ -25,7 +25,7 @@
 package com.breadwallet.effecthandler.metadata
 
 import com.breadwallet.crypto.WalletManagerMode
-import com.platform.entities.TxMetaData
+import com.breadwallet.platform.entities.TxMetaData
 
 sealed class MetaDataEvent {
     data class OnTransactionMetaDataUpdated(
