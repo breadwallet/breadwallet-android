@@ -63,6 +63,8 @@ import java.util.Date
 import kotlin.time.milliseconds
 
 private const val DELEGATE = "Delegate"
+private const val UNSTAKE_KEY = "Type"
+private const val UNSTAKE_VALUE = "Delegation"
 private const val DELEGATION_OP = "DelegationOp"
 private const val DELEGATION_OP_VALUE = "1"
 private val WALLET_UPDATE_DEBOUNCE = 250L.milliseconds
@@ -144,18 +146,21 @@ private fun handleLoadAccount(
                         it.state.type == INCLUDED ||
                         it.state.type == PENDING
                 }
-                .sortedBy { it.confirmation.orNull()?.confirmationTime ?: Date() }
+                .sortedByDescending { it.confirmation.orNull()?.confirmationTime ?: Date() }
                 .firstOrNull { transfer ->
-                    transfer.attributes.any { it.key.equals(DELEGATE, true) } &&
-                        (transfer.confirmation.orNull()?.success ?: true)
+                    transfer.attributes.any {
+                        it.key.equals(DELEGATE, true) ||
+                            (it.key.equals(UNSTAKE_KEY, true) && it.value.or("").equals(UNSTAKE_VALUE, true))
+                    } && (transfer.confirmation.orNull()?.success ?: true)
                 }
 
             when (transfer) {
                 null -> E.AccountUpdated.Unstaked(currencyCode)
                 else -> {
                     val address = transfer.target.orNull()?.toString() ?: ""
+                    val isTargetSelf = wallet.addressFor(address)?.let { wallet.containsAddress(it) } ?: false
                     val isConfirmed = transfer.confirmation.orNull()?.success ?: false
-                    val isStaked = address.isNotBlank() && address != "unknown"
+                    val isStaked = address.isNotBlank() && address != "unknown" && !isTargetSelf
                     val balance = wallet.balance.toBigDecimal()
                     if (isConfirmed) {
                         if (isStaked) E.AccountUpdated.Staked(currencyCode, address, STAKED, balance)
