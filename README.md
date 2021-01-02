@@ -1,11 +1,11 @@
 [![Litewallet](/images/header-android.png)](https://play.google.com/store/apps/details?id=com.loafwallet&hl=en_US)
 ======================
-[![Release](https://img.shields.io/github/v/release/litecoin-foundation/loafwallet-android?style=plastic)](https://img.shields.io/github/v/release/litecoin-foundation/loafwallet-android) 
+[![Release](https://img.shields.io/github/v/release/litecoin-foundation/loafwallet-android?style=plastic)](https://img.shields.io/github/v/release/litecoin-foundation/loafwallet-android)
 [![MIT License](https://img.shields.io/github/license/litecoin-foundation/loafwallet-android?style=plastic)](https://img.shields.io/github/license/litecoin-foundation/loafwallet-android?style=plastic)
 
 ## Easy and secure
 Litewallet is the best way to get started with Litecoin. Our simple, streamlined design is easy for beginners, yet powerful enough for experienced users. This is a free app produced by the Litecoin Foundation.
- 
+
 ## Donations
 The Litewallet Team is a group of global volunteers & part of the Litecoin Foundation that work hard to promote the use of Litecoin. Litewallet takes alot of time and resources to improve and test features but we need your help.  Please consider donating to one of our addresses:
 |                                   Hardware Campaign                                   	|                              General Litecoin Foundation                              	|
@@ -14,11 +14,11 @@ The Litewallet Team is a group of global volunteers & part of the Litecoin Found
 
 ## Completely decentralized
 
-Unlike other iOS Litecoin wallets, **Litewallet** is a standalone Litecoin client. It connects directly to the Litecoin network using [SPV](https://en.bitcoin.it/wiki/Thin_Client_Security#Header-Only_Clients) mode, and doesn't rely on servers that can be hacked or disabled. Even if Litewallet is removed from the App Store, the app will continue to function, allowing users to access their valuable Litecoin at any time.
+Unlike other Android Litecoin wallets, **Litewallet** is a standalone Litecoin client. It connects directly to the Litecoin network using [SPV](https://en.bitcoin.it/wiki/Thin_Client_Security#Header-Only_Clients) mode, and doesn't rely on servers that can be hacked or disabled. Even if Litewallet is removed from the App Store, the app will continue to function, allowing users to access their valuable Litecoin at any time.
 
 ## Cutting-edge security
 
-**Litewallet** utilizes AES hardware encryption, app sandboxing, and the latest iOS security features to protect users from malware, browser security holes, and even physical theft. Private keys are stored only in the secure enclave of the user's phone, inaccessible to anyone other than the user.
+**Litewallet** utilizes AES hardware encryption, app sandboxing, and the latest Android security features to protect users from malware, browser security holes, and even physical theft. Private keys are stored only in the secure enclave of the user's phone, inaccessible to anyone other than the user.
 
 ## Designed with new users in mind
 
@@ -58,7 +58,7 @@ Simplicity and ease-of-use is **Litewallet**'s core design principle. A simple r
 [![GitHub issues](https://img.shields.io/github/issues/litecoin-foundation/loafwallet-android?style=plastic)](https://github.com/litecoin-foundation/loafwallet-android/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/litecoin-foundation/loafwallet-android?color=00ff00&style=plastic)](https://github.com/litecoin-foundation/loafwallet-android/pulls)
 
-### Building & Developing Litewallet for Android: 
+### Building & Developing Litewallet for Android:
 
 1. Download and install Java 7 or up
 2. Download and install the latest Android studio

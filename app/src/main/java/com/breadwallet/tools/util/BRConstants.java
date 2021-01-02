@@ -80,7 +80,7 @@ public class BRConstants {
     public static final String ECONOMY_FEE_KB_PREFS = "EconomyFeeKb";
     public static final String LITTLE_CIRCLE = "\u2022";
 
-    public static String SUPPORT_EMAIL = "support@loafwallet.com";
+    public static String SUPPORT_EMAIL = "support@litecoinfoundation.zendesk.com";
 
     public static final int ONE_BITCOIN = 100000000;
     public static final int HUNDRED_BITS = 10000000;
@@ -162,10 +162,10 @@ public class BRConstants {
     public static final String wipeWallet = "wipe-wallet";
     public static final String loopBug = "android-loop-bug";
 
-    public static final String TWITTER_LINK = "https://twitter.com/loafwallet";
-    public static final String REDDIT_LINK = "https://www.reddit.com/r/litecoin";
-    public static final String WEB_LINK = "https://loafwallet.org";
-    public static final String TOS_LINK = "https://loafwallet.org/tos";
+    public static final String TWITTER_LINK = "https://twitter.com/Litewallet_App";
+    public static final String REDDIT_LINK = "https://www.reddit.com/r/Litewallet";
+    public static final String WEB_LINK = "https://lite-wallet.org";
+    public static final String TOS_LINK = "https://lite-wallet.org/policy";
 
     public static final String BLOCK_EXPLORER_BASE_URL = BuildConfig.LITECOIN_TESTNET ? "https://testnet.litecore.io/tx/" : "https://insight.litecore.io/tx/";
 

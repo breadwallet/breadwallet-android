@@ -58,4 +58,14 @@
         <item name="android:background">@drawable/fee_selector_bg_end</item>
     </style>
 
+    <style name="FiatOptionButtonStyle">
+        <item name="android:foreground">?selectableItemBackground</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/fiat_option_bg_selector</item>
+        <item name="android:layout_marginRight">15dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:textColor">@color/fiat_option_text_selector</item>
+    </style>
+
 </resources>

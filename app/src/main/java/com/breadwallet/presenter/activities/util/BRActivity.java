@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.fragment.app.FragmentActivity;
+
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
@@ -49,15 +51,10 @@ import timber.log.Timber;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRActivity extends Activity {
+public class BRActivity extends FragmentActivity {
 
     static {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     @Override
@@ -167,6 +164,9 @@ public class BRActivity extends Activity {
                     finish();
                 }
                 break;
+
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

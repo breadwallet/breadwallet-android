@@ -89,12 +89,9 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         BRPeerManager.OnTxStatusUpdate, BRSharedPrefs.OnIsoChangedListener,
         TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, InternetManager.ConnectionReceiverListener {
 
-    private static final String TAG = BreadActivity.class.getName();
-
     private LinearLayout sendButton;
     private LinearLayout receiveButton;
-    //TODO: Add back when server can handle the buy
-    //private LinearLayout buyButton;
+    private LinearLayout buyButton;
     private LinearLayout menuButton;
     public static final Point screenParametersPoint = new Point();
 
@@ -104,7 +101,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private TextView equals;
     private int progress = 0;
     private TextView manageText;
-    //    private TextView walletName;
     private ConstraintLayout walletProgressLayout;
 
     private LinearLayout toolbarLayout;
@@ -112,7 +108,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private ImageButton searchIcon;
     public ViewFlipper barFlipper;
     private BRSearchBar searchBar;
-    //    private boolean isSwapped;
     private ConstraintLayout toolBarConstraintLayout;
     private String savedFragmentTag;
     private boolean uiIsDone;
@@ -122,7 +117,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     public static BreadActivity getApp() {
         return app;
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,20 +205,20 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 BRAnimator.showReceiveFragment(BreadActivity.this, true);
             }
         });
-        //TODO: Add back when server can handle the buy
-        //        buyButton.setOnClickListener(new View.OnClickListener() {
-        //            @Override
-        //            public void onClick(View v) {
-        //                if (!BRAnimator.isClickAllowed()) return;
-        //                BRAnimator.showBuyFragment(BreadActivity.this);
-        //            }
-        //        });
+
+        buyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                BRAnimator.showBuyTabFragment(BreadActivity.this);
+            }
+        });
 
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                //start the server for Buy Bitcoin
+                //start the server for Buy Litecoin
                 BRAnimator.showMenuFragment(BreadActivity.this);
 
             }
@@ -425,10 +419,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         sendButton = (LinearLayout) findViewById(R.id.send_layout);
         receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
 
-        //TODO: Add back when server can handle the buy
-        //buyButton = (LinearLayout) findViewById(R.id.buy_layout);
-        //walletName = (TextView) findViewById(R.id.wallet_name_text);
-
+        buyButton = (LinearLayout) findViewById(R.id.buy_layout);
 
         menuButton = (LinearLayout) findViewById(R.id.menu_layout);
         manageText = (TextView) findViewById(R.id.manage_text);

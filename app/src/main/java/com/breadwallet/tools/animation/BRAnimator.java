@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
@@ -31,6 +32,7 @@ import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.presenter.fragments.BuyTabFragment;
 import com.breadwallet.presenter.fragments.DynamicDonationFragment;
 import com.breadwallet.presenter.fragments.FragmentBuy;
 import com.breadwallet.presenter.fragments.FragmentGreetings;
@@ -330,15 +332,24 @@ public class BRAnimator {
 
     }
 
-    public static void showBuyFragment(Activity app) {
+    public static void showBuyFragment(FragmentActivity app, String currency) {
         if (app == null) {
             Timber.i("showBuyFragment: app is null");
             return;
         }
+        app.getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                .add(android.R.id.content, FragmentBuy.newInstance(currency), FragmentBuy.class.getName())
+                .addToBackStack(FragmentBuy.class.getName())
+                .commit();
+    }
+
+    public static void showBuyTabFragment(@NonNull Activity app) {
         FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-        transaction.add(android.R.id.content, new FragmentBuy(), FragmentBuy.class.getName());
-        transaction.addToBackStack(FragmentBuy.class.getName());
+        transaction.add(android.R.id.content, new BuyTabFragment(), BuyTabFragment.class.getName());
+        transaction.addToBackStack(BuyTabFragment.class.getName());
         transaction.commit();
     }
 

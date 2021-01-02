@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!-- App name -->
   <string name="About.appName.android">Loaf</string>
   <!-- About screen blog label -->
@@ -739,16 +739,32 @@
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
 
-    <string name="Donate.title">Donate to the Litecoin Foundation (%1$s)</string>
+  <string name="Donate.title">Donate to the Litecoin Foundation (%1$s)</string>
 
-    <string name="Confirmation.processingAndDonationTime">Processing time: These transactions will take %1$s minutes to process.</string>
-    <string name="Donate.title.confirmation">Confirm Donation</string>
-    <string name="Confirmation.donateLabel">Amount to Donate:</string>
-    <string name="Confirmation.staticAddressLabel">Address:</string>
-    <string name="Donate.word">Donate</string>
-    <string name="Donate.toThe">"Donate to the "</string>
-    <string name="FeeSelector.luxury">Luxury</string>
+  <string name="Confirmation.processingAndDonationTime">Processing time: These transactions will take %1$s minutes to process.</string>
+  <string name="Donate.title.confirmation">Confirm Donation</string>
+  <string name="Confirmation.donateLabel">Amount to Donate:</string>
+  <string name="Confirmation.staticAddressLabel">Address:</string>
+  <string name="Donate.word">Donate</string>
+  <string name="Donate.toThe">"Donate to the "</string>
+  <string name="FeeSelector.luxury">Luxury</string>
   <string name="FeeSelector.luxuryTime">2.5 - 5+ minutes</string>
   <string name="FeeSelector.luxuryMessage">This option virtually guarantees acceptance of your transaction though you are paying a premium.</string>
+
+  <string name="BuyCenter.simplex.Title" tools:ignore="ExtraTranslation">Simplex</string>
+  <string name="BuyCenter.simplex.FinancialDetails" tools:ignore="ExtraTranslation">"• Get Litecoin in 5 mins!\n• Buy Litecoin via credit card\n• Passport or State ID"</string>
+
+  <string name="aud_currency_code" translatable="false">AUD</string>
+  <string name="gbp_currency_code" translatable="false">GBP</string>
+  <string name="hkd_currency_code" translatable="false">HKD</string>
+  <string name="idr_currency_code" translatable="false">IDR</string>
+  <string name="rub_currency_code" translatable="false">RUB</string>
+  <string name="sgd_currency_code" translatable="false">SGD</string>
+
+  <string name="cad_currency_code" translatable="false">CAD</string>
+  <string name="eur_currency_code" translatable="false">EUR</string>
+  <string name="jpy_currency_code" translatable="false">JPY</string>
+  <string name="usd_currency_code" translatable="false">USD</string>
+  <string name="choose_fiat">Choose Fiat:</string>
 
 </resources>

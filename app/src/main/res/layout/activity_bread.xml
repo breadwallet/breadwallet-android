@@ -245,7 +245,7 @@
         android:background="@color/extra_light_blue_background"
         android:elevation="9dp"
         android:orientation="horizontal"
-        android:weightSum="3"
+        android:weightSum="4"
         tools:layout_conversion_absoluteHeight="0dp"
         tools:layout_conversion_absoluteWidth="411dp"
         tools:layout_conversion_absoluteX="0dp"
@@ -303,33 +303,33 @@
                 android:textColor="@color/pin_pad_text"
                 app:customTFont="BarlowSemiCondensed-Medium.ttf" />
         </LinearLayout>
-        <!-- Leaving here for the Buy Tab-->
-        <!--        <LinearLayout-->
-        <!--            android:id="@+id/buy_layout"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_weight="1"-->
-        <!--            android:gravity="center_horizontal|center_vertical"-->
-        <!--            android:orientation="vertical">-->
 
-        <!--            <ImageView-->
-        <!--                android:id="@+id/imageView3"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:layout_marginTop="8dp"-->
-        <!--                android:layout_weight="1"-->
-        <!--                android:src="@drawable/ic_litecoin_logo"/>-->
+        <LinearLayout
+            android:id="@+id/buy_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <!--            <com.breadwallet.presenter.customviews.BRText-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:layout_margin="4dp"-->
-        <!--                android:layout_weight="1"-->
-        <!--                android:text="@string/MenuButton.buy"-->
-        <!--                android:textAllCaps="true"-->
-        <!--                android:textColor="@color/pin_pad_text"-->
-        <!--                app:customTFont="BarlowSemiCondensed-Medium.ttf"/>-->
-        <!--        </LinearLayout>-->
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_litecoin_logo" />
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:text="@string/MenuButton.buy"
+                android:textAllCaps="true"
+                android:textColor="@color/pin_pad_text"
+                app:customTFont="BarlowSemiCondensed-Medium.ttf" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/menu_layout"

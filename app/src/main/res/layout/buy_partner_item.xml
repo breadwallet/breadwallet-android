@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="10dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="10dp"
+    tools:background="@color/litecoin_litewallet_blue">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/buyPartnerWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buy_partner_shape"
+        android:foreground="?selectableItemBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="10dp">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="105dp"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            android:padding="10dp"
+            android:src="@drawable/simplex_logo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/titleLbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:customTFont="BarlowSemiCondensed-Bold.ttf"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/imageView6"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/logo"
+            app:layout_constraintTop_toTopOf="@id/logo"
+            tools:text="@string/BuyCenter.simplex.Title" />
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/detailLbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:customTFont="BarlowSemiCondensed-Medium.ttf"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView6"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/titleLbl"
+            app:layout_constraintTop_toBottomOf="@+id/titleLbl"
+            tools:text="@string/BuyCenter.simplex.FinancialDetails" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/right_arrow_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/BRText5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="8dp"
+        android:maxLines="1"
+        android:text="@string/choose_fiat"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:customTFont="BarlowSemiCondensed-Medium.ttf"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fiat_option_h_scroll"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buyPartnerWrapper" />
+
+
+    <HorizontalScrollView
+        android:id="@+id/fiat_option_h_scroll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/BRText5"
+        app:layout_constraintEnd_toEndOf="@+id/buyPartnerWrapper"
+        app:layout_constraintWidth_max="wrap">
+
+        <RadioGroup
+            android:id="@+id/fiat_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="false"
+            android:baselineAligned="true"
+            android:baselineAlignedChildIndex="0"
+            android:checkedButton="@id/usd_fiat"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/aud_fiat"
+                style="@style/FiatOptionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/aud_currency_code" />
+
+            <RadioButton
+                android:id="@+id/gbp_fiat"
+                style="@style/FiatOptionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gbp_currency_code" />
+
+            <RadioButton
+                android:id="@+id/hkd_fiat"
+                style="@style/FiatOptionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hkd_currency_code" />
+
+            <RadioButton
+                android:id="@+id/idr_fiat"
+                style="@style/FiatOptionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/idr_currency_code" />
+
+            <RadioButton
+                android:id="@+id/rub_fiat"
+                style="@style/FiatOptionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/rub_currency_code" />
+
+            <RadioButton
+                android:id="@+id/sgd_fiat"
+                style="@style/FiatOptionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sgd_currency_code" />
+
+
+            <RadioButton
+                android:id="@+id/cad_fiat"
+                style="@style/FiatOptionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cad_currency_code" />
+
+            <RadioButton
+                android:id="@+id/eur_fiat"
+                style="@style/FiatOptionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eur_currency_code" />
+
+            <RadioButton
+                android:id="@+id/jpy_fiat"
+                style="@style/FiatOptionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/jpy_currency_code" />
+
+            <RadioButton
+                android:id="@+id/usd_fiat"
+                style="@style/FiatOptionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="0dp"
+                android:text="@string/usd_currency_code" />
+
+        </RadioGroup>
+
+    </HorizontalScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

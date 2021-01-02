@@ -29,8 +29,8 @@ android {
         applicationId = 'com.loafwallet'
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 613
-        versionName "v1.19.4"
+        versionCode 630
+        versionName "v1.20.0"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
@@ -201,10 +201,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
 
     // Firebase Crashlytics.
-    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
 
     // Firebase Crashlytics NDK
-    implementation 'com.google.firebase:firebase-crashlytics-ndk:17.0.0-beta01'
+    implementation 'com.google.firebase:firebase-crashlytics-ndk:17.2.2'
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
