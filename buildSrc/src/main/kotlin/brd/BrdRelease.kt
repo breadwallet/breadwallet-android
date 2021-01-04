@@ -28,11 +28,11 @@ object BrdRelease {
     /** Major version. Usually affected by marketing. Maximum value: 99 */
     private const val marketing = 4
     /** Minor version. Usually affected by product. Maximum value: 99 */
-    private const val product = 6
+    private const val product = 7
     /** Hot fix version. Usually affected by engineering. Maximum value: 9 */
     private const val engineering = 0
     /** Build version. Increase for each new build. Maximum value: 999 */
-    private const val build = 3
+    private const val build = 1
 
     init {
         check(marketing in 0..99)
