@@ -64,6 +64,7 @@ android {
             dimension = "mode"
             resValue("string", "app_name", "BRD")
             buildConfigField("boolean", "BITCOIN_TESTNET", "false")
+
         }
         create("brdTestnet") {
             applicationId = "com.breadwallet.testnet"
@@ -139,7 +140,8 @@ android {
 dependencies {
     implementation(project(":app-core"))
     implementation(project(":ui:ui-common"))
-    implementation(project(":ui:staking"))
+    implementation(project(":ui:ui-staking"))
+    implementation(project(":ui:ui-gift"))
     implementation(Libs.WalletKit.CoreAndroid)
 
     // AndroidX

@@ -64,6 +64,7 @@ enum class SettingsOption {
     VIEW_LOGS,
     COPY_PAPER_KEY,
     TOGGLE_TEZOS,
+    METADATA_VIEWER,
 
     // BTC
     REDEEM_PRIVATE_KEY,

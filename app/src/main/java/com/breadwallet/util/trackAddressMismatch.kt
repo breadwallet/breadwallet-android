@@ -24,31 +24,10 @@
  */
 package com.breadwallet.util
 
-import com.breadwallet.app.BreadApp
-import com.breadwallet.breadbox.BreadBox
-import com.breadwallet.breadbox.addressFor
-import com.breadwallet.breadbox.currencyId
-import com.breadwallet.crypto.blockchaindb.BlockchainDb
-import com.breadwallet.crypto.blockchaindb.errors.QueryError
-import com.breadwallet.logger.logError
 import com.breadwallet.tools.crypto.CryptoHelper.hexEncode
 import com.breadwallet.tools.crypto.CryptoHelper.keccak256
-import com.breadwallet.tools.crypto.CryptoHelper.sha256
-import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.security.BrdUserManager
-import com.breadwallet.tools.security.CryptoUserManager
 import com.breadwallet.tools.util.EventUtils
-import com.breadwallet.tools.util.eth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.platform.interfaces.AccountMetaDataProvider
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.flow.transform
-import org.kodein.di.erased.instance
 
 private const val ETH_ADDRESS_BYTES = 20
 

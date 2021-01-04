@@ -150,6 +150,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.VIEW_LOGS -> F.ViewLogs
                     SettingsOption.COPY_PAPER_KEY -> F.CopyPaperKey
                     SettingsOption.TOGGLE_TEZOS -> F.ToggleTezos
+                    SettingsOption.METADATA_VIEWER -> F.ViewMetadata
                 }
             )
         )

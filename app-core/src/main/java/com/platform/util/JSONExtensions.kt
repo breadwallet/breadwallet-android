@@ -28,7 +28,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 fun JSONObject.getJSONObjectOrNull(name: String): JSONObject? =
-    if (has(name)) getJSONObject(name) else null
+    if (has(name) && !isNull(name)) getJSONObject(name) else null
 
 fun JSONObject.getJSONArrayOrNull(name: String): JSONArray? =
     if (has(name)) getJSONArray(name) else null

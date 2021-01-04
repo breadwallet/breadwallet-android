@@ -7,6 +7,8 @@ plugins {
     kotlin("android.extensions")
 }
 
+apply(plugin = "io.sweers.redacted.redacted-plugin")
+
 project.tasks.register<brd.DownloadBundles>("downloadBundles")
 
 android {
@@ -37,11 +39,20 @@ dependencies {
     implementation(Libs.Androidx.LifecycleExtensions)
     implementation(Libs.Androidx.AppCompat)
     implementation(Libs.Androidx.CardView)
+    implementation(Libs.Androidx.CoreKtx)
     api(Libs.Androidx.ConstraintLayout)
     implementation(Libs.Androidx.GridLayout)
+    implementation(Libs.Zxing.Core)
 
     implementation(Libs.ApacheCommons.IO)
     implementation(Libs.ApacheCommons.Compress)
+    implementation(Libs.Redacted.Annotation)
 
     implementation(Libs.Firebase.Crashlytics)
+
+    // Kodein DI
+    implementation(Libs.Kodein.CoreErasedJvm)
+    implementation(Libs.Kodein.FrameworkAndroidX)
+
+    implementation(Libs.Jbsdiff.Core)
 }

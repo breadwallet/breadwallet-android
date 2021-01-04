@@ -2,7 +2,9 @@
 <resources>
 
     <item name="white" type="color">#ffffff</item>
+    <item name="white_transparent_75" type="color">#BFffffff</item>
     <item name="white_transparent_25" type="color">#40ffffff</item>
+    <item name="white_transparent_15" type="color">#26ffffff</item>
     <item name="white_transparent_10" type="color">#14ffffff</item>
     <item name="white_transparent" type="color">#00ffffff</item>
 

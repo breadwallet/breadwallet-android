@@ -35,7 +35,6 @@ import com.breadwallet.ui.controllers.SignalController.Listener
 import kotlinx.android.synthetic.main.fragment_signal.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 
 /**

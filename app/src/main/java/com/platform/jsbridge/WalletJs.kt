@@ -69,8 +69,8 @@ import com.breadwallet.ui.send.TransferField
 import com.platform.ConfirmTransactionMessage
 import com.platform.PlatformTransactionBus
 import com.platform.TransactionResultMessage
-import com.platform.entities.TxMetaDataValue
-import com.platform.interfaces.AccountMetaDataProvider
+import com.breadwallet.platform.entities.TxMetaDataValue
+import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import com.platform.util.getStringOrNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart

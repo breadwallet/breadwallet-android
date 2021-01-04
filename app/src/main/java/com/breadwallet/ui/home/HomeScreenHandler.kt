@@ -50,7 +50,7 @@ import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
 import com.breadwallet.util.usermetrics.UserMetricsUtil
-import com.platform.interfaces.AccountMetaDataProvider
+import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import com.platform.interfaces.WalletProvider
 import com.platform.util.AppReviewPromptManager
 import com.squareup.picasso.Callback

@@ -29,7 +29,7 @@ import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.defaultUnit
 import com.breadwallet.breadbox.feeForToken
-import com.breadwallet.breadbox.formatFiatForUi
+import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.breadbox.toSanitizedString
@@ -43,7 +43,6 @@ import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.manager.ConnectivityState
 import com.breadwallet.tools.manager.ConnectivityStateProvider
-import com.breadwallet.tools.manager.MarketDataResult
 import com.breadwallet.tools.manager.RatesFetcher
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil

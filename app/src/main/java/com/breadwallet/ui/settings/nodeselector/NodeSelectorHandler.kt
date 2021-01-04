@@ -28,8 +28,8 @@ import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.containsCurrency
 import com.breadwallet.breadbox.currencyId
 import com.breadwallet.breadbox.getPeerOrNull
-import com.breadwallet.mobius.bindConsumerIn
 import com.breadwallet.logger.logError
+import com.breadwallet.mobius.bindConsumerIn
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.btc
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.E

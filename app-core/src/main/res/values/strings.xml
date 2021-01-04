@@ -1326,4 +1326,31 @@
     <string name="Staking.statusPending">Pending</string>
     <string name="Staking.changeValidator">Change</string>
     <string name="Staking.validatorHint">Enter Validator Address</string>
+
+    <!-- Give the Gift of Bitcoin -->
+    <string name="CreateGift.title">Give the Gift of Bitcoin</string>
+    <string name="CreateGift.subtitle">Send bitcoin to someone even if they don\'t have a wallet.</string>
+    <string name="CreateGift.description">We\'ll create what\'s called a "paper wallet" with a qr code and instructions for installing BRD that you can email or text to friends and family.</string>
+    <string name="CreateGift.amountLabel">Choose amount ($USD)</string>
+    <string name="CreateGift.customAmountHint">Custom amount ($500 max)</string>
+    <string name="CreateGift.recipientName">Recipient\'s name</string>
+    <string name="CreateGift.create">Create</string>
+    <string name="CreateGift.unexpectedError">An unexpected error occurred. Please contact support.</string>
+    <string name="CreateGift.serverError">A server error occurred. Please try again later.</string>
+    <string name="CreateGift.insufficientBalanceError">You have insufficient funds to send a gift.</string>
+    <string name="CreateGift.insufficientBalanceForAmountError">You have insufficient funds to send a gift of this amount.</string>
+    <string name="CreateGift.inputAmountError">You must select a gift amount.</string>
+    <string name="CreateGift.inputRecipientNameError">You must enter the name of the recipient.</string>
+    <string name="ConfirmGift.paperWalletAmount">Paper Wallet Amount</string>
+    <string name="ConfirmGift.processingTime">Validating this paper wallet on the network may take up to 60 minutes</string>
+    <string name="ShareGift.walletName">Bitcoin</string>
+    <string name="ShareGift.approximateTotal">Approximate Total</string>
+    <string name="ShareGift.tagLine">Someone gifted you bitcoin!</string>
+    <string name="ShareGift.footerMessage1">A network fee will be deducted from the total when claimed.\nActual value depends on current price of bitcoin.</string>
+    <string name="ShareGift.footerMessage2">Download the BRD app for iPhone or Android.\nFor more information visit brd.com/gift</string>
+    <string name="Transaction.toRecipient">to %1$s</string>
+    <string name="TransactionDetails.giftedTo">Gifted to %1$s</string>
+    <string name="TransactionDetails.gift">Gift</string>
+    <string name="TransactionDetails.reclaim">Reclaim</string>
+    <string name="TransactionDetails.resend">Resend</string>
 </resources>

@@ -29,10 +29,11 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
-import com.breadwallet.breadbox.formatFiatForUi
+import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRDateUtil
@@ -127,7 +128,9 @@ class TxDetailsController(
             show_hide_details.clicks().map { E.OnShowHideDetailsClicked },
             memo_input.textChanges().map { E.OnMemoChanged(it) },
             transaction_id.clicks().map { E.OnTransactionHashClicked },
-            tx_to_from_address.clicks().map { E.OnAddressClicked }
+            tx_to_from_address.clicks().map { E.OnAddressClicked },
+            gift_resend.clicks().map { E.OnGiftResendClicked },
+            gift_reclaim.clicks().map { E.OnGiftReclaimClicked }
         )
     }
 
@@ -277,7 +280,13 @@ class TxDetailsController(
 
         ifChanged(M::memoLoaded) {
             if (memoLoaded && !isFeeForToken) {
-                memo_input.setText(memo)
+                memo_input.setText(
+                    if (giftRecipientName.isNullOrBlank()) {
+                        memo
+                    } else {
+                        String.format(res.getString(R.string.TransactionDetails_giftedTo, giftRecipientName))
+                    }
+                )
             }
         }
 
@@ -366,6 +375,11 @@ class TxDetailsController(
                     hedera_memo_value.text = hederaMemo.value
                 }
             }
+        }
+
+        ifChanged(M::giftPrivateKey) { privateKey ->
+            layoutGift.isGone = privateKey.isNullOrBlank()
+            gift_divider.isGone = privateKey.isNullOrBlank()
         }
     }
 
