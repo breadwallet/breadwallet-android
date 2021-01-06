@@ -120,6 +120,67 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/bread_margin"
+            android:paddingEnd="@dimen/bread_margin">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="2"
+                android:background="@color/extra_light_gray" />
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:text="@string/Send.or" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="8"
+                android:background="@color/extra_light_gray" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal">
+
+            <com.breadwallet.presenter.customviews.BREdit
+                android:id="@+id/ud_address_edit"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:ellipsize="middle"
+                android:ems="10"
+                android:hint="@string/Send.UnstoppableDomains.placeholder"
+                android:inputType="textPersonName"
+                android:singleLine="true" />
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/ud_lookup_button"
+                style="@style/Send_ActionButStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/bread_margin"
+                android:text="@string/Send.UnstoppableDomains.lookup"
+                app:buttonType="2"
+                app:isBreadButton="true" />
+
+        </LinearLayout>
+
         <View
             android:id="@+id/separator"
             android:layout_width="match_parent"

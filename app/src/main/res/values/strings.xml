@@ -469,12 +469,22 @@
   <!-- Send screen title (as in "this is the screen for sending money") -->
   <string name="Send.title">Send</string>
   <!-- Send money to label -->
-  <string name="Send.toLabel">To</string>
-  <!-- Adress already used alert message - first part -->
+  <string name="Send.toLabel">Enter a Litecoin address</string>
+
+  <!-- Enter to match domain name to LTC Address -->
+  <string name="Send.UnstoppableDomains.placeholder">Enter a .crypto or .zil domain</string>
+  <!-- Or -->
+  <string name="Send.or">Or</string>
+  <!-- Lookup -->
+  <string name="Send.UnstoppableDomains.lookup">Lookup</string>
+  <!-- Your address was resolved! -->
+  <string name="Send.UnstoppableDomains.domainResolved">Your address was resolved!</string>
+
+  <!-- Address already used alert message - first part -->
   <string name="Send.UsedAddress.firstLine">Litecoin addresses are intended for single use only.</string>
-  <!-- Adress already used alert message - second part -->
+  <!-- Address already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">Re-use reduces privacy for both you and the recipient and can result in loss if the recipient doesn\'t directly control the address.</string>
-  <!-- Adress already used alert title -->
+  <!-- Address already used alert title -->
   <string name="Send.UsedAddress.title">Address Already Used</string>
   <!-- About label -->
   <string name="Settings.about">About</string>

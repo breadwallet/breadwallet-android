@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import timber.log.Timber;
+
 /**
  * BreadWallet
  * <p/>
@@ -118,7 +120,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.e(TAG, "Upgrading database from version " + oldVersion + " to "
+        Timber.e("Upgrading database from version " + oldVersion + " to "
                 + newVersion + ", which will destroy all old data");
 //        db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
 //        db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);

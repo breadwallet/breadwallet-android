@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -15,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.PaymentItem;
@@ -96,31 +96,24 @@ public class DynamicDonationFragment extends Fragment {
         totalVal = view.findViewById(R.id.totalVal);
 
         Button cancelBut = view.findViewById(R.id.cancelBut);
-        cancelBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AnalyticsManager.logCustomEvent(BRConstants._20200225_DCD);
-
-                getActivity().onBackPressed();
-            }
+        cancelBut.setOnClickListener(v -> {
+            AnalyticsManager.logCustomEvent(BRConstants._20200225_DCD);
+            getActivity().onBackPressed();
         });
 
         Button donateBut = view.findViewById(R.id.donateBut);
-        donateBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String memo = getString(R.string.Donate_toThe) + chosenAddress.first;
-                PaymentItem request = new PaymentItem(new String[]{chosenAddress.second}, null, mDonationAmount, null, false, memo);
+        donateBut.setOnClickListener(v -> {
+            String memo = getString(R.string.Donate_toThe) + chosenAddress.first;
+            PaymentItem request = new PaymentItem(new String[]{chosenAddress.second}, null, mDonationAmount, null, false, memo);
 
-                Bundle params = new Bundle();
-                params.putString("DONATION_ACCOUNT", chosenAddress.first);
-                params.putLong("DONATION_AMOUNT", mDonationAmount);
-                params.putString("ADDRESS_SCHEME", "v2");
+            Bundle params = new Bundle();
+            params.putString("DONATION_ACCOUNT", chosenAddress.first);
+            params.putLong("DONATION_AMOUNT", mDonationAmount);
+            params.putString("ADDRESS_SCHEME", "v2");
 
-                AnalyticsManager.logCustomEventWithParams(BRConstants._20200223_DD, params);
+            AnalyticsManager.logCustomEventWithParams(BRConstants._20200223_DD, params);
 
-                BRSender.getInstance().sendTransaction(getContext(), request);
-            }
+            BRSender.getInstance().sendTransaction(getContext(), request);
         });
 
         amountSliderVal = view.findViewById(R.id.amountSliderVal);
@@ -130,24 +123,18 @@ public class DynamicDonationFragment extends Fragment {
         ImageButton upAmountBut = view.findViewById(R.id.upAmountBut);
         ImageButton downAmountBut = view.findViewById(R.id.downAmountBut);
 
-        upAmountBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                seekBar.incrementProgressBy(diff());
+        upAmountBut.setOnClickListener(v -> {
+            seekBar.incrementProgressBy(diff());
 
-                long newAmount = newAmount(seekBar.getProgress());
-                updateDonationValues(newAmount);
-            }
+            long newAmount = newAmount(seekBar.getProgress());
+            updateDonationValues(newAmount);
         });
 
-        downAmountBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                seekBar.incrementProgressBy(-diff());
+        downAmountBut.setOnClickListener(v -> {
+            seekBar.incrementProgressBy(-diff());
 
-                long newAmount = newAmount(seekBar.getProgress());
-                updateDonationValues(newAmount);
-            }
+            long newAmount = newAmount(seekBar.getProgress());
+            updateDonationValues(newAmount);
         });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

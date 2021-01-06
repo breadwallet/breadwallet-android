@@ -194,7 +194,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSendFragment(BreadActivity.this, null);
-
             }
         });
 
@@ -486,12 +485,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     @Override
     public void onBalanceChanged(final long balance) {
         updateUI();
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 
     public void updateUI() {

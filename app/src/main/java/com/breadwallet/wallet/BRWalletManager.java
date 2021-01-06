@@ -382,7 +382,7 @@ public class BRWalletManager {
                                         @Override
                                         public void onComplete() {
                                             if (!((Activity) app).isDestroyed())
-                                                ((Activity) app).getFragmentManager().popBackStack();
+                                                ((Activity) app).onBackPressed();
                                         }
                                     });
                     }

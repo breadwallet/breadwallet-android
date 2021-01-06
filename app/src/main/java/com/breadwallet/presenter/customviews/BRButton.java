@@ -134,7 +134,7 @@ public class BRButton extends Button {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (isBreadButton) {
+        if (isEnabled() && isBreadButton) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 if (getParent() != null) {
                     getParent().requestDisallowInterceptTouchEvent(false);

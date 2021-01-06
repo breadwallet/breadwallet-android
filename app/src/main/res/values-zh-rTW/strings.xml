@@ -471,7 +471,17 @@
   <!-- Send screen title (as in "this is the screen for sending money") -->
   <string name="Send.title">寄送</string>
   <!-- Send money to label -->
-  <string name="Send.toLabel">給</string>
+  <string name="Send.toLabel">輸入萊特幣地址</string>
+
+  <!-- Enter to match domain name to LTC Address -->
+  <string name="Send.UnstoppableDomains.placeholder">輸入.crypto或.zil域</string>
+  <!-- Or -->
+  <string name="Send.or">要么</string>
+  <!-- Lookup -->
+  <string name="Send.UnstoppableDomains.lookup">抬頭</string>
+  <!-- Your address was resolved! -->
+  <string name="Send.UnstoppableDomains.domainResolved">您的地址已解決！</string>
+
   <!-- Adress already used alert message - first part -->
   <string name="Send.UsedAddress.firstLine">比特幣位址專供一次性使用。</string>
   <!-- Adress already used alert message - second part -->

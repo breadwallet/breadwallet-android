@@ -109,7 +109,7 @@ public class BRAnimator {
         secondaryTextSize = 12.8f;
     }
 
-    public static void showFragmentByTag(Activity app, String tag) {
+    public static void showFragmentByTag(FragmentActivity app, String tag) {
         Timber.d("showFragmentByTag: %s", tag);
         if (tag == null) return;
         //catch animation duration, make it 0 for no animation, then restore it.
@@ -137,12 +137,12 @@ public class BRAnimator {
         }
     }
 
-    public static void showSendFragment(Activity app, final String bitcoinUrl) {
+    public static void showSendFragment(FragmentActivity app, final String bitcoinUrl) {
         if (app == null) {
             Timber.i("showSendFragment: app is null");
             return;
         }
-        FragmentSend fragmentSend = (FragmentSend) app.getFragmentManager().findFragmentByTag(FragmentSend.class.getName());
+        FragmentSend fragmentSend = (FragmentSend) app.getSupportFragmentManager().findFragmentByTag(FragmentSend.class.getName());
         if (fragmentSend != null && fragmentSend.isAdded()) {
             fragmentSend.setUrl(bitcoinUrl);
             return;
@@ -154,7 +154,7 @@ public class BRAnimator {
                 bundle.putString("url", bitcoinUrl);
                 fragmentSend.setArguments(bundle);
             }
-            app.getFragmentManager().beginTransaction()
+            app.getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                     .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
                     .addToBackStack(FragmentSend.class.getName()).commit();
@@ -353,12 +353,12 @@ public class BRAnimator {
         transaction.commit();
     }
 
-    public static void showDynamicDonationFragment(@NonNull Activity app) {
-        FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-        transaction.add(android.R.id.content, new DynamicDonationFragment(), DynamicDonationFragment.class.getName());
-        transaction.addToBackStack(DynamicDonationFragment.class.getName());
-        transaction.commit();
+    public static void showDynamicDonationFragment(@NonNull FragmentActivity app) {
+        app.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                .add(android.R.id.content, new DynamicDonationFragment(), DynamicDonationFragment.class.getName())
+                .addToBackStack(DynamicDonationFragment.class.getName())
+                .commit();
     }
 
     public static void showMenuFragment(Activity app) {

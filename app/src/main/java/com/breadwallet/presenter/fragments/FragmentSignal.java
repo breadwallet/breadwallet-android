@@ -3,7 +3,6 @@ package com.breadwallet.presenter.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +12,6 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
-
-import junit.framework.Assert;
-
-import timber.log.Timber;
 
 
 /**
@@ -49,7 +44,7 @@ public class FragmentSignal extends Fragment {
     public static final String ICON_DESCRIPTION = "iconDescription";
     public static final String RES_ID = "resId";
     public TextView mTitle;
-//    public TextView mDescription;
+    //    public TextView mDescription;
     public ImageView mIcon;
     private BROnSignalCompletion completion;
     private LinearLayout signalLayout;
@@ -75,16 +70,10 @@ public class FragmentSignal extends Fragment {
 
         if (bundle != null) {
             String title = bundle.getString(TITLE, "");
-            String description = bundle.getString(ICON_DESCRIPTION, "");
             int resId = bundle.getInt(RES_ID, 0);
-            Assert.assertNotSame(title, "");
-            Assert.assertNotSame(description, "");
-            Assert.assertNotSame(resId, 0);
 
             mTitle.setText(title);
             mIcon.setImageResource(resId);
-        } else {
-            Timber.d("onCreateView: bundle is null!");
         }
 
         return rootView;
@@ -104,7 +93,7 @@ public class FragmentSignal extends Fragment {
                 try {
                     if (getActivity() != null)
                         getActivity().getFragmentManager().popBackStack();
-                } catch (Exception ignored){
+                } catch (Exception ignored) {
 
                 }
                 new Handler().postDelayed(new Runnable() {

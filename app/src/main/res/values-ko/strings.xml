@@ -471,7 +471,17 @@
   <!-- Send screen title (as in "this is the screen for sending money") -->
   <string name="Send.title">보내기</string>
   <!-- Send money to label -->
-  <string name="Send.toLabel">수취인</string>
+  <string name="Send.toLabel">라이트 코인 주소를 입력하세요</string>
+
+  <!-- Enter to match domain name to LTC Address -->
+  <string name="Send.UnstoppableDomains.placeholder">.crypto 또는 .zil 도메인을 입력하세요.</string>
+  <!-- Or -->
+  <string name="Send.or">또는</string>
+  <!-- Lookup -->
+  <string name="Send.UnstoppableDomains.lookup">조회</string>
+  <!-- Your address was resolved! -->
+  <string name="Send.UnstoppableDomains.domainResolved">주소가 확인되었습니다!</string>
+
   <!-- Adress already used alert message - first part -->
   <string name="Send.UsedAddress.firstLine">라이트코인 주소는 일회용입니다.</string>
   <!-- Adress already used alert message - second part -->

@@ -97,7 +97,7 @@ public class BRDialogView extends DialogFragment {
             }
         });
         if (Utils.isNullOrEmpty(negButton)) {
-            Log.e(TAG, "onCreateDialog: removing negative button");
+            Timber.e("onCreateDialog: removing negative button");
             buttonsLayout.removeView(negativeButton);
             buttonsLayout.requestLayout();
         }

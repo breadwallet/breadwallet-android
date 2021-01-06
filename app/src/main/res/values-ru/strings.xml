@@ -471,7 +471,17 @@
   <!-- Send screen title (as in "this is the screen for sending money") -->
   <string name="Send.title">Отправить</string>
   <!-- Send money to label -->
-  <string name="Send.toLabel">На</string>
+  <string name="Send.toLabel">Введите адрес Litecoin</string>
+
+  <!-- Enter to match domain name to LTC Address -->
+  <string name="Send.UnstoppableDomains.placeholder">Введите домен .crypto или .zil</string>
+  <!-- Or -->
+  <string name="Send.or">или</string>
+  <!-- Lookup -->
+  <string name="Send.UnstoppableDomains.lookup">Искать</string>
+  <!-- Your address was resolved! -->
+  <string name="Send.UnstoppableDomains.domainResolved">Ваш адрес решен!</string>
+
   <!-- Adress already used alert message - first part -->
   <string name="Send.UsedAddress.firstLine">Биткойн-адреса предназначены исключительно для однократного использования.</string>
   <!-- Adress already used alert message - second part -->

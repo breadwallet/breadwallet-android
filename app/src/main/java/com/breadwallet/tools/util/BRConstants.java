@@ -195,11 +195,26 @@ public class BRConstants {
     public static final String _20200223_DD = "DID_DONATE";
     public static final String _20200225_DCD = "DID_CANCEL_DONATE";
     public static final String _20200301_DUDFPK = "DID_USE_DEFAULT_FEE_PER_KB";
+    public static final String _20201121_SIL = "STARTED_IFPS_LOOKUP";
+    public static final String _20201121_DRIA = "DID_RESOLVE_IPFS_ADDRESS";
+    public static final String _20201121_FRIA = "FAILED_RESOLVE_IPFS_ADDRESS";
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({_20191105_AL,_20191105_VSC, _20202116_VRC,_20191105_DSL,_20191105_DULP,
-            _20191105_DTBT,_20200111_DEDG,_20200111_DLDG,_20200111_RNI,_20200111_FNI,
-            _20200111_TNI,_20200111_WNI,_20200111_PNI,_20200111_UTST,_20200112_ERR,_20200112_DSR,
-            _20200125_DSRR,_20200217_DLWP,_20200217_DLWB,_20200223_DD,_20200225_DCD,_20200301_DUDFPK})
-    public @interface Event {}
+    @StringDef({_20191105_AL, _20191105_VSC, _20202116_VRC, _20191105_DSL, _20191105_DULP,
+            _20191105_DTBT, _20200111_DEDG, _20200111_DLDG, _20200111_RNI, _20200111_FNI,
+            _20200111_TNI, _20200111_WNI, _20200111_PNI, _20200111_UTST, _20200112_ERR, _20200112_DSR,
+            _20200125_DSRR, _20200217_DLWP, _20200217_DLWB, _20200223_DD, _20200225_DCD, _20200301_DUDFPK,
+            _20201121_SIL, _20201121_DRIA, _20201121_FRIA})
+    public @interface Event {
+    }
+
+
+    /**
+     * Analytics keys
+     */
+
+    public static final String START_TIME = "start_time";
+    public static final String SUCCESS_TIME = "success_time";
+    public static final String FAILURE_TIME = "failure_time";
+    public static final String ERROR = "error";
 }

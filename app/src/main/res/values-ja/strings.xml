@@ -471,7 +471,17 @@
   <!-- Send screen title (as in "this is the screen for sending money") -->
   <string name="Send.title">送金</string>
   <!-- Send money to label -->
-  <string name="Send.toLabel">宛先</string>
+  <string name="Send.toLabel">Litecoinのアドレスを入力してください。</string>
+
+  <!-- Enter to match domain name to LTC Address -->
+  <string name="Send.UnstoppableDomains.placeholder">.cryptoまたは.zilドメインを入力してください</string>
+  <!-- Or -->
+  <string name="Send.or">或いは</string>
+  <!-- Lookup -->
+  <string name="Send.UnstoppableDomains.lookup">調べる</string>
+  <!-- Your address was resolved! -->
+  <string name="Send.UnstoppableDomains.domainResolved">あなたの住所は解決されました！</string>
+
   <!-- Adress already used alert message - first part -->
   <string name="Send.UsedAddress.firstLine">ライトコインアドレスは、個人利用のみを想定しています。</string>
   <!-- Adress already used alert message - second part -->

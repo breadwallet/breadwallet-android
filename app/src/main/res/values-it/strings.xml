@@ -471,7 +471,17 @@
   <!-- Send screen title (as in "this is the screen for sending money") -->
   <string name="Send.title">Invia</string>
   <!-- Send money to label -->
-  <string name="Send.toLabel">A</string>
+  <string name="Send.toLabel">Inserire un indirizzo Litecoin</string>
+
+  <!-- Enter to match domain name to LTC Address -->
+  <string name="Send.UnstoppableDomains.placeholder">Inserisci un dominio .crypto o .zil</string>
+  <!-- Or -->
+  <string name="Send.or">o</string>
+  <!-- Lookup -->
+  <string name="Send.UnstoppableDomains.lookup">Consultare</string>
+  <!-- Your address was resolved! -->
+  <string name="Send.UnstoppableDomains.domainResolved">Il tuo indirizzo è stato risolto!</string>
+
   <!-- Adress already used alert message - first part -->
   <string name="Send.UsedAddress.firstLine">Gli indirizzi Litecoin dovrebbero essere utilizzati una sola volta.</string>
   <!-- Adress already used alert message - second part -->
