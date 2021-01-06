@@ -79,6 +79,9 @@ data class TxMetaDataValue(
                 gift = getJSONObjectOrNull(GIFT)?.let { GiftMetaData.fromJsonObject(it) }
             )
         }
+
+        fun hasGift(json: JSONObject): Boolean =
+            json.has(GIFT) && !json.isNull(GIFT)
     }
 
     /**

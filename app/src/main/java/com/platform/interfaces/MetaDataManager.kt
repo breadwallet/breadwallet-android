@@ -33,16 +33,16 @@ import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
-import com.breadwallet.protocols.messageexchange.entities.PairingMetaData
-import com.breadwallet.tools.crypto.CryptoHelper
-import com.breadwallet.tools.util.TokenUtil
-import com.breadwallet.tools.util.Utils
-import com.platform.entities.TokenListMetaData
 import com.breadwallet.platform.entities.TxMetaData
 import com.breadwallet.platform.entities.TxMetaDataEmpty
 import com.breadwallet.platform.entities.TxMetaDataValue
 import com.breadwallet.platform.entities.WalletInfoData
 import com.breadwallet.platform.interfaces.AccountMetaDataProvider
+import com.breadwallet.protocols.messageexchange.entities.PairingMetaData
+import com.breadwallet.tools.crypto.CryptoHelper
+import com.breadwallet.tools.util.TokenUtil
+import com.breadwallet.tools.util.Utils
+import com.platform.entities.TokenListMetaData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -226,20 +226,35 @@ class MetaDataManager(
             )
         )
 
-    override fun txMetaData(transaction: Transfer): Flow<TxMetaData> {
-        return storeProvider.keyFlow(getTxMetaDataKey(transaction))
+    override fun txMetaData(onlyGifts: Boolean): Map<String, TxMetaData> {
+        return storeProvider.getKeys()
+            .filter { it.startsWith(TX_META_DATA_KEY_PREFIX) }
+            .mapNotNull { key ->
+                storeProvider.get(key)?.run { key to this }
+            }
+            .toMap()
+            .run {
+                if (onlyGifts) filterValues { TxMetaDataValue.hasGift(it) }
+                else this
+            }
+            .mapValues { (_, v) -> TxMetaDataValue.fromJsonObject(v) }
+    }
+
+    override fun txMetaData(transferHash: String, isErc20: Boolean): Flow<TxMetaData> {
+        val key = getTxMetaDataKey(transferHash, isErc20)
+        return storeProvider.keyFlow(key)
             .mapLatest {
                 TxMetaDataValue.fromJsonObject(it)
             }
             .onStart {
-                val key = getTxMetaDataKey(transaction)
                 var metaData = storeProvider.get(key)
                 if (metaData == null) {
                     // Try legacy key
                     metaData = storeProvider.get(
                         getTxMetaDataKey(
-                            transaction,
-                            true
+                            transferHash,
+                            isErc20 = isErc20,
+                            legacy = true
                         )
                     )?.also {
                         // Migrate legacy value to new key
@@ -252,11 +267,19 @@ class MetaDataManager(
             .distinctUntilChanged()
     }
 
+    override fun txMetaData(transaction: Transfer): Flow<TxMetaData> {
+        return txMetaData(transaction.hashString(), isErc20 = transaction.wallet.currency.isErc20())
+    }
+
     override suspend fun putTxMetaData(
         transaction: Transfer,
         newTxMetaData: TxMetaDataValue
     ) {
-        var txMetaData = txMetaData(transaction).first()
+        putTxMetaData(transaction.hashString(), transaction.wallet.currency.isErc20(), newTxMetaData)
+    }
+
+    override suspend fun putTxMetaData(transferHash: String, isErc20: Boolean, newTxMetaData: TxMetaDataValue) {
+        var txMetaData = txMetaData(transferHash, isErc20 = isErc20).first()
 
         var needsUpdate = false
         when (txMetaData) {
@@ -268,12 +291,21 @@ class MetaDataManager(
                 txMetaData = newTxMetaData
             }
             is TxMetaDataValue -> {
-                if (newTxMetaData.gift != txMetaData.gift && newTxMetaData.gift?.keyData != null) {
-                    // Don't overwrite gift unless keyData is  provided
-                    txMetaData = txMetaData.copy(
-                        gift = newTxMetaData.gift
-                    )
-                    needsUpdate = true
+                val newGift = newTxMetaData.gift
+                val oldGift = txMetaData.gift
+                if (newGift != oldGift && newGift != null) {
+                    // Don't overwrite gift unless keyData is provided
+                    if (oldGift?.keyData == null && newGift.keyData != null) {
+                        txMetaData = txMetaData.copy(
+                            gift = newTxMetaData.gift
+                        )
+                        needsUpdate = true
+                    } else if (oldGift?.keyData != null && oldGift.claimed != newGift.claimed) {
+                        txMetaData = txMetaData.copy(
+                            gift = oldGift.copy(claimed = newGift.claimed)
+                        )
+                        needsUpdate = true
+                    }
                 }
                 if (newTxMetaData.comment != txMetaData.comment) {
                     txMetaData = txMetaData.copy(
@@ -291,7 +323,7 @@ class MetaDataManager(
         }
 
         if (needsUpdate) {
-            val key = getTxMetaDataKey(transaction)
+            val key = getTxMetaDataKey(transferHash, isErc20 = isErc20)
             storeProvider.put(key, txMetaData.toJSON())
         }
     }
@@ -395,24 +427,33 @@ class MetaDataManager(
         return json
     }
 
+    private fun getTxMetaDataKey(transaction: Transfer, legacy: Boolean = false): String {
+        return getTxMetaDataKey(
+            transferHash = transaction.hashString(),
+            isErc20 = transaction.wallet.currency.isErc20(),
+            legacy = legacy
+        )
+    }
+
     private fun getTxMetaDataKey(
-        transaction: Transfer,
+        transferHash: String,
+        isErc20: Boolean,
         legacy: Boolean = false
     ): String =
         if (legacy) {
             TX_META_DATA_KEY_PREFIX + Utils.bytesToHex(
-                CryptoHelper.sha256(transaction.hashString().toByteArray())!!
+                CryptoHelper.sha256(transferHash.toByteArray())!!
             )
         } else {
             val sha256hash =
-                CryptoHelper.hexDecode(transaction.hashString().removePrefix("0x"))
+                CryptoHelper.hexDecode(transferHash.removePrefix("0x"))
                     .apply {
                         reverse()
                     }
                     .run(CryptoHelper::sha256)
                     ?.run(CryptoHelper::hexEncode)
                     ?: ""
-            if (transaction.wallet.currency.isErc20()) TK_META_DATA_KEY_PREFIX + sha256hash
+            if (isErc20) TK_META_DATA_KEY_PREFIX + sha256hash
             else TX_META_DATA_KEY_PREFIX + sha256hash
         }
 
