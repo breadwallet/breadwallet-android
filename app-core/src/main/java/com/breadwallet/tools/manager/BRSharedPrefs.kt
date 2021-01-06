@@ -66,6 +66,7 @@ object BRSharedPrefs {
     private const val PAPER_KEY_WRITTEN_DOWN = "phraseWritten"
     private const val PREFER_STANDARD_FEE = "favorStandardFee"
     private const val FEE_PREFERENCE = "feePreference"
+    private const val LAST_GIFT_CHECK_TIME = "lastGiftCheckTime"
 
     @VisibleForTesting
     const val RECEIVE_ADDRESS = "receive_address"
@@ -126,6 +127,12 @@ object BRSharedPrefs {
 
     private lateinit var brdPrefs: SharedPreferences
     private val promptChangeChannel = BroadcastChannel<Unit>(Channel.CONFLATED)
+
+    var lastGiftCheckTime: Long
+        get() = brdPrefs.getLong(LAST_GIFT_CHECK_TIME, 0L)
+        set(value) {
+            brdPrefs.edit { putLong(LAST_GIFT_CHECK_TIME, value) }
+        }
 
     @JvmStatic
     fun getPreferredFiatIso(): String =

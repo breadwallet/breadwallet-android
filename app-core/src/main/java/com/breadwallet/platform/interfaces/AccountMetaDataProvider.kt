@@ -80,11 +80,17 @@ interface AccountMetaDataProvider {
     /** Clean up. */
     //fun close()
 
+    fun txMetaData(onlyGifts: Boolean = false): Map<String, TxMetaData>
+
     /** Returns a [Flow] of [TxMetaData] associated with [transaction], will recover it if necessary. */
     fun txMetaData(transaction: Transfer): Flow<TxMetaData>
 
+    fun txMetaData(transferHash: String, isErc20: Boolean): Flow<TxMetaData>
+
     /** Persist given [TxMetaData] for [transaction], but ONLY if the comment or exchange rate has changed. */
     suspend fun putTxMetaData(transaction: Transfer, newTxMetaData: TxMetaDataValue)
+
+    suspend fun putTxMetaData(transferHash: String, isErc20: Boolean, newTxMetaData: TxMetaDataValue)
 
     fun getPairingMetadata(pubKey: ByteArray): PairingMetaData?
 
