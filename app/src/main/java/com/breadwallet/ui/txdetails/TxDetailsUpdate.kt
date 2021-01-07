@@ -49,6 +49,7 @@ import com.spotify.mobius.Update
 import java.util.Date
 
 const val MAX_CRYPTO_DIGITS = 8
+private const val DELEGATE = "Delegate"
 
 object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
 
@@ -65,6 +66,7 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
             val confirmations = confirmations.orNull()?.toInt() ?: 0
             val confirmationsUntilFinal =
                 wallet.walletManager.network.confirmationsUntilFinal.toInt()
+            val delegateAddr = attributes.find { it.key.equals(DELEGATE, true) }?.value?.orNull()
             model.copy(
                 isEth = amount.currency.isEthereum(),
                 isErc20 = amount.currency.isErc20(),
@@ -74,9 +76,10 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
                 isReceived = isReceived(),
                 blockNumber = confirmation.orNull()?.blockNumber?.toInt() ?: 0,
                 toOrFromAddress = when {
-                    isReceived() && !model.currencyCode.isBitcoinLike() -> source
-                    else -> target
-                }.orNull()?.toSanitizedString() ?: "",
+                    isReceived() && !model.currencyCode.isBitcoinLike() -> source.orNull()?.toSanitizedString()
+                    delegateAddr != null -> delegateAddr
+                    else -> target.orNull()?.toSanitizedString()
+                } ?: "",
                 confirmationDate = confirmation
                     .transform { it?.confirmationTime }
                     .or { Date() },

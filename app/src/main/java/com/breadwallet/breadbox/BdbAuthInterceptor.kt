@@ -109,7 +109,7 @@ class BdbAuthInterceptor(
 
     private val publicKeyString by lazy {
         String(authKey.encodeAsPublic())
-            .run(CryptoHelper::hexDecode)
+            .run(CryptoHelper::hexDecode) ?: authKey.encodeAsPublic()
             .base64EncodedString()
     }
 
