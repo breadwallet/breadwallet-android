@@ -160,11 +160,13 @@ private fun handleLoadAccount(
                     val address = transfer.target.orNull()?.toString() ?: ""
                     val isTargetSelf = wallet.addressFor(address)?.let { wallet.containsAddress(it) } ?: false
                     val isConfirmed = transfer.confirmation.orNull()?.success ?: false
-                    val isStaked = address.isNotBlank() && address != "unknown" && !isTargetSelf
+                    val isStaked = address.isNotBlank() && !isTargetSelf
                     val balance = wallet.balance.toBigDecimal()
                     if (isConfirmed) {
-                        if (isStaked) E.AccountUpdated.Staked(currencyCode, address, STAKED, balance)
-                        else E.AccountUpdated.Unstaked(currencyCode)
+                        if (isStaked) {
+                            val delegateAddress = transfer.attributes.find { it.key.equals(DELEGATE, true) }!!.value.or(address)
+                            E.AccountUpdated.Staked(currencyCode, delegateAddress, STAKED, balance)
+                        } else E.AccountUpdated.Unstaked(currencyCode)
                     } else {
                         val state = if (isStaked) PENDING_STAKE else PENDING_UNSTAKE
                         E.AccountUpdated.Staked(currencyCode, address, state, balance)

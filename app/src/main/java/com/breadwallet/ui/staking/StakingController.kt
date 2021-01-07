@@ -168,7 +168,7 @@ class StakingController(
 
         ifChanged(M.SetValidator::address) {
             buttonPaste.isVisible = address.isBlank()
-            if (address.isNotBlank() && inputAddress.text.isNullOrBlank()) {
+            if (address.isNullOrBlank() || (address.isNotBlank() && inputAddress.text.isNullOrBlank())) {
                 inputAddress.setText(address)
             }
         }
