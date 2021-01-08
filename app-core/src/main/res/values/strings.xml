@@ -1326,6 +1326,7 @@
     <string name="Staking.statusPending">Pending</string>
     <string name="Staking.changeValidator">Change</string>
     <string name="Staking.validatorHint">Enter Validator Address</string>
+    <string name="Staking.stakingTo">staking to %1$s</string>
 
     <!-- Give the Gift of Bitcoin -->
     <string name="CreateGift.title">Give the Gift of Bitcoin</string>
@@ -1353,4 +1354,5 @@
     <string name="TransactionDetails.gift">Gift</string>
     <string name="TransactionDetails.reclaim">Reclaim</string>
     <string name="TransactionDetails.resend">Resend</string>
+    <string name="Transaction.stakingTo">staking to %1$s</string>
 </resources>

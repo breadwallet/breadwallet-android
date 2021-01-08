@@ -32,11 +32,14 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.isInvisible
 import com.bluelinelabs.conductor.RouterTransaction
+import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
 import com.breadwallet.tools.animation.SlideDetector
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.ViewEffect
+import com.breadwallet.ui.auth.AuthMode
+import com.breadwallet.ui.auth.AuthenticationController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.breadwallet.ui.flowbind.clicks
@@ -69,7 +72,8 @@ private const val CURRENCY_ID = "currency_id"
 class StakingController(
     bundle: Bundle? = null
 ) : BaseMobiusController<M, E, F>(bundle),
-    ConfirmationListener {
+    ConfirmationListener,
+    AuthenticationController.Listener {
 
     constructor(
         currencyId: String
@@ -86,6 +90,7 @@ class StakingController(
     override val layoutId: Int = com.breadwallet.R.layout.controller_staking
     override val flowEffectHandler
         get() = createStakingHandler(
+            context = direct.instance(),
             currencyId = arg(CURRENCY_ID),
             breadBox = direct.instance(),
             userManager = direct.instance()
@@ -105,7 +110,8 @@ class StakingController(
             buttonUnstake.clicks().map { E.OnUnstakeClicked },
             buttonConfirm.clicks().map { E.OnConfirmClicked },
             buttonChangeValidator.clicks().map { E.OnChangeClicked },
-            inputAddress.textChanges().map { E.OnAddressChanged(it) }
+            inputAddress.textChanges().map { E.OnAddressChanged(it) },
+            buttonFaq.clicks().map { E.OnHelpClicked }
         )
     }
 
@@ -122,7 +128,7 @@ class StakingController(
             }
             is F.Help -> {
                 val supportBaseUrl = HTTPServer.getPlatformUrl(HTTPServer.URL_SUPPORT)
-                val url = "$supportBaseUrl/article?slug=" // TODO: help slug
+                val url = "$supportBaseUrl/article?slug=staking"
                 router.pushController(RouterTransaction.with(WebController(url)))
             }
             is F.Close -> router.popCurrentController()
@@ -209,6 +215,10 @@ class StakingController(
                 }
             }
         }
+
+        ifChanged(M.SetValidator::isAuthenticating) {
+            handleIsAuthenticating(it, isFingerprintEnabled, res)
+        }
     }
 
     private fun M.ViewValidator.renderViewBaker(res: Resources) {
@@ -243,6 +253,33 @@ class StakingController(
                 }
             }
         }
+
+        ifChanged(M.ViewValidator::isAuthenticating) {
+            handleIsAuthenticating(it, isFingerprintEnabled, res)
+        }
+    }
+
+    private fun handleIsAuthenticating(
+        isAuthenticating: Boolean,
+        isFingerprintAuthEnable: Boolean,
+        res: Resources
+    ) {
+        val isAuthVisible =
+            router.backstack.lastOrNull()?.controller() is AuthenticationController
+        if (isAuthenticating && !isAuthVisible) {
+            val authenticationMode = if (isFingerprintAuthEnable) {
+                AuthMode.USER_PREFERRED
+            } else {
+                AuthMode.PIN_REQUIRED
+            }
+            val controller = AuthenticationController(
+                mode = authenticationMode,
+                title = res.getString(R.string.VerifyPin_touchIdMessage),
+                message = res.getString(R.string.VerifyPin_authorize)
+            )
+            controller.targetController = this@StakingController
+            router.pushController(RouterTransaction.with(controller))
+        }
     }
 
     override fun onConfirmed() {
@@ -251,6 +288,14 @@ class StakingController(
 
     override fun onCancelled() {
         eventConsumer.accept(E.OnTransactionCancelClicked)
+    }
+
+    override fun onAuthenticationSuccess() {
+        eventConsumer.accept(E.OnAuthSuccess)
+    }
+
+    override fun onAuthenticationCancelled() {
+        eventConsumer.accept(E.OnAuthCancelled)
     }
 
     class ConfirmationController(args: Bundle) : BaseController(args) {
