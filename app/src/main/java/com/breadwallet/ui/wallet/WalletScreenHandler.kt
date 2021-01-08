@@ -319,6 +319,7 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
                 else -> fee
             }
         ),
+        isStaking = delegateAddr != null,
         toAddress = delegateAddr ?: target.orNull()?.toSanitizedString() ?: "<unknown>",
         fromAddress = source.orNull()?.toSanitizedString() ?: "<unknown>",
         isReceived = direction == TransferDirection.RECEIVED,

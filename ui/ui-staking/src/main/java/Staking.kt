@@ -42,12 +42,16 @@ object Staking {
         abstract val currencyCode: String
         abstract val address: String
         abstract val balance: BigDecimal
+        abstract val isAuthenticating: Boolean
+        abstract val isFingerprintEnabled: Boolean
 
         object Loading : M() {
             override val currencyCode: String = ""
             override val currencyId: String = ""
             override val address: String = ""
             override val balance: BigDecimal = BigDecimal.ZERO
+            override val isAuthenticating: Boolean = false
+            override val isFingerprintEnabled: Boolean = false
         }
 
         data class SetValidator(
@@ -55,6 +59,8 @@ object Staking {
             override val currencyCode: String,
             override val address: String,
             override val balance: BigDecimal = BigDecimal.ZERO,
+            override val isAuthenticating: Boolean = false,
+            override val isFingerprintEnabled: Boolean,
             val originalAddress: String,
             val isAddressValid: Boolean,
             val isAddressChanged: Boolean,
@@ -66,10 +72,13 @@ object Staking {
 
             companion object {
                 fun createDefault(
+                    balance: BigDecimal,
                     currencyId: String,
                     currencyCode: String,
-                    originalAddress: String? = null
+                    originalAddress: String? = null,
+                    isFingerprintEnabled: Boolean
                 ) = SetValidator(
+                    balance =  balance,
                     currencyId = currencyId,
                     currencyCode = currencyCode,
                     address = "",
@@ -78,7 +87,8 @@ object Staking {
                     transactionError = null,
                     isCancellable = originalAddress != null,
                     originalAddress = originalAddress ?: "",
-                    feeEstimate = null
+                    feeEstimate = null,
+                    isFingerprintEnabled = isFingerprintEnabled
                 )
             }
         }
@@ -88,6 +98,8 @@ object Staking {
             override val currencyCode: String,
             override val address: String,
             override val balance: BigDecimal,
+            override val isAuthenticating: Boolean = false,
+            override val isFingerprintEnabled: Boolean = false,
             val state: State,
             val feeEstimate: TransferFeeBasis? = null
         ) : M() {
@@ -101,16 +113,18 @@ object Staking {
 
         sealed class AccountUpdated : E() {
             abstract val currencyCode: String
+            abstract val balance: BigDecimal
 
             data class Unstaked(
-                override val currencyCode: String
+                override val currencyCode: String,
+                override val balance: BigDecimal
             ) : AccountUpdated()
 
             data class Staked(
                 override val currencyCode: String,
                 val address: String,
                 val state: M.ViewValidator.State,
-                val balance: BigDecimal
+                override val balance: BigDecimal
             ) : AccountUpdated()
         }
 
@@ -126,6 +140,8 @@ object Staking {
             val balance: BigDecimal
         ) : E()
 
+        data class OnAuthenticationSettingsUpdated(val isFingerprintEnabled: Boolean) : E()
+
         object OnStakeClicked : E()
         object OnUnstakeClicked : E()
         object OnChangeClicked : E()
@@ -136,11 +152,14 @@ object Staking {
         object OnConfirmClicked : E()
         object OnTransactionConfirmClicked : E()
         object OnTransactionCancelClicked : E()
+        object OnAuthSuccess : E()
+        object OnAuthCancelled : E()
     }
 
     sealed class F {
 
         object LoadAccount : F()
+        object LoadAuthenticationSettings : F()
         object PasteFromClipboard : F()
         object Help : F(), ViewEffect
         object Close : F(), ViewEffect

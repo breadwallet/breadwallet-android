@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.uistaking
 
+import android.content.Context
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.addressFor
 import com.breadwallet.breadbox.estimateFee
@@ -42,7 +43,9 @@ import com.breadwallet.crypto.errors.FeeEstimationError
 import com.breadwallet.crypto.errors.TransferSubmitError
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.manager.BRClipboardManager
+import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
 import com.breadwallet.ui.uistaking.Staking.E
 import com.breadwallet.ui.uistaking.Staking.F
 import com.breadwallet.ui.uistaking.Staking.M
@@ -70,6 +73,7 @@ private const val DELEGATION_OP_VALUE = "1"
 private val WALLET_UPDATE_DEBOUNCE = 250L.milliseconds
 
 fun createStakingHandler(
+    context: Context,
     currencyId: String,
     breadBox: BreadBox,
     userManager: BrdUserManager
@@ -128,6 +132,10 @@ fun createStakingHandler(
             E.OnTransferFailed(M.TransactionError.FeeEstimateFailed)
         }
     }
+    addFunctionSync<F.LoadAuthenticationSettings> {
+        val isEnabled = isFingerPrintAvailableAndSetup(context) && BRSharedPrefs.sendMoneyWithFingerprint
+        E.OnAuthenticationSettingsUpdated(isEnabled)
+    }
 }
 
 private fun handleLoadAccount(
@@ -153,20 +161,20 @@ private fun handleLoadAccount(
                             (it.key.equals(UNSTAKE_KEY, true) && it.value.or("").equals(UNSTAKE_VALUE, true))
                     } && (transfer.confirmation.orNull()?.success ?: true)
                 }
+            val balance = wallet.balance.toBigDecimal()
 
             when (transfer) {
-                null -> E.AccountUpdated.Unstaked(currencyCode)
+                null -> E.AccountUpdated.Unstaked(currencyCode, balance)
                 else -> {
                     val address = transfer.target.orNull()?.toString() ?: ""
                     val isTargetSelf = wallet.addressFor(address)?.let { wallet.containsAddress(it) } ?: false
                     val isConfirmed = transfer.confirmation.orNull()?.success ?: false
                     val isStaked = address.isNotBlank() && !isTargetSelf
-                    val balance = wallet.balance.toBigDecimal()
                     if (isConfirmed) {
                         if (isStaked) {
                             val delegateAddress = transfer.attributes.find { it.key.equals(DELEGATE, true) }!!.value.or(address)
                             E.AccountUpdated.Staked(currencyCode, delegateAddress, STAKED, balance)
-                        } else E.AccountUpdated.Unstaked(currencyCode)
+                        } else E.AccountUpdated.Unstaked(currencyCode, balance)
                     } else {
                         val state = if (isStaked) PENDING_STAKE else PENDING_UNSTAKE
                         E.AccountUpdated.Staked(currencyCode, address, state, balance)
