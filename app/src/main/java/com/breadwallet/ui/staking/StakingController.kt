@@ -84,7 +84,7 @@ class StakingController(
         overridePushHandler(BottomSheetChangeHandler())
     }
 
-    override val defaultModel: M = M.Loading
+    override val defaultModel: M = M.Loading()
     override val init = StakingInit
     override val update = StakingUpdate
     override val layoutId: Int = com.breadwallet.R.layout.controller_staking
