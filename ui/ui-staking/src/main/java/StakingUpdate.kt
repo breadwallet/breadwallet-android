@@ -76,7 +76,8 @@ object StakingUpdate : Update<M, E, F> {
                 balance = event.balance,
                 address = event.address,
                 currencyCode = event.currencyCode,
-                currencyId = model.currencyId
+                currencyId = model.currencyId,
+                isFingerprintEnabled = model.isFingerprintEnabled
             )
         }
     )
@@ -292,6 +293,7 @@ object StakingUpdate : Update<M, E, F> {
     private fun onAuthenticationSettingsUpdated(model: M, event: E.OnAuthenticationSettingsUpdated): Next<M, F> =
         when (model) {
             is M.ViewValidator -> next(model.copy(isFingerprintEnabled = event.isFingerprintEnabled))
-            else -> noChange()
+            is M.SetValidator -> next(model.copy(isFingerprintEnabled = event.isFingerprintEnabled))
+            is M.Loading -> next(model.copy(isFingerprintEnabled = event.isFingerprintEnabled))
         }
 }

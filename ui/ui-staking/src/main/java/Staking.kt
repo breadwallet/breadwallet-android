@@ -45,14 +45,14 @@ object Staking {
         abstract val isAuthenticating: Boolean
         abstract val isFingerprintEnabled: Boolean
 
-        object Loading : M() {
-            override val currencyCode: String = ""
-            override val currencyId: String = ""
-            override val address: String = ""
-            override val balance: BigDecimal = BigDecimal.ZERO
-            override val isAuthenticating: Boolean = false
-            override val isFingerprintEnabled: Boolean = false
-        }
+        data class Loading(
+            override val currencyCode: String = "",
+            override val currencyId: String = "",
+            override val address: String = "",
+            override val balance: BigDecimal = BigDecimal.ZERO,
+            override val isAuthenticating: Boolean = false,
+            override val isFingerprintEnabled: Boolean = false,
+        ) : M()
 
         data class SetValidator(
             override val currencyId: String,
