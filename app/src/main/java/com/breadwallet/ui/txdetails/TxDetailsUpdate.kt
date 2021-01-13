@@ -136,8 +136,7 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
                         memoLoaded = true,
                         exchangeCurrencyCode = event.metaData.exchangeCurrency ?: "",
                         exchangeRate = event.metaData.exchangeRate.toBigDecimal(),
-                        giftRecipientName =  event.metaData.gift?.recipientName,
-                        giftPrivateKey = event.metaData.gift?.keyData
+                        gift = event.metaData.gift
                     )
                 )
             }
@@ -185,7 +184,8 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
         dispatch(setOf(F.CopyToClipboard(model.transactionHash)))
 
     override fun onGiftResendClicked(model: M): Next<M, F> {
-        val key = model.giftPrivateKey!!.toByteArray()
+        val gift = model.gift!!
+        val key = gift.keyData!!.toByteArray()
         val encodedPrivateKey = Base64.encode(key, Base64.NO_PADDING).toString(Charsets.UTF_8)
         val giftUrl = "$GIFT_BASE_URL$encodedPrivateKey"
         return dispatch(
@@ -193,7 +193,7 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
                 F.ShareGift(
                     giftUrl,
                     model.transactionHash,
-                    model.giftRecipientName!!,
+                    gift.recipientName!!,
                     model.cryptoTransferredAmount,
                     model.fiatAmountNow,
                     model.exchangeRate
@@ -203,5 +203,5 @@ object TxDetailsUpdate : Update<M, E, F>, TxDetailsUpdateSpec {
     }
 
     override fun onGiftReclaimClicked(model: M): Next<M, F> =
-        dispatch(setOf(F.ImportGift(model.giftPrivateKey!!)))
+        dispatch(setOf(F.ImportGift(model.gift!!.keyData!!, model.transactionHash)))
 }

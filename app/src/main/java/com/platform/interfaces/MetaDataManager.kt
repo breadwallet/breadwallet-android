@@ -240,27 +240,13 @@ class MetaDataManager(
             .mapValues { (_, v) -> TxMetaDataValue.fromJsonObject(v) }
     }
 
-    override fun txMetaData(transferHash: String, isErc20: Boolean): Flow<TxMetaData> {
-        val key = getTxMetaDataKey(transferHash, isErc20)
+    override fun txMetaData(key: String, isErc20: Boolean): Flow<TxMetaData> {
         return storeProvider.keyFlow(key)
             .mapLatest {
                 TxMetaDataValue.fromJsonObject(it)
             }
             .onStart {
-                var metaData = storeProvider.get(key)
-                if (metaData == null) {
-                    // Try legacy key
-                    metaData = storeProvider.get(
-                        getTxMetaDataKey(
-                            transferHash,
-                            isErc20 = isErc20,
-                            legacy = true
-                        )
-                    )?.also {
-                        // Migrate legacy value to new key
-                        storeProvider.put(key, it)
-                    }
-                }
+                val metaData = storeProvider.get(key)
                 if (metaData != null) emit(TxMetaDataValue.fromJsonObject(metaData))
                 else emit(TxMetaDataEmpty)
             }
@@ -268,18 +254,20 @@ class MetaDataManager(
     }
 
     override fun txMetaData(transaction: Transfer): Flow<TxMetaData> {
-        return txMetaData(transaction.hashString(), isErc20 = transaction.wallet.currency.isErc20())
+        val key = getTxMetaDataKey(transaction)
+        return txMetaData(key, isErc20 = transaction.wallet.currency.isErc20())
     }
 
     override suspend fun putTxMetaData(
         transaction: Transfer,
         newTxMetaData: TxMetaDataValue
     ) {
-        putTxMetaData(transaction.hashString(), transaction.wallet.currency.isErc20(), newTxMetaData)
+        val key = getTxMetaDataKey(transaction)
+        putTxMetaData(key, transaction.wallet.currency.isErc20(), newTxMetaData)
     }
 
-    override suspend fun putTxMetaData(transferHash: String, isErc20: Boolean, newTxMetaData: TxMetaDataValue) {
-        var txMetaData = txMetaData(transferHash, isErc20 = isErc20).first()
+    override suspend fun putTxMetaData(key: String, isErc20: Boolean, newTxMetaData: TxMetaDataValue) {
+        var txMetaData = txMetaData(key, isErc20 = isErc20).first()
 
         var needsUpdate = false
         when (txMetaData) {
@@ -300,9 +288,16 @@ class MetaDataManager(
                             gift = newTxMetaData.gift
                         )
                         needsUpdate = true
-                    } else if (oldGift?.keyData != null && oldGift.claimed != newGift.claimed) {
+                    } else if (
+                        oldGift?.keyData != null &&
+                        (oldGift.claimed != newGift.claimed ||
+                            oldGift.reclaimed != newGift.reclaimed)
+                    ) {
                         txMetaData = txMetaData.copy(
-                            gift = oldGift.copy(claimed = newGift.claimed)
+                            gift = oldGift.copy(
+                                claimed = newGift.claimed,
+                                reclaimed = newGift.reclaimed
+                            )
                         )
                         needsUpdate = true
                     }
@@ -323,7 +318,6 @@ class MetaDataManager(
         }
 
         if (needsUpdate) {
-            val key = getTxMetaDataKey(transferHash, isErc20 = isErc20)
             storeProvider.put(key, txMetaData.toJSON())
         }
     }

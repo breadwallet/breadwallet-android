@@ -45,7 +45,8 @@ object Import {
         val keyRequiresPassword: Boolean = false,
         val isKeyValid: Boolean = false,
         val loadingState: LoadingState = LoadingState.IDLE,
-        val currencyCode: CurrencyCode? = null
+        val currencyCode: CurrencyCode? = null,
+        val reclaimGiftHash: String? = null
     ) {
         enum class LoadingState {
             IDLE, VALIDATING, ESTIMATING, SUBMITTING
@@ -65,14 +66,16 @@ object Import {
         companion object {
             fun createDefault(
                 privateKey: String? = null,
-                isPasswordProtected: Boolean = false
+                isPasswordProtected: Boolean = false,
+                reclaimGiftHash: String? = null
             ): M = M(
                 privateKey = privateKey,
                 keyRequiresPassword = isPasswordProtected,
-                loadingState = if (privateKey != null) {
-                    LoadingState.VALIDATING
-                } else {
+                reclaimGiftHash = reclaimGiftHash,
+                loadingState = if (privateKey == null) {
                     LoadingState.IDLE
+                } else {
+                    LoadingState.VALIDATING
                 }
             )
         }
@@ -204,7 +207,8 @@ object Import {
         data class SubmitImport(
             @Redacted val privateKey: String,
             @Redacted val password: String?,
-            val currencyCode: CurrencyCode
+            val currencyCode: CurrencyCode,
+            val reclaimGiftHash: String?
         ) : F()
 
         sealed class Nav(

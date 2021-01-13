@@ -281,10 +281,10 @@ class TxDetailsController(
         ifChanged(M::memoLoaded) {
             if (memoLoaded && !isFeeForToken) {
                 memo_input.setText(
-                    if (giftRecipientName.isNullOrBlank()) {
+                    if (gift?.recipientName.isNullOrBlank()) {
                         memo
                     } else {
-                        String.format(res.getString(R.string.TransactionDetails_giftedTo, giftRecipientName))
+                        String.format(res.getString(R.string.TransactionDetails_giftedTo, gift?.recipientName))
                     }
                 )
             }
@@ -377,9 +377,13 @@ class TxDetailsController(
             }
         }
 
-        ifChanged(M::giftPrivateKey) { privateKey ->
-            layoutGift.isGone = privateKey.isNullOrBlank()
-            gift_divider.isGone = privateKey.isNullOrBlank()
+        ifChanged(M::gift) { gift ->
+            val gone = gift?.keyData.isNullOrBlank() ||
+                gift?.reclaimed == true ||
+                gift?.claimed == true
+
+            layoutGift.isGone = gone
+            gift_divider.isGone = gone
         }
     }
 
