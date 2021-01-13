@@ -406,7 +406,7 @@ class MetaDataManager(
         } else {
             val hashString = transaction.hashString().removePrefix("0x")
             val sha256hash =
-                CryptoHelper.hexDecode(hashString) ?: hashString.toByteArray(Charsets.UTF_8)
+                (CryptoHelper.hexDecode(hashString) ?: hashString.toByteArray(Charsets.UTF_8))
                     .apply {
                         reverse()
                     }
