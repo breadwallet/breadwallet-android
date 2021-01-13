@@ -121,10 +121,10 @@ sealed class NavigationTarget : INavigationTarget {
     object FingerprintSettings : NavigationTarget()
     object WipeWallet : NavigationTarget()
     object OnBoarding : NavigationTarget()
-    object ImportWallet : NavigationTarget()
-    data class ImportWalletWithKey(
-        val privateKey: String,
-        val isPasswordProtected: Boolean
+    data class ImportWallet(
+        val privateKey: String? = null,
+        val isPasswordProtected: Boolean = false,
+        val reclaimingGift: String? = null
     ) : NavigationTarget()
     object BitcoinNodeSelector : NavigationTarget()
     object EnableSegWit : NavigationTarget()

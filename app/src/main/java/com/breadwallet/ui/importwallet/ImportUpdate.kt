@@ -154,7 +154,8 @@ val ImportUpdate = Update<M, E, F> { model, event ->
                     F.SubmitImport(
                         privateKey = checkNotNull(model.privateKey),
                         password = model.keyPassword,
-                        currencyCode = checkNotNull(model.currencyCode)
+                        currencyCode = checkNotNull(model.currencyCode),
+                        reclaimGiftHash = model.reclaimGiftHash
                     )
                 )
             )

@@ -45,8 +45,7 @@ interface NavigationTargetHandlerSpec {
         NavigationTarget.FingerprintSettings -> fingerprintSettings()
         NavigationTarget.WipeWallet -> wipeWallet()
         NavigationTarget.OnBoarding -> onBoarding()
-        NavigationTarget.ImportWallet -> importWallet()
-        is NavigationTarget.ImportWalletWithKey -> importWallet(effect)
+        is NavigationTarget.ImportWallet -> importWallet(effect)
         NavigationTarget.BitcoinNodeSelector -> bitcoinNodeSelector()
         NavigationTarget.EnableSegWit -> enableSegWit()
         NavigationTarget.LegacyAddress -> legacyAddress()
@@ -117,9 +116,7 @@ interface NavigationTargetHandlerSpec {
 
     fun onBoarding(): Unit
 
-    fun importWallet(): Unit
-
-    fun importWallet(effect: NavigationTarget.ImportWalletWithKey): Unit
+    fun importWallet(effect: NavigationTarget.ImportWallet): Unit
 
     fun bitcoinNodeSelector(): Unit
 

@@ -32,21 +32,22 @@ import com.breadwallet.crypto.errors.WalletSweeperError
 import com.breadwallet.crypto.errors.WalletSweeperInsufficientFundsError
 import com.breadwallet.platform.entities.GiftMetaData
 import com.breadwallet.platform.entities.TxMetaDataValue
+import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.btc
-import com.platform.interfaces.MetaDataManager
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 
 private const val UNCLAIMED_GIFT_DELAY_MS = 3_600_000L
 
 class GiftTracker(
     private val breadBox: BreadBox,
-    private val metaDataManager: MetaDataManager
+    private val metaDataManager: AccountMetaDataProvider
 ) {
 
     suspend fun checkUnclaimedGifts() {
         val currentMs = System.currentTimeMillis()
-        val millisSinceLastCheck = BRSharedPrefs.lastGiftCheckTime - currentMs
+        val millisSinceLastCheck = currentMs - BRSharedPrefs.lastGiftCheckTime
         if (millisSinceLastCheck < UNCLAIMED_GIFT_DELAY_MS) {
             return
         }
@@ -56,7 +57,7 @@ class GiftTracker(
             .txMetaData(onlyGifts = true)
             .mapNotNull { (key, metadata) ->
                 val gift = (metadata as TxMetaDataValue).gift!!
-                if (gift.claimed) null else key to metadata
+                if (gift.claimed || gift.reclaimed) null else key to metadata
             }
             .toMap()
 
@@ -83,9 +84,20 @@ class GiftTracker(
         }
     }
 
+    suspend fun markGiftReclaimed(transferHash: String) {
+        val transfer = breadBox.walletTransfer(btc, transferHash).first()
+        val metadata = metaDataManager.txMetaData(transfer)
+            .filterIsInstance<TxMetaDataValue>()
+            .first()
+        metaDataManager.putTxMetaData(
+            transfer,
+            metadata.copy(gift = metadata.gift!!.copy(reclaimed = true))
+        )
+    }
+
     private suspend fun markGiftClaimed(key: String, metadata: TxMetaDataValue) {
         metaDataManager.putTxMetaData(
-            transferHash = key,
+            key = key,
             isErc20 = false,
             newTxMetaData = metadata.copy(
                 gift = metadata.gift!!.copy(

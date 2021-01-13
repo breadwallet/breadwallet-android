@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.wallet
 
+import com.breadwallet.platform.entities.GiftMetaData
 import io.sweers.redacted.annotation.Redacted
 import java.math.BigDecimal
 
@@ -47,7 +48,7 @@ data class WalletTransaction(
     val currencyCode: String,
     val feeToken: String = "",
     val confirmationsUntilFinal: Int,
-    val recipientName: String? = null
+    val gift: GiftMetaData? = null
 ) {
     val isFeeForToken: Boolean = feeToken.isNotBlank()
 
