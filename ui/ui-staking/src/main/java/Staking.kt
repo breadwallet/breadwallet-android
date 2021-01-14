@@ -64,6 +64,7 @@ object Staking {
             val originalAddress: String,
             val isAddressValid: Boolean,
             val isAddressChanged: Boolean,
+            val canSubmitTransfer: Boolean,
             val transactionError: TransactionError?,
             val feeEstimate: TransferFeeBasis?,
             val isCancellable: Boolean,
@@ -84,6 +85,7 @@ object Staking {
                     address = "",
                     isAddressValid = true,
                     isAddressChanged = false,
+                    canSubmitTransfer = false,
                     transactionError = null,
                     isCancellable = originalAddress != null,
                     originalAddress = originalAddress ?: "",
@@ -136,6 +138,7 @@ object Staking {
 
         data class OnTransferFailed(val transactionError: M.TransactionError) : E()
         data class OnFeeUpdated(
+            val address: String?,
             val feeEstimate: TransferFeeBasis,
             val balance: BigDecimal
         ) : E()
@@ -160,7 +163,9 @@ object Staking {
 
         object LoadAccount : F()
         object LoadAuthenticationSettings : F()
-        object PasteFromClipboard : F()
+        data class PasteFromClipboard(
+            val currentDelegateAddress: String
+        ) : F()
         object Help : F(), ViewEffect
         object Close : F(), ViewEffect
 
