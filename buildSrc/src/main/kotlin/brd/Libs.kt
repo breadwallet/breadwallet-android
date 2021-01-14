@@ -24,19 +24,19 @@
  */
 package brd
 
-const val KOTLIN_VERSION = "1.4.10"
-private const val COROUTINES_VERSION = "1.4.1"
+const val KOTLIN_VERSION = "1.4.21"
+private const val COROUTINES_VERSION = "1.4.2"
 private const val WALLETKIT_VERSION = "6.3.0"
-private const val FIREBASE_MESSAGING_VERSION = "20.2.4"
-private const val FIREBASE_ANALYTICS_VERSION = "17.5.0"
+private const val FIREBASE_MESSAGING_VERSION = "21.0.1"
+private const val FIREBASE_ANALYTICS_VERSION = "18.0.0"
 private const val FIREBASE_CONFIG_VERSION = "19.2.0"
-private const val CRASHLYTICS_VERSION = "17.2.1"
+private const val CRASHLYTICS_VERSION = "17.3.0"
 private const val GUAVA_VERSION = "25.1-android"
 private const val LIFECYCLE_EXT_VERSION = "2.2.0"
 private const val WORK_MANAGER_VERSION = "2.4.0"
-private const val SECURITY_VERSION = "1.0.0-rc03"
+private const val SECURITY_VERSION = "1.1.0-alpha03"
 private const val LEGACY_V13 = "1.0.0"
-private const val CORE_VERSION = "1.3.1"
+private const val CORE_VERSION = "1.3.2"
 private const val APPCOMPAT_VERSION = "1.2.0"
 private const val CARDVIEW_VERSION = "1.0.0"
 private const val CAMERAX_VERSION = "1.0.0-beta07"
@@ -65,8 +65,8 @@ private const val JUNIT_VERSION = "4.12"
 private const val MOCKITO_VERSION = "2.25.0"
 private const val KASPRESSO_VERSION = "1.1.0"
 private const val KAKAO_VERSION = "2.3.2"
-private const val MATERIAL_VERSION = "1.2.0"
-private const val REDACTED_VERSION = "0.0.3"
+private const val MATERIAL_VERSION = "1.2.1"
+const val REDACTED_VERSION = "0.6.1"
 private const val DETEKT_VERSION = "1.0.1"
 private const val COMMONS_COMPRESS_VERSION = "1.20"
 
@@ -104,10 +104,10 @@ object Libs {
     }
 
     object Firebase {
-        const val Messaging = "com.google.firebase:firebase-messaging:$FIREBASE_MESSAGING_VERSION"
-        const val Analytics = "com.google.firebase:firebase-analytics:$FIREBASE_ANALYTICS_VERSION"
+        const val Messaging = "com.google.firebase:firebase-messaging-ktx:$FIREBASE_MESSAGING_VERSION"
+        const val Analytics = "com.google.firebase:firebase-analytics-ktx:$FIREBASE_ANALYTICS_VERSION"
         const val ConfigKtx = "com.google.firebase:firebase-config-ktx:$FIREBASE_CONFIG_VERSION"
-        const val Crashlytics = "com.google.firebase:firebase-crashlytics:$CRASHLYTICS_VERSION"
+        const val Crashlytics = "com.google.firebase:firebase-crashlytics-ktx:$CRASHLYTICS_VERSION"
     }
 
     object Material {
@@ -212,7 +212,7 @@ object Libs {
     }
 
     object Redacted {
-        const val Annotation = "io.sweers.redacted:redacted-compiler-plugin-annotation:$REDACTED_VERSION"
+        const val Annotation = "dev.zacsweers.redacted:redacted-compiler-plugin-annotations:$REDACTED_VERSION"
     }
 
     object Detekt {

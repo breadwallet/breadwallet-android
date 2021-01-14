@@ -5,9 +5,12 @@ plugins {
     id("com.android.library")
     kotlin("android")
     kotlin("android.extensions")
+    id("dev.zacsweers.redacted.redacted-gradle-plugin")
 }
 
-apply(plugin = "io.sweers.redacted.redacted-plugin")
+redacted {
+    replacementString.set("***")
+}
 
 project.tasks.register<brd.DownloadBundles>("downloadBundles")
 
@@ -46,7 +49,7 @@ dependencies {
 
     implementation(Libs.ApacheCommons.IO)
     implementation(Libs.ApacheCommons.Compress)
-    implementation(Libs.Redacted.Annotation)
+    compileOnly(Libs.Redacted.Annotation)
 
     implementation(Libs.Firebase.Crashlytics)
 
