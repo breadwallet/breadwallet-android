@@ -108,9 +108,11 @@ class BdbAuthInterceptor(
     }
 
     private val publicKeyString by lazy {
-        String(authKey.encodeAsPublic())
-            .run(CryptoHelper::hexDecode) ?: authKey.encodeAsPublic()
-            .base64EncodedString()
+        val decodedKey = String(authKey.encodeAsPublic())
+            .run(CryptoHelper::hexDecode)
+        checkNotNull(decodedKey) {
+            "Failed to decode authKey public bytes."
+        }.base64EncodedString()
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
