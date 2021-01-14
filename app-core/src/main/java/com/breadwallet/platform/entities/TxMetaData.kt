@@ -31,7 +31,7 @@ import com.platform.util.getIntOrDefault
 import com.platform.util.getJSONObjectOrNull
 import com.platform.util.getLongOrDefault
 import com.platform.util.getStringOrNull
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import org.json.JSONObject
 
 sealed class TxMetaData

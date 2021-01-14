@@ -26,7 +26,7 @@ package com.breadwallet.tools.util
 
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData
 import com.breadwallet.util.CurrencyCode
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import java.io.Serializable
 import java.math.BigDecimal
 

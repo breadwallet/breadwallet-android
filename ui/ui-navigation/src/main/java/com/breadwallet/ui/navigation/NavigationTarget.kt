@@ -28,7 +28,7 @@ import com.breadwallet.model.InAppMessage
 import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.auth.AuthMode
 import com.breadwallet.ui.settings.SettingsSection
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import java.math.BigDecimal
 
 sealed class NavigationTarget : INavigationTarget {

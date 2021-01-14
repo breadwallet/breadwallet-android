@@ -25,7 +25,7 @@
 package com.breadwallet.ui.wallet
 
 import com.breadwallet.platform.entities.GiftMetaData
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import java.math.BigDecimal
 
 private const val TRUNCATED_ADDRESS_CHARS = 7

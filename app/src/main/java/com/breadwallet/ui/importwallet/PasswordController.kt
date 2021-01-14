@@ -39,7 +39,7 @@ import com.spotify.mobius.Next.dispatch
 import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 import drewcarlson.mobius.flow.subtypeEffectHandler
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import kotlinx.android.synthetic.main.controller_import_password.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.Flow

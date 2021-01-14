@@ -33,7 +33,7 @@ import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.send.TransferField
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.platform.entities.TxMetaData
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import java.math.BigDecimal
 import java.util.Date
 

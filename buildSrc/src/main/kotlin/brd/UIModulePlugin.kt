@@ -31,7 +31,7 @@ import org.gradle.kotlin.dsl.project
 class UIModulePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val uiModule = UIModuleExtension(project)
-        project.plugins.apply("io.sweers.redacted.redacted-plugin")
+        project.plugins.apply("dev.zacsweers.redacted.redacted-gradle-plugin")
         project.extensions.add(UIModuleExtension::class.java, "UIModule", uiModule)
         project.configureAndroidLibrary(uiModule.basePackage) {
             val uiCommonProject = project(":ui:ui-common")
