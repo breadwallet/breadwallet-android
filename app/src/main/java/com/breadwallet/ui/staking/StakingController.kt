@@ -108,7 +108,7 @@ class StakingController(
             buttonClose.clicks().map { E.OnCloseClicked },
             buttonCancel.clicks().map { E.OnCancelClicked },
             buttonUnstake.clicks().map { E.OnUnstakeClicked },
-            buttonConfirm.clicks().map { E.OnConfirmClicked },
+            buttonConfirm.clicks().map { E.OnStakeClicked },
             buttonChangeValidator.clicks().map { E.OnChangeClicked },
             inputAddress.textChanges().map { E.OnAddressChanged(it) },
             buttonFaq.clicks().map { E.OnHelpClicked }
@@ -179,12 +179,13 @@ class StakingController(
             }
         }
 
-        ifChanged(M.SetValidator::isAddressValid) {
-            buttonConfirm.isEnabled = isAddressValid && isAddressChanged
+
+        ifChanged(M.SetValidator::isAddressValid, M.SetValidator::canSubmitTransfer) {
+            buttonConfirm.isEnabled = canSubmitTransfer
             inputLayoutAddress.apply {
                 if (isAddressValid) {
                     error = null
-                    helperText = if (address.isNotBlank()) {
+                    helperText = if (canSubmitTransfer) {
                         "Valid baker address!"
                     } else null
                     setHelperTextColor(
