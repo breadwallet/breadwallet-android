@@ -295,6 +295,13 @@ abstract class BaseMobiusController<M, E, F>(
             .launchIn(viewAttachScope)
     }
 
+    inline fun <T, reified M2 : M> extractOrUnit(
+        model: M?,
+        crossinline extract: (M2) -> T
+    ): Any? {
+        return if (model is M2) model.run(extract) else Unit
+    }
+
     /**
      * Invokes [block] only when the result of [extract] on
      * [this] is not equal to [extract] on [previousModel].
@@ -306,7 +313,7 @@ abstract class BaseMobiusController<M, E, F>(
         crossinline block: (@ParameterName("value") T) -> Unit
     ) {
         val currentValue = extract(this)
-        val previousValue = (previousModel as? M2)?.run(extract)
+        val previousValue = extractOrUnit(previousModel, extract)
         if (currentValue != previousValue) {
             block(currentValue)
         }
@@ -322,8 +329,8 @@ abstract class BaseMobiusController<M, E, F>(
         crossinline block: () -> Unit
     ) {
         if (
-            extract1(this) != (previousModel as? M2)?.run(extract1) ||
-            extract2(this) != (previousModel as? M2)?.run(extract2)
+            extract1(this) != extractOrUnit(previousModel, extract1) ||
+            extract2(this) != extractOrUnit(previousModel, extract2)
         ) {
             block()
         }
@@ -340,9 +347,9 @@ abstract class BaseMobiusController<M, E, F>(
         crossinline block: () -> Unit
     ) {
         if (
-            extract1(this) != (previousModel as? M2)?.run(extract1) ||
-            extract2(this) != (previousModel as? M2)?.run(extract2) ||
-            extract3(this) != (previousModel as? M2)?.run(extract3)
+            extract1(this) != extractOrUnit(previousModel, extract1) ||
+            extract2(this) != extractOrUnit(previousModel, extract2) ||
+            extract3(this) != extractOrUnit(previousModel, extract3)
         ) {
             block()
         }
@@ -361,10 +368,10 @@ abstract class BaseMobiusController<M, E, F>(
         crossinline block: () -> Unit
     ) {
         if (
-            extract1(this) != (previousModel as? M2)?.run(extract1) ||
-            extract2(this) != (previousModel as? M2)?.run(extract2) ||
-            extract3(this) != (previousModel as? M2)?.run(extract3) ||
-            extract4(this) != (previousModel as? M2)?.run(extract4)
+            extract1(this) != extractOrUnit(previousModel, extract1) ||
+            extract2(this) != extractOrUnit(previousModel, extract2) ||
+            extract3(this) != extractOrUnit(previousModel, extract3) ||
+            extract4(this) != extractOrUnit(previousModel, extract4)
         ) {
             block()
         }

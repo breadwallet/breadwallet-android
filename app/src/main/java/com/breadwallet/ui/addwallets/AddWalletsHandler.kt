@@ -150,8 +150,7 @@ private fun walletIsNeeded(wallet: Wallet, trackedWallets: List<String>) =
 private fun List<TokenItem>.applyFilter(query: String) =
     filter { token ->
         (token.name.contains(query, true) ||
-            token.symbol.contains(query, true)) &&
-            !token.symbol.isTezos() // TODO: DROID-1854 remove tezos filter
+            token.symbol.contains(query, true))
     }
 
 private fun TokenItem.asToken(enabled: Boolean, removable: Boolean): Token {

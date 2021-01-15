@@ -76,9 +76,7 @@ import okhttp3.Response
 import okio.Buffer
 
 import com.breadwallet.tools.util.BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8
-import com.breadwallet.tools.util.BRConstants.FALSE
 import com.breadwallet.tools.util.BRConstants.HEADER_ACCEPT
-import com.breadwallet.tools.util.BRConstants.TRUE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -151,7 +149,7 @@ class APIClient(
                 if (authKey != null) {
                     val requestBody = JSONObject().run {
                         val encodedPublicKey = authKey.encodeAsPublic().toString(Charsets.UTF_8)
-                        val pubkey = CryptoHelper.hexDecode(encodedPublicKey)
+                        val pubkey = CryptoHelper.hexDecode(encodedPublicKey) ?: encodedPublicKey.toByteArray(Charsets.UTF_8)
                         put(PUBKEY, CryptoHelper.base58Encode(pubkey))
                         put(DEVICE_ID, BRSharedPrefs.getDeviceId())
                         toString().toRequestBody(CONTENT_TYPE_JSON_CHARSET_UTF8.toMediaType())
