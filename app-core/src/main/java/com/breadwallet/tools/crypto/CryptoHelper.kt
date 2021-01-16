@@ -80,8 +80,8 @@ object CryptoHelper {
     }
 
     @JvmStatic
-    fun hexDecode(data: String): ByteArray {
-        return hex.decode(data).or(byteArrayOf())
+    fun hexDecode(data: String): ByteArray? {
+        return hex.decode(data).orNull()
     }
 
     fun signCompact(data: ByteArray, key: Key): ByteArray {

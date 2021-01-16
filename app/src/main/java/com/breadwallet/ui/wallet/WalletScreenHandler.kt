@@ -65,6 +65,7 @@ import java.math.BigDecimal
 import kotlin.math.min
 
 private const val MAX_PROGRESS = 100
+private const val DELEGATE = "Delegate"
 
 @Suppress("TooManyFunctions")
 object WalletScreenHandler {
@@ -305,6 +306,7 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
         else -> amount.convert(wallet.defaultUnit).get()
     }
     val isErrored = state.failedError.isPresent || confirmation.orNull()?.success == false
+    val delegateAddr = attributes.find { it.key.equals(DELEGATE, true) }?.value?.orNull()
     return WalletTransaction(
         txHash = hashString(),
         amount = when {
@@ -317,7 +319,8 @@ fun Transfer.asWalletTransaction(): WalletTransaction {
                 else -> fee
             }
         ),
-        toAddress = target.orNull()?.toSanitizedString() ?: "<unknown>",
+        isStaking = delegateAddr != null,
+        toAddress = delegateAddr ?: target.orNull()?.toSanitizedString() ?: "<unknown>",
         fromAddress = source.orNull()?.toSanitizedString() ?: "<unknown>",
         isReceived = direction == TransferDirection.RECEIVED,
         fee = fee.doubleAmount(unitForFee.base).or(0.0).toBigDecimal(),
