@@ -202,7 +202,7 @@ class MetaDataManager(
                 false
             }
             else -> {
-                val rawPubKey = CryptoHelper.hexDecode(pairingData.publicKeyHex)
+                val rawPubKey = CryptoHelper.hexDecode(pairingData.publicKeyHex) ?: pairingData.publicKeyHex.toByteArray(Charsets.UTF_8)
                 storeProvider.put(pairingKey(rawPubKey), pairingData.toJSON())
             }
         }
@@ -439,8 +439,9 @@ class MetaDataManager(
                 CryptoHelper.sha256(transferHash.toByteArray())!!
             )
         } else {
+            val hashString = transferHash.removePrefix("0x")
             val sha256hash =
-                CryptoHelper.hexDecode(transferHash.removePrefix("0x"))
+                (CryptoHelper.hexDecode(hashString) ?: hashString.toByteArray(Charsets.UTF_8))
                     .apply {
                         reverse()
                     }

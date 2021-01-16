@@ -98,6 +98,7 @@ class TransactionListItem(
             tx_description.text = when {
                 !transaction.gift?.recipientName.isNullOrBlank() ->
                     context.getString(R.string.Transaction_toRecipient, transaction.gift?.recipientName)
+                transaction.isStaking -> context.getString(R.string.Transaction_stakingTo, transaction.truncatedToAddress)
                 commentString == null -> ""
                 commentString.isNotEmpty() -> commentString
                 transaction.isFeeForToken ->

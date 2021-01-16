@@ -44,6 +44,7 @@ object StakingUpdate : Update<M, E, F> {
         is E.OnAddressValidated -> onAddressValidated(model, event)
         is E.OnTransferFailed -> onTransferFailed(model, event)
         is E.OnFeeUpdated -> onFeeUpdated(model, event)
+        is E.OnAuthenticationSettingsUpdated -> onAuthenticationSettingsUpdated(model, event)
         E.OnStakeClicked -> onStakeClicked(model)
         E.OnUnstakeClicked -> onUnstakeClicked(model)
         E.OnChangeClicked -> onChangeClicked(model)
@@ -54,6 +55,8 @@ object StakingUpdate : Update<M, E, F> {
         E.OnHelpClicked -> onHelpClicked()
         E.OnTransactionConfirmClicked -> onTransactionConfirmClicked(model)
         E.OnTransactionCancelClicked -> onTransactionCancelClicked(model)
+        E.OnAuthSuccess -> onAuthSuccess(model)
+        E.OnAuthCancelled -> onAuthCancelled(model)
     }
 
     private fun accountUpdated(
@@ -62,13 +65,19 @@ object StakingUpdate : Update<M, E, F> {
     ): Next<M, F> = next(
         when (event) {
             is E.AccountUpdated.Unstaked ->
-                M.SetValidator.createDefault(model.currencyId, event.currencyCode)
+                M.SetValidator.createDefault(
+                    event.balance,
+                    model.currencyId,
+                    event.currencyCode,
+                    isFingerprintEnabled = model.isFingerprintEnabled
+                )
             is E.AccountUpdated.Staked -> M.ViewValidator(
                 state = event.state,
                 balance = event.balance,
                 address = event.address,
                 currencyCode = event.currencyCode,
-                currencyId = model.currencyId
+                currencyId = model.currencyId,
+                isFingerprintEnabled = model.isFingerprintEnabled
             )
         }
     )
@@ -76,20 +85,30 @@ object StakingUpdate : Update<M, E, F> {
     private fun onAddressChanged(
         model: M,
         event: E.OnAddressChanged
-    ): Next<M, F> = when (model) {
-        is M.SetValidator -> next(
-            model.copy(
-                address = event.address,
-                isAddressValid = event.address.isBlank() || model.isAddressValid,
-                isAddressChanged = event.address != model.originalAddress
-            ),
-            setOfNotNull(
-                if (event.address.isNotBlank()) {
-                    F.ValidateAddress(event.address)
-                } else null
-            )
-        )
-        else -> noChange()
+    ): Next<M, F> {
+        return if (model.address == event.address) {
+            noChange()
+        } else {
+            when (model) {
+                is M.SetValidator -> {
+                    next(
+                        model.copy(
+                            address = event.address,
+                            isAddressValid = (event.address.isBlank() || model.isAddressValid) && event.address != model.originalAddress,
+                            isAddressChanged = event.address != model.originalAddress,
+                            canSubmitTransfer = false,
+                            feeEstimate = null
+                        ),
+                        setOfNotNull(
+                            if (event.address.isNotBlank()) {
+                                F.ValidateAddress(event.address)
+                            } else null
+                        )
+                    )
+                }
+                else -> noChange()
+            }
+        }
     }
 
     private fun onAddressValidated(
@@ -99,6 +118,7 @@ object StakingUpdate : Update<M, E, F> {
         is M.SetValidator -> next(
             model.copy(
                 isAddressValid = event.isValid,
+                canSubmitTransfer = event.isValid,
             ),
             setOfNotNull(
                 if (event.isValid) {
@@ -139,9 +159,11 @@ object StakingUpdate : Update<M, E, F> {
                 )
             )
         } else noChange()
-        is M.SetValidator -> if (model.isAddressValid) {
+        is M.SetValidator -> if (event.address == model.address) {
             next(model.copy(feeEstimate = event.feeEstimate))
-        } else noChange()
+        } else {
+            next(model)
+        }
         else -> noChange()
     }
 
@@ -181,9 +203,11 @@ object StakingUpdate : Update<M, E, F> {
         is M.ViewValidator -> if (model.state == STAKED) {
             next(
                 M.SetValidator.createDefault(
+                    model.balance,
                     model.currencyId,
                     model.currencyCode,
-                    model.address
+                    model.address,
+                    model.isFingerprintEnabled,
                 )
             )
         } else noChange()
@@ -226,7 +250,13 @@ object StakingUpdate : Update<M, E, F> {
     }
 
     private fun onPasteClicked(model: M): Next<M, F> = when (model) {
-        is M.SetValidator -> dispatch(setOf(F.PasteFromClipboard))
+        is M.SetValidator -> dispatch(setOf(
+            if (model.originalAddress.isNotBlank()) {
+                F.PasteFromClipboard(model.originalAddress)
+            } else {
+                F.PasteFromClipboard(model.address)
+            }
+        ))
         else -> noChange()
     }
 
@@ -238,16 +268,36 @@ object StakingUpdate : Update<M, E, F> {
 
     private fun onTransactionConfirmClicked(model: M): Next<M, F> =
         when (model) {
+            is M.ViewValidator -> next(model.copy(isAuthenticating = true))
+            is M.SetValidator -> next(model.copy(isAuthenticating = true))
+            else -> noChange()
+        }
+
+    private fun onAuthSuccess(model: M): Next<M, F> =
+        when (model) {
             is M.SetValidator -> if (
                 model.isAddressValid &&
                 model.address.isNotBlank() &&
                 model.feeEstimate != null
             ) {
-                dispatch(setOf(F.Stake(model.address, model.feeEstimate)))
+                next(
+                    model.copy(isAuthenticating = false),
+                    setOf(F.Stake(model.address, model.feeEstimate))
+                )
             } else noChange()
             is M.ViewValidator -> if (model.state == PENDING_UNSTAKE && model.feeEstimate != null) {
-                dispatch(setOf(F.Unstake(model.feeEstimate)))
+                next(
+                    model.copy(isAuthenticating = false),
+                    setOf(F.Unstake(model.feeEstimate))
+                )
             } else noChange()
+            else -> noChange()
+        }
+
+    private fun onAuthCancelled(model:M): Next<M, F> =
+        when (model) {
+            is M.ViewValidator -> next(model.copy(isAuthenticating = false, state = STAKED))
+            is M.SetValidator -> next(model.copy(isAuthenticating = false))
             else -> noChange()
         }
 
@@ -257,5 +307,12 @@ object StakingUpdate : Update<M, E, F> {
                 next(model.copy(state = STAKED))
             } else noChange()
             else -> noChange()
+        }
+
+    private fun onAuthenticationSettingsUpdated(model: M, event: E.OnAuthenticationSettingsUpdated): Next<M, F> =
+        when (model) {
+            is M.ViewValidator -> next(model.copy(isFingerprintEnabled = event.isFingerprintEnabled))
+            is M.SetValidator -> next(model.copy(isFingerprintEnabled = event.isFingerprintEnabled))
+            is M.Loading -> next(model.copy(isFingerprintEnabled = event.isFingerprintEnabled))
         }
 }
