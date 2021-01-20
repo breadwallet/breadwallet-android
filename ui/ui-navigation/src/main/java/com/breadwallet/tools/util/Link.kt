@@ -66,7 +66,9 @@ sealed class Link {
 
     data class ImportWallet(
         @Redacted val privateKey: String,
-        val passwordProtected: Boolean
+        val passwordProtected: Boolean,
+        val gift: Boolean = false,
+        val scanned: Boolean = false
     ) : Link()
 
     sealed class BreadUrl : Link() {

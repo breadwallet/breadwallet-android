@@ -420,7 +420,13 @@ class RouterNavigator(
         val controller = if (privateKey.isNullOrBlank()) {
             ImportController()
         } else {
-            ImportController(privateKey, effect.isPasswordProtected, effect.reclaimingGift)
+            ImportController(
+                privateKey,
+                effect.isPasswordProtected,
+                effect.reclaimingGift,
+                effect.scanned,
+                effect.gift
+            )
         }
         router.pushController(
             controller.asTransaction(
@@ -557,7 +563,9 @@ class RouterNavigator(
             is Link.ImportWallet -> {
                 val controller = ImportController(
                     privateKey = link.privateKey,
-                    isPasswordProtected = link.passwordProtected
+                    isPasswordProtected = link.passwordProtected,
+                    scanned = false,
+                    gift = false
                 ).asTransaction()
                 router.pushWithStackIfEmpty(controller, effect.authenticated) {
                     listOf(

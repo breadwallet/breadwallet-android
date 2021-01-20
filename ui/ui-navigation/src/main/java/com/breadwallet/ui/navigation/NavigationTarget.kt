@@ -124,7 +124,9 @@ sealed class NavigationTarget : INavigationTarget {
     data class ImportWallet(
         val privateKey: String? = null,
         val isPasswordProtected: Boolean = false,
-        val reclaimingGift: String? = null
+        val reclaimingGift: String? = null,
+        val scanned: Boolean = false,
+        val gift: Boolean = false,
     ) : NavigationTarget()
     object BitcoinNodeSelector : NavigationTarget()
     object EnableSegWit : NavigationTarget()

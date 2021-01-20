@@ -25,6 +25,7 @@
 package com.breadwallet.ui.importwallet
 
 import com.breadwallet.breadbox.toBigDecimal
+import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.importwallet.Import.E
 import com.breadwallet.ui.importwallet.Import.F
 import com.breadwallet.ui.importwallet.Import.M
@@ -140,8 +141,25 @@ val ImportUpdate = Update<M, E, F> { model, event ->
             next(model.reset(), setOf(F.ShowBalanceTooLow))
         E.Estimate.NoBalance ->
             next(model.reset(), setOf(F.ShowNoBalance))
-        is E.Transfer.OnSuccess ->
-            next(model.reset(), setOf(F.ShowImportSuccess))
+        is E.Transfer.OnSuccess -> {
+            val effects = mutableSetOf<F>(F.ShowImportSuccess)
+            if (model.gift) {
+                effects.add(F.TrackEvent(EventUtils.EVENT_GIFT_REDEEM))
+                if (model.scanned) {
+                    effects.add(F.TrackEvent(EventUtils.EVENT_GIFT_REDEEM_SCAN))
+                } else {
+                    effects.add(F.TrackEvent(EventUtils.EVENT_GIFT_REDEEM_LINK))
+                }
+            } else if (!model.reclaimGiftHash.isNullOrBlank()) {
+                effects.add(F.TrackEvent(EventUtils.EVENT_GIFT_REDEEM))
+                effects.add(F.TrackEvent(EventUtils.EVENT_GIFT_REDEEM_RECLAIM))
+            }
+
+            next(
+                model.reset(),
+                effects
+            )
+        }
         E.Transfer.OnFailed ->
             next(model.reset(), setOf(F.ShowImportFailed))
         E.OnImportCancel -> next(model.reset())

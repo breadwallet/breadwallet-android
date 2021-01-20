@@ -46,6 +46,7 @@ import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.tools.security.isFingerPrintAvailableAndSetup
+import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.uistaking.Staking.E
 import com.breadwallet.ui.uistaking.Staking.F
 import com.breadwallet.ui.uistaking.Staking.M
@@ -61,7 +62,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.single
 import java.util.Date
 import kotlin.time.milliseconds
 
@@ -199,9 +199,12 @@ private suspend fun BreadBox.changeValidator(
 
     return try {
         // Estimate and submit transfer
+        val event: String
         val address = if (targetAddress == null) {
+            event = EventUtils.EVENT_WALLET_UNSTAKE
             wallet.target // unstake
         } else {
+            event = EventUtils.EVENT_WALLET_STAKE
             checkNotNull(wallet.addressFor(targetAddress))
         }
         val transfer = wallet.createTransfer(address, amount, feeEstimate, attrs).orNull()
@@ -217,6 +220,7 @@ private suspend fun BreadBox.changeValidator(
                     INCLUDED, PENDING, SUBMITTED -> {
                         val target = checkNotNull(tx.target.orNull()).toString()
                         val balance = wallet.balance.toBigDecimal()
+                        EventUtils.pushEvent(event)
                         E.AccountUpdated.Staked(wallet.currency.code, target, PENDING_STAKE, balance)
                     }
                     DELETED, FAILED -> {
