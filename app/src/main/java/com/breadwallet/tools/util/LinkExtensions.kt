@@ -57,7 +57,8 @@ const val GIFT_BASE_URL = "$BRD_PROTOCOL://$BRD_HOST$GIFT_PATH_PREFIX"
 @Suppress("ComplexMethod")
 suspend fun String.asLink(
     breadBox: BreadBox,
-    uriParser: CryptoUriParser
+    uriParser: CryptoUriParser,
+    scanned: Boolean = false
 ): Link? {
     if (isBlank()) return null
     val uri = Uri.parse(this)
@@ -81,7 +82,7 @@ suspend fun String.asLink(
             )
         uriParser.isCryptoUrl(this) ->
             uriParser.parseRequest(this)?.asCryptoRequestUrl()
-        isGiftUrl(uri) -> uri.asGiftUrl()
+        isGiftUrl(uri) -> uri.asGiftUrl(scanned = scanned)
         isPlatformUrl(uri) -> uri.asPlatformUrl()
         isPlatformDebugUrl(uri) -> uri.asPlatformDebugUrl()
         isWalletPairUrl(uri) -> Link.WalletPairUrl(PairingMetaData(this))
@@ -110,9 +111,14 @@ fun CryptoRequest.asCryptoRequestUrl() =
         destinationTag = destinationTag
     )
 
-private fun Uri.asGiftUrl(): Link.ImportWallet {
+private fun Uri.asGiftUrl(scanned: Boolean): Link.ImportWallet {
     val key = Base64.decode(lastPathSegment ?: "", Base64.DEFAULT)
-    return Link.ImportWallet(key.toString(Charsets.UTF_8), false)
+    return Link.ImportWallet(
+        key.toString(Charsets.UTF_8),
+        passwordProtected = false,
+        gift = true,
+        scanned = scanned
+    )
 }
 
 private fun Uri.asPlatformUrl(): Link.PlatformUrl {

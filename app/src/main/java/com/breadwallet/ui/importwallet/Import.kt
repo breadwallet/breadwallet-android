@@ -46,7 +46,9 @@ object Import {
         val isKeyValid: Boolean = false,
         val loadingState: LoadingState = LoadingState.IDLE,
         val currencyCode: CurrencyCode? = null,
-        val reclaimGiftHash: String? = null
+        val reclaimGiftHash: String? = null,
+        val scanned: Boolean = false,
+        val gift: Boolean = false
     ) {
         enum class LoadingState {
             IDLE, VALIDATING, ESTIMATING, SUBMITTING
@@ -67,11 +69,15 @@ object Import {
             fun createDefault(
                 privateKey: String? = null,
                 isPasswordProtected: Boolean = false,
-                reclaimGiftHash: String? = null
+                reclaimGiftHash: String? = null,
+                scanned: Boolean = false,
+                gift: Boolean = false
             ): M = M(
                 privateKey = privateKey,
                 keyRequiresPassword = isPasswordProtected,
                 reclaimGiftHash = reclaimGiftHash,
+                scanned = scanned,
+                gift = gift,
                 loadingState = if (privateKey == null) {
                     LoadingState.IDLE
                 } else {
@@ -208,7 +214,11 @@ object Import {
             @Redacted val privateKey: String,
             @Redacted val password: String?,
             val currencyCode: CurrencyCode,
-            val reclaimGiftHash: String?
+            val reclaimGiftHash: String?,
+        ) : F()
+
+        data class TrackEvent(
+            val eventString: String,
         ) : F()
 
         sealed class Nav(

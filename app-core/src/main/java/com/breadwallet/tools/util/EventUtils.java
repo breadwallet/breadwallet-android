@@ -29,7 +29,7 @@ import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.Log;
 
-import com.breadwallet.BuildConfig;
+import com.breadwallet.appcore.BuildConfig;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.platform.APIClient;
 
@@ -161,6 +161,15 @@ public final class EventUtils {
     public static final String PROMPT_RECOMMEND_RESCAN = EventUtils.EVENT_PROMPT_PREFIX + "recommendRescanPrompt";
     public static final String PROMPT_EMAIL = EventUtils.EVENT_PROMPT_PREFIX + "emailPrompt";
     public static final String PROMPT_RATE_APP = EventUtils.EVENT_PROMPT_PREFIX + "rateAppPrompt";
+    // Gift events
+    public static final String EVENT_GIFT_SEND = "gift.send";
+    public static final String EVENT_GIFT_REDEEM = "gift.redeem";
+    public static final String EVENT_GIFT_REDEEM_LINK = "gift.redeem.link";
+    public static final String EVENT_GIFT_REDEEM_SCAN = "gift.redeem.scan";
+    public static final String EVENT_GIFT_REDEEM_RECLAIM = "gift.redeem.reclaim";
+    // Staking
+    public static final String EVENT_WALLET_STAKE = "wallet.xtz.stake";
+    public static final String EVENT_WALLET_UNSTAKE = "wallet.xtz.unstake";
     private static final String TAG = EventUtils.class.getName();
     private static final String EVENTS_PATH = "/events";
     private static final String SESSION_ID = "sessionId";

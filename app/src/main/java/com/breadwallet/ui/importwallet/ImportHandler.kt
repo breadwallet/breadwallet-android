@@ -33,6 +33,7 @@ import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Key
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManagerState
+import com.breadwallet.tools.util.EventUtils
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterIsInstance
@@ -49,6 +50,9 @@ fun createImportHandler(
     addFunction(handleValidateKey(breadBox))
     addFunction(handleEstimateImport(breadBox, walletImporter))
     addFunction(handleSubmitTransfer(walletImporter, giftTracker))
+    addConsumer<Import.F.TrackEvent> { (event) ->
+        EventUtils.pushEvent(event)
+    }
 }
 
 private val filterBtcLike: (Wallet) -> Boolean = {
