@@ -33,13 +33,15 @@ object ShowPaperKey {
     data class M(
         @Redacted val phrase: List<String>,
         val onComplete: OnCompleteAction?,
-        val currentWord: Int = 0
+        val currentWord: Int = 0,
+        val phraseWroteDown: Boolean = false
     ) {
         companion object {
             fun createDefault(
                 phrase: List<String>,
-                onComplete: OnCompleteAction?
-            ) = M(phrase, onComplete)
+                onComplete: OnCompleteAction?,
+                phraseWroteDown: Boolean
+            ) = M(phrase, onComplete, phraseWroteDown = phraseWroteDown)
         }
     }
 

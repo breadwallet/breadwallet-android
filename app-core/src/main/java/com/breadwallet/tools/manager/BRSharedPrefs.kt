@@ -134,6 +134,12 @@ object BRSharedPrefs {
             brdPrefs.edit { putLong(LAST_GIFT_CHECK_TIME, value) }
         }
 
+    var phraseWroteDown: Boolean
+        get() = brdPrefs.getBoolean(PAPER_KEY_WRITTEN_DOWN, false)
+        set(value) {
+            brdPrefs.edit { putBoolean(PAPER_KEY_WRITTEN_DOWN, value) }
+        }
+
     @JvmStatic
     fun getPreferredFiatIso(): String =
         brdPrefs.getString(
@@ -152,12 +158,6 @@ object BRSharedPrefs {
             } else iso
             putString(CURRENT_CURRENCY, default)
         }
-
-    fun getPhraseWroteDown(): Boolean =
-        brdPrefs.getBoolean(PAPER_KEY_WRITTEN_DOWN, false)
-
-    fun putPhraseWroteDown(check: Boolean) =
-        brdPrefs.edit { putBoolean(PAPER_KEY_WRITTEN_DOWN, check) }
 
     fun getReceiveAddress(iso: String): String? =
         brdPrefs.getString(RECEIVE_ADDRESS + iso.toUpperCase(), "")

@@ -44,13 +44,7 @@ fun createOnBoardingHandler(
         when (val result = userManager.setupWithGeneratedPhrase()) {
             SetupResult.Success -> {
                 logInfo("Wallet created successfully.")
-
-                try {
-                    E.OnWalletCreated
-                } catch (e: IllegalStateException) {
-                    logError("Error initializing crypto system", e)
-                    E.SetupError.CryptoSystemBootError
-                }
+                E.OnWalletCreated
             }
             is SetupResult.FailedToGeneratePhrase -> {
                 logError("Failed to generate phrase.", result.exception)
