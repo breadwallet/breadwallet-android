@@ -42,15 +42,16 @@ object ShowPaperKeyUpdate : Update<ShowPaperKey.M, ShowPaperKey.E, ShowPaperKey.
         model: ShowPaperKey.M
     ): Next<ShowPaperKey.M, ShowPaperKey.F> {
         return if (model.currentWord == model.phrase.size - 1) {
-            dispatch(
-                setOf<ShowPaperKey.F>(
-                    if (model.onComplete == null) {
-                        ShowPaperKey.F.GoBack
-                    } else {
-                        ShowPaperKey.F.GoToPaperKeyProve(model.phrase, model.onComplete)
-                    }
-                )
-            )
+            val effect: ShowPaperKey.F = if (model.onComplete == null) {
+                if (model.phraseWroteDown) {
+                    ShowPaperKey.F.GoBack
+                } else {
+                    ShowPaperKey.F.GoToPaperKeyProve(model.phrase, OnCompleteAction.GO_HOME)
+                }
+            } else {
+                ShowPaperKey.F.GoToPaperKeyProve(model.phrase, model.onComplete)
+            }
+            dispatch(setOf<ShowPaperKey.F>(effect))
         } else {
             next(model.copy(currentWord = model.currentWord + 1))
         }
