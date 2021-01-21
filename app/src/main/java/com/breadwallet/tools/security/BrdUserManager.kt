@@ -58,8 +58,11 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
@@ -490,25 +493,24 @@ class CryptoUserManager(
 
     private fun startDisabledTimer(failTimestamp: Long) {
         if (failTimestamp > 0) {
-            BreadApp.applicationScope.launch {
-                val secureTime = BRSharedPrefs.getSecureTime()
-                val disableUntil = disabledUntil(getFailCount(), failTimestamp)
-                val delaySeconds = ((disableUntil - secureTime) / 1000).toInt()
-
-                if (delaySeconds <= 0) {
-                    return@launch
+            BRSharedPrefs.secureTimeFlow()
+                .map { secureTime ->
+                    val disableUntil = disabledUntil(getFailCount(), failTimestamp)
+                    ((disableUntil - secureTime) / 1000).toInt()
                 }
+                .takeWhile { it > 0 }
+                .onEach { initialDelay ->
+                    disabledSeconds.set(initialDelay)
+                    while (disabledSeconds.get() > 0) {
+                        delay(1000)
+                        disabledSeconds.getAndDecrement()
+                    }
 
-                disabledSeconds.set(delaySeconds)
-                while (disabledSeconds.get() > 0) {
-                    delay(1000)
-                    disabledSeconds.getAndDecrement()
+                    putFailTimestamp(0)
+                    disabledSeconds.set(0)
+                    stateChangeChannel.offer(Unit)
                 }
-
-                putFailTimestamp(0)
-                disabledSeconds.set(0)
-                stateChangeChannel.offer(Unit)
-            }
+                .launchIn(BreadApp.applicationScope)
         }
     }
 
