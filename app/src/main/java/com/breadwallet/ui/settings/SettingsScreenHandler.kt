@@ -88,6 +88,7 @@ import org.json.JSONObject
 import java.io.File
 import java.math.BigDecimal
 import java.text.DecimalFormat
+import java.util.Date
 import java.util.Locale
 import java.util.UUID
 import java.util.logging.Level
@@ -535,6 +536,7 @@ class SettingsScreenHandler(
                 val feeWallet = if (wallet.currency.isNative()) wallet else breadBox.wallet(wallet.unitForFee.currency.code).first()
                 wallet.transfers
                     .filter { it.state.type == TransferState.Type.INCLUDED }
+                    .sortedBy { it.confirmation.orNull()?.confirmationTime ?: Date()}
                     .forEach { transfer ->
                         val memo = getMemo(transfer)
                         out.write("${transfer.export(memo, feeWallet)}\n")
