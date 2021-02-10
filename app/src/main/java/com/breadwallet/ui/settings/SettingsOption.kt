@@ -34,6 +34,7 @@ enum class SettingsOption {
     REWARDS,
     ABOUT,
     ATM_FINDER,
+    EXPORT_TRANSACTIONS,
     DEVELOPER_OPTIONS,
 
     // PREFERENCES

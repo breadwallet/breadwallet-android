@@ -24,6 +24,8 @@
  */
 package com.breadwallet.ui.settings
 
+import android.net.Uri
+import com.breadwallet.R
 import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.navigation.NavigationEffect
@@ -32,9 +34,13 @@ import com.breadwallet.util.CurrencyCode
 import dev.zacsweers.redacted.annotations.Redacted
 
 object SettingsScreen {
+
+    const val CONFIRM_EXPORT_TRANSACTIONS_DIALOG = "confirm_export"
+
     data class M(
         val section: SettingsSection,
-        @Redacted val items: List<SettingsItem> = listOf()
+        @Redacted val items: List<SettingsItem> = listOf(),
+        val isLoading: Boolean = false
     ) {
         companion object {
             fun createDefault(section: SettingsSection) = M(section)
@@ -63,6 +69,9 @@ object SettingsScreen {
         object OnCloseHiddenMenu : E()
 
         data class OnATMMapClicked(val url: String, val mapJson: String) : E()
+
+        object OnExportTransactionsConfirmed : E()
+        data class OnTransactionsExportFileGenerated(val uri: Uri) : E()
     }
 
     sealed class F {
@@ -212,5 +221,18 @@ object SettingsScreen {
         object RelaunchHomeScreen : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Home
         }
+
+        object ShowConfirmExportTransactions : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.AlertDialog(
+                    titleResId = R.string.ExportConfirmation_title,
+                    messageResId = R.string.ExportConfirmation_message,
+                    positiveButtonResId = R.string.ExportConfirmation_continue,
+                    negativeButtonResId = R.string.ExportConfirmation_cancel,
+                    dialogId = CONFIRM_EXPORT_TRANSACTIONS_DIALOG
+                )
+        }
+
+        object GenerateTransactionsExportFile: F()
+        data class ExportTransactions(val uri: Uri) : F(), ViewEffect
     }
 }

@@ -25,6 +25,8 @@
 package com.breadwallet.ui.settings
 
 import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -35,12 +37,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
-import com.breadwallet.app.BreadApp
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.auth.AuthenticationController
+import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.scanner.ScannerController
 import com.breadwallet.ui.settings.SettingsScreen.E
@@ -63,7 +65,8 @@ class SettingsController(
     args: Bundle? = null
 ) : BaseMobiusController<M, E, F>(args),
     ScannerController.Listener,
-    AuthenticationController.Listener {
+    AuthenticationController.Listener,
+    AlertDialogController.Listener {
 
     companion object {
         private const val EXT_SECTION = "section"
@@ -146,6 +149,9 @@ class SettingsController(
             }
             settings_list.adapter = adapter
         }
+        ifChanged(M::isLoading) {
+            loading_view.visibility = if(isLoading) View.VISIBLE else View.GONE
+        }
     }
 
     override fun handleViewEffect(effect: ViewEffect) {
@@ -160,6 +166,7 @@ class SettingsController(
             F.ShowPlatformBundleDialog -> showPlatformBundleDialog(
                 ServerBundlesHelper.getBundle(ServerBundlesHelper.Type.WEB)
             )
+            is F.ExportTransactions ->  exportTransactions(effect.uri)
         }
     }
 
@@ -169,6 +176,14 @@ class SettingsController(
 
     override fun onAuthenticationSuccess() {
         eventConsumer.accept(E.OnAuthenticated)
+    }
+
+    override fun onPositiveClicked(
+        dialogId: String,
+        controller: AlertDialogController,
+        result: AlertDialogController.DialogInputResult
+    ) {
+       eventConsumer.accept(E.OnExportTransactionsConfirmed)
     }
 
     /** Developer options dialogs */
@@ -215,5 +230,19 @@ class SettingsController(
             .setNegativeButton(R.string.Button_cancel, null)
             .create()
             .show()
+    }
+
+    private fun exportTransactions(uri: Uri) {
+        val context = checkNotNull(activity)
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/csv"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_TEXT, context.getString(R.string.Settings_exportTransaction))
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        val title = context.getString(R.string.Settings_share)
+        val chooserIntent = Intent.createChooser(shareIntent, title)
+        chooserIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        context.startActivity(chooserIntent)
     }
 }
