@@ -100,6 +100,18 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
     override fun onCloseHiddenMenu(model: M): Next<M, F> =
         dispatch(setOf(F.RelaunchHomeScreen))
 
+    override fun onExportTransactionsConfirmed(model: M): Next<M, F> =
+        next(
+            model.copy(isLoading = true),
+            setOf(F.GenerateTransactionsExportFile)
+        )
+
+    override fun onTransactionsExportFileGenerated(model: M, event: E.OnTransactionsExportFileGenerated): Next<M, F> =
+        next(
+            model.copy(isLoading = false),
+            setOf(F.ExportTransactions(event.uri))
+        )
+
     @Suppress("ComplexMethod")
     override fun onOptionClicked(
         model: M,
@@ -151,6 +163,7 @@ object SettingsUpdate : Update<M, E, F>, SettingsScreenUpdateSpec {
                     SettingsOption.COPY_PAPER_KEY -> F.CopyPaperKey
                     SettingsOption.TOGGLE_TEZOS -> F.ToggleTezos
                     SettingsOption.METADATA_VIEWER -> F.ViewMetadata
+                    SettingsOption.EXPORT_TRANSACTIONS -> F.ShowConfirmExportTransactions
                 }
             )
         )
