@@ -68,7 +68,6 @@ import com.breadwallet.util.errorHandler
 import com.platform.APIClient
 import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import com.breadwallet.util.isBitcoinLike
-import com.google.common.base.Suppliers
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -559,9 +558,7 @@ class SettingsScreenHandler(
         var src = source.orNull()?.toSanitizedString() ?: ""
 
         var amt = BigDecimal(
-            Suppliers.memoize {
-                amount.toStringAsUnit(wallet.unit, df).or("")
-            }.get()
+            amount.toStringAsUnit(wallet.unit, df).or("")
         ).stripTrailingZeros().toPlainString()
 
         var f = ""
@@ -574,9 +571,7 @@ class SettingsScreenHandler(
             src = if (wallet.currency.code.isBitcoinLike()) "" else src
             amt = "-$amt"
             f = BigDecimal(
-                Suppliers.memoize {
-                    fee.toStringAsUnit(feeWallet.unit, df).or("")
-                }.get()
+                fee.toStringAsUnit(feeWallet.unit, df).or("")
             ).stripTrailingZeros().toPlainString()
             feeCode = feeWallet.unit.currency.code.toLowerCase(Locale.ROOT)
         }
