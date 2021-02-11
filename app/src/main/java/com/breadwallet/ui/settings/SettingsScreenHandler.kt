@@ -34,6 +34,7 @@ import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BdbAuthInterceptor
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.feeForToken
 import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.isNative
 import com.breadwallet.breadbox.toSanitizedString
@@ -88,9 +89,9 @@ import org.json.JSONObject
 import java.io.File
 import java.math.BigDecimal
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.UUID
 import java.util.logging.Level
 import kotlin.text.Charsets.UTF_8
 
@@ -99,7 +100,7 @@ private const val DETAILED_LOGGING_MESSAGE = "Detailed logging is enabled for th
 private const val CLEAR_BLOCKCHAIN_DATA_MESSAGE = "Clearing blockchain data"
 private const val TEZOS_ID = "tezos-mainnet:__native__"  // TODO: DROID-1854 remove tezos filter
 private const val OPTION_UPDATE_THROTTLE = 1000L
-private const val TRANSACTIONS_FILE_SUFFIX = "-transactions.csv"
+private const val TRANSACTIONS_FILE_PREFIX = "BRD-transactions-"
 private const val AUTHORITY_BASE = "com.breadwallet"
 private const val HEADER =
     "currency_code,timestamp,transaction_id,direction,from_address,to_address,amount,amount_unit,fee,fee_unit,memo\n"
@@ -109,6 +110,7 @@ private val df = (DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat).apply
     negativeSuffix = ""
     maximumFractionDigits = 99
 }
+private val dtf = SimpleDateFormat("MMMM-d-yyy_hh-mm-ss", Locale.ROOT)
 
 class SettingsScreenHandler(
     private val output: Consumer<E>,
@@ -529,7 +531,7 @@ class SettingsScreenHandler(
 
     private suspend fun exportTransactionsToFile() {
         val wallets = getEnabledWallets()
-        val file = File(context.externalCacheDir, "${UUID.randomUUID()}$TRANSACTIONS_FILE_SUFFIX")
+        val file = File(context.externalCacheDir, "$TRANSACTIONS_FILE_PREFIX${dtf.format(Date())}.csv")
         file.bufferedWriter().use { out ->
             out.write(HEADER)
             wallets.forEach { wallet ->
@@ -562,11 +564,8 @@ class SettingsScreenHandler(
             }.get()
         ).stripTrailingZeros().toPlainString()
 
-        val f = BigDecimal(
-            Suppliers.memoize {
-                fee.toStringAsUnit(feeWallet.unit, df).or("")
-            }.get()
-        ).stripTrailingZeros().toPlainString()
+        var f = ""
+        var feeCode = ""
 
         if (direction == TransferDirection.RECEIVED) {
             dir = "received"
@@ -574,7 +573,16 @@ class SettingsScreenHandler(
             dir = "sent"
             src = if (wallet.currency.code.isBitcoinLike()) "" else src
             amt = "-$amt"
+            f = BigDecimal(
+                Suppliers.memoize {
+                    fee.toStringAsUnit(feeWallet.unit, df).or("")
+                }.get()
+            ).stripTrailingZeros().toPlainString()
+            feeCode = feeWallet.unit.currency.code.toLowerCase(Locale.ROOT)
         }
+
+        val feeToken = feeForToken()
+        val memoOrFeeToken = if (feeToken.isNotBlank()) "Fee for token transfer: $feeToken" else memo
 
         return listOf(
             "\"${wallet.currency.code.toLowerCase(Locale.ROOT)}\"",
@@ -586,8 +594,8 @@ class SettingsScreenHandler(
             amt,
             "\"${wallet.unit.currency.code.toLowerCase(Locale.ROOT)}\"",
             f,
-            "\"${feeWallet.unit.currency.code.toLowerCase(Locale.ROOT)}\"",
-            "\"$memo\""
+            "\"$feeCode\"",
+            "\"$memoOrFeeToken\""
         ).joinToString(",")
     }
 
