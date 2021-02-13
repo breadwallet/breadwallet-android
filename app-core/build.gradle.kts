@@ -5,7 +5,7 @@ plugins {
     id("com.android.library")
     kotlin("android")
     kotlin("android.extensions")
-    id("dev.zacsweers.redacted.redacted-gradle-plugin")
+    id("dev.zacsweers.redacted")
 }
 
 redacted {
@@ -19,6 +19,7 @@ android {
     buildToolsVersion(BrdRelease.ANDROID_BUILD_TOOLS)
     defaultConfig {
         minSdkVersion(BrdRelease.ANDROID_MINIMUM_SDK)
+        buildConfigField("int", "VERSION_CODE", "${BrdRelease.versionCode}")
     }
 
     compileOptions {

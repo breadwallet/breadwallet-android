@@ -18,7 +18,7 @@ buildscript {
 
     dependencies {
         classpath("dev.zacsweers.redacted:redacted-compiler-gradle-plugin:${brd.REDACTED_VERSION}")
-        classpath("com.android.tools.build:gradle:4.0.2")
+        classpath("com.android.tools.build:gradle:4.1.2")
         classpath("com.google.gms:google-services:4.3.4") // google-services plugin
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
         classpath("com.google.firebase:firebase-appdistribution-gradle:$firebase_distribution_version")

@@ -24,7 +24,7 @@
  */
 package brd
 
-const val KOTLIN_VERSION = "1.4.21"
+const val KOTLIN_VERSION = "1.4.30"
 private const val COROUTINES_VERSION = "1.4.2"
 private const val WALLETKIT_VERSION = "6.3.0"
 private const val FIREBASE_MESSAGING_VERSION = "21.0.1"
@@ -66,7 +66,7 @@ private const val MOCKITO_VERSION = "2.25.0"
 private const val KASPRESSO_VERSION = "1.1.0"
 private const val KAKAO_VERSION = "2.3.2"
 private const val MATERIAL_VERSION = "1.2.1"
-const val REDACTED_VERSION = "0.6.1"
+const val REDACTED_VERSION = "0.8.0"
 private const val DETEKT_VERSION = "1.0.1"
 private const val COMMONS_COMPRESS_VERSION = "1.20"
 

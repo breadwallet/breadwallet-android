@@ -1,5 +1,4 @@
 import brd.BrdRelease
-import brd.DownloadBundles
 import brd.Libs
 import brd.appetize.AppetizePlugin
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
@@ -10,7 +9,7 @@ plugins {
     kotlin("android")
     kotlin("android.extensions")
     id("io.gitlab.arturbosch.detekt") version "1.0.1"
-    id("dev.zacsweers.redacted.redacted-gradle-plugin")
+    id("dev.zacsweers.redacted")
 }
 
 plugins.apply(AppetizePlugin::class)
@@ -84,7 +83,7 @@ android {
     buildTypes {
         getByName("release") {
             signingConfig = signingConfigs.getByName("FakeSigningConfig")
-            manifestPlaceholders = mapOf("applicationIcon" to "@mipmap/ic_launcher")
+            manifestPlaceholders(mapOf("applicationIcon" to "@mipmap/ic_launcher"))
             isDebuggable = false
             isMinifyEnabled = false
             buildConfigField("boolean", "IS_INTERNAL_BUILD", "false")
@@ -98,7 +97,7 @@ android {
         getByName("debug") {
             signingConfig = signingConfigs.getByName("FakeSigningConfig")
             applicationIdSuffix = ".debug"
-            manifestPlaceholders = mapOf("applicationIcon" to "@mipmap/ic_launcher_grayscale")
+            manifestPlaceholders(mapOf("applicationIcon" to "@mipmap/ic_launcher_grayscale"))
             isDebuggable = true
             isJniDebuggable = true
             isMinifyEnabled = false
