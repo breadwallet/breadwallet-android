@@ -69,6 +69,7 @@ private const val MATERIAL_VERSION = "1.2.1"
 const val REDACTED_VERSION = "0.8.0"
 private const val DETEKT_VERSION = "1.0.1"
 private const val COMMONS_COMPRESS_VERSION = "1.20"
+private const val BIOMETRIC_VERSION = "1.2.0-alpha02"
 
 object Libs {
     object WalletKit {
@@ -87,6 +88,7 @@ object Libs {
         const val RecyclerView = "androidx.recyclerview:recyclerview:$RECYCLER_VERSION"
         const val Security = "androidx.security:security-crypto:$SECURITY_VERSION"
         const val LegacyV13 = "androidx.legacy:legacy-support-v13:$LEGACY_V13"
+        const val Biometric = "androidx.biometric:biometric-ktx:$BIOMETRIC_VERSION"
     }
 
     object AndroidxTest {

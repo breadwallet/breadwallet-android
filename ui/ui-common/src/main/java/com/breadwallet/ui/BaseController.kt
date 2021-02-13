@@ -157,13 +157,27 @@ abstract class BaseController(
         }
     }
 
+    protected fun <T> resetOnDetach(block: () -> T): ReadOnlyProperty<BaseController, T> {
+        return ResettableDelegate(ResetCallback.ON_DETACH, block)
+    }
+
+    protected fun <T> resetOnViewDestroy(block: () -> T): ReadOnlyProperty<BaseController, T> {
+        return ResettableDelegate(ResetCallback.ON_DESTROY_VIEW, block)
+    }
+
+    protected fun <T> resetOnDestroy(block: () -> T): ReadOnlyProperty<BaseController, T> {
+        return ResettableDelegate(ResetCallback.ON_DESTROY, block)
+    }
+
     /**
      * Produce a [ViewBinding] [T] during [onCreateView] and use the
      * [ViewBinding.getRoot] as the [Controller.getView].
      *
      * The binding will be released in [onDestroyView].
      *
-     * *NOTE:* The binding only exists between [onCreateView] and [onDestroyView]
+     * *NOTE:* The binding only exists between [onCreateView] and [onDestroyView].
+     * Multiple bindings can be created, but only the first defined binding is
+     * used as the Controller's view.
      */
     protected fun <T : ViewBinding> viewBinding(
         block: (LayoutInflater) -> T

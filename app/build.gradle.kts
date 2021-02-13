@@ -116,7 +116,9 @@ android {
             output.outputFileName = "${output.baseName}-${BrdRelease.internalVersionName}.apk"
         }
     }
-
+    buildFeatures {
+        viewBinding = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -144,6 +146,7 @@ dependencies {
     implementation(Libs.WalletKit.CoreAndroid)
 
     // AndroidX
+    implementation(Libs.Androidx.Biometric)
     implementation(Libs.Androidx.LifecycleExtensions)
     implementation(Libs.Androidx.LifecycleScopeKtx)
     implementation(Libs.Androidx.WorkManagerKtx)

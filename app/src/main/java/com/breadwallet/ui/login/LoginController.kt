@@ -27,12 +27,15 @@ package com.breadwallet.ui.login
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.view.View
 import android.view.animation.AccelerateInterpolator
+import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerLoginBinding
 import com.breadwallet.legacy.presenter.customviews.PinLayout
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.ui.BaseMobiusController
@@ -43,8 +46,6 @@ import com.breadwallet.ui.login.LoginScreen.E
 import com.breadwallet.ui.login.LoginScreen.F
 import com.breadwallet.ui.login.LoginScreen.M
 import drewcarlson.mobius.flow.FlowTransformer
-import kotlinx.android.synthetic.main.controller_login.*
-import kotlinx.android.synthetic.main.pin_digits.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -60,12 +61,11 @@ import org.kodein.di.erased.instance
 
 private const val EXTRA_URL = "PENDING_URL"
 private const val EXTRA_SHOW_HOME = "SHOW_HOME"
+private const val UNLOCKED_DELAY_MS = 200L
 
 class LoginController(args: Bundle? = null) :
     BaseMobiusController<M, E, F>(args),
     AuthenticationController.Listener {
-
-    override val layoutId = R.layout.controller_login
 
     constructor(intentUrl: String?) : this(
         bundleOf(EXTRA_URL to intentUrl)
@@ -87,17 +87,43 @@ class LoginController(args: Bundle? = null) :
             direct.instance()
         )
 
-    override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        modelFlow.map { it.fingerprintEnable }
-            .distinctUntilChanged()
-            .onEach { fingerprintEnable ->
-                fingerprint_icon.isVisible = fingerprintEnable
+    private val binding by viewBinding(ControllerLoginBinding::inflate)
+
+    private val biometricPrompt by resetOnViewDestroy {
+        BiometricPrompt(
+            activity as AppCompatActivity,
+            ContextCompat.getMainExecutor(activity),
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    eventConsumer.accept(E.OnAuthenticationSuccess)
+                }
+
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    // Defer to pin authentication on error
+                    if (errorCode != BiometricPrompt.ERROR_CANCELED) {
+                        eventConsumer.accept(E.OnAuthenticationFailed)
+                    }
+                }
+
+                // Ignored: only handle final events from onAuthenticationError
+                override fun onAuthenticationFailed() = Unit
             }
-            .launchIn(uiBindScope)
-        return merge(
-            fingerprint_icon.clicks().map { E.OnFingerprintClicked },
-            pin_digits.bindInput()
         )
+    }
+
+    override fun bindView(modelFlow: Flow<M>): Flow<E> {
+        return with(binding) {
+            modelFlow.map { it.fingerprintEnable }
+                .distinctUntilChanged()
+                .onEach { fingerprintEnable ->
+                    fingerprintIcon.isVisible = fingerprintEnable
+                }
+                .launchIn(uiBindScope)
+            merge(
+                fingerprintIcon.clicks().map { E.OnFingerprintClicked },
+                pinDigits.bindInput()
+            )
+        }
     }
 
     private fun PinLayout.bindInput() = callbackFlow<E> {
@@ -117,18 +143,20 @@ class LoginController(args: Bundle? = null) :
                 )
             }
         }
-        setup(brkeyboard, pinListener)
+        setup(binding.brkeyboard, pinListener)
         awaitClose { cleanUp() }
     }
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        brkeyboard.setShowDecimal(false)
-        brkeyboard.setDeleteButtonBackgroundColor(resources!!.getColor(android.R.color.transparent))
-        brkeyboard.setDeleteImage(R.drawable.ic_delete_dark)
+        with(binding) {
+            brkeyboard.setShowDecimal(false)
+            brkeyboard.setDeleteButtonBackgroundColor(resources!!.getColor(android.R.color.transparent))
+            brkeyboard.setDeleteImage(R.drawable.ic_delete_dark)
 
-        val pinDigitButtonColors = resources!!.getIntArray(R.array.pin_digit_button_colors)
-        brkeyboard.setButtonTextColor(pinDigitButtonColors)
+            val pinDigitButtonColors = resources!!.getIntArray(R.array.pin_digit_button_colors)
+            brkeyboard.setButtonTextColor(pinDigitButtonColors)
+        }
     }
 
     override fun handleBack() =
@@ -139,6 +167,14 @@ class LoginController(args: Bundle? = null) :
         when (effect) {
             F.AuthenticationSuccess -> unlockWallet()
             F.AuthenticationFailed -> showError()
+            F.ShowFingerprintController -> {
+                biometricPrompt.authenticate(
+                    BiometricPrompt.PromptInfo.Builder()
+                        .setTitle(resources!!.getString(R.string.UnlockScreen_touchIdTitle_android))
+                        .setNegativeButtonText(resources!!.getString(R.string.Prompts_TouchId_usePin_android))
+                        .build()
+                )
+            }
         }
     }
 
@@ -148,24 +184,26 @@ class LoginController(args: Bundle? = null) :
     }
 
     private fun unlockWallet() {
-        fingerprint_icon.visibility = View.INVISIBLE
-        pinLayout.animate().translationY(-R.dimen.animation_long.toFloat())
-            .setInterpolator(AccelerateInterpolator())
-        brkeyboard.animate().translationY(R.dimen.animation_long.toFloat())
-            .setInterpolator(AccelerateInterpolator())
-        unlocked_image.animate().alpha(1f)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    super.onAnimationEnd(animation)
-                    controllerScope.launch {
-                        delay(DateUtils.SECOND_IN_MILLIS / 2)
-                        eventConsumer.accept(E.OnUnlockAnimationEnd)
+        with(binding) {
+            fingerprintIcon.visibility = View.INVISIBLE
+            pinDigits.animate().translationY(-com.breadwallet.R.dimen.animation_long.toFloat())
+                .setInterpolator(AccelerateInterpolator())
+            brkeyboard.animate().translationY(com.breadwallet.R.dimen.animation_long.toFloat())
+                .setInterpolator(AccelerateInterpolator())
+            unlockedImage.animate().alpha(1f)
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        super.onAnimationEnd(animation)
+                        controllerScope.launch {
+                            delay(UNLOCKED_DELAY_MS)
+                            eventConsumer.accept(E.OnUnlockAnimationEnd)
+                        }
                     }
-                }
-            })
+                })
+        }
     }
 
     private fun showError() {
-        SpringAnimator.failShakeAnimation(applicationContext, pinLayout)
+        SpringAnimator.failShakeAnimation(applicationContext, binding.pinDigits)
     }
 }
