@@ -66,7 +66,7 @@ class NotificationSettingsController : BaseController() {
         super.onAttach(view)
         val owner = (activity as AppCompatActivity)
         viewModel.refreshState()
-        viewModel.notificationsEnable.observe(owner, Observer { state ->
+        viewModel.notificationsEnable.observe(owner) { state ->
             when (state) {
                 NotificationsState.APP_ENABLED -> {
                     toggle_button.isChecked = true
@@ -86,8 +86,9 @@ class NotificationSettingsController : BaseController() {
                     open_settings_btn.post { open_settings_btn.visibility = View.VISIBLE }
                     current_settings_description.setText(R.string.PushNotifications_enableInstructions)
                 }
+                null -> Unit
             }
-        })
+        }
     }
 
     private fun setListeners() {
@@ -129,7 +130,7 @@ class NotificationSettingsController : BaseController() {
     private fun updateNotifications(notificationsEnabled: Boolean) {
         val owner = (activity as AppCompatActivity)
         viewModel.togglePushNotifications(notificationsEnabled)
-            .observe(owner, Observer { resource ->
+            .observe(owner) { resource ->
                 when (resource?.status) {
                     Status.LOADING -> {
                         progress_layout.visibility = View.VISIBLE
@@ -145,6 +146,6 @@ class NotificationSettingsController : BaseController() {
                         logDebug("Settings updated")
                     }
                 }
-            })
+            }
     }
 }

@@ -82,7 +82,6 @@ class AddWalletsController : BaseMobiusController<M, E, F>() {
         modelFlow: Flow<M>
     ) = callbackFlow<E> {
         val adapter = AddTokenListAdapter(
-            context = checkNotNull(applicationContext),
             tokensFlow = modelFlow
                 .map { model -> model.tokens }
                 .distinctUntilChanged(),

@@ -38,7 +38,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKeys
+import androidx.security.crypto.MasterKey
 import com.breadwallet.BuildConfig
 import com.breadwallet.breadbox.BdbAuthInterceptor
 import com.breadwallet.breadbox.BreadBox
@@ -130,8 +130,6 @@ private const val WALLETKIT_DATA_DIR_NAME = "cryptocore"
 class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
     companion object {
-        private val TAG = BreadApp::class.java.name
-
         init {
             CryptoApi.initialize(CryptoApiProvider.getInstance())
         }
@@ -140,7 +138,6 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
         private const val WALLET_ID_PATTERN = "^[a-z0-9 ]*$"
         private const val WALLET_ID_SEPARATOR = " "
         private const val NUMBER_OF_BYTES_FOR_SHA256_NEEDED = 10
-        private const val SERVER_SHUTDOWN_DELAY_MILLIS = 60000L // 60 seconds
 
         @SuppressLint("StaticFieldLeak")
         private lateinit var mInstance: BreadApp
@@ -404,6 +401,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
                 Lifecycle.Event.ON_START -> handleOnStart()
                 Lifecycle.Event.ON_STOP -> handleOnStop()
                 Lifecycle.Event.ON_DESTROY -> handleOnDestroy()
+                else -> Unit
             }
         }
 
@@ -509,16 +507,18 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
     private fun createEncryptedPrefs(fileName: String): SharedPreferences? {
         val masterKeys = runCatching {
-            MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+            MasterKey.Builder(this)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
         }.onFailure { e ->
             BRReportsManager.error("Failed to create Master Keys", e)
         }.getOrNull() ?: return null
 
         return runCatching {
             EncryptedSharedPreferences.create(
+                this@BreadApp,
                 fileName,
                 masterKeys,
-                this@BreadApp,
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )

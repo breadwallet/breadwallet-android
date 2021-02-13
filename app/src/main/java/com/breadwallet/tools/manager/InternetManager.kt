@@ -22,6 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+@file:Suppress("DEPRECATION")
 package com.breadwallet.tools.manager
 
 import android.content.BroadcastReceiver

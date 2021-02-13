@@ -87,6 +87,5 @@ class SlideDetector(private val root: View) : View.OnTouchListener {
 
     private fun removeCurrentView() {
         router?.popCurrentController()
-        (context as? Activity)?.fragmentManager?.popBackStack()
     }
 }
