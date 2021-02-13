@@ -30,6 +30,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerImportWalletBinding
 import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.ViewEffect
@@ -40,9 +41,7 @@ import com.breadwallet.ui.importwallet.Import.E
 import com.breadwallet.ui.importwallet.Import.F
 import com.breadwallet.ui.importwallet.Import.IMPORT_SUCCESS_DIALOG
 import com.breadwallet.ui.importwallet.Import.M
-import com.breadwallet.ui.importwallet.Import.M.LoadingState
 import com.breadwallet.ui.scanner.ScannerController
-import kotlinx.android.synthetic.main.controller_import_wallet.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -79,11 +78,11 @@ class ImportController(
         bundleOf(
             PRIVATE_KEY to privateKey,
             PASSWORD_PROTECTED to isPasswordProtected,
-            RECLAIMING_GIFT to reclaimingGift
+            RECLAIMING_GIFT to reclaimingGift,
+            SCANNED to scanned,
+            GIFT to gift
         )
     )
-
-    override val layoutId = R.layout.controller_import_wallet
 
     override val init = ImportInit
     override val update = ImportUpdate
@@ -91,7 +90,7 @@ class ImportController(
         privateKey = argOptional(PRIVATE_KEY),
         isPasswordProtected = arg(PASSWORD_PROTECTED, false),
         reclaimGiftHash = argOptional(RECLAIMING_GIFT),
-        scanned = arg(GIFT)
+        scanned = arg(SCANNED, false)
     )
 
     override val kodein by Kodein.lazy {
@@ -107,38 +106,44 @@ class ImportController(
             direct.instance()
         )
 
+    private val binding by viewBinding(ControllerImportWalletBinding::inflate)
+
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
         modelFlow
             .map { it.loadingState }
             .distinctUntilChanged()
             .onEach { state ->
-                val isLoading = state != LoadingState.IDLE
+                val isLoading = state != M.LoadingState.IDLE
                 // Disable navigation
-                scan_button.isEnabled = !isLoading
-                faq_button.isEnabled = !isLoading
-                close_button.isEnabled = !isLoading
+                with(binding) {
+                    scanButton.isEnabled = !isLoading
+                    faqButton.isEnabled = !isLoading
+                    closeButton.isEnabled = !isLoading
 
-                // Set loading visibility
-                scan_button.isGone = isLoading
-                progressBar.isVisible = isLoading
-                label_import_status.isVisible = isLoading
+                    // Set loading visibility
+                    scanButton.isGone = isLoading
+                    progressBar.isVisible = isLoading
+                    labelImportStatus.isVisible = isLoading
+                }
 
                 // Set loading message
                 val messageId = when (state) {
-                    LoadingState.ESTIMATING,
-                    LoadingState.VALIDATING -> R.string.Import_checking
-                    LoadingState.SUBMITTING -> R.string.Import_importing
+                    M.LoadingState.ESTIMATING,
+                    M.LoadingState.VALIDATING -> R.string.Import_checking
+                    M.LoadingState.SUBMITTING -> R.string.Import_importing
                     else -> null
                 }
-                messageId?.let(label_import_status::setText)
+                messageId?.let(binding.labelImportStatus::setText)
             }
             .launchIn(uiBindScope)
 
-        return merge(
-            close_button.clicks().map { E.OnCloseClicked },
-            faq_button.clicks().map { E.OnFaqClicked },
-            scan_button.clicks().map { E.OnScanClicked }
-        )
+        return with(binding) {
+            merge(
+                closeButton.clicks().map { E.OnCloseClicked },
+                faqButton.clicks().map { E.OnFaqClicked },
+                scanButton.clicks().map { E.OnScanClicked }
+            )
+        }
     }
 
     override fun handleBack(): Boolean {

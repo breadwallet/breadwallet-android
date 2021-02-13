@@ -27,7 +27,6 @@ package com.breadwallet.ui.wallet
 import android.animation.AnimatorInflater
 import android.animation.LayoutTransition
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.transition.TransitionManager
@@ -35,6 +34,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
+import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -45,15 +45,14 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.WalletState
 import com.breadwallet.breadbox.formatCryptoForUi
-import com.breadwallet.ui.formatFiatForUi
+import com.breadwallet.databinding.ControllerWalletBinding
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
-import com.breadwallet.legacy.presenter.customviews.BaseTextView
+import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.logger.logDebug
 import com.breadwallet.model.PriceDataPoint
 import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
-import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
@@ -69,7 +68,6 @@ import com.breadwallet.ui.wallet.spark.SparkAdapter
 import com.breadwallet.ui.wallet.spark.SparkView
 import com.breadwallet.ui.wallet.spark.animation.LineSparkAnimator
 import com.breadwallet.ui.web.WebController
-import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isTezos
 import com.google.android.material.appbar.AppBarLayout
 import com.mikepenz.fastadapter.FastAdapter
@@ -77,12 +75,6 @@ import com.mikepenz.fastadapter.GenericFastAdapter
 import com.mikepenz.fastadapter.adapters.GenericModelAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.adapters.ModelAdapter
-import com.spotify.mobius.Connectable
-import kotlinx.android.synthetic.main.chart_view.*
-import kotlinx.android.synthetic.main.controller_wallet.*
-import kotlinx.android.synthetic.main.market_data_view.*
-import kotlinx.android.synthetic.main.view_delisted_token.*
-import kotlinx.android.synthetic.main.wallet_toolbar.*
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.awaitClose
@@ -115,8 +107,6 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
 
     private val currencyCode = arg<String>(EXTRA_CURRENCY_CODE)
 
-    override val layoutId = R.layout.controller_wallet
-
     override val defaultModel = M.createDefault(currencyCode)
     override val init = WalletInit
     override val update = WalletUpdate
@@ -124,90 +114,90 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
         get() = WalletScreenHandler.createEffectHandler(
             checkNotNull(applicationContext),
             direct.instance(),
-            Connectable { output ->
+            { output ->
                 MetaDataEffectHandler(output, direct.instance(), direct.instance())
             },
             direct.instance(),
             direct.instance()
         )
 
+    protected val binding by viewBinding(ControllerWalletBinding::inflate)
+
     private var fastAdapter: GenericFastAdapter? = null
     private var txAdapter: GenericModelAdapter<WalletTransaction>? = null
     private var syncAdapter: ItemAdapter<SyncingItem>? = null
     private var stakingAdapter: ItemAdapter<StakingItem>? = null
     private var mPriceDataAdapter = SparkAdapter()
-    private val mIntervalButtons: List<BaseTextView>
-        get() = listOf<BaseTextView>(
-            one_day,
-            one_week,
-            one_month,
-            three_months,
-            one_year,
-            three_years
-        )
-
-    override fun onCreateView(view: View) {
-        super.onCreateView(view)
-
-        updateUi()
-        setPriceTags(BRSharedPrefs.isCryptoPreferred(), false)
-
-        more_info_button.setOnClickListener {
-            val url = NavigationTarget.SupportPage(BRConstants.FAQ_UNSUPPORTED_TOKEN).asSupportUrl()
-            router.pushController(
-                RouterTransaction.with(
-                    WebController(url)
-                )
+    private val mIntervalButtons: List<TextView>
+        get() = with(binding.chartContainer) {
+            listOf<TextView>(
+                oneDay,
+                oneWeek,
+                oneMonth,
+                threeMonths,
+                oneYear,
+                threeYears
             )
         }
 
-        txAdapter = ModelAdapter { TransactionListItem(it, currentModel.isCryptoPreferred) }
-        syncAdapter = ItemAdapter()
-        stakingAdapter = ItemAdapter()
-        fastAdapter = FastAdapter.with(listOf(syncAdapter!!, stakingAdapter!!, txAdapter!!))
-        checkNotNull(fastAdapter).onClickListener = { _, _, item, _ ->
-            when (item) {
-                is TransactionListItem ->
-                    eventConsumer.accept(E.OnTransactionClicked(item.model.txHash))
-                is StakingItem -> eventConsumer.accept(E.OnStakingCellClicked)
+    override fun onCreateView(view: View) {
+        super.onCreateView(view)
+        with(binding) {
+            updateUi()
+            setPriceTags(BRSharedPrefs.isCryptoPreferred(), false)
+            delistedTokenLayout.moreInfoButton.setOnClickListener {
+                val url = NavigationTarget.SupportPage(BRConstants.FAQ_UNSUPPORTED_TOKEN).asSupportUrl()
+                router.pushController(
+                    RouterTransaction.with(
+                        WebController(url)
+                    )
+                )
             }
-            true
-        }
 
-        // TODO: When we get another staking currency, should re-assess how to perform this check
-        if (currencyCode.isTezos()) {
-            stakingAdapter!!.setNewList(listOf(StakingItem(currencyCode)))
-        }
-
-        tx_list.adapter = fastAdapter
-        tx_list.itemAnimator = DefaultItemAnimator()
-        tx_list.layoutManager = object : LinearLayoutManager(applicationContext) {
-            override fun onLayoutCompleted(state: RecyclerView.State?) {
-                super.onLayoutCompleted(state)
-                val adapter = checkNotNull(txAdapter)
-                updateVisibleTransactions(adapter, this, viewCreatedScope.actor {
-                    for (event in channel) {
-                        eventConsumer.accept(event)
-                    }
-                })
+            txAdapter = ModelAdapter { TransactionListItem(it, currentModel.isCryptoPreferred) }
+            syncAdapter = ItemAdapter()
+            stakingAdapter = ItemAdapter()
+            fastAdapter = FastAdapter.with(listOf(syncAdapter!!, stakingAdapter!!, txAdapter!!))
+            checkNotNull(fastAdapter).onClickListener = { _, _, item, _ ->
+                when (item) {
+                    is TransactionListItem ->
+                        eventConsumer.accept(E.OnTransactionClicked(item.model.txHash))
+                    is StakingItem -> eventConsumer.accept(E.OnStakingCellClicked)
+                }
+                true
             }
-        }
 
-        spark_line.setAdapter(mPriceDataAdapter)
-        spark_line.sparkAnimator = LineSparkAnimator().apply {
-            duration = MARKET_CHART_ANIMATION_DURATION
-            interpolator = AccelerateInterpolator(MARKET_CHART_ANIMATION_ACCELERATION)
-        }
+            // TODO: When we get another staking currency, should re-assess how to perform this check
+            if (currencyCode.isTezos()) {
+                stakingAdapter!!.setNewList(listOf(StakingItem(currencyCode)))
+            }
 
-        appbar.addOnOffsetChangedListener(this)
+            txList.adapter = fastAdapter
+            txList.itemAnimator = DefaultItemAnimator()
+            txList.layoutManager = object : LinearLayoutManager(applicationContext) {
+                override fun onLayoutCompleted(state: RecyclerView.State?) {
+                    super.onLayoutCompleted(state)
+                    val adapter = checkNotNull(txAdapter)
+                    updateVisibleTransactions(adapter, this, viewCreatedScope.actor {
+                        for (event in channel) {
+                            eventConsumer.accept(event)
+                        }
+                    })
+                }
+            }
 
-        if (currencyCode.isBitcoin()) {
-            gift_button.visibility = View.VISIBLE
+            chartContainer.sparkLine.setAdapter(mPriceDataAdapter)
+            chartContainer.sparkLine.sparkAnimator = LineSparkAnimator().apply {
+                duration = MARKET_CHART_ANIMATION_DURATION
+                interpolator = AccelerateInterpolator(MARKET_CHART_ANIMATION_ACCELERATION)
+            }
+
+            appbar.addOnOffsetChangedListener(this@WalletController)
         }
     }
 
     override fun onDestroyView(view: View) {
-        appbar.removeOnOffsetChangedListener(this)
+        binding.appbar.removeOnOffsetChangedListener(this)
         txAdapter = null
         fastAdapter = null
         mPriceDataAdapter = SparkAdapter()
@@ -216,57 +206,59 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
         // Tx Action buttons
-        send_button.setHasShadow(false)
-        receive_button.setHasShadow(false)
+        return with(binding) {
+            sendButton.setHasShadow(false)
+            receiveButton.setHasShadow(false)
 
-        return merge(
-            send_button.clicks().map { E.OnSendClicked },
-            receive_button.clicks().map { E.OnReceiveClicked },
-            buttonCreateAccount.clicks().map { E.OnCreateAccountClicked },
-            search_icon.clicks().map { E.OnSearchClicked },
-            back_icon.clicks().map { E.OnBackClicked },
-            gift_button.clicks().map { E.OnGiftClicked },
-            bindTxList(),
-            bindIntervalClicks(),
-            bindSparkLineScrubbing(),
             merge(
-                balance_primary.clicks(),
-                balance_secondary.clicks()
-            ).map { E.OnChangeDisplayCurrencyClicked },
-            callbackFlow {
-                search_bar.setEventOutput(channel)
-                awaitClose { search_bar.setEventOutput(null) }
-            }
-        )
+                sendButton.clicks().map { E.OnSendClicked },
+                receiveButton.clicks().map { E.OnReceiveClicked },
+                buttonCreateAccount.clicks().map { E.OnCreateAccountClicked },
+                breadBar.searchIcon.clicks().map { E.OnSearchClicked },
+                breadBar.backIcon.clicks().map { E.OnBackClicked },
+                bindTxList(),
+                bindIntervalClicks(),
+                bindSparkLineScrubbing(),
+                merge(
+                    balancePrimary.clicks(),
+                    balanceSecondary.clicks()
+                ).map { E.OnChangeDisplayCurrencyClicked },
+                callbackFlow {
+                    searchBar.setEventOutput(channel)
+                    awaitClose { searchBar.setEventOutput(null) }
+                }
+            )
+        }
     }
 
     @Suppress("ComplexMethod")
     private fun bindIntervalClicks(): Flow<E> =
         callbackFlow {
             val intervalClickListener = View.OnClickListener { v ->
-                E.OnChartIntervalSelected(
-                    when (v.id) {
-                        one_day.id -> Interval.ONE_DAY
-                        one_week.id -> Interval.ONE_WEEK
-                        one_month.id -> Interval.ONE_MONTH
-                        three_months.id -> Interval.THREE_MONTHS
-                        one_year.id -> Interval.ONE_YEAR
-                        three_years.id -> Interval.THREE_YEARS
-                        else -> error("Unknown button pressed")
-                    }
-                ).run(::offer)
+                with(binding.chartContainer) {
+                    E.OnChartIntervalSelected(
+                        when (v.id) {
+                            oneDay.id -> Interval.ONE_DAY
+                            oneWeek.id -> Interval.ONE_WEEK
+                            oneMonth.id -> Interval.ONE_MONTH
+                            threeMonths.id -> Interval.THREE_MONTHS
+                            oneYear.id -> Interval.ONE_YEAR
+                            threeYears.id -> Interval.THREE_YEARS
+                            else -> error("Unknown button pressed")
+                        }
+                    ).run(::offer)
+                }
             }
-            val inputs = arrayOf(one_day, one_week, one_month, three_months, one_year, three_years)
-            inputs.forEach { it.setOnClickListener(intervalClickListener) }
+            mIntervalButtons.forEach { it.setOnClickListener(intervalClickListener) }
             awaitClose {
-                inputs.forEach { it.setOnClickListener(null) }
+                mIntervalButtons.forEach { it.setOnClickListener(null) }
             }
         }
 
     private fun bindSparkLineScrubbing(): Flow<E> =
         callbackFlow {
             val channel = channel
-            spark_line.scrubListener = object : SparkView.OnScrubListener {
+            binding.chartContainer.sparkLine.scrubListener = object : SparkView.OnScrubListener {
                 override fun onScrubbed(value: Any?) {
                     if (value == null) {
                         channel.offer(E.OnChartDataPointReleased)
@@ -278,21 +270,22 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
                 }
             }
             awaitClose {
-                spark_line.scrubListener = null
+                binding.chartContainer.sparkLine.scrubListener = null
             }
         }
 
     private fun bindTxList(): Flow<E> =
         callbackFlow {
             // Tx List
-            tx_list.addOnScrollListener(
+            val channel = channel
+            binding.txList.addOnScrollListener(
                 object : RecyclerView.OnScrollListener() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         super.onScrollStateChanged(recyclerView, newState)
 
                         when (newState) {
                             RecyclerView.SCROLL_STATE_DRAGGING -> {
-                                offer(E.OnVisibleTransactionsChanged(emptyList()))
+                                channel.offer(E.OnVisibleTransactionsChanged(emptyList()))
                             }
                             RecyclerView.SCROLL_STATE_IDLE -> {
                                 val adapter = checkNotNull(txAdapter)
@@ -307,7 +300,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
             )
 
             awaitClose {
-                tx_list.clearOnScrollListeners()
+                binding.txList.clearOnScrollListeners()
             }
         }
 
@@ -336,196 +329,202 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
         val adapter = checkNotNull(txAdapter)
         val resources = checkNotNull(resources)
 
-        ifChanged(M::currencyName, currency_label::setText)
+        with(binding) {
 
-        ifChanged(M::balance) {
-            balance_secondary.text = it.formatCryptoForUi(currencyCode, scale = MAX_CRYPTO_DIGITS)
-        }
+            ifChanged(M::currencyName, breadBar.currencyLabel::setText)
 
-        ifChanged(M::fiatBalance) {
-            // TODO: Move preferredFiatIso to model
-            val preferredFiatIso = BRSharedPrefs.getPreferredFiatIso()
-            balance_primary.text = CurrencyUtils.getFormattedFiatAmount(preferredFiatIso, it)
-        }
-
-        ifChanged(M::isCryptoPreferred) {
-            setPriceTags(it, true)
-
-            adapter.itemList.items
-                .filterIsInstance<TransactionListItem>()
-                .forEach { item ->
-                    item.isCryptoPreferred = isCryptoPreferred
-                }
-            checkNotNull(fastAdapter).notifyAdapterDataSetChanged()
-        }
-
-        ifChanged(
-            M::isFilterApplied,
-            M::filteredTransactions,
-            M::transactions
-        ) {
-            if (isFilterApplied) {
-                adapter.setNewList(filteredTransactions)
-            } else {
-                adapter.setNewList(transactions)
+            ifChanged(M::balance) {
+                balanceSecondary.text = it.formatCryptoForUi(currencyCode, scale = MAX_CRYPTO_DIGITS)
             }
-        }
 
-        // Update header area
-        ifChanged(
-            M::hasInternet,
-            M::isShowingSearch
-        ) {
-            when {
-                hasInternet && isShowingSearch -> {
-                    notification_bar.isVisible = false
-                    // TODO revisit this animation with conductor
-                    search_bar.onShow(true)
-                    if (search_bar.y != 0f) {
-                        val searchBarAnimation =
-                            AnimatorInflater.loadAnimator(applicationContext, R.animator.from_top)
-                        searchBarAnimation.setTarget(search_bar)
-                        searchBarAnimation.start()
-                    }
-                    search_bar.render(this)
-                }
-                hasInternet && !isShowingSearch -> {
-                    notification_bar.isVisible = false
-                    if (search_bar.y == 0f) {
-                        val searchBarAnimation =
-                            AnimatorInflater.loadAnimator(applicationContext, R.animator.to_top)
-                        searchBarAnimation.setTarget(search_bar)
-                        searchBarAnimation.start()
-                    }
-                    search_bar.onShow(false)
-                }
-                else -> {
-                    notification_bar.isVisible = true
-                }
+            ifChanged(M::fiatBalance) {
+                // TODO: Move preferredFiatIso to model
+                val preferredFiatIso = BRSharedPrefs.getPreferredFiatIso()
+                balancePrimary.text = it.formatFiatForUi(preferredFiatIso)
             }
-        }
 
-        ifChanged(
-            M::filterComplete,
-            M::filterPending,
-            M::filterReceived,
-            M::filterSent
-        ) {
-            search_bar.render(this)
-        }
+            ifChanged(M::isCryptoPreferred) {
+                setPriceTags(it, true)
 
-        // Update sync progress
-        ifChanged(
-            M::syncProgress,
-            M::isSyncing,
-            M::syncingThroughMillis
-        ) {
-            val syncAdapter = syncAdapter!!
-            if (isSyncing) {
-                val item = syncAdapter.adapterItems.firstOrNull() ?: SyncingItem()
-                item.syncProgress = syncProgress
-                item.syncThroughMillis = syncingThroughMillis
+                adapter.itemList.items
+                    .filterIsInstance<TransactionListItem>()
+                    .forEach { item ->
+                        item.isCryptoPreferred = isCryptoPreferred
+                    }
+                checkNotNull(fastAdapter).notifyAdapterDataSetChanged()
+            }
 
-                if (syncAdapter.adapterItemCount == 0) {
-                    syncAdapter.setNewList(listOf(item))
+            ifChanged(
+                M::isFilterApplied,
+                M::filteredTransactions,
+                M::transactions
+            ) {
+                if (isFilterApplied) {
+                    adapter.setNewList(filteredTransactions)
                 } else {
-                    fastAdapter?.notifyAdapterDataSetChanged()
-                }
-            } else {
-                syncAdapter.setNewList(emptyList())
-            }
-        }
-        ifChanged(M::state) {
-            when (state) {
-                WalletState.Initialized -> {
-                    layout_send_receive.isVisible = true
-                    layoutCreateAccount.isVisible = false
-                }
-                WalletState.Error, WalletState.Loading -> {
-                    layout_send_receive.isVisible = false
-                    layoutCreateAccount.isVisible = true
-                    buttonCreateAccount.isVisible = false
-                    progressCreateAccount.isVisible = true
-                }
-                WalletState.WaitingOnAction -> {
-                    layout_send_receive.isVisible = false
-                    layoutCreateAccount.isVisible = true
-                    buttonCreateAccount.isVisible = true
-                    progressCreateAccount.isVisible = false
+                    adapter.setNewList(transactions)
                 }
             }
-        }
 
-        ifChanged(M::priceChartDataPoints) {
-            mPriceDataAdapter.dataSet = it
-            mPriceDataAdapter.notifyDataSetChanged()
-        }
-
-        ifChanged(M::priceChartIsLoading) {
-            if (!it && priceChartDataPoints.isEmpty()) toolbar_layout.isVisible = false
-        }
-
-        ifChanged(M::priceChartInterval) {
-            val deselectedColor = resources.getColor(R.color.trans_white)
-            val selectedColor = resources.getColor(R.color.white)
-            mIntervalButtons.forEachIndexed { index, baseTextView ->
-                baseTextView.setTextColor(
-                    when (priceChartInterval.ordinal) {
-                        index -> selectedColor
-                        else -> deselectedColor
+            // Update header area
+            ifChanged(
+                M::hasInternet,
+                M::isShowingSearch
+            ) {
+                when {
+                    hasInternet && isShowingSearch -> {
+                        notificationBar.isVisible = false
+                        // TODO revisit this animation with conductor
+                        searchBar.onShow(true)
+                        if (searchBar.y != 0f) {
+                            val searchBarAnimation =
+                                AnimatorInflater.loadAnimator(applicationContext, R.animator.from_top)
+                            searchBarAnimation.setTarget(searchBar)
+                            searchBarAnimation.start()
+                        }
+                        searchBar.render(this@render)
                     }
-                )
-            }
-        }
-
-        ifChanged(
-            M::selectedPriceDataPoint,
-            M::fiatPricePerUnit,
-            M::priceChartInterval
-        ) {
-            if (selectedPriceDataPoint == null) {
-                chart_label.text = priceChange?.toString().orEmpty()
-                currency_usd_price.text = fiatPricePerUnit
-            } else {
-                currency_usd_price.text = selectedPriceDataPoint.closePrice
-                    .toBigDecimal()
-                    .formatFiatForUi(BRSharedPrefs.getPreferredFiatIso())
-
-                val format = when (priceChartInterval) {
-                    Interval.ONE_DAY, Interval.ONE_WEEK ->
-                        MARKET_CHART_DATE_WITH_HOUR
-                    else -> MARKET_CHART_DATE_WITH_YEAR
+                    hasInternet && !isShowingSearch -> {
+                        notificationBar.isVisible = false
+                        if (searchBar.y == 0f) {
+                            val searchBarAnimation =
+                                AnimatorInflater.loadAnimator(applicationContext, R.animator.to_top)
+                            searchBarAnimation.setTarget(searchBar)
+                            searchBarAnimation.start()
+                        }
+                        searchBar.onShow(false)
+                    }
+                    else -> {
+                        notificationBar.isVisible = true
+                    }
                 }
-                val dateFormat = SimpleDateFormat(format, Locale.ROOT)
-                chart_label.text = dateFormat.format(selectedPriceDataPoint.time)
             }
-        }
 
-        ifChanged(M::isShowingDelistedBanner) {
-            if (isShowingDelistedBanner) showDelistedTokenBanner()
-        }
-
-        ifChanged(M::marketDataState) {
-            market_data.isVisible = marketDataState != MarketDataState.ERROR
-            market_data.layoutParams.height = if (marketDataState == MarketDataState.LOADED) {
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            } else {
-                0
+            ifChanged(
+                M::filterComplete,
+                M::filterPending,
+                M::filterReceived,
+                M::filterSent
+            ) {
+                searchBar.render(this@render)
             }
-        }
 
-        ifChanged(
-            M::marketCap,
-            M::totalVolume,
-            M::high24h,
-            M::low24h
-        ) {
-            val preferredFiat = BRSharedPrefs.getPreferredFiatIso().toUpperCase(Locale.ROOT)
+            // Update sync progress
+            ifChanged(
+                M::syncProgress,
+                M::isSyncing,
+                M::syncingThroughMillis
+            ) {
+                val syncAdapter = syncAdapter!!
+                if (isSyncing) {
+                    val item = syncAdapter.adapterItems.firstOrNull() ?: SyncingItem()
+                    item.syncProgress = syncProgress
+                    item.syncThroughMillis = syncingThroughMillis
 
-            market_cap.text = marketCap?.formatFiatForUi(preferredFiat, 0) ?: ""
-            total_volume.text = totalVolume?.formatFiatForUi(preferredFiat, 0) ?: ""
-            twenty_four_high.text = high24h?.formatFiatForUi(preferredFiat) ?: ""
-            twenty_four_low.text = low24h?.formatFiatForUi(preferredFiat) ?: ""
+                    if (syncAdapter.adapterItemCount == 0) {
+                        syncAdapter.setNewList(listOf(item))
+                    } else {
+                        fastAdapter?.notifyAdapterDataSetChanged()
+                    }
+                } else {
+                    syncAdapter.setNewList(emptyList())
+                }
+            }
+            ifChanged(M::state) {
+                when (state) {
+                    WalletState.Initialized -> {
+                        layoutSendReceive.isVisible = true
+                        layoutCreateAccount.isVisible = false
+                    }
+                    WalletState.Error, WalletState.Loading -> {
+                        layoutSendReceive.isVisible = false
+                        layoutCreateAccount.isVisible = true
+                        buttonCreateAccount.isVisible = false
+                        progressCreateAccount.isVisible = true
+                    }
+                    WalletState.WaitingOnAction -> {
+                        layoutSendReceive.isVisible = false
+                        layoutCreateAccount.isVisible = true
+                        buttonCreateAccount.isVisible = true
+                        progressCreateAccount.isVisible = false
+                    }
+                }
+            }
+
+            ifChanged(M::priceChartDataPoints) {
+                mPriceDataAdapter.dataSet = it
+                mPriceDataAdapter.notifyDataSetChanged()
+            }
+
+            ifChanged(M::priceChartIsLoading) {
+                if (!it && priceChartDataPoints.isEmpty()) toolbarLayout.isVisible = false
+            }
+
+            ifChanged(M::priceChartInterval) {
+                val deselectedColor = resources.getColor(R.color.trans_white)
+                val selectedColor = resources.getColor(R.color.white)
+                mIntervalButtons.forEachIndexed { index, TextView ->
+                    TextView.setTextColor(
+                        when (priceChartInterval.ordinal) {
+                            index -> selectedColor
+                            else -> deselectedColor
+                        }
+                    )
+                }
+            }
+
+            with(chartContainer) {
+                ifChanged(
+                    M::selectedPriceDataPoint,
+                    M::fiatPricePerUnit,
+                    M::priceChartInterval
+                ) {
+                    if (selectedPriceDataPoint == null) {
+                        chartLabel.text = priceChange?.toString().orEmpty()
+                        currencyUsdPrice.text = fiatPricePerUnit
+                    } else {
+                        currencyUsdPrice.text = selectedPriceDataPoint.closePrice
+                            .toBigDecimal()
+                            .formatFiatForUi(BRSharedPrefs.getPreferredFiatIso())
+
+                        val format = when (priceChartInterval) {
+                            Interval.ONE_DAY, Interval.ONE_WEEK ->
+                                MARKET_CHART_DATE_WITH_HOUR
+                            else -> MARKET_CHART_DATE_WITH_YEAR
+                        }
+                        val dateFormat = SimpleDateFormat(format, Locale.ROOT)
+                        chartLabel.text = dateFormat.format(selectedPriceDataPoint.time)
+                    }
+                }
+            }
+
+            ifChanged(M::isShowingDelistedBanner) {
+                if (isShowingDelistedBanner) showDelistedTokenBanner()
+            }
+
+            with(marketData) {
+                ifChanged(M::marketDataState) {
+                    marketDataCard.isVisible = marketDataState != MarketDataState.ERROR
+                    marketDataCard.layoutParams.height = if (marketDataState == MarketDataState.LOADED) {
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    } else {
+                        0
+                    }
+                }
+
+                ifChanged(
+                    M::marketCap,
+                    M::totalVolume,
+                    M::high24h,
+                    M::low24h
+                ) {
+                    val preferredFiat = BRSharedPrefs.getPreferredFiatIso().toUpperCase(Locale.ROOT)
+                    marketCap.text = this@render.marketCap?.formatFiatForUi(preferredFiat, 0) ?: ""
+                    totalVolume.text = this@render.totalVolume?.formatFiatForUi(preferredFiat, 0) ?: ""
+                    twentyFourHigh.text = high24h?.formatFiatForUi(preferredFiat) ?: ""
+                    twentyFourLow.text = low24h?.formatFiatForUi(preferredFiat) ?: ""
+                }
+            }
         }
     }
 
@@ -543,7 +542,7 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
      * This token is no longer supported by the BRD app, notify the user.
      */
     private fun showDelistedTokenBanner() {
-        delisted_token_layout.visibility = View.VISIBLE
+        binding.delistedTokenLayout.root.visibility = View.VISIBLE
     }
 
     private fun updateUi() {
@@ -554,118 +553,122 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
         val endColor = token.endColor
         val currentTheme = UiUtils.getThemeId(activity)
 
-        if (currentTheme == R.style.AppTheme_Dark) {
-            val buttonColor = resources.getColor(R.color.wallet_footer_button_color_dark)
-            send_button.setColor(buttonColor)
-            receive_button.setColor(buttonColor)
-            gift_button.background = ColorDrawable(buttonColor)
-            buttonCreateAccount.setColor(buttonColor)
-            progressCreateAccount.indeterminateDrawable.setTint(buttonColor)
+        with(binding) {
+            if (currentTheme == R.style.AppTheme_Dark) {
+                val buttonColor = resources.getColor(R.color.wallet_footer_button_color_dark)
+                sendButton.setColor(buttonColor)
+                receiveButton.setColor(buttonColor)
+                buttonCreateAccount.setColor(buttonColor)
+                progressCreateAccount.indeterminateDrawable.setTint(buttonColor)
+
+                if (endColor != null) {
+                    val color = Color.parseColor(endColor)
+                    layoutCreateAccount.setBackgroundColor(color)
+                    layoutSendReceive.setBackgroundColor(color)
+                }
+            } else if (endColor != null) {
+                Color.parseColor(endColor).let {
+                    sendButton.setColor(it)
+                    receiveButton.setColor(it)
+                    buttonCreateAccount.setColor(it)
+                }
+            }
 
             if (endColor != null) {
-                val color = Color.parseColor(endColor)
-                layoutCreateAccount.setBackgroundColor(color)
-                layout_send_receive.setBackgroundColor(color)
+                //it's a gradient
+                val gd = GradientDrawable(
+                    GradientDrawable.Orientation.LEFT_RIGHT,
+                    intArrayOf(Color.parseColor(startColor), Color.parseColor(endColor))
+                )
+                gd.cornerRadius = 0f
+                mainContainer.background = gd
+                appbar.background = gd
+            } else {
+                //it's a solid color
+                mainContainer.setBackgroundColor(Color.parseColor(startColor))
+                appbar.setBackgroundColor(Color.parseColor(startColor))
             }
-        } else if (endColor != null) {
-            Color.parseColor(endColor).let {
-                send_button.setColor(it)
-                receive_button.setColor(it)
-                gift_button.background = ColorDrawable(it)
-                buttonCreateAccount.setColor(it)
-            }
-        }
-
-        if (endColor != null) {
-            //it's a gradient
-            val gd = GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT,
-                intArrayOf(Color.parseColor(startColor), Color.parseColor(endColor))
-            )
-            gd.cornerRadius = 0f
-            bread_bar.background = gd
-            appbar.background = gd
-        } else {
-            //it's a solid color
-            bread_bar.setBackgroundColor(Color.parseColor(startColor))
-            appbar.setBackgroundColor(Color.parseColor(startColor))
         }
     }
 
     @Suppress("LongMethod", "ComplexMethod") // TODO: This function should not exist
     private fun setPriceTags(cryptoPreferred: Boolean, animate: Boolean) {
         val resources = checkNotNull(resources)
-        if (animate) {
-            TransitionManager.beginDelayedTransition(balance_values)
-        }
-
-        val primaryTextSize = resources.getDimension(R.dimen.wallet_balance_primary_text_size)
-        val secondaryTextSize = resources.getDimension(R.dimen.wallet_balance_secondary_text_size)
-
-        // Reverse balance value labels
-        fun reverseLabels() {
-            val newChildren = balance_values.children.toList().reversed()
-            balance_values.removeAllViews()
-            newChildren.forEach { view ->
-                balance_values.addView(view)
-                balance_values.recomputeViewAttributes(view)
+        with(binding) {
+            if (animate) {
+                TransitionManager.beginDelayedTransition(balanceValues)
             }
-        }
 
-        if (cryptoPreferred) {
-            if (balance_values.children.last().id == R.id.balance_primary) {
-                reverseLabels()
-            }
-            // CRYPTO on RIGHT
-            balance_secondary.setTextSize(TypedValue.COMPLEX_UNIT_PX, primaryTextSize)
-            balance_primary.setTextSize(TypedValue.COMPLEX_UNIT_PX, secondaryTextSize)
-        } else {
-            if (balance_values.children.last().id == R.id.balance_secondary) {
-                reverseLabels()
-            }
-            // CRYPTO on LEFT
-            balance_secondary.setTextSize(TypedValue.COMPLEX_UNIT_PX, secondaryTextSize)
-            balance_primary.setTextSize(TypedValue.COMPLEX_UNIT_PX, primaryTextSize)
-        }
+            val primaryTextSize = resources.getDimension(R.dimen.wallet_balance_primary_text_size)
+            val secondaryTextSize = resources.getDimension(R.dimen.wallet_balance_secondary_text_size)
 
-        balance_secondary.setTextColor(
-            resources.getColor(
-                if (cryptoPreferred)
-                    R.color.white
-                else
-                    R.color.currency_subheading_color, null
+            // Reverse balance value labels
+            fun reverseLabels() {
+                val newChildren = balanceValues.children.toList().reversed()
+                balanceValues.removeAllViews()
+                newChildren.forEach { view ->
+                    balanceValues.addView(view)
+                    balanceValues.recomputeViewAttributes(view)
+                }
+            }
+
+            if (cryptoPreferred) {
+                if (balanceValues.children.last().id == R.id.balance_primary) {
+                    reverseLabels()
+                }
+                // CRYPTO on RIGHT
+                balanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_PX, primaryTextSize)
+                balancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_PX, secondaryTextSize)
+            } else {
+                if (balanceValues.children.last().id == R.id.balance_secondary) {
+                    reverseLabels()
+                }
+                // CRYPTO on LEFT
+                balanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_PX, secondaryTextSize)
+                balancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_PX, primaryTextSize)
+            }
+
+            balanceSecondary.setTextColor(
+                resources.getColor(
+                    if (cryptoPreferred)
+                        R.color.white
+                    else
+                        R.color.currency_subheading_color, null
+                )
             )
-        )
-        balance_primary.setTextColor(
-            resources.getColor(
-                if (cryptoPreferred)
-                    R.color.currency_subheading_color
-                else
-                    R.color.white, null
+            balancePrimary.setTextColor(
+                resources.getColor(
+                    if (cryptoPreferred)
+                        R.color.currency_subheading_color
+                    else
+                        R.color.white, null
+                )
             )
-        )
+        }
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
         // Disable layout transitions while collapsed or collapsing
-        when {
-            abs(verticalOffset) == appBarLayout.totalScrollRange -> {
-                appBarLayout.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                market_info.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                sparkview_container.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-            }
-            verticalOffset == 0 -> {
-                appBarLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
-                market_info.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
-                sparkview_container.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
-            }
-            else -> {
-                appBarLayout.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                market_info.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                sparkview_container.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
-                TransitionManager.endTransitions(market_info)
-                TransitionManager.endTransitions(sparkview_container)
-                TransitionManager.endTransitions(balance_values)
+        with(binding) {
+            when {
+                abs(verticalOffset) == appBarLayout.totalScrollRange -> {
+                    appBarLayout.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                    marketInfo.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                    sparkviewContainer.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                }
+                verticalOffset == 0 -> {
+                    appBarLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+                    marketInfo.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+                    sparkviewContainer.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+                }
+                else -> {
+                    appBarLayout.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                    marketInfo.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                    sparkviewContainer.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                    TransitionManager.endTransitions(marketInfo)
+                    TransitionManager.endTransitions(sparkviewContainer)
+                    TransitionManager.endTransitions(balanceValues)
+                }
             }
         }
     }

@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerReceiveBinding
 import com.breadwallet.legacy.presenter.customviews.BRKeyboard
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
@@ -52,7 +53,6 @@ import com.breadwallet.util.CurrencyCode
 import com.spotify.mobius.First.first
 import com.spotify.mobius.Init
 import drewcarlson.mobius.flow.FlowTransformer
-import kotlinx.android.synthetic.main.controller_receive.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
@@ -64,6 +64,7 @@ import kotlinx.coroutines.launch
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.util.Currency
+import java.util.Locale
 
 private const val EXTRA_CURRENCY_CODE = "currency_code"
 private const val EXTRA_RECEIVE = "is_receive"
@@ -89,8 +90,6 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
     private val currencyCode: String = arg(EXTRA_CURRENCY_CODE)
     private val cryptoUriParser by instance<CryptoUriParser>()
 
-    override val layoutId = R.layout.controller_receive
-
     override val defaultModel =
         M.createDefault(
             currencyCode = currencyCode,
@@ -111,38 +110,44 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
             direct.instance()
         )
 
+    private val binding by viewBinding(ControllerReceiveBinding::inflate)
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        title.setText(R.string.UnlockScreen_myAddress)
-        signal_layout.removeView(copied_layout)
-        signal_layout.layoutTransition = UiUtils.getDefaultTransition()
-        keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button)
-        keyboard.setDeleteImage(R.drawable.ic_delete_black)
-        keyboard.setBRKeyboardColor(R.color.white)
+        with(binding) {
+            title.setText(R.string.UnlockScreen_myAddress)
+            signalLayout.removeView(copiedLayout)
+            signalLayout.layoutTransition = UiUtils.getDefaultTransition()
+            keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button)
+            keyboard.setDeleteImage(R.drawable.ic_delete_black)
+            keyboard.setBRKeyboardColor(R.color.white)
+        }
     }
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
+        binding.signalLayout.setOnTouchListener(SlideDetector(router, binding.signalLayout))
     }
 
     override fun onDetach(view: View) {
-        signal_layout.setOnTouchListener(null)
+        binding.signalLayout.setOnTouchListener(null)
         super.onDetach(view)
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        return merge(
-            faq_button.clicks().map { E.OnFaqClicked },
-            share_button.clicks().map { E.OnShareClicked },
-            close_button.clicks().map { E.OnCloseClicked },
-            qr_image.clicks().map { E.OnCopyAddressClicked },
-            textInputAmount.clicks().map { E.OnAmountClicked },
-            background_layout.clicks().map { E.OnCloseClicked },
-            address_text.clicks().map { E.OnCopyAddressClicked },
-            iso_button.clicks().map { E.OnToggleCurrencyClicked },
-            keyboard.bindInput()
-        )
+        return with(binding) {
+            merge(
+                faqButton.clicks().map { E.OnFaqClicked },
+                shareButton.clicks().map { E.OnShareClicked },
+                closeButton.clicks().map { E.OnCloseClicked },
+                qrImage.clicks().map { E.OnCopyAddressClicked },
+                textInputAmount.clicks().map { E.OnAmountClicked },
+                backgroundLayout.clicks().map { E.OnCloseClicked },
+                addressText.clicks().map { E.OnCopyAddressClicked },
+                isoButton.clicks().map { E.OnToggleCurrencyClicked },
+                keyboard.bindInput()
+            )
+        }
     }
 
     private fun BRKeyboard.bindInput() = callbackFlow<E> {
@@ -163,67 +168,69 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
     override fun M.render() {
         val res = checkNotNull(resources)
 
-        ifChanged(M::sanitizedAddress, address_text::setText)
-        ifChanged(
-            M::rawAmount,
-            M::fiatCurrencyCode
-        ) {
-            val formattedAmount = if (isAmountCrypto || rawAmount.isBlank()) {
-                rawAmount
-            } else {
-                rawAmount.formatFiatForInputUi(fiatCurrencyCode)
+        with(binding) {
+            ifChanged(M::sanitizedAddress, addressText::setText)
+            ifChanged(
+                M::rawAmount,
+                M::fiatCurrencyCode
+            ) {
+                val formattedAmount = if (isAmountCrypto || rawAmount.isBlank()) {
+                    rawAmount
+                } else {
+                    rawAmount.formatFiatForInputUi(fiatCurrencyCode)
+                }
+                textInputAmount.setText(formattedAmount)
             }
-            textInputAmount.setText(formattedAmount)
-        }
 
-        ifChanged(
-            M::isAmountCrypto,
-            M::currencyCode,
-            M::fiatCurrencyCode
-        ) {
-            iso_button.text = when {
-                isAmountCrypto -> currencyCode.toUpperCase()
-                else -> "%s (%s)".format(
-                    fiatCurrencyCode.toUpperCase(),
-                    Currency.getInstance(fiatCurrencyCode).symbol
+            ifChanged(
+                M::isAmountCrypto,
+                M::currencyCode,
+                M::fiatCurrencyCode
+            ) {
+                isoButton.text = when {
+                    isAmountCrypto -> currencyCode.toUpperCase(Locale.ROOT)
+                    else -> "%s (%s)".format(
+                        fiatCurrencyCode.toUpperCase(Locale.ROOT),
+                        Currency.getInstance(fiatCurrencyCode).symbol
+                    )
+                }
+            }
+
+            ifChanged(M::currencyCode) {
+                title.text = "%s %s".format(
+                    res.getString(R.string.Receive_title),
+                    currencyCode.toUpperCase(Locale.ROOT)
                 )
             }
-        }
 
-        ifChanged(M::currencyCode) {
-            title.text = "%s %s".format(
-                res.getString(R.string.Receive_title),
-                currencyCode.toUpperCase()
-            )
-        }
-
-        ifChanged(
-            M::receiveAddress,
-            M::amount
-        ) {
-            if (receiveAddress.isNotBlank()) {
-                val request = CryptoRequest.Builder()
-                    .setAddress(receiveAddress)
-                    .setAmount(amount)
-                    .build()
-                viewAttachScope.launch(Dispatchers.Main) {
-                    cryptoUriParser.createUrl(currencyCode, request)?.let { uri ->
-                        if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
-                            logError("failed to generate qr image for address")
+            ifChanged(
+                M::receiveAddress,
+                M::amount
+            ) {
+                if (receiveAddress.isNotBlank()) {
+                    val request = CryptoRequest.Builder()
+                        .setAddress(receiveAddress)
+                        .setAmount(amount)
+                        .build()
+                    viewAttachScope.launch(Dispatchers.Main) {
+                        cryptoUriParser.createUrl(currencyCode, request)?.let { uri ->
+                            if (!QRUtils.generateQR(activity, uri.toString(), qrImage)) {
+                                logError("failed to generate qr image for address")
+                            }
                         }
                     }
+                } else {
+                    qrImage.setImageDrawable(null)
                 }
-            } else {
-                qr_image.setImageDrawable(null)
             }
-        }
 
-        ifChanged(M::isRequestAmountSupported) {
-            amount_layout.isVisible = isRequestAmountSupported
-        }
+            ifChanged(M::isRequestAmountSupported) {
+                amountLayout.isVisible = isRequestAmountSupported
+            }
 
-        ifChanged(M::isAmountEditVisible) {
-            keyboard_layout.isVisible = isAmountEditVisible
+            ifChanged(M::isAmountEditVisible) {
+                keyboardLayout.isVisible = isAmountEditVisible
+            }
         }
     }
 
@@ -249,14 +256,16 @@ class ReceiveController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
 
     private fun showCopiedMessage() {
         viewCreatedScope.launch(Dispatchers.Main) {
-            if (signal_layout.indexOfChild(copied_layout) == -1) {
-                signal_layout.addView(
-                    copied_layout,
-                    signal_layout.indexOfChild(share_button)
-                )
+            with(binding) {
+                if (signalLayout.indexOfChild(copiedLayout) == -1) {
+                    signalLayout.addView(
+                        copiedLayout,
+                        signalLayout.indexOfChild(shareButton)
+                    )
+                }
+                delay(HIDE_COPY_MESSAGE_DELAY_MS)
+                signalLayout.removeView(copiedLayout)
             }
-            delay(HIDE_COPY_MESSAGE_DELAY_MS)
-            signal_layout.removeView(copied_layout)
         }
     }
 

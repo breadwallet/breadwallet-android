@@ -111,13 +111,13 @@ class PlatformConfirmTransactionController(
                 AuthMode.PIN_REQUIRED
             }
 
-        val controller = AuthenticationController(
+        val authController = AuthenticationController(
             mode = authenticationMode,
             title = res.getString(R.string.VerifyPin_title),
             message = res.getString(R.string.VerifyPin_authorize)
         )
-        controller.targetController = this
-        router.pushController(RouterTransaction.with(controller))
+        authController.targetController = this
+        router.pushController(RouterTransaction.with(authController))
     }
 
     override fun onNegativeClicked(controller: ConfirmTxController) {

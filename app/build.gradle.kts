@@ -7,7 +7,7 @@ import com.google.firebase.appdistribution.gradle.AppDistributionExtension
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("android.extensions")
+    id("kotlin-parcelize")
     id("io.gitlab.arturbosch.detekt") version "1.0.1"
     id("dev.zacsweers.redacted")
 }
@@ -132,9 +132,6 @@ android {
             "-Xopt-in=kotlin.time.ExperimentalTime",
             "-Xopt-in=kotlin.RequiresOptIn"
         )
-    }
-    androidExtensions {
-        isExperimental = true
     }
 }
 

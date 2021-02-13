@@ -28,6 +28,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerPinInputBinding
 import com.breadwallet.legacy.presenter.customviews.PinLayout
 import com.breadwallet.legacy.presenter.customviews.PinLayout.PinLayoutListener
 import com.breadwallet.tools.animation.SpringAnimator
@@ -39,7 +40,6 @@ import com.breadwallet.ui.pin.InputPin.E
 import com.breadwallet.ui.pin.InputPin.F
 import com.breadwallet.ui.pin.InputPin.M
 import drewcarlson.mobius.flow.FlowTransformer
-import kotlinx.android.synthetic.main.controller_pin_input.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -66,7 +66,6 @@ class InputPinController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
         )
     )
 
-    override val layoutId = R.layout.controller_pin_input
     override val defaultModel = M.createDefault(
         pinUpdateMode = arg(EXTRA_PIN_MODE_UPDATE, false),
         onComplete = OnCompleteAction.valueOf(arg(EXTRA_ON_COMPLETE)),
@@ -77,30 +76,32 @@ class InputPinController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
     override val flowEffectHandler: FlowTransformer<F, E>
         get() = createInputPinHandler(direct.instance())
 
+    private val binding by viewBinding(ControllerPinInputBinding::inflate)
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         val pinDigitButtonColors = resources?.getIntArray(R.array.pin_digit_button_colors)
-        brkeyboard.setButtonTextColor(pinDigitButtonColors)
-        brkeyboard.setShowDecimal(false)
+        binding.brkeyboard.setButtonTextColor(pinDigitButtonColors)
+        binding.brkeyboard.setShowDecimal(false)
     }
 
     override fun handleViewEffect(effect: ViewEffect) {
         when (effect) {
-            F.ErrorShake -> SpringAnimator.failShakeAnimation(applicationContext, pin_digits)
+            F.ErrorShake -> SpringAnimator.failShakeAnimation(applicationContext, binding.pinDigits)
             F.ShowPinError -> toastLong(R.string.UpdatePin_setPinError)
         }
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
         return merge(
-            faq_button.clicks().map { E.OnFaqClicked },
-            pin_digits.bindInput()
+            binding.faqButton.clicks().map { E.OnFaqClicked },
+            binding.pinDigits.bindInput()
         )
     }
 
     private fun PinLayout.bindInput() = callbackFlow<E> {
         val channel = channel
-        setup(brkeyboard, object : PinLayoutListener {
+        setup(binding.brkeyboard, object : PinLayoutListener {
             override fun onPinInserted(pin: String, isPinCorrect: Boolean) {
                 channel.offer(E.OnPinEntered(pin, isPinCorrect))
             }
@@ -114,7 +115,7 @@ class InputPinController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
 
     override fun M.render() {
         ifChanged(M::mode) {
-            title.setText(
+            binding.title.setText(
                 when (mode) {
                     M.Mode.VERIFY -> R.string.UpdatePin_enterCurrent
                     M.Mode.NEW -> if (pinUpdateMode) {
@@ -130,6 +131,6 @@ class InputPinController(args: Bundle) : BaseMobiusController<M, E, F>(args) {
                 }
             )
         }
-        ifChanged(M::pinUpdateMode, pin_digits::setIsPinUpdating)
+        ifChanged(M::pinUpdateMode, binding.pinDigits::setIsPinUpdating)
     }
 }

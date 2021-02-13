@@ -31,6 +31,7 @@ import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerAboutBinding
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRConstants
@@ -38,7 +39,6 @@ import com.breadwallet.tools.util.EmailTarget
 import com.breadwallet.tools.util.SupportManager
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.home.HomeController
-import kotlinx.android.synthetic.main.controller_about.*
 import org.kodein.di.erased.instance
 import java.util.Locale
 
@@ -46,51 +46,52 @@ private const val VERSION_CLICK_COUNT_FOR_BACKDOOR = 5
 
 class AboutController(args: Bundle? = null) : BaseController(args) {
 
-    override val layoutId = R.layout.controller_about
-
     private var versionClickedCount = 0
     private val supportManager: SupportManager by instance()
+    private val binding by viewBinding(ControllerAboutBinding::inflate)
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         val res = checkNotNull(resources)
 
-        back_button.setOnClickListener {
-            router.popCurrentController()
-        }
-
-        info_text.text = String.format(
-            Locale.getDefault(),
-            res.getString(R.string.About_footer),
-            BuildConfig.VERSION_NAME,
-            BuildConfig.BUILD_VERSION
-        )
-
-        info_text.setOnClickListener {
-            versionClickedCount++
-            if (versionClickedCount >= VERSION_CLICK_COUNT_FOR_BACKDOOR) {
-                versionClickedCount = 0
-                supportManager.submitEmailRequest(EmailTarget.ANDROID_TEAM)
+        with(binding) {
+            backButton.setOnClickListener {
+                router.popCurrentController()
             }
-        }
 
-        reddit_share_button.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_REDDIT)))
-        }
-        twitter_share_button.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_TWITTER)))
-        }
-        blog_share_button.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_BLOG)))
-        }
-        policy_text.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_PRIVACY_POLICY)))
-        }
+            infoText.text = String.format(
+                Locale.getDefault(),
+                res.getString(R.string.About_footer),
+                BuildConfig.VERSION_NAME,
+                BuildConfig.BUILD_VERSION
+            )
 
-        brd_rewards_id.text = BRSharedPrefs.getWalletRewardId()
-        brd_copy.setOnClickListener {
-            BRClipboardManager.putClipboard(brd_rewards_id.text.toString())
-            toast(R.string.Receive_copied)
+            infoText.setOnClickListener {
+                versionClickedCount++
+                if (versionClickedCount >= VERSION_CLICK_COUNT_FOR_BACKDOOR) {
+                    versionClickedCount = 0
+                    supportManager.submitEmailRequest(EmailTarget.ANDROID_TEAM)
+                }
+            }
+
+            redditShareButton.setOnClickListener {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_REDDIT)))
+            }
+            twitterShareButton.setOnClickListener {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_TWITTER)))
+            }
+            blogShareButton.setOnClickListener {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_BLOG)))
+            }
+            policyText.setOnClickListener {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_PRIVACY_POLICY)))
+            }
+
+            brdRewardsId.text = BRSharedPrefs.getWalletRewardId()
+            brdCopy.setOnClickListener {
+                BRClipboardManager.putClipboard(brdRewardsId.text.toString())
+                toast(R.string.Receive_copied)
+            }
         }
     }
 

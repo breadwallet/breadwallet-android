@@ -29,6 +29,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerWriteDownBinding
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.auth.AuthenticationController
@@ -37,8 +38,6 @@ import com.breadwallet.ui.navigation.OnCompleteAction
 import com.breadwallet.ui.writedownkey.WriteDownKey.E
 import com.breadwallet.ui.writedownkey.WriteDownKey.F
 import com.breadwallet.ui.writedownkey.WriteDownKey.M
-import kotlinx.android.synthetic.main.controller_write_down.*
-import kotlinx.android.synthetic.main.email_prompt.close_button
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -77,11 +76,15 @@ class WriteDownKeyController(args: Bundle? = null) :
     override val flowEffectHandler
         get() = createWriteDownKeyHandler(direct.instance())
 
-    override fun bindView(modelFlow: Flow<M>): Flow<E> = merge(
-        faq_button.clicks().map { E.OnFaqClicked },
-        close_button.clicks().map { E.OnCloseClicked },
-        button_write_down.clicks().map { E.OnWriteDownClicked }
-    )
+    private val binding by viewBinding(ControllerWriteDownBinding::inflate)
+
+    override fun bindView(modelFlow: Flow<M>): Flow<E> = with(binding) {
+        merge(
+            faqButton.clicks().map { E.OnFaqClicked },
+            closeButton.clicks().map { E.OnCloseClicked },
+            buttonWriteDown.clicks().map { E.OnWriteDownClicked }
+        )
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

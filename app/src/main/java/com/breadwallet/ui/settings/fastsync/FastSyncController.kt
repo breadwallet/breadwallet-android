@@ -31,6 +31,7 @@ import android.text.style.ClickableSpan
 import android.view.View
 import androidx.core.os.bundleOf
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerFastSyncBinding
 import com.breadwallet.effecthandler.metadata.MetaDataEffect
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
 import com.breadwallet.effecthandler.metadata.MetaDataEvent
@@ -47,7 +48,6 @@ import com.breadwallet.util.CurrencyCode
 import com.spotify.mobius.Connectable
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import drewcarlson.mobius.flow.transform
-import kotlinx.android.synthetic.main.controller_fast_sync.*
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -73,7 +73,8 @@ class FastSyncController(
         bundleOf(CURRENCY_CODE to currencyCode)
     )
 
-    override val layoutId = R.layout.controller_fast_sync
+    private val binding by viewBinding(ControllerFastSyncBinding::inflate)
+
     override val defaultModel = M.createDefault(arg(CURRENCY_CODE))
     override val init = FastSyncInit
     override val update = FastSyncUpdate
@@ -124,14 +125,16 @@ class FastSyncController(
             .map { it.fastSyncEnable }
             .distinctUntilChanged()
             .onEach { isChecked ->
-                switch_fast_sync.isChecked = isChecked
+                binding.switchFastSync.isChecked = isChecked
             }
             .launchIn(uiBindScope)
-        return merge(
-            back_btn.clicks().map { E.OnBackClicked },
-            switch_fast_sync.checked().map { E.OnFastSyncChanged(it) },
-            bindLearnMoreLink()
-        )
+        return with(binding) {
+            merge(
+                backBtn.clicks().map { E.OnBackClicked },
+                switchFastSync.checked().map { E.OnFastSyncChanged(it) },
+                bindLearnMoreLink()
+            )
+        }
     }
 
     override fun onPositiveClicked(
@@ -171,7 +174,7 @@ class FastSyncController(
         }
         if (linkPos != -1) {
             // TODO(DROID-1624): WalletConnectionSettings_link is not correct in CJK translations, ignore link for now.
-            description.text = SpannableString(message).apply {
+            binding.description.text = SpannableString(message).apply {
                 setSpan(
                     clickableSpan,
                     linkPos,
@@ -180,7 +183,7 @@ class FastSyncController(
                 )
             }
         }
-        description.movementMethod = LinkMovementMethod.getInstance()
+        binding.description.movementMethod = LinkMovementMethod.getInstance()
         awaitClose()
     }
 }

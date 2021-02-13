@@ -4,7 +4,7 @@ import brd.Libs
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("android.extensions")
+    id("kotlin-parcelize")
     id("dev.zacsweers.redacted")
 }
 
@@ -28,9 +28,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-    }
-    androidExtensions {
-        isExperimental = true
     }
 }
 

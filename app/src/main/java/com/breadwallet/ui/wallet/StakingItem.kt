@@ -26,13 +26,12 @@ package com.breadwallet.ui.wallet
 
 import android.view.View
 import com.breadwallet.R
+import com.breadwallet.databinding.StakingViewBinding
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.util.CurrencyCode
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.squareup.picasso.Picasso
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.staking_view.*
 import java.io.File
 
 class StakingItem(
@@ -43,17 +42,16 @@ class StakingItem(
     override val layoutRes: Int = R.layout.staking_view
     override fun getViewHolder(v: View) = ViewHolder(v)
 
-    class ViewHolder(
-        override val containerView: View
-    ) : FastAdapter.ViewHolder<StakingItem>(containerView),
-        LayoutContainer {
+    class ViewHolder(v: View) : FastAdapter.ViewHolder<StakingItem>(v) {
 
         override fun bindView(item: StakingItem, payloads: List<Any>) {
-            val tokenIconPath = TokenUtil.getTokenIconPath(item.currencyCode, true)
+            with(StakingViewBinding.bind(itemView)) {
+                val tokenIconPath = TokenUtil.getTokenIconPath(item.currencyCode, true)
 
-            if (!tokenIconPath.isNullOrBlank()) {
-                val iconFile = File(tokenIconPath)
-                Picasso.get().load(iconFile).into(staking_token_icon)
+                if (!tokenIconPath.isNullOrBlank()) {
+                    val iconFile = File(tokenIconPath)
+                    Picasso.get().load(iconFile).into(stakingTokenIcon)
+                }
             }
         }
 

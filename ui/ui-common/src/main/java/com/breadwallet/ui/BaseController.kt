@@ -33,8 +33,6 @@ import android.widget.Toast
 import androidx.viewbinding.ViewBinding
 import com.bluelinelabs.conductor.Controller
 import com.breadwallet.util.errorHandler
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -44,14 +42,10 @@ import org.kodein.di.android.closestKodein
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-/**
- * A simple controller that automatically inflates the
- * [layoutId] and implements [LayoutContainer].
- */
 @Suppress("TooManyFunctions")
 abstract class BaseController(
     args: Bundle? = null
-) : Controller(args), KodeinAware, LayoutContainer {
+) : Controller(args), KodeinAware {
 
     protected val controllerScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Default + errorHandler("controllerScope")
@@ -72,9 +66,6 @@ abstract class BaseController(
 
     private val resettableDelegates = mutableListOf<ResettableDelegate<*>>()
 
-    final override var containerView: View? = null
-        private set
-
     /** The layout id to be used for inflating this controller's view. */
     open val layoutId: Int = -1
 
@@ -88,7 +79,6 @@ abstract class BaseController(
         return if (viewBindingDelegates.isEmpty()) {
             check(layoutId > 0) { "Must set layoutId or override onCreateView." }
             inflater.inflate(layoutId, container, false).apply {
-                containerView = this
                 onCreateView(this)
             }
         } else {
@@ -101,8 +91,6 @@ abstract class BaseController(
         resetDelegatesFor(ResetCallback.ON_DESTROY_VIEW)
         viewCreatedScope.coroutineContext.cancelChildren()
         super.onDestroyView(view)
-        clearFindViewByIdCache()
-        containerView = null
     }
 
     override fun onDetach(view: View) {

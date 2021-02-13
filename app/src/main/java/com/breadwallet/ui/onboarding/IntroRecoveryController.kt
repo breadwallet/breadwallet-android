@@ -28,22 +28,22 @@ import android.os.Bundle
 import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
-import com.breadwallet.R
+import com.breadwallet.databinding.ControllerIntroRecoverBinding
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.recovery.RecoveryKeyController
-import kotlinx.android.synthetic.main.controller_intro_recover.*
-
 
 class IntroRecoveryController(args: Bundle? = null) : BaseController(args) {
 
-    override val layoutId = R.layout.controller_intro_recover
+    private val binding by viewBinding(ControllerIntroRecoverBinding::inflate)
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        send_button.setOnClickListener {
-            router.pushController(RouterTransaction.with(RecoveryKeyController())
+        binding.sendButton.setOnClickListener {
+            router.pushController(
+                RouterTransaction.with(RecoveryKeyController())
                     .popChangeHandler(HorizontalChangeHandler())
-                    .pushChangeHandler(HorizontalChangeHandler()))
+                    .pushChangeHandler(HorizontalChangeHandler())
+            )
         }
     }
 }
