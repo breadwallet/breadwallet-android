@@ -163,9 +163,10 @@ class FastSyncController(
         val message: String = act.getString(R.string.WalletConnectionSettings_explanatoryText)
         val clickableText = act.getString(R.string.WalletConnectionSettings_link)
         val linkPos = message.lastIndexOf(clickableText)
+        val channel = channel
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(widget: View) {
-                offer(E.OnLearnMoreClicked)
+                channel.offer(E.OnLearnMoreClicked)
             }
         }
         if (linkPos != -1) {

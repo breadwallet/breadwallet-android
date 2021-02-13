@@ -265,14 +265,15 @@ open class WalletController(args: Bundle) : BaseMobiusController<M, E, F>(args),
 
     private fun bindSparkLineScrubbing(): Flow<E> =
         callbackFlow {
+            val channel = channel
             spark_line.scrubListener = object : SparkView.OnScrubListener {
                 override fun onScrubbed(value: Any?) {
                     if (value == null) {
-                        offer(E.OnChartDataPointReleased)
+                        channel.offer(E.OnChartDataPointReleased)
                     } else {
                         val dataPoint = value as PriceDataPoint
                         logDebug("dataPoint: $dataPoint")
-                        offer(E.OnChartDataPointSelected(dataPoint))
+                        channel.offer(E.OnChartDataPointSelected(dataPoint))
                     }
                 }
             }

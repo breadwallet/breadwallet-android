@@ -88,9 +88,10 @@ class ShowPaperKeyController(args: Bundle) : BaseMobiusController<M, E, F>(args)
             previous_button.clicks().map { E.OnPreviousClicked },
             close_button.clicks().map { E.OnCloseClicked },
             callbackFlow<E> {
+                val channel = channel
                 val listener = object : DefaultOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
-                        offer(E.OnPageChanged(position))
+                        channel.offer(E.OnPageChanged(position))
                     }
                 }
                 words_pager.addOnPageChangeListener(listener)

@@ -101,13 +101,14 @@ class LoginController(args: Bundle? = null) :
     }
 
     private fun PinLayout.bindInput() = callbackFlow<E> {
+        val channel = channel
         val pinListener = object : PinLayout.PinLayoutListener {
             override fun onPinLocked() {
-                offer(E.OnPinLocked)
+                channel.offer(E.OnPinLocked)
             }
 
             override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
-                offer(
+                channel.offer(
                     if (isPinCorrect) {
                         E.OnAuthenticationSuccess
                     } else {

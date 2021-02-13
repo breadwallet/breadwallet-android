@@ -81,9 +81,10 @@ class OnBoardingController(
             button_skip.clicks().map { E.OnSkipClicked },
             button_back.clicks().map { E.OnBackClicked },
             callbackFlow<E.OnPageChanged> {
+                val channel = channel
                 val listener = object : ViewPager.SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
-                        offer(E.OnPageChanged(position + 1))
+                        channel.offer(E.OnPageChanged(position + 1))
                     }
                 }
                 view_pager.addOnPageChangeListener(listener)
