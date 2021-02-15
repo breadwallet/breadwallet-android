@@ -27,10 +27,12 @@ package brd
 const val KOTLIN_VERSION = "1.4.30"
 private const val COROUTINES_VERSION = "1.4.2"
 private const val WALLETKIT_VERSION = "6.3.0"
+private const val FIREBASE_APPDIST_VERSION = "2.0.1"
 private const val FIREBASE_MESSAGING_VERSION = "21.0.1"
 private const val FIREBASE_ANALYTICS_VERSION = "18.0.2"
 private const val FIREBASE_CONFIG_VERSION = "20.0.3"
 private const val CRASHLYTICS_VERSION = "17.3.1"
+private const val CRASHLYTICS_PLUGIN_VERSION = "2.2.0"
 private const val GUAVA_VERSION = "25.1-android"
 private const val LIFECYCLE_EXT_VERSION = "2.2.0"
 private const val WORK_MANAGER_VERSION = "2.4.0"
@@ -70,11 +72,18 @@ const val REDACTED_VERSION = "0.8.0"
 private const val DETEKT_VERSION = "1.0.1"
 private const val COMMONS_COMPRESS_VERSION = "1.20"
 private const val BIOMETRIC_VERSION = "1.2.0-alpha02"
+private const val AGP_VERSION = "4.1.2"
+private const val SERVICES_PLUGIN_VERSION = "4.3.4"
 
 object Libs {
     object WalletKit {
         const val CoreAndroid = "com.breadwallet.core:corecrypto-android:$WALLETKIT_VERSION"
     }
+
+    object Android {
+        const val GradlePlugin = "com.android.tools.build:gradle:$AGP_VERSION"
+    }
+
     object Androidx {
         const val LifecycleExtensions = "androidx.lifecycle:lifecycle-extensions:$LIFECYCLE_EXT_VERSION"
         const val LifecycleScopeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:$LIFECYCLE_EXT_VERSION"
@@ -105,11 +114,17 @@ object Libs {
         const val View = "androidx.camera:camera-view:$CAMERAX_VIEW_VERSION"
     }
 
+    object Google {
+        const val ServicesPlugin = "com.google.gms:google-services:$SERVICES_PLUGIN_VERSION"
+    }
+
     object Firebase {
         const val Messaging = "com.google.firebase:firebase-messaging-ktx:$FIREBASE_MESSAGING_VERSION"
         const val Analytics = "com.google.firebase:firebase-analytics-ktx:$FIREBASE_ANALYTICS_VERSION"
         const val ConfigKtx = "com.google.firebase:firebase-config-ktx:$FIREBASE_CONFIG_VERSION"
         const val Crashlytics = "com.google.firebase:firebase-crashlytics-ktx:$CRASHLYTICS_VERSION"
+        const val DistributionPlugin = "com.google.firebase:firebase-appdistribution-gradle:$FIREBASE_APPDIST_VERSION"
+        const val CrashlyticsPlugin = "com.google.firebase:firebase-crashlytics-gradle:$CRASHLYTICS_PLUGIN_VERSION"
     }
 
     object Material {
@@ -165,6 +180,7 @@ object Libs {
     }
 
     object Kotlin {
+        const val GradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
         const val StdLibJdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$KOTLIN_VERSION"
         const val Test = "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
         const val TestJunit = "org.jetbrains.kotlin:kotlin-test-junit:$KOTLIN_VERSION"
@@ -215,6 +231,7 @@ object Libs {
 
     object Redacted {
         const val Annotation = "dev.zacsweers.redacted:redacted-compiler-plugin-annotations:$REDACTED_VERSION"
+        const val Plugin = "dev.zacsweers.redacted:redacted-compiler-gradle-plugin:$REDACTED_VERSION"
     }
 
     object Detekt {
