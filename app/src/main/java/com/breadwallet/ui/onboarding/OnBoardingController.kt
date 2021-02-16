@@ -26,21 +26,21 @@ package com.breadwallet.ui.onboarding
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.breadwallet.R
-import com.breadwallet.app.BreadApp
+import com.breadwallet.databinding.ControllerOnBoardingBinding
+import com.breadwallet.databinding.ControllerOnboardingPageBinding
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.onboarding.OnBoarding.E
 import com.breadwallet.ui.onboarding.OnBoarding.F
 import com.breadwallet.ui.onboarding.OnBoarding.M
-import kotlinx.android.synthetic.main.controller_on_boarding.*
-import kotlinx.android.synthetic.main.controller_onboarding_page.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -54,15 +54,11 @@ class OnBoardingController(
 ) : BaseMobiusController<M, E, F>(args) {
 
     private val activeIndicator by lazy {
-        val resId = R.drawable.page_indicator_active
-        checkNotNull(resources).getDrawable(resId, checkNotNull(activity).theme)
+        ContextCompat.getDrawable(applicationContext!!, R.drawable.page_indicator_active)
     }
     private val inactiveIndicator by lazy {
-        val resId = R.drawable.page_indicator_inactive
-        checkNotNull(resources).getDrawable(resId, checkNotNull(activity).theme)
+        ContextCompat.getDrawable(applicationContext!!, R.drawable.page_indicator_inactive)
     }
-
-    override val layoutId = R.layout.controller_on_boarding
 
     override val defaultModel = M.DEFAULT
     override val init = OnBoardingInit
@@ -71,48 +67,55 @@ class OnBoardingController(
     override val flowEffectHandler
         get() = createOnBoardingHandler(direct.instance())
 
+    private val binding by viewBinding(ControllerOnBoardingBinding::inflate)
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        view_pager.adapter = OnBoardingPageAdapter()
+        binding.viewPager.adapter = OnBoardingPageAdapter()
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        return merge(
-            button_skip.clicks().map { E.OnSkipClicked },
-            button_back.clicks().map { E.OnBackClicked },
-            callbackFlow<E.OnPageChanged> {
-                val listener = object : ViewPager.SimpleOnPageChangeListener() {
-                    override fun onPageSelected(position: Int) {
-                        offer(E.OnPageChanged(position + 1))
+        return with(binding) {
+            merge(
+                buttonSkip.clicks().map { E.OnSkipClicked },
+                buttonBack.clicks().map { E.OnBackClicked },
+                callbackFlow<E.OnPageChanged> {
+                    val channel = channel
+                    val listener = object : ViewPager.SimpleOnPageChangeListener() {
+                        override fun onPageSelected(position: Int) {
+                            channel.offer(E.OnPageChanged(position + 1))
+                        }
+                    }
+                    viewPager.addOnPageChangeListener(listener)
+                    awaitClose {
+                        viewPager.removeOnPageChangeListener(listener)
                     }
                 }
-                view_pager.addOnPageChangeListener(listener)
-                awaitClose {
-                    view_pager.removeOnPageChangeListener(listener)
-                }
-            }
-        )
+            )
+        }
     }
 
     override fun M.render() {
-        ifChanged(M::page) { page ->
-            listOf(indicator1, indicator2, indicator3)
-                .forEachIndexed { index, indicator ->
-                    indicator.background = when (page) {
-                        index + 1 -> activeIndicator
-                        else -> inactiveIndicator
+        with(binding) {
+            ifChanged(M::page) { page ->
+                listOf(indicator1, indicator2, indicator3)
+                    .forEachIndexed { index, indicator ->
+                        indicator.background = when (page) {
+                            index + 1 -> activeIndicator
+                            else -> inactiveIndicator
+                        }
                     }
-                }
-        }
+            }
 
-        ifChanged(M::isFirstPage) { isFirstPage ->
-            button_skip.isVisible = isFirstPage
-            button_back.isVisible = isFirstPage
-        }
+            ifChanged(M::isFirstPage) { isFirstPage ->
+                buttonSkip.isVisible = isFirstPage
+                buttonBack.isVisible = isFirstPage
+            }
 
-        ifChanged(M::isLoading) { isLoading ->
-            loading_view.isVisible = isLoading
-            button_skip.isEnabled = !isLoading
+            ifChanged(M::isLoading) { isLoading ->
+                loadingView.root.isVisible = isLoading
+                buttonSkip.isEnabled = !isLoading
+            }
         }
     }
 
@@ -136,44 +139,44 @@ class OnBoardingController(
 }
 
 class PageOneController(args: Bundle? = null) : BaseController(args) {
-    override val layoutId = R.layout.controller_onboarding_page
+    private val binding by viewBinding(ControllerOnboardingPageBinding::inflate)
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        primary_text.setText(R.string.OnboardingPageTwo_title)
-        secondary_text.setText(R.string.OnboardingPageTwo_subtitle)
+        binding.primaryText.setText(R.string.OnboardingPageTwo_title)
+        binding.secondaryText.setText(R.string.OnboardingPageTwo_subtitle)
     }
 }
 
 class PageTwoController(args: Bundle? = null) : BaseController(args) {
-    override val layoutId = R.layout.controller_onboarding_page
+    private val binding by viewBinding(ControllerOnboardingPageBinding::inflate)
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        val resources = checkNotNull(resources)
-        val theme = checkNotNull(activity).theme
-        primary_text.setText(R.string.OnboardingPageThree_title)
-        secondary_text.setText(R.string.OnboardingPageThree_subtitle)
-        image_view.setImageDrawable(resources.getDrawable(R.drawable.ic_currencies, theme))
+        binding.primaryText.setText(R.string.OnboardingPageThree_title)
+        binding.secondaryText.setText(R.string.OnboardingPageThree_subtitle)
+        binding.imageView.setImageResource(R.drawable.ic_currencies)
     }
 }
 
 class PageThreeController(args: Bundle? = null) : BaseController(args) {
-    override val layoutId = R.layout.controller_onboarding_page
+    private val binding by viewBinding(ControllerOnboardingPageBinding::inflate)
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         val onBoardingController = (parentController as OnBoardingController)
 
-        last_screen_title.isVisible = true
-        button_buy.isVisible = true
-        button_browse.isVisible = true
-        primary_text.isVisible = false
-        secondary_text.isVisible = false
-        image_view.isVisible = false
-        button_buy.setOnClickListener {
-            onBoardingController.eventConsumer.accept(E.OnBuyClicked)
-        }
-        button_browse.setOnClickListener {
-            onBoardingController.eventConsumer.accept(E.OnBrowseClicked)
+        with(binding) {
+            lastScreenTitle.isVisible = true
+            buttonBuy.isVisible = true
+            buttonBrowse.isVisible = true
+            primaryText.isVisible = false
+            secondaryText.isVisible = false
+            imageView.isVisible = false
+            buttonBuy.setOnClickListener {
+                onBoardingController.eventConsumer.accept(E.OnBuyClicked)
+            }
+            buttonBrowse.setOnClickListener {
+                onBoardingController.eventConsumer.accept(E.OnBrowseClicked)
+            }
         }
     }
 }

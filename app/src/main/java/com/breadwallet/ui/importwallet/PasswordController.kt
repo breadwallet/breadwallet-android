@@ -26,7 +26,7 @@ package com.breadwallet.ui.importwallet
 
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
-import com.breadwallet.R
+import com.breadwallet.databinding.ControllerImportPasswordBinding
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
 import com.breadwallet.ui.flowbind.clicks
@@ -40,7 +40,6 @@ import com.spotify.mobius.Next.next
 import com.spotify.mobius.Update
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import dev.zacsweers.redacted.annotations.Redacted
-import kotlinx.android.synthetic.main.controller_import_password.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
@@ -56,7 +55,6 @@ class PasswordController(
         overridePushHandler(DialogChangeHandler())
     }
 
-    override val layoutId = R.layout.controller_import_password
     override val defaultModel = M.DEFAULT
     override val update = Update<M, E, F> { model, event ->
         when (event) {
@@ -65,22 +63,24 @@ class PasswordController(
             E.OnCancelClicked -> dispatch(setOf(F.Cancel))
         }
     }
-
     override val flowEffectHandler
         get() = subtypeEffectHandler<F, E> {
             addConsumerSync(Main, ::handleConfirm)
             addActionSync<F.Cancel>(Main, ::handleCancel)
         }
+    private val binding by viewBinding(ControllerImportPasswordBinding::inflate)
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        return merge(
-            input_password.editorActions()
-                .filter { it == EditorInfo.IME_ACTION_DONE }
-                .map { E.OnConfirmClicked },
-            input_password.textChanges().map { E.OnPasswordChanged(it) },
-            button_confirm.clicks().map { E.OnConfirmClicked },
-            button_cancel.clicks().map { E.OnCancelClicked }
-        )
+        return with(binding) {
+            merge(
+                inputPassword.editorActions()
+                    .filter { it == EditorInfo.IME_ACTION_DONE }
+                    .map { E.OnConfirmClicked },
+                inputPassword.textChanges().map { E.OnPasswordChanged(it) },
+                buttonConfirm.clicks().map { E.OnConfirmClicked },
+                buttonCancel.clicks().map { E.OnCancelClicked }
+            )
+        }
     }
 
     private fun handleConfirm(effect: F.Confirm) {

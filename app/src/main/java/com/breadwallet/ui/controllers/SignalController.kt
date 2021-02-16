@@ -27,12 +27,11 @@ package com.breadwallet.ui.controllers
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
-import com.breadwallet.R
+import com.breadwallet.databinding.ControllerSignalBinding
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.BottomSheetChangeHandler
 import com.breadwallet.ui.controllers.SignalController.Companion.CLOSE_DELAY_MS
 import com.breadwallet.ui.controllers.SignalController.Listener
-import kotlinx.android.synthetic.main.fragment_signal.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -79,13 +78,15 @@ class SignalController(args: Bundle) : BaseController(args) {
         fun onSignalComplete()
     }
 
-    override val layoutId: Int = R.layout.fragment_signal
+    private val binding by viewBinding(ControllerSignalBinding::inflate)
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        title.text = arg(KEY_TITLE)
-        description.text = arg(KEY_DESCRIPTION)
-        qr_image.setImageResource(arg(KEY_ICON_RES_ID))
+        with(binding) {
+            title.text = arg(KEY_TITLE)
+            description.text = arg(KEY_DESCRIPTION)
+            qrImage.setImageResource(arg(KEY_ICON_RES_ID))
+        }
     }
 
     override fun onAttach(view: View) {

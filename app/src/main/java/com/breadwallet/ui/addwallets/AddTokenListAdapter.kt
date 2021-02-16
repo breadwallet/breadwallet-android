@@ -48,7 +48,6 @@ import java.io.File
 import java.util.Locale
 
 class AddTokenListAdapter(
-    private val context: Context,
     private val tokensFlow: Flow<List<Token>>,
     private val sendChannel: SendChannel<AddWallets.E>
 ) : RecyclerView.Adapter<AddTokenListAdapter.TokenItemViewHolder>() {
@@ -83,7 +82,7 @@ class AddTokenListAdapter(
                 // If no icon is present, then use the capital first letter of the token currency code instead.
                 holder.iconLetter.visibility = View.VISIBLE
                 iconDrawable.setColor(Color.parseColor(token.startColor))
-                holder.iconLetter.text = currencyCode.substring(0, 1).toUpperCase()
+                holder.iconLetter.text = currencyCode.substring(0, 1).toUpperCase(Locale.ROOT)
                 holder.logo.visibility = View.GONE
             }
             else -> {
@@ -99,7 +98,6 @@ class AddTokenListAdapter(
         holder.symbol.text = token.currencyCode.toUpperCase(Locale.ROOT)
 
         holder.addRemoveButton.apply {
-            val token = tokens[holder.adapterPosition]
             text = context.getString(
                 when {
                     token.enabled -> R.string.TokenList_remove

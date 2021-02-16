@@ -79,6 +79,7 @@
                         android:animateLayoutChanges="true">
 
                         <include
+                            android:id="@+id/chartContainer"
                             layout="@layout/chart_view"
                             app:layout_collapseMode="parallax"/>
 

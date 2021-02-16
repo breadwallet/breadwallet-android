@@ -32,6 +32,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.databinding.ControllerScannerBinding
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.qrcode.scannedText
@@ -41,7 +42,6 @@ import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.util.CryptoUriParser
-import kotlinx.android.synthetic.main.controller_scanner.*
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -65,10 +65,9 @@ class ScannerController(
         fun onRawTextScanned(text: String) = Unit
     }
 
-    override val layoutId = R.layout.controller_scanner
-
     private val breadBox by instance<BreadBox>()
     private val uriParser by instance<CryptoUriParser>()
+    private val binding by viewBinding(ControllerScannerBinding::inflate)
 
     override fun onAttach(view: View) {
         super.onAttach(view)
@@ -96,7 +95,7 @@ class ScannerController(
     }
 
     private fun startScanner(breadBox: BreadBox, uriParser: CryptoUriParser) {
-        qrdecoderview
+        binding.qrdecoderview
             .scannedText(true)
             .mapLatest { text -> text to text.asLink(breadBox, uriParser, scanned = true) }
             .flowOn(Default)
@@ -106,7 +105,7 @@ class ScannerController(
                     showGuideError()
                 } else {
                     logDebug("Found compatible QR code")
-                    scan_guide.setImageResource(R.drawable.cameraguide)
+                    binding.scanGuide.setImageResource(R.drawable.cameraguide)
                     emit(text to link)
                 }
             }
@@ -136,8 +135,8 @@ class ScannerController(
 
     /** Display an error state for [CAMERA_UI_UPDATE_MS] then reset. */
     private suspend fun showGuideError() {
-        scan_guide.setImageResource(R.drawable.cameraguide_red)
+        binding.scanGuide.setImageResource(R.drawable.cameraguide_red)
         delay(CAMERA_UI_UPDATE_MS)
-        scan_guide.setImageResource(R.drawable.cameraguide)
+        binding.scanGuide.setImageResource(R.drawable.cameraguide)
     }
 }

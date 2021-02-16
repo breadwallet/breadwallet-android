@@ -26,7 +26,7 @@ package com.breadwallet.ui.addwallets
 
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.breadwallet.R
+import com.breadwallet.databinding.ControllerAddWalletsBinding
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.addwallets.AddWallets.E
@@ -34,7 +34,6 @@ import com.breadwallet.ui.addwallets.AddWallets.F
 import com.breadwallet.ui.addwallets.AddWallets.M
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.flowbind.textChanges
-import kotlinx.android.synthetic.main.controller_add_wallets.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -46,7 +45,7 @@ import org.kodein.di.erased.instance
 
 class AddWalletsController : BaseMobiusController<M, E, F>() {
 
-    override val layoutId: Int = R.layout.controller_add_wallets
+    private val binding by viewBinding(ControllerAddWalletsBinding::inflate)
 
     override val defaultModel = M.createDefault()
     override val init = AddWalletsInit
@@ -64,32 +63,33 @@ class AddWalletsController : BaseMobiusController<M, E, F>() {
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        token_list.layoutManager = LinearLayoutManager(checkNotNull(activity))
-        search_edit.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                Utils.hideKeyboard(activity)
+        return with(binding) {
+            tokenList.layoutManager = LinearLayoutManager(checkNotNull(activity))
+            searchEdit.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    Utils.hideKeyboard(activity)
+                }
             }
-        }
 
-        return merge(
-            search_edit.textChanges().map { E.OnSearchQueryChanged(it) },
-            back_arrow.clicks().map { E.OnBackClicked },
-            bindTokenList(modelFlow)
-        )
+            merge(
+                searchEdit.textChanges().map { E.OnSearchQueryChanged(it) },
+                backArrow.clicks().map { E.OnBackClicked },
+                bindTokenList(modelFlow)
+            )
+        }
     }
 
     private fun bindTokenList(
         modelFlow: Flow<M>
     ) = callbackFlow<E> {
         val adapter = AddTokenListAdapter(
-            context = checkNotNull(applicationContext),
             tokensFlow = modelFlow
                 .map { model -> model.tokens }
                 .distinctUntilChanged(),
             sendChannel = channel
         )
-        token_list.adapter = adapter
+        binding.tokenList.adapter = adapter
 
-        awaitClose { token_list.adapter = null }
+        awaitClose { binding.tokenList.adapter = null }
     }
 }

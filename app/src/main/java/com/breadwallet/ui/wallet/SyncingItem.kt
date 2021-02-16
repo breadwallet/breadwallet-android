@@ -26,10 +26,9 @@ package com.breadwallet.ui.wallet
 
 import android.view.View
 import com.breadwallet.R
+import com.breadwallet.databinding.WalletSyncProgressViewBinding
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.wallet_sync_progress_view.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -48,23 +47,23 @@ class SyncingItem : AbstractItem<SyncingItem.ViewHolder>() {
     override fun getViewHolder(v: View) = ViewHolder(v)
 
     class ViewHolder(
-        override val containerView: View
-    ) : FastAdapter.ViewHolder<SyncingItem>(containerView),
-        LayoutContainer {
+        v: View
+    ) : FastAdapter.ViewHolder<SyncingItem>(v) {
 
-        private val resources = containerView.resources
+        private val resources = v.resources
         private val dateFormat = SimpleDateFormat(SYNCED_THROUGH_DATE_FORMAT, Locale.US)
         private val numberFormat = NumberFormat.getPercentInstance()
 
         override fun bindView(item: SyncingItem, payloads: List<Any>) {
             val syncingText = resources.getString(R.string.SyncingView_syncing)
+            val binding = WalletSyncProgressViewBinding.bind(itemView)
             val syncingPercentText = numberFormat.format(item.syncProgress)
-            syncing_label.text = "%s %s".format(syncingText, syncingPercentText)
+            binding.syncingLabel.text = "%s %s".format(syncingText, syncingPercentText)
 
             if (item.hasSyncTime) {
                 val syncedThroughDate = dateFormat.format(item.syncThroughMillis)
                 val syncedThroughText = resources.getString(R.string.SyncingView_syncedThrough)
-                sync_status_label.text = syncedThroughText.format(syncedThroughDate)
+                binding.syncStatusLabel.text = syncedThroughText.format(syncedThroughDate)
             }
         }
 

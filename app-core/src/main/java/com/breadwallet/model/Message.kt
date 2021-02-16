@@ -25,7 +25,7 @@
 package com.breadwallet.model
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * In-app message model.

@@ -33,6 +33,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
+import com.breadwallet.databinding.TransactionDetailsBinding
 import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.tools.manager.BRClipboardManager
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -49,7 +50,6 @@ import com.breadwallet.ui.txdetails.TxDetails.F
 import com.breadwallet.ui.txdetails.TxDetails.M
 import com.breadwallet.util.isBitcoinLike
 import drewcarlson.mobius.flow.FlowTransformer
-import kotlinx.android.synthetic.main.transaction_details.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -91,7 +91,6 @@ class TxDetailsController(
         overridePushHandler(DialogChangeHandler())
     }
 
-    override val layoutId = R.layout.transaction_details
     override val init = TxDetailsInit
     override val update = TxDetailsUpdate
     override val defaultModel: M
@@ -109,29 +108,33 @@ class TxDetailsController(
             direct.instance()
         )
 
+    private val binding by viewBinding(TransactionDetailsBinding::inflate)
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         // NOTE: This allows animateLayoutChanges to properly animate details show/hide
         (view as ViewGroup).layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
 
-        val color = tx_to_from_address.textColors.defaultColor
-        memo_input.setTextColor(color)
-        fee_primary_label.text = resources!!.getString(R.string.Send_fee, "")
-        view.setOnClickListener {
-            router.popCurrentController()
+        with(binding) {
+            val color = txToFromAddress.textColors.defaultColor
+            memoInput.setTextColor(color)
+            feePrimaryLabel.text = resources!!.getString(R.string.Send_fee, "")
+            view.setOnClickListener {
+                router.popCurrentController()
+            }
         }
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        return merge(
-            close_button.clicks().map { E.OnClosedClicked },
-            show_hide_details.clicks().map { E.OnShowHideDetailsClicked },
-            memo_input.textChanges().map { E.OnMemoChanged(it) },
-            transaction_id.clicks().map { E.OnTransactionHashClicked },
-            tx_to_from_address.clicks().map { E.OnAddressClicked },
-            gift_resend.clicks().map { E.OnGiftResendClicked },
-            gift_reclaim.clicks().map { E.OnGiftReclaimClicked }
-        )
+        return with(binding) {
+            merge(
+                closeButton.clicks().map { E.OnClosedClicked },
+                showHideDetails.clicks().map { E.OnShowHideDetailsClicked },
+                memoInput.textChanges().map { E.OnMemoChanged(it) },
+                transactionId.clicks().map { E.OnTransactionHashClicked },
+                txToFromAddress.clicks().map { E.OnAddressClicked },
+            )
+        }
     }
 
     override fun onDetach(view: View) {
@@ -150,268 +153,278 @@ class TxDetailsController(
     override fun M.render() {
         val res = checkNotNull(resources)
 
-        ifChanged(M::showDetails) {
-            details_container.isVisible = showDetails
-            show_hide_details.setText(
-                when {
-                    showDetails -> R.string.TransactionDetails_hideDetails
-                    else -> R.string.TransactionDetails_showDetails
-                }
-            )
-        }
+        with(binding) {
+            ifChanged(M::showDetails) {
+                detailsContainer.isVisible = showDetails
+                showHideDetails.setText(
+                    when {
+                        showDetails -> R.string.TransactionDetails_hideDetails
+                        else -> R.string.TransactionDetails_showDetails
+                    }
+                )
+            }
 
-        ifChanged(M::isFeeForToken) {
-            if (isFeeForToken) { // it's a token transfer ETH tx
-                memo_input.setText(
-                    String.format(
-                        res.getString(R.string.Transaction_tokenTransfer),
-                        feeToken
+            ifChanged(M::isFeeForToken) {
+                if (isFeeForToken) { // it's a token transfer ETH tx
+                    memoInput.setText(
+                        String.format(
+                            res.getString(R.string.Transaction_tokenTransfer),
+                            feeToken
+                        )
+                    )
+                    memoInput.isFocusable = false
+                }
+            }
+
+            ifChanged(M::isReceived) {
+                showSentViews(!isReceived)
+
+                txAction.setText(
+                    when {
+                        isReceived -> R.string.TransactionDetails_titleReceived
+                        else -> R.string.TransactionDetails_titleSent
+                    }
+                )
+
+                txToFrom.setText(
+                    when {
+                        isReceived -> if (currencyCode.isBitcoinLike()) {
+                            R.string.TransactionDetails_addressViaHeader
+                        } else {
+                            R.string.TransactionDetails_addressFromHeader
+                        }
+                        else -> R.string.TransactionDetails_addressToHeader
+                    }
+                )
+
+                txAmount.setTextColor(
+                    res.getColor(
+                        when {
+                            isReceived -> R.color.transaction_amount_received_color
+                            else -> R.color.total_assets_usd_color
+                        }
                     )
                 )
-                memo_input.isFocusable = false
             }
-        }
 
-        ifChanged(M::isReceived) {
-            showSentViews(!isReceived)
+            if (!isReceived) {
+                ifChanged(
+                    M::isEth,
+                    M::gasPrice,
+                    M::gasLimit
+                ) {
+                    showEthViews(isEth)
 
-            tx_action.setText(
-                when {
-                    isReceived -> R.string.TransactionDetails_titleReceived
-                    else -> R.string.TransactionDetails_titleSent
+                    if (isEth) {
+                        val formatter = NumberFormat.getIntegerInstance().apply {
+                            maximumFractionDigits = 0
+                            isGroupingUsed = false
+                        }
+                        gasPrice.text = "%s %s".format(this@render.gasPrice.toBigInteger(), "gwei")
+                        gasLimit.text = formatter.format(this@render.gasLimit).toString()
+                    }
                 }
-            )
 
-            tx_to_from.setText(
-                when {
-                    isReceived -> if (currencyCode.isBitcoinLike()) {
-                        R.string.TransactionDetails_addressViaHeader
-                    } else {
-                        R.string.TransactionDetails_addressFromHeader
-                    }
-                    else -> R.string.TransactionDetails_addressToHeader
+                ifChanged(M::transactionTotal) {
+                    feeSecondary.text =
+                        transactionTotal.formatCryptoForUi(currencyCode, MAX_CRYPTO_DIGITS)
                 }
-            )
 
-            tx_amount.setTextColor(
-                res.getColor(
-                    when {
-                        isReceived -> R.color.transaction_amount_received_color
-                        else -> R.color.total_assets_usd_color
-                    }
-                )
-            )
-        }
-
-        if (!isReceived) {
-            ifChanged(
-                M::isEth,
-                M::gasPrice,
-                M::gasLimit
-            ) {
-                showEthViews(isEth)
-
-                if (isEth) {
-                    val formatter = NumberFormat.getIntegerInstance().apply {
-                        maximumFractionDigits = 0
-                        isGroupingUsed = false
-                    }
-                    gas_price.text = "%s %s".format(gasPrice.toBigInteger(), "gwei")
-                    gas_limit.text = formatter.format(gasLimit).toString()
+                ifChanged(
+                    M::fee,
+                    M::isErc20
+                ) {
+                    showTotalCost(!isErc20)
+                    feePrimary.text = fee.formatCryptoForUi(feeCurrency, MAX_CRYPTO_DIGITS)
                 }
             }
 
-            ifChanged(M::transactionTotal) {
-                fee_secondary.text =
-                    transactionTotal.formatCryptoForUi(currencyCode, MAX_CRYPTO_DIGITS)
+            ifChanged(M::blockNumber) {
+                showConfirmedView(blockNumber != 0)
             }
 
             ifChanged(
-                M::fee,
-                M::isErc20
+                M::fiatAmountWhenSent,
+                M::exchangeCurrencyCode,
+                M::fiatAmountNow,
+                M::preferredFiatIso
             ) {
-                showTotalCost(!isErc20)
-                fee_primary.text = fee.formatCryptoForUi(feeCurrency, MAX_CRYPTO_DIGITS)
-            }
-        }
+                val formattedAmountNow = fiatAmountNow.formatFiatForUi(preferredFiatIso)
+                val showWhenSent = fiatAmountWhenSent.compareTo(BigDecimal.ZERO) != 0
 
-        ifChanged(M::blockNumber) {
-            showConfirmedView(blockNumber != 0)
-        }
-
-        ifChanged(
-            M::fiatAmountWhenSent,
-            M::exchangeCurrencyCode,
-            M::fiatAmountNow,
-            M::preferredFiatIso
-        ) {
-            val amountNow = fiatAmountNow.formatFiatForUi(preferredFiatIso)
-            val showWhenSent = fiatAmountWhenSent.compareTo(BigDecimal.ZERO) != 0
-
-            label_when_sent.text = res.getString(
-                when {
-                    isReceived -> R.string.TransactionDetails_amountWhenReceived
-                    else -> R.string.TransactionDetails_amountWhenSent
-                },
-                fiatAmountWhenSent.formatFiatForUi(exchangeCurrencyCode),
-                amountNow
-            )
-            amount_now.text = amountNow
-
-            label_when_sent.visibility = if (showWhenSent) View.VISIBLE else View.INVISIBLE
-            amount_now.visibility = if (!showWhenSent) View.VISIBLE else View.INVISIBLE
-        }
-
-        ifChanged(M::toOrFromAddress) {
-            // TODO: Do we need a string res for no hash text?
-            tx_to_from_address.text = when {
-                toOrFromAddress.isNotBlank() -> toOrFromAddress
-                else -> "<unknown>"
-            }
-        }
-
-        ifChanged(M::cryptoTransferredAmount) {
-            tx_amount.text = cryptoTransferredAmount.formatCryptoForUi(
-                currencyCode,
-                MAX_CRYPTO_DIGITS,
-                !isReceived
-            )
-        }
-
-        ifChanged(M::memoLoaded) {
-            if (memoLoaded && !isFeeForToken) {
-                memo_input.setText(
-                    if (gift?.recipientName.isNullOrBlank()) {
-                        memo
-                    } else {
-                        String.format(res.getString(R.string.TransactionDetails_giftedTo, gift?.recipientName))
-                    }
-                )
-            }
-        }
-
-        ifChanged(
-            M::exchangeCurrencyCode,
-            M::preferredFiatIso,
-            M::exchangeRate,
-            M::isReceived
-        ) {
-            if (isReceived) {
-                groupExchangeRateSection.isVisible = false
-            } else {
-                exchange_rate_label.setText(R.string.Transaction_exchangeOnDaySent)
-                exchange_rate.text = exchangeRate.formatFiatForUi(
+                labelWhenSent.text = res.getString(
                     when {
-                        exchangeCurrencyCode.isNotBlank() -> exchangeCurrencyCode
-                        else -> preferredFiatIso
-                    }
+                        isReceived -> R.string.TransactionDetails_amountWhenReceived
+                        else -> R.string.TransactionDetails_amountWhenSent
+                    },
+                    fiatAmountWhenSent.formatFiatForUi(exchangeCurrencyCode),
+                    formattedAmountNow
+                )
+                amountNow.text = formattedAmountNow
+
+                labelWhenSent.visibility = if (showWhenSent) View.VISIBLE else View.INVISIBLE
+                amountNow.visibility = if (!showWhenSent) View.VISIBLE else View.INVISIBLE
+            }
+
+            ifChanged(M::toOrFromAddress) {
+                // TODO: Do we need a string res for no hash text?
+                txToFromAddress.text = when {
+                    toOrFromAddress.isNotBlank() -> toOrFromAddress
+                    else -> "<unknown>"
+                }
+            }
+
+            ifChanged(M::cryptoTransferredAmount) {
+                txAmount.text = cryptoTransferredAmount.formatCryptoForUi(
+                    currencyCode,
+                    MAX_CRYPTO_DIGITS,
+                    !isReceived
                 )
             }
-        }
 
-        ifChanged(M::confirmationDate) {
-            tx_date.text = BRDateUtil.getFullDate((confirmationDate ?: Date()).time)
-        }
+            ifChanged(M::memoLoaded) {
+                if (memoLoaded && !isFeeForToken) {
+                    memoInput.setText(
+                        if (gift?.recipientName.isNullOrBlank()) {
+                            memo
+                        } else {
+                            String.format(res.getString(R.string.TransactionDetails_giftedTo, gift?.recipientName))
+                        }
+                    )
+                }
+            }
 
-        ifChanged(M::transactionHash) {
-            transaction_id.text = transactionHash
-        }
+            ifChanged(
+                M::exchangeCurrencyCode,
+                M::preferredFiatIso,
+                M::exchangeRate,
+                M::isReceived
+            ) {
+                if (isReceived) {
+                    groupExchangeRateSection.isVisible = false
+                } else {
+                    exchangeRateLabel.setText(R.string.Transaction_exchangeOnDaySent)
+                    exchangeRate.text = this@render.exchangeRate.formatFiatForUi(
+                        when {
+                            exchangeCurrencyCode.isNotBlank() -> exchangeCurrencyCode
+                            else -> preferredFiatIso
+                        }
+                    )
+                }
+            }
 
-        ifChanged(M::confirmedInBlockNumber) {
-            confirmed_in_block_number.text = confirmedInBlockNumber
-        }
+            ifChanged(M::confirmationDate) {
+                txDate.text = BRDateUtil.getFullDate((confirmationDate ?: Date()).time)
+            }
 
-        ifChanged(M::confirmations) {
-            confirmations_value.text = confirmations.toString()
-        }
+            ifChanged(M::transactionHash) {
+                transactionId.text = transactionHash
+            }
 
-        ifChanged(M::transactionState) {
-            when (transactionState) {
-                TransactionState.CONFIRMED -> {
-                    if (isCompleted) {
-                        tx_status.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                            R.drawable.checkmark_circled,
-                            0,
-                            0,
-                            0
-                        )
-                        tx_status.setText(R.string.Transaction_complete)
-                    } else {
-                        tx_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                        tx_status.setText(R.string.Transaction_confirming)
+            ifChanged(M::confirmedInBlockNumber) {
+                confirmedInBlockNumber.text = this@render.confirmedInBlockNumber
+            }
+
+            ifChanged(M::confirmations) {
+                confirmationsValue.text = confirmations.toString()
+            }
+
+            ifChanged(M::transactionState) {
+                when (transactionState) {
+                    TransactionState.CONFIRMED -> {
+                        if (isCompleted) {
+                            txStatus.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                                R.drawable.checkmark_circled,
+                                0,
+                                0,
+                                0
+                            )
+                            txStatus.setText(R.string.Transaction_complete)
+                        } else {
+                            txStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                            txStatus.setText(R.string.Transaction_confirming)
+                        }
+                    }
+                    TransactionState.FAILED -> {
+                        txStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                        txStatus.setText(R.string.TransactionDetails_initializedTimestampHeader)
+                    }
+                    TransactionState.CONFIRMING -> {
+                        txStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                        txStatus.setText(R.string.Transaction_confirming)
                     }
                 }
-                TransactionState.FAILED -> {
-                    tx_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                    tx_status.setText(R.string.TransactionDetails_initializedTimestampHeader)
-                }
-                TransactionState.CONFIRMING -> {
-                    tx_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                    tx_status.setText(R.string.Transaction_confirming)
+            }
+
+            ifChanged(M::destinationTag) {
+                if (destinationTag != null) {
+                    layoutDestinationTag.isVisible = true
+                    destinationTagDivider.isVisible = true
+                    if (destinationTag.value.isNullOrEmpty()) {
+                        destinationTagValue.setText(R.string.TransactionDetails_destinationTag_EmptyHint)
+                    } else {
+                        destinationTagValue.text = destinationTag.value
+                    }
                 }
             }
-        }
 
-        ifChanged(M::destinationTag) {
-            if (destinationTag != null) {
-                layoutDestinationTag.isVisible = true
-                destination_tag_divider.isVisible = true
-                if (destinationTag.value.isNullOrEmpty()) {
-                    destination_tag_value.setText(R.string.TransactionDetails_destinationTag_EmptyHint)
-                } else {
-                    destination_tag_value.text = destinationTag.value
+            ifChanged(M::hederaMemo) {
+                val hederaMemo = hederaMemo
+                if (hederaMemo != null) {
+                    layoutHederaMemo.isVisible = true
+                    hederaMemoDivider.isVisible = true
+                    if (hederaMemo.value.isNullOrEmpty()) {
+                        hederaMemoValue.setText(R.string.TransactionDetails_destinationTag_EmptyHint)
+                    } else {
+                        hederaMemoValue.text = hederaMemo.value
+                    }
                 }
             }
-        }
 
-        ifChanged(M::hederaMemo) {
-            val hederaMemo = hederaMemo
-            if (hederaMemo != null) {
-                layoutHederaMemo.isVisible = true
-                hedera_memo_divider.isVisible = true
-                if (hederaMemo.value.isNullOrEmpty()) {
-                    hedera_memo_value.setText(R.string.TransactionDetails_destinationTag_EmptyHint)
-                } else {
-                    hedera_memo_value.text = hederaMemo.value
-                }
+            ifChanged(M::gift) { gift ->
+                val gone = gift?.keyData.isNullOrBlank() ||
+                    gift?.reclaimed == true ||
+                    gift?.claimed == true
+
+                layoutGift.isGone = gone
+                giftDivider.isGone = gone
             }
-        }
-
-        ifChanged(M::gift) { gift ->
-            val gone = gift?.keyData.isNullOrBlank() ||
-                gift?.reclaimed == true ||
-                gift?.claimed == true
-
-            layoutGift.isGone = gone
-            gift_divider.isGone = gone
         }
     }
 
     private fun showSentViews(show: Boolean) {
-        fee_primary_container.isVisible = show
-        fee_secondary_container.isVisible = show
-        fee_primary_divider.isVisible = show
-        fee_secondary_divider.isVisible = show
+        with(binding) {
+            feePrimaryContainer.isVisible = show
+            feeSecondaryContainer.isVisible = show
+            feePrimaryDivider.isVisible = show
+            feeSecondaryDivider.isVisible = show
+        }
         showEthViews(show)
     }
 
     private fun showEthViews(show: Boolean) {
-        gas_price_container.isVisible = show
-        gas_limit_container.isVisible = show
-        gas_price_divider.isVisible = show
-        gas_limit_divider.isVisible = show
+        with(binding) {
+            gasPriceContainer.isVisible = show
+            gasLimitContainer.isVisible = show
+            gasPriceDivider.isVisible = show
+            gasLimitDivider.isVisible = show
+        }
     }
 
     private fun showTotalCost(show: Boolean) {
-        fee_secondary_container.isVisible = show
-        fee_secondary_divider.isVisible = show
+        with(binding) {
+            feeSecondaryContainer.isVisible = show
+            feeSecondaryDivider.isVisible = show
+        }
     }
 
     private fun showConfirmedView(show: Boolean) {
-        confirmed_container.isVisible = show
-        confirmed_divider.isVisible = show
-        confirmations_divider.isVisible = show
-        confirmations_container.isVisible = show
+        with(binding) {
+            confirmedContainer.isVisible = show
+            confirmedDivider.isVisible = show
+            confirmationsDivider.isVisible = show
+            confirmationsContainer.isVisible = show
+        }
     }
 
     private fun copyToClipboard(text: String) {

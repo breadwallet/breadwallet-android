@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             // Allow launching with a phrase to recover automatically
             val hasWallet = userManager.isInitialized()
             if (BuildConfig.DEBUG && intent.hasExtra(EXTRA_RECOVER_PHRASE) && !hasWallet) {
-                val phrase = intent.getStringExtra(EXTRA_RECOVER_PHRASE)
+                val phrase = intent.getStringExtra(EXTRA_RECOVER_PHRASE)!!
                 if (phrase.isNotBlank() && phrase.split(" ").size == RecoveryKey.M.RECOVERY_KEY_WORDS_COUNT) {
                     val controller = RecoveryKeyController(RecoveryKey.Mode.RECOVER, phrase)
                     router.setRoot(RouterTransaction.with(controller))
@@ -295,9 +295,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     /** Process the new intent and return the url to browse if available */
     private fun processIntentData(intent: Intent): String? {
         if (intent.hasExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)) {
-            val campaignId = intent.getStringExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)
-            val attributes =
-                mapOf<String, String>(EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID to campaignId)
+            val campaignId = intent.getStringExtra(EXTRA_PUSH_NOTIFICATION_CAMPAIGN_ID)!!
+            val attributes = mapOf(EventUtils.EVENT_ATTRIBUTE_CAMPAIGN_ID to campaignId)
             EventUtils.pushEvent(EventUtils.EVENT_MIXPANEL_APP_OPEN, attributes)
             EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATION_OPEN)
         }

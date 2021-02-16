@@ -26,8 +26,6 @@ package com.breadwallet.tools.animation
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.app.Activity
-import android.content.Context
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.OvershootInterpolator
@@ -40,12 +38,7 @@ class SlideDetector(private val root: View) : View.OnTouchListener {
         this.router = router
     }
 
-    constructor(context: Context, root: View) : this(root) {
-        this.context = context
-    }
-
     private var router: Router? = null
-    private var context: Context? = null
 
     private var origY: Float = 0f
     private var dY: Float = 0f
@@ -87,6 +80,5 @@ class SlideDetector(private val root: View) : View.OnTouchListener {
 
     private fun removeCurrentView() {
         router?.popCurrentController()
-        (context as? Activity)?.fragmentManager?.popBackStack()
     }
 }

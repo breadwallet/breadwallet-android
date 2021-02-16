@@ -36,15 +36,16 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerHomeBinding
 import com.breadwallet.legacy.presenter.customviews.BRButton
 import com.breadwallet.legacy.presenter.customviews.BREdit
 import com.breadwallet.legacy.presenter.customviews.BaseTextView
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.animation.SpringAnimator
 import com.breadwallet.tools.manager.BRSharedPrefs
-import com.breadwallet.tools.util.CurrencyUtils
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
+import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.ui.home.HomeScreen.E
 import com.breadwallet.ui.home.HomeScreen.F
 import com.breadwallet.ui.home.HomeScreen.M
@@ -59,7 +60,6 @@ import com.mikepenz.fastadapter.drag.SimpleDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
-import kotlinx.android.synthetic.main.controller_home.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -81,7 +81,6 @@ class HomeController(
     args: Bundle? = null
 ) : BaseMobiusController<M, E, F>(args), AlertDialogController.Listener {
 
-    override val layoutId = R.layout.controller_home
     override val defaultModel = M.createDefault()
     override val update = HomeScreenUpdate
     override val init = HomeScreenInit
@@ -97,28 +96,31 @@ class HomeController(
             direct.instance()
         )
 
+    private val binding by viewBinding(ControllerHomeBinding::inflate)
     private var fastAdapter: GenericFastAdapter? = null
     private var walletAdapter: ModelAdapter<Wallet, WalletListItem>? = null
     private var addWalletAdapter: ItemAdapter<AddWalletItem>? = null
 
     override fun bindView(output: Consumer<E>): Disposable {
-        buy_layout.setOnClickListener { output.accept(E.OnBuyClicked) }
-        trade_layout.setOnClickListener { output.accept(E.OnTradeClicked) }
-        menu_layout.setOnClickListener { output.accept(E.OnMenuClicked) }
+        return with (binding) {
+            buyLayout.setOnClickListener { output.accept(E.OnBuyClicked) }
+            tradeLayout.setOnClickListener { output.accept(E.OnTradeClicked) }
+            menuLayout.setOnClickListener { output.accept(E.OnMenuClicked) }
 
-        val fastAdapter = checkNotNull(fastAdapter)
-        fastAdapter.onClickListener = { _, _, item, _ ->
-            val event = when (item) {
-                is AddWalletItem -> E.OnAddWalletsClicked
-                is WalletListItem -> E.OnWalletClicked(item.model.currencyCode)
-                else -> error("Unknown item clicked.")
+            val fastAdapter = checkNotNull(fastAdapter)
+            fastAdapter.onClickListener = { _, _, item, _ ->
+                val event = when (item) {
+                    is AddWalletItem -> E.OnAddWalletsClicked
+                    is WalletListItem -> E.OnWalletClicked(item.model.currencyCode)
+                    else -> error("Unknown item clicked.")
+                }
+                output.accept(event)
+                true
             }
-            output.accept(event)
-            true
-        }
 
-        return Disposable {
-            fastAdapter.onClickListener = null
+            Disposable {
+                fastAdapter.onClickListener = null
+            }
         }
     }
 
@@ -133,11 +135,13 @@ class HomeController(
 
         val dragCallback = SimpleDragCallback(DragEventHandler(fastAdapter!!, eventConsumer))
         val touchHelper = ItemTouchHelper(dragCallback)
-        touchHelper.attachToRecyclerView(rv_wallet_list)
+        with(binding) {
+            touchHelper.attachToRecyclerView(rvWalletList)
 
-        rv_wallet_list.adapter = fastAdapter
-        rv_wallet_list.itemAnimator = null
-        rv_wallet_list.layoutManager = LinearLayoutManager(view.context)
+            rvWalletList.adapter = fastAdapter
+            rvWalletList.itemAnimator = null
+            rvWalletList.layoutManager = LinearLayoutManager(view.context)
+        }
 
         addWalletAdapter!!.add(AddWalletItem())
     }
@@ -158,49 +162,49 @@ class HomeController(
     }
 
     override fun M.render() {
-        ifChanged(M::aggregatedFiatBalance) {
-            total_assets_usd.text = CurrencyUtils.getFormattedFiatAmount(
-                BRSharedPrefs.getPreferredFiatIso(),
-                aggregatedFiatBalance
-            )
-        }
-
-        ifChanged(M::showPrompt) {
-            if (prompt_container.childCount > 0) {
-                prompt_container.removeAllViews()
+        with(binding) {
+            ifChanged(M::aggregatedFiatBalance) {
+                totalAssetsUsd.text = aggregatedFiatBalance.formatFiatForUi(BRSharedPrefs.getPreferredFiatIso())
             }
-            if (showPrompt) {
-                val promptView = getPromptView(promptId!!)
-                prompt_container.addView(promptView, 0)
-            }
-        }
 
-        ifChanged(M::hasInternet) {
-            notification_bar.apply {
-                isGone = hasInternet
-                if (hasInternet) bringToFront()
-            }
-        }
-
-        ifChanged(M::isBuyBellNeeded) {
-            buy_bell.isVisible = isBuyBellNeeded
-        }
-
-        ifChanged(M::hasInternet) {
-            buy_text_view.setText(
-                when {
-                    showBuyAndSell -> R.string.HomeScreen_buyAndSell
-                    else -> R.string.HomeScreen_buy
+            ifChanged(M::showPrompt) {
+                if (promptContainer.childCount > 0) {
+                    promptContainer.removeAllViews()
                 }
-            )
+                if (showPrompt) {
+                    val promptView = getPromptView(promptId!!)
+                    promptContainer.addView(promptView, 0)
+                }
+            }
+
+            ifChanged(M::isBuyBellNeeded) {
+                buyBell.isVisible = isBuyBellNeeded
+            }
+
+            ifChanged(M::hasInternet) {
+                notificationBar.apply {
+                    isGone = hasInternet
+                    if (hasInternet) bringToFront()
+                }
+                buyTextView.setText(
+                    when {
+                        showBuyAndSell -> R.string.HomeScreen_buyAndSell
+                        else -> R.string.HomeScreen_buy
+                    }
+                )
+            }
+
+            ifChanged(M::isBuyBellNeeded) {
+                buyBell.isVisible = isBuyBellNeeded
+            }
         }
     }
 
     private fun setUpBuildInfoLabel() {
         val network = if (BuildConfig.BITCOIN_TESTNET) NETWORK_TESTNET else NETWORK_MAINNET
         val buildInfo = "$network ${BuildConfig.VERSION_NAME} build ${BuildConfig.BUILD_VERSION}"
-        testnet_label.text = buildInfo
-        testnet_label.isVisible = BuildConfig.BITCOIN_TESTNET || BuildConfig.DEBUG
+        binding.testnetLabel.text = buildInfo
+        binding.testnetLabel.isVisible = BuildConfig.BITCOIN_TESTNET || BuildConfig.DEBUG
     }
 
     private fun getPromptView(promptItem: PromptItem): View {
@@ -278,7 +282,7 @@ class HomeController(
                 customDescription.text = act.getString(R.string.Prompts_Email_successBody)
                 viewAttachScope.launch(Main) {
                     delay(EMAIL_SUCCESS_DELAY)
-                    prompt_container.removeAllViews()
+                    binding.promptContainer.removeAllViews()
                 }
             } else {
                 SpringAnimator.failShakeAnimation(act, emailEditText)
@@ -346,4 +350,3 @@ class HomeController(
         eventConsumer.accept(E.OnSupportFormSubmitted(result.inputText))
     }
 }
-

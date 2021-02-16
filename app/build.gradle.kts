@@ -1,5 +1,4 @@
 import brd.BrdRelease
-import brd.DownloadBundles
 import brd.Libs
 import brd.appetize.AppetizePlugin
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
@@ -8,9 +7,9 @@ import com.google.firebase.appdistribution.gradle.AppDistributionExtension
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("android.extensions")
+    id("kotlin-parcelize")
     id("io.gitlab.arturbosch.detekt") version "1.0.1"
-    id("dev.zacsweers.redacted.redacted-gradle-plugin")
+    id("dev.zacsweers.redacted")
 }
 
 plugins.apply(AppetizePlugin::class)
@@ -84,7 +83,7 @@ android {
     buildTypes {
         getByName("release") {
             signingConfig = signingConfigs.getByName("FakeSigningConfig")
-            manifestPlaceholders = mapOf("applicationIcon" to "@mipmap/ic_launcher")
+            manifestPlaceholders(mapOf("applicationIcon" to "@mipmap/ic_launcher"))
             isDebuggable = false
             isMinifyEnabled = false
             buildConfigField("boolean", "IS_INTERNAL_BUILD", "false")
@@ -98,7 +97,7 @@ android {
         getByName("debug") {
             signingConfig = signingConfigs.getByName("FakeSigningConfig")
             applicationIdSuffix = ".debug"
-            manifestPlaceholders = mapOf("applicationIcon" to "@mipmap/ic_launcher_grayscale")
+            manifestPlaceholders(mapOf("applicationIcon" to "@mipmap/ic_launcher_grayscale"))
             isDebuggable = true
             isJniDebuggable = true
             isMinifyEnabled = false
@@ -117,7 +116,9 @@ android {
             output.outputFileName = "${output.baseName}-${BrdRelease.internalVersionName}.apk"
         }
     }
-
+    buildFeatures {
+        viewBinding = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -132,9 +133,6 @@ android {
             "-Xopt-in=kotlin.RequiresOptIn"
         )
     }
-    androidExtensions {
-        isExperimental = true
-    }
 }
 
 dependencies {
@@ -145,6 +143,7 @@ dependencies {
     implementation(Libs.WalletKit.CoreAndroid)
 
     // AndroidX
+    implementation(Libs.Androidx.Biometric)
     implementation(Libs.Androidx.LifecycleExtensions)
     implementation(Libs.Androidx.LifecycleScopeKtx)
     implementation(Libs.Androidx.WorkManagerKtx)

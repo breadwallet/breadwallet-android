@@ -29,6 +29,7 @@ import android.text.format.DateUtils
 import android.view.View
 import androidx.core.view.contains
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerLegacyAddressBinding
 import com.breadwallet.legacy.presenter.entities.CryptoRequest
 import com.breadwallet.logger.logError
 import com.breadwallet.mobius.CompositeEffectHandler
@@ -43,7 +44,6 @@ import com.breadwallet.ui.settings.segwit.LegacyAddress.F
 import com.breadwallet.ui.settings.segwit.LegacyAddress.M
 import com.breadwallet.util.CryptoUriParser
 import com.spotify.mobius.Connectable
-import kotlinx.android.synthetic.main.controller_legacy_address.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -82,43 +82,49 @@ class LegacyAddressController(
             }
         )
 
+    private val binding by viewBinding(ControllerLegacyAddressBinding::inflate)
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        copiedLayout = copied_layout
-        signal_layout.removeView(copiedLayout)
+        copiedLayout = binding.copiedLayout
+        binding.signalLayout.removeView(copiedLayout)
     }
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        signal_layout.setOnTouchListener(SlideDetector(router, signal_layout))
+        binding.signalLayout.setOnTouchListener(SlideDetector(router, binding.signalLayout))
     }
 
     override fun onDetach(view: View) {
         super.onDetach(view)
-        signal_layout.setOnTouchListener(null)
+        binding.signalLayout.setOnTouchListener(null)
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        return merge(
-            close_button.clicks().map { E.OnCloseClicked },
-            background_layout.clicks().map { E.OnCloseClicked },
-            share_button.clicks().map { E.OnShareClicked },
-            address_text.clicks().map { E.OnAddressClicked },
-            qr_image.clicks().map { E.OnAddressClicked }
-        )
+        return with(binding) {
+            merge(
+                closeButton.clicks().map { E.OnCloseClicked },
+                backgroundLayout.clicks().map { E.OnCloseClicked },
+                shareButton.clicks().map { E.OnShareClicked },
+                addressText.clicks().map { E.OnAddressClicked },
+                qrImage.clicks().map { E.OnAddressClicked }
+            )
+        }
     }
 
     override fun M.render() {
-        ifChanged(M::sanitizedAddress, address_text::setText)
-        ifChanged(M::receiveAddress) {
-            val request = CryptoRequest.Builder()
-                .setAddress(receiveAddress)
-                .build()
-            viewAttachScope.launch(Dispatchers.Main) {
-                cryptoUriParser.createUrl(btc, request)?.let { uri ->
-                    if (!QRUtils.generateQR(activity, uri.toString(), qr_image)) {
-                        logError("failed to generate qr image for address")
-                        router.popCurrentController()
+        with(binding) {
+            ifChanged(M::sanitizedAddress, addressText::setText)
+            ifChanged(M::receiveAddress) {
+                val request = CryptoRequest.Builder()
+                    .setAddress(receiveAddress)
+                    .build()
+                viewAttachScope.launch(Dispatchers.Main) {
+                    cryptoUriParser.createUrl(btc, request)?.let { uri ->
+                        if (!QRUtils.generateQR(activity, uri.toString(), qrImage)) {
+                            logError("failed to generate qr image for address")
+                            router.popCurrentController()
+                        }
                     }
                 }
             }
@@ -126,13 +132,15 @@ class LegacyAddressController(
     }
 
     private fun showAddressCopied() {
-        if (signal_layout.contains(copiedLayout)) return
+        with(binding) {
+            if (signalLayout.contains(copiedLayout)) return
 
-        signal_layout.addView(copiedLayout, signal_layout.indexOfChild(share_button))
-        viewAttachScope.launch(Dispatchers.Main) {
-            delay(DateUtils.SECOND_IN_MILLIS * 2)
-            if (signal_layout.contains(copiedLayout)) {
-                signal_layout.removeView(copiedLayout)
+            signalLayout.addView(copiedLayout, signalLayout.indexOfChild(shareButton))
+            viewAttachScope.launch(Dispatchers.Main) {
+                delay(DateUtils.SECOND_IN_MILLIS * 2)
+                if (signalLayout.contains(copiedLayout)) {
+                    signalLayout.removeView(copiedLayout)
+                }
             }
         }
     }
