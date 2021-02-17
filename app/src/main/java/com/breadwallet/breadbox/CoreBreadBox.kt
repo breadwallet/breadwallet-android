@@ -343,6 +343,25 @@ internal class CoreBreadBox(
             }
     }
 
+    override fun walletTransfer(currencyCode: String, transfer: Transfer): Flow<Transfer> {
+        val targetWallet = { wallet: Wallet -> wallet.currency.code.equals(currencyCode, true) }
+        val targetTransfer = { updatedTransfer: Transfer ->
+                (transfer == updatedTransfer || (transfer.hash.isPresent && transfer.hash == updatedTransfer.hash))
+        }
+        return transferUpdatedChannelMap
+            .asFlow()
+            .filter { targetTransfer(it) }
+            .onStart {
+                emit(
+                    system?.wallets
+                        ?.firstOrNull(targetWallet)
+                        ?.transfers
+                        ?.firstOrNull(targetTransfer)
+                        ?: return@onStart
+                )
+            }
+    }
+
     override fun initializeWallet(currencyCode: String) {
         check(isOpen) { "initializeWallet cannot be called before open." }
         val system = checkNotNull(system)
