@@ -80,7 +80,7 @@ class PlatformConfirmTransactionController(
         )
     )
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedViewState: Bundle?): View {
         return View(container.context)
     }
 

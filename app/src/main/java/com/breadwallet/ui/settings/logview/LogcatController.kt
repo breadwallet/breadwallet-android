@@ -94,7 +94,7 @@ class LogcatController(args: Bundle? = null) : BaseController(args) {
     }
 
     @SuppressLint("SetTextI18n")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedViewState: Bundle?): View {
         return LinearLayout(container.context).apply {
             isClickable = true
             orientation = LinearLayout.VERTICAL

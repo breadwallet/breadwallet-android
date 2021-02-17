@@ -27,10 +27,12 @@ package brd
 const val KOTLIN_VERSION = "1.4.30"
 private const val COROUTINES_VERSION = "1.4.2"
 private const val WALLETKIT_VERSION = "6.3.0"
+private const val FIREBASE_APPDIST_VERSION = "2.0.1"
 private const val FIREBASE_MESSAGING_VERSION = "21.0.1"
-private const val FIREBASE_ANALYTICS_VERSION = "18.0.0"
-private const val FIREBASE_CONFIG_VERSION = "19.2.0"
-private const val CRASHLYTICS_VERSION = "17.3.0"
+private const val FIREBASE_ANALYTICS_VERSION = "18.0.2"
+private const val FIREBASE_CONFIG_VERSION = "20.0.3"
+private const val CRASHLYTICS_VERSION = "17.3.1"
+private const val CRASHLYTICS_PLUGIN_VERSION = "2.2.0"
 private const val GUAVA_VERSION = "25.1-android"
 private const val LIFECYCLE_EXT_VERSION = "2.2.0"
 private const val WORK_MANAGER_VERSION = "2.4.0"
@@ -39,23 +41,23 @@ private const val LEGACY_V13 = "1.0.0"
 private const val CORE_VERSION = "1.3.2"
 private const val APPCOMPAT_VERSION = "1.2.0"
 private const val CARDVIEW_VERSION = "1.0.0"
-private const val CAMERAX_VERSION = "1.0.0-beta07"
-private const val CAMERAX_VIEW_VERSION = "1.0.0-alpha14"
+private const val CAMERAX_VERSION = "1.0.0-rc02"
+private const val CAMERAX_VIEW_VERSION = "1.0.0-alpha21"
 private const val RECYCLER_VERSION = "1.1.0"
 private const val CONSTRAINT_LAYOUT_VERSION = "1.1.3"
 private const val GRID_LAYOUT_VERSION = "1.0.0"
-private const val FASTADAPTER_VERSION = "5.2.2"
-private const val CONDUCTOR_VERSION = "3.0.0-rc2"
+private const val FASTADAPTER_VERSION = "5.3.4"
+private const val CONDUCTOR_VERSION = "3.0.1"
 private const val KODEIN_VERSION = "6.5.1"
-private const val MOBIUS_VERSION = "1.3.4"
+private const val MOBIUS_VERSION = "1.5.3"
 private const val MOBIUS_COROUTINES_VERSION = "0.1.2"
 private const val ESPRESSO_VERSION = "3.3.0-rc01"
-private const val ANDROIDX_TEST_VERSION = "1.3.0-rc01"
+private const val ANDROIDX_TEST_VERSION = "1.3.0"
 private const val JUNIT_KTX_VERSION = "1.1.2-rc01"
 private const val OKHTTP_VERSION = "4.5.0"
 private const val PICASSO_VERSION = "2.71828"
 private const val JETTY_VERSION = "9.2.19.v20160908" // DO NOT UPGRADE
-private const val LEAKCANARY_VERSION = "2.2"
+private const val LEAKCANARY_VERSION = "2.6"
 private const val ANR_WATCHDOG_VERSION = "1.4.0"
 private const val ZXING_VERSION = "3.3.3"
 private const val COMMONS_IO_VERSION = "2.6"
@@ -65,16 +67,23 @@ private const val JUNIT_VERSION = "4.12"
 private const val MOCKITO_VERSION = "2.25.0"
 private const val KASPRESSO_VERSION = "1.1.0"
 private const val KAKAO_VERSION = "2.3.2"
-private const val MATERIAL_VERSION = "1.2.1"
+private const val MATERIAL_VERSION = "1.3.0"
 const val REDACTED_VERSION = "0.8.0"
 private const val DETEKT_VERSION = "1.0.1"
 private const val COMMONS_COMPRESS_VERSION = "1.20"
 private const val BIOMETRIC_VERSION = "1.2.0-alpha02"
+private const val AGP_VERSION = "4.1.2"
+private const val SERVICES_PLUGIN_VERSION = "4.3.4"
 
 object Libs {
     object WalletKit {
         const val CoreAndroid = "com.breadwallet.core:corecrypto-android:$WALLETKIT_VERSION"
     }
+
+    object Android {
+        const val GradlePlugin = "com.android.tools.build:gradle:$AGP_VERSION"
+    }
+
     object Androidx {
         const val LifecycleExtensions = "androidx.lifecycle:lifecycle-extensions:$LIFECYCLE_EXT_VERSION"
         const val LifecycleScopeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:$LIFECYCLE_EXT_VERSION"
@@ -105,11 +114,17 @@ object Libs {
         const val View = "androidx.camera:camera-view:$CAMERAX_VIEW_VERSION"
     }
 
+    object Google {
+        const val ServicesPlugin = "com.google.gms:google-services:$SERVICES_PLUGIN_VERSION"
+    }
+
     object Firebase {
         const val Messaging = "com.google.firebase:firebase-messaging-ktx:$FIREBASE_MESSAGING_VERSION"
         const val Analytics = "com.google.firebase:firebase-analytics-ktx:$FIREBASE_ANALYTICS_VERSION"
         const val ConfigKtx = "com.google.firebase:firebase-config-ktx:$FIREBASE_CONFIG_VERSION"
         const val Crashlytics = "com.google.firebase:firebase-crashlytics-ktx:$CRASHLYTICS_VERSION"
+        const val DistributionPlugin = "com.google.firebase:firebase-appdistribution-gradle:$FIREBASE_APPDIST_VERSION"
+        const val CrashlyticsPlugin = "com.google.firebase:firebase-crashlytics-gradle:$CRASHLYTICS_PLUGIN_VERSION"
     }
 
     object Material {
@@ -133,7 +148,7 @@ object Libs {
 
     object Conductor {
         const val Core = "com.bluelinelabs:conductor:$CONDUCTOR_VERSION"
-        const val Support = "com.bluelinelabs:conductor-support:$CONDUCTOR_VERSION"
+        const val ViewPager = "com.bluelinelabs:conductor-viewpager:$CONDUCTOR_VERSION"
     }
 
     object Kodein {
@@ -165,13 +180,13 @@ object Libs {
     }
 
     object Kotlin {
+        const val GradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
         const val StdLibJdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$KOTLIN_VERSION"
         const val Test = "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
         const val TestJunit = "org.jetbrains.kotlin:kotlin-test-junit:$KOTLIN_VERSION"
     }
 
     object Jetty {
-        const val Continuations = "org.eclipse.jetty:jetty-continuation:$JETTY_VERSION"
         const val Webapp = "org.eclipse.jetty:jetty-webapp:$JETTY_VERSION"
         const val WebSocket = "org.eclipse.jetty.websocket:websocket-server:$JETTY_VERSION"
     }
@@ -215,6 +230,7 @@ object Libs {
 
     object Redacted {
         const val Annotation = "dev.zacsweers.redacted:redacted-compiler-plugin-annotations:$REDACTED_VERSION"
+        const val Plugin = "dev.zacsweers.redacted:redacted-compiler-gradle-plugin:$REDACTED_VERSION"
     }
 
     object Detekt {

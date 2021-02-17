@@ -33,7 +33,7 @@ import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.support.RouterPagerAdapter
+import com.bluelinelabs.conductor.viewpager.RouterPagerAdapter
 import com.breadwallet.R
 import com.breadwallet.databinding.ControllerPaperKeyBinding
 import com.breadwallet.databinding.FragmentWordItemBinding

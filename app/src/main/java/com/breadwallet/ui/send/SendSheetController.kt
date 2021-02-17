@@ -419,7 +419,7 @@ class SendSheetController(args: Bundle? = null) :
 
             ifChanged(M::isConfirmingTx) {
                 val isConfirmVisible =
-                    router.backstack.lastOrNull()?.controller() is ConfirmTxController
+                    router.backstack.lastOrNull()?.controller is ConfirmTxController
                 if (isConfirmingTx && !isConfirmVisible) {
                     val controller = ConfirmTxController(
                         currencyCode,
@@ -440,7 +440,7 @@ class SendSheetController(args: Bundle? = null) :
 
             ifChanged(M::isAuthenticating) {
                 val isAuthVisible =
-                    router.backstack.lastOrNull()?.controller() is AuthenticationController
+                    router.backstack.lastOrNull()?.controller is AuthenticationController
                 if (isAuthenticating && !isAuthVisible) {
                     val authenticationMode = if (isFingerprintAuthEnable) {
                         AuthMode.USER_PREFERRED

@@ -62,7 +62,6 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.browser.BrdNativeJs
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
-import com.platform.HTTPServer
 import com.platform.LinkBus
 import com.platform.LinkResultMessage
 import com.platform.PlatformTransactionBus
@@ -177,13 +176,6 @@ class WebController(
         super.onCreateView(view)
 
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
-
-        HTTPServer.setOnCloseListener {
-            if (router.backstack.lastOrNull()?.controller() is WebController) {
-                router.popCurrentController()
-            }
-            HTTPServer.setOnCloseListener(null)
-        }
 
         binding.webView.settings.apply {
             domStorageEnabled = true
@@ -342,7 +334,6 @@ class WebController(
 
     override fun onDestroyView(view: View) {
         super.onDestroyView(view)
-        HTTPServer.setOnCloseListener(null)
         nativePromiseFactory.dispose()
     }
 
@@ -353,10 +344,16 @@ class WebController(
         }
     }
 
-    private fun handleLinkMessages() = LinkBus.requests().onEach {
+    private fun handleLinkMessages() = LinkBus.requests().onEach { (url, jsonRequest) ->
         withContext(Main) {
-            val transaction = RouterTransaction.with(WebController(it.url, it.jsonRequest))
-            router.pushController(transaction)
+            if (url.endsWith("/_close")) {
+                if (router.backstack.lastOrNull()?.controller is WebController) {
+                    router.popCurrentController()
+                }
+            } else {
+                val transaction = RouterTransaction.with(WebController(url, jsonRequest))
+                router.pushController(transaction)
+            }
         }
     }
 

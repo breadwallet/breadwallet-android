@@ -274,7 +274,7 @@ class StakingController(
         res: Resources
     ) {
         val isAuthVisible =
-            router.backstack.lastOrNull()?.controller() is AuthenticationController
+            router.backstack.lastOrNull()?.controller is AuthenticationController
         if (isAuthenticating && !isAuthVisible) {
             val authenticationMode = if (isFingerprintAuthEnable) {
                 AuthMode.USER_PREFERRED

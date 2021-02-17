@@ -78,7 +78,6 @@ public class HTTPServer extends AbstractLifeCycle {
 
     private static HTTPServer mInstance;
     private static Set<Middleware> middlewares;
-    private static OnCloseListener mOnCloseListener;
     private int mPort;
     private Server mServer;
     private Context mContext; // TODO Inject when implementing dependency injection.
@@ -119,16 +118,8 @@ public class HTTPServer extends AbstractLifeCycle {
         final Context context = BreadApp.getBreadContext();
         boolean result = false;
         if (target.equalsIgnoreCase(BRConstants.CLOSE)) {
-            if (context != null) {
-                BRExecutor.getInstance().forMainThreadTasks().execute(() -> {
-                    if (mOnCloseListener != null) {
-                        mOnCloseListener.onClose();
-                    }
-                });
-                APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
-                return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
-            }
-            return true;
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } else if (target.toLowerCase().startsWith("/_email")) {
             Log.e(TAG, "dispatch: uri: " + baseRequest.getUri().toString());
             String address = Uri.parse(baseRequest.getUri().toString()).getQueryParameter("address");
@@ -162,10 +153,6 @@ public class HTTPServer extends AbstractLifeCycle {
             }
         }
         return result;
-    }
-
-    public static void setOnCloseListener(OnCloseListener listener) {
-        mOnCloseListener = listener;
     }
 
     private void setupIntegrations() {
@@ -306,10 +293,6 @@ public class HTTPServer extends AbstractLifeCycle {
 
     public int getPort() {
         return mPort;
-    }
-
-    public interface OnCloseListener {
-        void onClose();
     }
 
     private static class ServerHandler extends AbstractHandler {
