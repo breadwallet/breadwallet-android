@@ -187,7 +187,6 @@ object Libs {
     }
 
     object Jetty {
-        const val Continuations = "org.eclipse.jetty:jetty-continuation:$JETTY_VERSION"
         const val Webapp = "org.eclipse.jetty:jetty-webapp:$JETTY_VERSION"
         const val WebSocket = "org.eclipse.jetty.websocket:websocket-server:$JETTY_VERSION"
     }

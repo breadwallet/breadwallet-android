@@ -190,7 +190,6 @@ dependencies {
     implementation(Libs.ApacheCommons.IO)
     implementation(Libs.Jbsdiff.Core)
     implementation(Libs.Slf4j.Api)
-    implementation(Libs.Jetty.Continuations)
     implementation(Libs.Jetty.Webapp)
     implementation(Libs.Jetty.WebSocket)
 
