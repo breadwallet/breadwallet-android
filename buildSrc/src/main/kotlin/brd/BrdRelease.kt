@@ -32,7 +32,7 @@ object BrdRelease {
     /** Hot fix version. Usually affected by engineering. Maximum value: 9 */
     private const val engineering = 0
     /** Build version. Increase for each new build. Maximum value: 999 */
-    private const val build = 5
+    private const val build = 7
 
     init {
         check(marketing in 0..99)
