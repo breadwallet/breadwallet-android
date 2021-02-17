@@ -119,7 +119,7 @@ class DisabledController(args: Bundle? = null) : BaseController(args) {
         EventUtils.pushEvent(EventUtils.EVENT_LOGIN_UNLOCKED)
 
         val returnStack = router.backstack
-            .takeWhile { it.controller() !is DisabledController }
+            .takeWhile { it.controller !is DisabledController }
 
         when {
             returnStack.isEmpty() -> {
@@ -130,7 +130,7 @@ class DisabledController(args: Bundle? = null) : BaseController(args) {
                         .pushChangeHandler(FadeChangeHandler())
                 )
             }
-            returnStack.last().controller() !is LoginController -> {
+            returnStack.last().controller !is LoginController -> {
                 logDebug("Returning to Login for previous backstack.")
                 val loginTransaction = RouterTransaction.with(LoginController(showHome = false))
                     .popChangeHandler(FadeChangeHandler())

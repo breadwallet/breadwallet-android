@@ -111,7 +111,7 @@ class KeyStoreController(
     }
 
     private fun showKeyStoreDialog(state: KeyStoreInvalid) {
-        val topController = router.backstack.lastOrNull()?.controller()
+        val topController = router.backstack.lastOrNull()?.controller
         val currentDialog = (topController as? AlertDialogController)?.dialogId
         val res = checkNotNull(resources)
         val controller = when (state) {

@@ -31,7 +31,7 @@ import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.support.RouterPagerAdapter
+import com.bluelinelabs.conductor.viewpager.RouterPagerAdapter
 import com.breadwallet.R
 import com.breadwallet.databinding.ControllerOnBoardingBinding
 import com.breadwallet.databinding.ControllerOnboardingPageBinding

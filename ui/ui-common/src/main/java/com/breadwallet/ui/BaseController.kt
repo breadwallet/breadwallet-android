@@ -73,7 +73,7 @@ abstract class BaseController(
     open fun onCreateView(view: View) {
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedViewState: Bundle?): View {
         val viewBindingDelegates = resettableDelegates.filterIsInstance<ViewBindingDelegate<ViewBinding>>()
 
         return if (viewBindingDelegates.isEmpty()) {
@@ -135,7 +135,7 @@ abstract class BaseController(
     inline fun <reified T> findListener(): T? =
         (targetController as? T)
             ?: (parentController as? T)
-            ?: (router.backstack.dropLast(1).lastOrNull()?.controller() as? T)
+            ?: (router.backstack.dropLast(1).lastOrNull()?.controller as? T)
 
     private fun resetDelegatesFor(callback: ResetCallback) {
         resettableDelegates.forEach { delegate ->

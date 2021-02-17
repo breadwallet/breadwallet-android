@@ -217,7 +217,7 @@ dependencies {
 
     // Conductor
     implementation(Libs.Conductor.Core)
-    implementation(Libs.Conductor.Support)
+    implementation(Libs.Conductor.ViewPager)
 
     // Kodein DI
     implementation(Libs.Kodein.CoreErasedJvm)

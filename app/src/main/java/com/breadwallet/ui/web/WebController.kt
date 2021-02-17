@@ -179,7 +179,7 @@ class WebController(
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
 
         HTTPServer.setOnCloseListener {
-            if (router.backstack.lastOrNull()?.controller() is WebController) {
+            if (router.backstack.lastOrNull()?.controller is WebController) {
                 router.popCurrentController()
             }
             HTTPServer.setOnCloseListener(null)

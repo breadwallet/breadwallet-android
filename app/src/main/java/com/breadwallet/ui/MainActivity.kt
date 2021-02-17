@@ -244,7 +244,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         val data = processIntentData(intent) ?: ""
         if (data.isNotBlank() && userManager.isInitialized()) {
             val hasRoot = router.hasRootController()
-            val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
+            val isTopLogin = router.backstack.lastOrNull()?.controller is LoginController
             val isAuthenticated = !isTopLogin && hasRoot
             navigator.navigateTo(NavigationTarget.DeepLink(data, isAuthenticated))
         }
@@ -338,7 +338,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         .any()
 
     private fun isBackstackLocked() =
-        router.backstack.lastOrNull()?.controller()
+        router.backstack.lastOrNull()?.controller
             ?.let {
                 // Backstack is locked or requires a pin
                 it is LoginController || it is InputPinController ||
