@@ -31,7 +31,7 @@ import com.platform.util.getIntOrDefault
 import com.platform.util.getJSONObjectOrNull
 import com.platform.util.getLongOrDefault
 import com.platform.util.getStringOrNull
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import org.json.JSONObject
 
 sealed class TxMetaData
@@ -48,6 +48,7 @@ private const val DEVICE_ID = "dId"
 private const val GIFT = "gift"
 private const val SHARED = "shared"
 private const val CLAIMED = "claimed"
+private const val RECLAIMED = "reclaimed"
 private const val KEY_DATA = "keyData"
 private const val RECIPIENT_NAME = "recipientName"
 
@@ -79,6 +80,9 @@ data class TxMetaDataValue(
                 gift = getJSONObjectOrNull(GIFT)?.let { GiftMetaData.fromJsonObject(it) }
             )
         }
+
+        fun hasGift(json: JSONObject): Boolean =
+            json.has(GIFT) && !json.isNull(GIFT)
     }
 
     /**
@@ -103,12 +107,12 @@ data class TxMetaDataValue(
             CLASS_VERSION to classVersion,
             BLOCK_HEIGHT to blockHeight,
             EXCHANGE_RATE to exchangeRate,
-            EXCHANGE_CURRENCY to (exchangeCurrency ?: ""),
+            EXCHANGE_CURRENCY to (exchangeCurrency ?: JSONObject.NULL),
             FEE_RATE to fee,
             TX_SIZE to txSize,
             CREATION_TIME to creationTime,
-            DEVICE_ID to (deviceId ?: ""),
-            COMMENT to (comment ?: ""),
+            DEVICE_ID to (deviceId ?: JSONObject.NULL),
+            COMMENT to (comment ?: JSONObject.NULL),
             GIFT to gift?.toJSON()
         )
     )
@@ -117,8 +121,9 @@ data class TxMetaDataValue(
 data class GiftMetaData(
     val shared: Boolean = false,
     val claimed: Boolean = false,
+    val reclaimed: Boolean = false,
     @Redacted val keyData: String? = null,
-    @Redacted val recipientName: String? = null
+    @Redacted val recipientName: String? = null,
 ) {
     companion object {
         fun fromJsonObject(json: JSONObject): GiftMetaData = json.run {
@@ -126,7 +131,8 @@ data class GiftMetaData(
                 shared = getBooleanOrDefault(SHARED, false),
                 claimed = getBooleanOrDefault(CLAIMED, false),
                 keyData = getStringOrNull(KEY_DATA),
-                recipientName = getStringOrNull(RECIPIENT_NAME)
+                recipientName = getStringOrNull(RECIPIENT_NAME),
+                reclaimed = getBooleanOrDefault(RECLAIMED, false),
             )
         }
     }
@@ -135,8 +141,9 @@ data class GiftMetaData(
         mapOf(
             SHARED to shared,
             CLAIMED to claimed,
-            KEY_DATA to (keyData ?: ""),
-            RECIPIENT_NAME to (recipientName ?: "")
+            KEY_DATA to (keyData ?: JSONObject.NULL),
+            RECIPIENT_NAME to (recipientName ?: JSONObject.NULL),
+            RECLAIMED to reclaimed
         )
     )
 }

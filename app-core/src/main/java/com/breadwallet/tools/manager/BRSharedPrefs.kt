@@ -38,6 +38,7 @@ import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.callbackFlow
@@ -66,6 +67,7 @@ object BRSharedPrefs {
     private const val PAPER_KEY_WRITTEN_DOWN = "phraseWritten"
     private const val PREFER_STANDARD_FEE = "favorStandardFee"
     private const val FEE_PREFERENCE = "feePreference"
+    private const val LAST_GIFT_CHECK_TIME = "lastGiftCheckTime"
 
     @VisibleForTesting
     const val RECEIVE_ADDRESS = "receive_address"
@@ -113,6 +115,8 @@ object BRSharedPrefs {
     const val APP_FOREGROUNDED_COUNT = "appForegroundedCount"
     const val APP_RATE_PROMPT_HAS_RATED = "appReviewPromptHasRated"
 
+    private val secureTimeFlow = MutableSharedFlow<Long>(replay = 1)
+
     /**
      * Call when Application is initialized to setup [brdPrefs].
      * This removes the need for a context parameter.
@@ -121,11 +125,25 @@ object BRSharedPrefs {
         brdPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         applicationScope.launch {
             _trackedConversionChanges.value = getTrackedConversions()
+
+            secureTimeFlow.tryEmit(getSecureTime())
         }
     }
 
     private lateinit var brdPrefs: SharedPreferences
     private val promptChangeChannel = BroadcastChannel<Unit>(Channel.CONFLATED)
+
+    var lastGiftCheckTime: Long
+        get() = brdPrefs.getLong(LAST_GIFT_CHECK_TIME, 0L)
+        set(value) {
+            brdPrefs.edit { putLong(LAST_GIFT_CHECK_TIME, value) }
+        }
+
+    var phraseWroteDown: Boolean
+        get() = brdPrefs.getBoolean(PAPER_KEY_WRITTEN_DOWN, false)
+        set(value) {
+            brdPrefs.edit { putBoolean(PAPER_KEY_WRITTEN_DOWN, value) }
+        }
 
     @JvmStatic
     fun getPreferredFiatIso(): String =
@@ -146,12 +164,6 @@ object BRSharedPrefs {
             putString(CURRENT_CURRENCY, default)
         }
 
-    fun getPhraseWroteDown(): Boolean =
-        brdPrefs.getBoolean(PAPER_KEY_WRITTEN_DOWN, false)
-
-    fun putPhraseWroteDown(check: Boolean) =
-        brdPrefs.edit { putBoolean(PAPER_KEY_WRITTEN_DOWN, check) }
-
     fun getReceiveAddress(iso: String): String? =
         brdPrefs.getString(RECEIVE_ADDRESS + iso.toUpperCase(), "")
 
@@ -160,11 +172,17 @@ object BRSharedPrefs {
 
     @JvmStatic
     fun getSecureTime() =
-        brdPrefs.getLong(SECURE_TIME, System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS)
+        brdPrefs.getLong(SECURE_TIME, System.currentTimeMillis())
 
     //secure time from the server
-    fun putSecureTime(date: Long) =
+    fun putSecureTime(date: Long) {
         brdPrefs.edit { putLong(SECURE_TIME, date) }
+        secureTimeFlow.tryEmit(date)
+    }
+
+    fun secureTimeFlow(): Flow<Long> {
+        return secureTimeFlow
+    }
 
     fun getLastSyncTime(iso: String) =
         brdPrefs.getLong(LAST_SYNC_TIME_PREFIX + iso.toUpperCase(), 0)

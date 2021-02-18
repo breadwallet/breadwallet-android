@@ -25,6 +25,7 @@
 package com.breadwallet.ui.txdetails
 
 import com.breadwallet.crypto.Transfer
+import com.breadwallet.platform.entities.GiftMetaData
 import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.models.TransactionState
 import com.breadwallet.ui.navigation.NavigationEffect
@@ -32,7 +33,7 @@ import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.send.TransferField
 import com.breadwallet.util.CurrencyCode
 import com.breadwallet.platform.entities.TxMetaData
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import java.math.BigDecimal
 import java.util.Date
 
@@ -65,8 +66,7 @@ object TxDetails {
         val feeToken: String = "",
         val confirmations: Int = 0,
         val transferFields: List<TransferField> = emptyList(),
-        val giftRecipientName: String? = null,
-        val giftPrivateKey: String? = null
+        val gift: GiftMetaData? = null
     ) {
         companion object {
             /** Create a [TxDetails.M] using only the required values. */
@@ -149,8 +149,14 @@ object TxDetails {
             override val navigationTarget = NavigationTarget.Back
         }
 
-        data class ImportGift(@Redacted val privateKey: String) : F(), NavigationEffect {
-            override val navigationTarget = NavigationTarget.ImportWalletWithKey(privateKey, false)
+        data class ImportGift(
+            @Redacted val privateKey: String,
+            val transferHash: String
+        ) : F(), NavigationEffect {
+            override val navigationTarget = NavigationTarget.ImportWallet(
+                privateKey,
+                reclaimingGift = transferHash
+            )
         }
 
         data class ShareGift(

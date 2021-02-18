@@ -348,10 +348,7 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
                 is TxMetaDataValue -> event.transactionMetaData.comment ?: ""
                 is TxMetaDataEmpty -> ""
             },
-            recipientName = when (event.transactionMetaData){
-                is TxMetaDataValue -> event.transactionMetaData.gift?.recipientName
-                is TxMetaDataEmpty -> null
-            }
+            gift = (event.transactionMetaData as? TxMetaDataValue)?.gift
         )
         val transactions = model.transactions.replaceAt(index, transaction)
         return next(
@@ -374,10 +371,7 @@ object WalletUpdate : Update<M, E, F>, WalletScreenUpdateSpec {
                                 is TxMetaDataEmpty -> ""
                                 null -> transaction.memo
                             },
-                            recipientName = when (metadata) {
-                                is TxMetaDataValue -> metadata.gift?.recipientName
-                                else -> null
-                            }
+                            gift = (metadata as? TxMetaDataValue)?.gift
                         )
                     }
             )

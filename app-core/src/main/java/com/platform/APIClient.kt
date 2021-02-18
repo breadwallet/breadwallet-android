@@ -76,6 +76,7 @@ import okhttp3.Response
 import okio.Buffer
 
 import com.breadwallet.tools.util.BRConstants.CONTENT_TYPE_JSON_CHARSET_UTF8
+import com.breadwallet.tools.util.BRConstants.DATE
 import com.breadwallet.tools.util.BRConstants.HEADER_ACCEPT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -364,6 +365,12 @@ class APIClient(
                 val headers = HashMap<String, String>()
                 for (name in res.headers.names()) {
                     headers[name.toLowerCase()] = res.header(name)!!
+                    if (name.equals(DATE, true)) {
+                        val dateValue = res.header(name)!!
+                        DATE_FORMAT.parse(dateValue)
+                            ?.time
+                            ?.run(BRSharedPrefs::putSecureTime)
+                    }
                 }
 
                 var bytesBody: ByteArray? = null

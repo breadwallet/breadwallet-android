@@ -60,9 +60,12 @@ class TransactionListItem(
                     transaction.progress < PROGRESS_FULL ->
                         R.drawable.transfer_in_progress
                     transaction.isErrored -> R.drawable.transfer_failed
+                    transaction.gift != null -> when {
+                        transaction.gift.claimed -> R.drawable.transfer_gift_claimed
+                        transaction.gift.reclaimed -> R.drawable.transfer_gift_reclaimed
+                        else -> R.drawable.transfer_gift_unclaimed
+                    }
                     received -> R.drawable.transfer_receive
-                    transaction.recipientName != null ->
-                        R.drawable.transfer_gift_claimed
                     else -> R.drawable.transfer_send
                 }
             )
@@ -93,8 +96,8 @@ class TransactionListItem(
             tx_amount.text = formattedAmount
 
             tx_description.text = when {
-                !transaction.recipientName.isNullOrBlank() ->
-                    context.getString(R.string.Transaction_toRecipient, transaction.recipientName)
+                !transaction.gift?.recipientName.isNullOrBlank() ->
+                    context.getString(R.string.Transaction_toRecipient, transaction.gift?.recipientName)
                 transaction.isStaking -> context.getString(R.string.Transaction_stakingTo, transaction.truncatedToAddress)
                 commentString == null -> ""
                 commentString.isNotEmpty() -> commentString

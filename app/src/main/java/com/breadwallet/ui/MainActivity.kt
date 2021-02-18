@@ -368,7 +368,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                 LoginController(showHome = router.backstackSize == 0)
             else -> InputPinController(
                 onComplete = OnCompleteAction.GO_HOME,
-                skipWriteDown = BRSharedPrefs.getPhraseWroteDown()
+                skipWriteDown = BRSharedPrefs.phraseWroteDown
             )
         }
 

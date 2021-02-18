@@ -53,6 +53,7 @@ import com.breadwallet.platform.interfaces.AccountMetaDataProvider
 import com.breadwallet.repository.RatesRepository
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.BrdUserManager
+import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.uigift.CreateGift.E
 import com.breadwallet.ui.uigift.CreateGift.F
 import com.breadwallet.ui.uigift.CreateGift.PaperWalletError
@@ -174,6 +175,7 @@ fun createCreateGiftingHandler(
                             when (checkNotNull(tx.state.type)) {
                                 TransferState.Type.CREATED, TransferState.Type.SIGNED -> null
                                 TransferState.Type.INCLUDED, TransferState.Type.PENDING, TransferState.Type.SUBMITTED -> {
+                                    EventUtils.pushEvent(EventUtils.EVENT_GIFT_SEND)
                                     E.OnTransactionSent(transferHash)
                                 }
                                 TransferState.Type.DELETED, TransferState.Type.FAILED -> {

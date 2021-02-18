@@ -24,7 +24,8 @@
  */
 package com.breadwallet.ui.wallet
 
-import io.sweers.redacted.annotation.Redacted
+import com.breadwallet.platform.entities.GiftMetaData
+import dev.zacsweers.redacted.annotations.Redacted
 import java.math.BigDecimal
 
 private const val TRUNCATED_ADDRESS_CHARS = 7
@@ -47,7 +48,7 @@ data class WalletTransaction(
     val currencyCode: String,
     val feeToken: String = "",
     val confirmationsUntilFinal: Int,
-    val recipientName: String? = null,
+    val gift: GiftMetaData? = null,
     val isStaking: Boolean = false
 ) {
     val isFeeForToken: Boolean = feeToken.isNotBlank()

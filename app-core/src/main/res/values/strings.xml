@@ -1355,4 +1355,12 @@
     <string name="TransactionDetails.reclaim">Reclaim</string>
     <string name="TransactionDetails.resend">Resend</string>
     <string name="Transaction.stakingTo">staking to %1$s</string>
+
+    <!-- Export Transactions -->
+    <string name="Settings.exportTransaction">Export transaction history to CSV</string>
+    <string name="Settings.share">Share</string>
+    <string name="ExportConfirmation.title">Export transactions?</string>
+    <string name="ExportConfirmation.message">This will generate a CSV file including all completed transactions from all enabled wallets.</string>
+    <string name="ExportConfirmation.continue">Continue</string>
+    <string name="ExportConfirmation.cancel">Cancel</string>
 </resources>

@@ -353,6 +353,10 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
             ConversionTracker(instance())
         }
 
+        bind<GiftTracker>() with singleton {
+            GiftTracker(instance(), instance())
+        }
+
         bind<ConnectivityStateProvider>() with singleton {
             val connectivityManager =
                 this@BreadApp.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -376,6 +380,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
     private var accountLockJob: Job? = null
 
     private val apiClient by instance<APIClient>()
+    private val giftTracker by instance<GiftTracker>()
     private val userManager by instance<BrdUserManager>()
     private val ratesFetcher by instance<RatesFetcher>()
     private val accountMetaData by instance<AccountMetaDataProvider>()
@@ -484,6 +489,7 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
 
         startedScope.launch {
             accountMetaData.recoverAll(migrate)
+            giftTracker.checkUnclaimedGifts()
         }
 
         ratesFetcher.start(startedScope)

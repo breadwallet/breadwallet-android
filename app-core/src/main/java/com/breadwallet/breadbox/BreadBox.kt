@@ -71,6 +71,8 @@ interface BreadBox {
     /** Emits the [Transfer] for the [transferHash] of [currencyCode]. */
     fun walletTransfer(currencyCode: String, transferHash: String): Flow<Transfer>
 
+    fun walletTransfer(currencyCode: String, transfer: Transfer): Flow<Transfer>
+
     /** Initializes the [Wallet] of [currencyCode], required for certain [Wallet]s before use. */
     fun initializeWallet(currencyCode: String)
 
