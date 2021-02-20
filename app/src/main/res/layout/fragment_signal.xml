@@ -1,10 +1,9 @@
 <com.breadwallet.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                        xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                        android:layout_width="match_parent"
-                                                        android:layout_height="match_parent"
-                                                        android:background="@android:color/transparent"
-                                                        android:filterTouchesWhenObscured="true"
-                                                        android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:filterTouchesWhenObscured="true"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/signal_layout"
@@ -15,27 +14,24 @@
         android:background="@drawable/signal_layout"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            style="@style/BRBoldTextStyle"
             android:layout_gravity="center_horizontal"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:textColor="@color/white"
-            android:textSize="@dimen/header"
-            app:customTFont="BarlowSemiCondensed-Bold.ttf"
-            />
+            android:textSize="@dimen/header" />
 
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginTop="16dp"
-            android:background="@color/separator_gray"
-            />
+            android:background="@color/separator_gray" />
 
         <ImageView
             android:id="@+id/qr_image"
@@ -45,10 +41,10 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
-            android:src="@drawable/ic_check_mark_white"
-            />
+            android:src="@drawable/ic_check_mark_white" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,8 +53,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:textColor="@color/white"
-            android:textSize="16sp"
-            />
+            android:textSize="16sp" />
 
     </LinearLayout>
 

@@ -8,7 +8,8 @@
     android:background="@color/litecoin_litewallet_blue"
     android:orientation="vertical">
 
-    <com.breadwallet.presenter.customviews.BRText
+    <TextView
+        style="@style/BRTextStyle"
         android:id="@+id/version_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +34,8 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.breadwallet.presenter.customviews.BRText
+    <TextView
+        style="@style/BRTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
@@ -49,6 +51,7 @@
         app:layout_constraintTop_toBottomOf="@id/logoImgV" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/button_new_wallet"
         android:layout_width="0dp"
         android:layout_height="80dp"
@@ -68,6 +71,7 @@
         tools:textColor="@color/white" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/button_recover_wallet"
         android:layout_width="0dp"
         android:layout_height="80dp"

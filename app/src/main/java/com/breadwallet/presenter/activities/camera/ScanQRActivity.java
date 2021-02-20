@@ -7,13 +7,12 @@ import android.content.pm.PackageManager;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.legacy.app.ActivityCompat;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -56,24 +55,17 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
     private UIUpdateTask task;
     private boolean handlingCode;
     public static boolean appVisible = false;
-    private static ScanQRActivity app;
     private static final int MY_PERMISSION_REQUEST_CAMERA = 56432;
 
-    private ViewGroup mainLayout;
-
     private QRCodeReaderView qrCodeReaderView;
-
-    public static ScanQRActivity getApp() {
-        return app;
-    }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr);
 
-        cameraGuide = (ImageView) findViewById(R.id.scan_guide);
-        descriptionText = (TextView) findViewById(R.id.description_text);
+        cameraGuide = findViewById(R.id.scan_guide);
+        descriptionText = findViewById(R.id.description_text);
 
         task = new UIUpdateTask();
         task.start();
@@ -85,7 +77,6 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
                 == PackageManager.PERMISSION_GRANTED) {
             initQRCodeReaderView();
         } else {
-//            requestCameraPermission();
             Timber.d("onCreate: Permissions needed? HUH?");
         }
 
@@ -103,7 +94,6 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
     protected void onResume() {
         super.onResume();
         appVisible = true;
-        app = this;
         if (qrCodeReaderView != null) {
             qrCodeReaderView.startCamera();
         }
@@ -162,17 +152,14 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
         }
 
         if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//            Snackbar.make(mainLayout, "Camera permission was granted.", Snackbar.LENGTH_SHORT).show();
             initQRCodeReaderView();
         } else {
-//            Snackbar.make(mainLayout, "Camera permission request was denied.", Snackbar.LENGTH_SHORT)
-//                    .show();
+            Timber.w("Camera permission request was denied.");
         }
     }
 
     @Override
     public void onQRCodeRead(final String text, PointF[] points) {
-
         if (handlingCode) return;
         if (BitcoinUrlHandler.isBitcoinUrl(text) || BRBitId.isBitId(text)) {
             runOnUiThread(new Runnable() {
@@ -202,7 +189,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
     }
 
     private void initQRCodeReaderView() {
-        qrCodeReaderView = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
+        qrCodeReaderView = findViewById(R.id.qrdecoderview);
         qrCodeReaderView.setAutofocusInterval(500L);
         qrCodeReaderView.setOnQRCodeReadListener(this);
         qrCodeReaderView.setBackCamera();

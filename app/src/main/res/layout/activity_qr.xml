@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:id="@+id/qr_main_layout"
-                android:layout_height="match_parent"
-                android:gravity="center">
+    android:layout_width="match_parent"
+    android:id="@+id/qr_main_layout"
+    android:layout_height="match_parent"
+    android:gravity="center">
 
 
     <com.breadwallet.tools.qrcode.QRCodeReaderView
@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        />
+        android:layout_alignParentTop="true" />
 
 
     <ImageView
@@ -21,9 +20,10 @@
         android:padding="40dp"
         android:layout_height="240dp"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true" />
 
-    <com.breadwallet.presenter.customviews.BRText
+    <TextView
+        style="@style/BRTextStyle"
         android:layout_width="wrap_content"
         android:id="@+id/description_text"
         android:layout_centerHorizontal="true"
@@ -35,6 +35,6 @@
         android:shadowRadius="5"
         android:shadowColor="@color/black"
         android:shadowDy="3"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

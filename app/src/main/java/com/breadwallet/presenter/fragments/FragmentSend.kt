@@ -25,7 +25,6 @@ import androidx.transition.TransitionManager
 import com.breadwallet.R
 import com.breadwallet.presenter.customviews.BRKeyboard
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
-import com.breadwallet.presenter.customviews.BRText
 import com.breadwallet.presenter.entities.PaymentItem
 import com.breadwallet.tools.animation.BRAnimator
 import com.breadwallet.tools.animation.BRDialog
@@ -97,8 +96,8 @@ class FragmentSend : Fragment() {
     private lateinit var amountLayout: ConstraintLayout
     private lateinit var feeLayout: BRLinearLayoutWithCaret
     private var feeButtonsShown = false
-    private lateinit var feeDescription: BRText
-    private lateinit var warningText: BRText
+    private lateinit var feeDescription: TextView
+    private lateinit var warningText: TextView
     private var amountLabelOn = true
     private var ignoreCleanup = false
 
@@ -131,8 +130,8 @@ class FragmentSend : Fragment() {
         keyboardLayout = rootView.findViewById<View>(R.id.keyboard_layout) as LinearLayout
         amountLayout = rootView.findViewById<View>(R.id.amount_layout) as ConstraintLayout
         feeLayout = rootView.findViewById<View>(R.id.fee_buttons_layout) as BRLinearLayoutWithCaret
-        feeDescription = rootView.findViewById<View>(R.id.fee_description) as BRText
-        warningText = rootView.findViewById<View>(R.id.warning_text) as BRText
+        feeDescription = rootView.findViewById<View>(R.id.fee_description) as TextView
+        warningText = rootView.findViewById<View>(R.id.warning_text) as TextView
         close = rootView.findViewById<View>(R.id.close_button) as ImageButton
         selectedIso = if (BRSharedPrefs.getPreferredLTC(context)) "LTC" else BRSharedPrefs.getIso(context)
         amountBuilder = StringBuilder(0)
@@ -165,9 +164,6 @@ class FragmentSend : Fragment() {
 
     private fun setupFeesSelector(rootView: View) {
         val feesSegment = rootView.findViewById<RadioGroup>(R.id.fees_segment)
-        for (i in 0 until feesSegment.childCount) {
-            FontManager.setCustomFont(context, feesSegment.getChildAt(i) as RadioButton, "BarlowSemiCondensed-Medium.ttf")
-        }
         feesSegment.setOnCheckedChangeListener { _, checkedId -> onFeeTypeSelected(checkedId) }
         onFeeTypeSelected(R.id.regular_fee_but)
     }
@@ -430,15 +426,6 @@ class FragmentSend : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        BRAnimator.animateBackgroundDim(backgroundLayout, true)
-        BRAnimator.animateSignalSlide(signalLayout, true) {
-            if (activity != null) {
-                try {
-                    activity!!.fragmentManager.popBackStack()
-                } catch (ignored: Exception) {
-                }
-            }
-        }
         FeeManager.getInstance().resetFeeType()
     }
 

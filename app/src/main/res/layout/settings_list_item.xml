@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:filterTouchesWhenObscured="true"
-                android:orientation="horizontal"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:filterTouchesWhenObscured="true"
+    android:orientation="horizontal">
 
-    <com.breadwallet.presenter.customviews.BRText
+    <TextView
+        style="@style/BRTextStyle"
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,11 +16,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:textSize="@dimen/sub_header"
-        android:textColor="@color/almost_black"
-        />
+        android:textColor="@color/almost_black" />
 
-    <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="BarlowSemiCondensed-Medium.ttf"
+    <TextView
+        style="@style/BRTextStyle"
         android:id="@+id/item_addon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +27,6 @@
         android:textSize="@dimen/sub_header"
         android:layout_centerVertical="true"
         android:layout_marginEnd="24dp"
-        android:textColor="@color/light_gray"
-       />
+        android:textColor="@color/light_gray" />
 
 </RelativeLayout>

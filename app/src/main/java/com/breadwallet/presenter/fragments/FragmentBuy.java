@@ -19,9 +19,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.breadwallet.BuildConfig;
@@ -62,6 +64,7 @@ import timber.log.Timber;
 public class FragmentBuy extends Fragment {
     private static final int FILE_CHOOSER_REQUEST_CODE = 15423;
     public LinearLayout backgroundLayout;
+    private ProgressBar progress;
     private WebView webView;
     private String onCloseUrl;
     private static final String URL_BUY_LTC = BuildConfig.DEBUG ? "https://api-stage.lite-wallet.org" : "https://api-prod.lite-wallet.org";
@@ -95,7 +98,10 @@ public class FragmentBuy extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_buy, container, false);
+        Toolbar toolbar = rootView.findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> closePayment());
         backgroundLayout = rootView.findViewById(R.id.background_layout);
+        progress = rootView.findViewById(R.id.progress);
         webView = rootView.findViewById(R.id.web_view);
         webView.setWebChromeClient(mWebChromeClient);
         webView.setWebViewClient(mWebViewClient);
@@ -152,6 +158,14 @@ public class FragmentBuy extends Fragment {
             openImageChooserActivity();
             return true;
         }
+
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            super.onProgressChanged(view, newProgress);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                progress.setProgress(newProgress, true);
+            } else progress.setProgress(newProgress);
+        }
     };
 
     private WebViewClient mWebViewClient = new WebViewClient() {
@@ -175,12 +189,14 @@ public class FragmentBuy extends Fragment {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             Timber.d("onPageStarted: %s", url);
             super.onPageStarted(view, url, favicon);
+            progress.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             Timber.d("onPageFinished %s", url);
+            progress.setVisibility(View.GONE);
         }
     };
 

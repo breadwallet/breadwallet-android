@@ -143,8 +143,8 @@ public class BRApiManager {
         //initialize the TimerTask's job
         initializeTimerTask(context);
 
-        //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-        timer.schedule(timerTask, 0, 60000); //
+        //schedule the timer, after the first 0ms the TimerTask will run every 60000ms
+        timer.schedule(timerTask, 0, 60000);
     }
 
     public void stopTimerTask() {

@@ -235,7 +235,7 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Gérer le portefeuille</string>
   <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Acheter des Litecoins</string>
+  <string name="MenuButton.buy">Acheter</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Verrouiller le portefeuille</string>
   <!-- Menu button title -->
@@ -748,14 +748,44 @@
   <string name="WritePaperPhrase.previous">Précédent</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d de %2$d</string>
-    <string name="Donate.title">Faites un don à la Fondation Litecoin (%1$s)</string>
+  <string name="Donate.title">Faites un don à la Fondation Litecoin (%1$s)</string>
   <string name="Donate.title.confirmation">Confirmer le don</string>
   <string name="Confirmation.processingAndDonationTime">Temps de traitement: le traitement de ces transactions prendra %1$s minutes.</string>
   <string name="Confirmation.donateLabel">Montant à donner:</string>
   <string name="Confirmation.staticAddressLabel">Adresse:</string>
   <string name="Donate.word">Faire un don</string>
   <string name="Donate.toThe">"Faire un don à "</string>
-    <string name="FeeSelector.luxury">Luxe</string>
-    <string name="FeeSelector.luxuryMessage">Cette option garantit pratiquement l\'acceptation de votre transaction même si vous payez une prime.</string>
-    <string name="FeeSelector.luxuryTime">2.5 à 5+ minutes</string>
+  <string name="FeeSelector.luxury">Luxe</string>
+  <string name="FeeSelector.luxuryMessage">Cette option garantit pratiquement l\'acceptation de votre transaction même si vous payez une prime.</string>
+  <string name="FeeSelector.luxuryTime">2.5 à 5+ minutes</string>
+  <string name="BottomNavItem.History.title">HISTORIQUE</string>
+  <string name="BottomNavItem.Card.title">CARTE</string>
+  <string name="LitecoinCard.cardBalance">Solde de la carte</string>
+  <string name="LitecoinCard.logout">Se déconnecter</string>
+  <string name="Register.Hint.mobileNumber">Numéro de portable</string>
+  <string name="Register.Hint.zipPostalCode">Code postal</string>
+  <string name="Register.Hint.country">Pays</string>
+  <string name="Register.Hint.stateProvince">État / Province</string>
+  <string name="Register.Hint.city">Ville</string>
+  <string name="Register.Hint.address">Adresse de rue</string>
+  <string name="Register.Hint.confirmPassword">Confirmez le mot de passe</string>
+  <string name="Register.Hint.lastName">Nom</string>
+  <string name="Register.Hint.firstName">Prénom</string>
+  <string name="Register.registerCardPhrase">Inscrivez-vous à la carte Litecoin</string>
+  <string name="Login.Dialog.forgotPassword.reset">Réinitialiser le mot de passe</string>
+  <string name="Login.register">S\'inscrire</string>
+  <string name="Login.login">S\'identifier</string>
+  <string name="Login.forgotPassword">Mot de passe oublié?</string>
+  <string name="Login.Hint.password">Mot de passe</string>
+  <string name="Login.Dialog.forgotPasswordMessage">Visitez le site https://litecoin.dashboard.getblockcard.com/password/forgot pour réinitialiser votre mot de passe.</string>
+  <string name="Login.Dialog.forgotPassword.visit">Visitez</string>
+  <string name="required">Champ requis</string>
+  <string name="wrong_email_format">Adresse e-mail invalide</string>
+  <string name="error_pwd_6chars_min">Le mot de passe doit comporter au moins 6 caractères</string>
+  <string name="Register.Dialog.registeredSuccessMessage">Vous avez été enregistré. Veuillez confirmer en visitant votre boîte de réception et en cliquant sur le bouton de confirmation</string>
+  <string name="Error.unknownSystem">Oups, une erreur s\'est produite. Veuillez réessayer plus tard</string>
+  <string name="mismatch_password">Mot de passe incompatible</string>
+  <string name="Error.emailNotVerified">Vous devez vérifier votre adresse e-mail avant de pouvoir vous connecter.</string>
+  <string name="Error.wrong2faTokenProvided">Mauvais 2FA fourni</string>
+  <string name="BuyCenter.simplex.FinancialDetails">• Obtenez du Litecoin en 5 minutes! \\n • Achetez du Litecoin par carte de crédit \\n • Passeport ou identifiant d\'État</string>
 </resources>

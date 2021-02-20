@@ -33,7 +33,7 @@
   <!-- Keystore error -->
   <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact litewallet@litecoinfoundation.net</string>
   <!-- KeyStore error, keys are invalidated -->
-  <string name="Alert.keystore.invalidated.android">Your Bread encrypted data was recently invalidated because your Android lock screen was disabled.</string>
+  <string name="Alert.keystore.invalidated.android">Your Litewallet encrypted data was recently invalidated because your Android lock screen was disabled.</string>
   <!-- Keystore error title -->
   <string name="Alert.keystore.title.android">Android KeyStore Error</string>
   <!-- No internet alert message -->
@@ -147,7 +147,7 @@
   <!-- Email unavailable alert title -->
   <string name="ErrorMessages.emailUnavailableTitle">Email Unavailable</string>
   <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-  <string name="ErrorMessages.loopingLockScreen.android">Bread can not be authenticated due to a bug in your version of Android. [Please tap here for more information.]</string>
+  <string name="ErrorMessages.loopingLockScreen.android">Litewallet can not be authenticated due to a bug in your version of Android. [Please tap here for more information.]</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableMessage">This device isn\'t configured to send messages.</string>
   <!-- Messaging unavailable alert title -->
@@ -423,7 +423,7 @@
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Balance: %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Permissions\"</string>
+  <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"Litewallet\" &gt; \"Permissions\"</string>
   <!-- Permission required to access camera -->
   <string name="Send.cameraUnavailabeTitle.android">Litewallet is not allowed to access the camera</string>
   <!-- Camera not allowed message -->
@@ -566,7 +566,7 @@
   <string name="TouchIdSettings.spendingLimit">Spending limit: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">Enable Touch ID for Litewallet</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <!-- Enable fingerprint for this wallet called Litewallet -->
   <string name="TouchIdSettings.switchLabel.android">Enable Fingerprint Authentication</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
@@ -761,8 +761,8 @@
   <string name="FeeSelector.luxuryTime">2.5 - 5+ minutes</string>
   <string name="FeeSelector.luxuryMessage">This option virtually guarantees acceptance of your transaction though you are paying a premium.</string>
 
-  <string name="BuyCenter.simplex.Title" tools:ignore="ExtraTranslation">Simplex</string>
-  <string name="BuyCenter.simplex.FinancialDetails" tools:ignore="ExtraTranslation">"• Get Litecoin in 5 mins!\n• Buy Litecoin via credit card\n• Passport or State ID"</string>
+  <string name="BuyCenter.simplex.Title" tools:ignore="MissingTranslation">Simplex</string>
+  <string name="BuyCenter.simplex.FinancialDetails">"• Get Litecoin in 5 mins!\n• Buy Litecoin via credit card\n• Passport or State ID"</string>
 
   <string name="aud_currency_code" translatable="false">AUD</string>
   <string name="gbp_currency_code" translatable="false">GBP</string>
@@ -775,6 +775,47 @@
   <string name="eur_currency_code" translatable="false">EUR</string>
   <string name="jpy_currency_code" translatable="false">JPY</string>
   <string name="usd_currency_code" translatable="false">USD</string>
-  <string name="choose_fiat">Choose Fiat:</string>
+
+  <string name="BottomNavItem.History.title">History</string>
+  <string name="BottomNavItem.Card.title">Card</string>
+
+  <!-- Login/Register fields validation texts -->
+  <string name="required">Required field</string>
+  <string name="wrong_email_format">Invalid e-mail address</string>
+  <string name="error_pwd_6chars_min">Password must have at least 6 characters</string>
+  <string name="mismatch_password">Mismatch password</string>
+
+  <!-- Login view texts -->
+  <string name="Login.Hint.email" translatable="false">@string/Receive.emailButton</string>
+  <string name="Login.Hint.password">Password</string>
+  <string name="Login.forgotPassword">Forgot password?</string>
+  <string name="Login.login">Login</string>
+  <string name="Login.register">Register</string>
+  <string name="Login.Dialog.forgotPassword.reset">Reset password</string>
+  <string name="Login.Dialog.forgotPassword.visit">Visit</string>
+  <string name="Login.Dialog.forgotPasswordMessage">Visit https://litecoin.dashboard.getblockcard.com/password/forgot to reset your password</string>
+
+  <!-- Register view texts -->
+  <string name="Register.registerCardPhrase">Register for Litecoin Card</string>
+  <string name="Register.Hint.firstName">First name</string>
+  <string name="Register.Hint.lastName">Last name</string>
+  <string name="Register.Hint.confirmPassword">Confirm password</string>
+  <string name="Register.Hint.address">Address</string>
+  <string name="Register.Hint.city">City</string>
+  <string name="Register.Hint.stateProvince">State / Province</string>
+  <string name="Register.Hint.country">Country</string>
+  <string name="Register.Hint.zipPostalCode">Zip / Postcode</string>
+  <string name="Register.Hint.mobileNumber">Mobile number</string>
+  <string name="Register.Dialog.registeredSuccessMessage">You have been registered. Please confirm by visiting your email inbox and clicking on the confirmation button</string>
+
+  <!-- Transfer view texts -->
+  <string name="LitecoinCard.logout">Logout</string>
+  <string name="LitecoinCard.cardBalance">Card Balance</string>
+
+  <!-- Api Errors -->
+  <string name="Error.unknownSystem">Oops something wrong happened. Please try again later</string>
+  <string name="Error.emailNotVerified">You need to verify your email address before you can login.</string>
+  <string name="Error.wrong2faTokenProvided">Wrong 2FA provided</string>
+
 
 </resources>

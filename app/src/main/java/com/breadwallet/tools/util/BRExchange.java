@@ -38,8 +38,6 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  */
 public class BRExchange {
 
-    private static final String TAG = BRExchange.class.getName();
-
     public static BigDecimal getMaxAmount(Context context, String iso) {
         final long MAX_BTC = 84000000;
         if (iso.equalsIgnoreCase("LTC"))
@@ -91,9 +89,6 @@ public class BRExchange {
             switch (unit) {
                 case CURRENT_UNIT_PHOTONS:
                     currencySymbolString = "m" + BRConstants.bitcoinLowercase;
-//                        decimalPoints = 2;
-//                    if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
-//                        currencyFormat.setMinimumFractionDigits(1);
                     break;
                 case BRConstants.CURRENT_UNIT_LITES:
                     currencySymbolString = BRConstants.bitcoinLowercase;

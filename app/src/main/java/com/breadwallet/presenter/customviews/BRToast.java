@@ -47,7 +47,6 @@ public class BRToast {
      *
      * @param message the message to be shown in the custom toast
      */
-
     public static void showCustomToast(Context app, String message, int yOffSet, int duration, int layoutDrawable) {
         if (app == null) return;
         if (!(app instanceof Activity)) app = BreadApp.getBreadContext();

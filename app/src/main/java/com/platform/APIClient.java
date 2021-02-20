@@ -226,9 +226,8 @@ public class APIClient {
         try {
             String strUtl = BASE_URL + TOKEN;
 
+            String base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(BRKeyStore.getAuthKey(ctx));
             JSONObject requestMessageJSON = new JSONObject();
-            String base58PubKey = null;
-            base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(BRKeyStore.getAuthKey(ctx));
             requestMessageJSON.put("pubKey", base58PubKey);
             requestMessageJSON.put("deviceID", BRSharedPrefs.getDeviceId(ctx));
 
@@ -409,8 +408,7 @@ public class APIClient {
                         + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
         String signedRequest = signRequest(requestString);
         if (signedRequest == null) return null;
-        byte[] tokenBytes = new byte[0];
-        tokenBytes = BRKeyStore.getToken(ctx);
+        byte[] tokenBytes = BRKeyStore.getToken(ctx);
         String token = tokenBytes == null ? "" : new String(tokenBytes);
         if (token.isEmpty()) token = getToken();
         if (token == null || token.isEmpty()) {

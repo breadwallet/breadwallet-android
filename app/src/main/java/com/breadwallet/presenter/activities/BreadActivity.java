@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.activities;
 
 import android.animation.LayoutTransition;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -10,17 +9,17 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.transition.ChangeBounds;
@@ -30,34 +29,42 @@ import androidx.transition.TransitionSet;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRSearchBar;
-import com.breadwallet.presenter.fragments.FragmentManage;
+import com.breadwallet.presenter.customviews.BRNotificationBar;
+import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.presenter.fragments.BuyTabFragment;
+import com.breadwallet.presenter.history.HistoryFragment;
+import com.breadwallet.presenter.spend.AuthBottomSheetDialogFragment;
+import com.breadwallet.presenter.transfer.TransferFragment;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.TextSizeTransition;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
-import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.ExtensionKt;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import timber.log.Timber;
 
 import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
 import static com.breadwallet.presenter.activities.SetPinActivity.introSetPitActivity;
 import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
-import static com.breadwallet.tools.animation.BRAnimator.primaryTextSize;
-import static com.breadwallet.tools.animation.BRAnimator.secondaryTextSize;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -85,34 +92,31 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  * THE SOFTWARE.
  */
 
-public class BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged,
-        BRPeerManager.OnTxStatusUpdate, BRSharedPrefs.OnIsoChangedListener,
-        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, InternetManager.ConnectionReceiverListener {
+public class BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged, BRSharedPrefs.OnIsoChangedListener,
+        TransactionDataSource.OnTxAddedListener, InternetManager.ConnectionReceiverListener {
 
-    private LinearLayout sendButton;
-    private LinearLayout receiveButton;
-    private LinearLayout buyButton;
-    private LinearLayout menuButton;
     public static final Point screenParametersPoint = new Point();
+    private static final float PRIMARY_TEXT_SIZE = 24f;
+    private static final float SECONDARY_TEXT_SIZE = 12.8f;
+    private int mSelectedBottomNavItem = -1;
 
     private InternetManager mConnectionReceiver;
-    private TextView primaryPrice;
-    private TextView secondaryPrice;
+    private Button primaryPrice;
+    private Button secondaryPrice;
     private TextView equals;
-    private int progress = 0;
-    private TextView manageText;
-    private ConstraintLayout walletProgressLayout;
+    private ImageButton menuBut;
+    private TextView ltcPriceLbl;
+    private TextView ltcPriceDateLbl;
 
-    private LinearLayout toolbarLayout;
     public static boolean appVisible = false;
-    private ImageButton searchIcon;
     public ViewFlipper barFlipper;
-    private BRSearchBar searchBar;
     private ConstraintLayout toolBarConstraintLayout;
-    private String savedFragmentTag;
     private boolean uiIsDone;
 
     private static BreadActivity app;
+    private BottomNavigationView bottomNav;
+
+    private Handler mHandler = new Handler();
 
     public static BreadActivity getApp() {
         return app;
@@ -122,15 +126,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bread);
-        BRWalletManager.getInstance().addBalanceChangedListener(this);
-        BRPeerManager.getInstance().addStatusUpdateListener(this);
-        BRPeerManager.setOnSyncFinished(new BRPeerManager.OnSyncSucceeded() {
-            @Override
-            public void onFinished() {
-                //put some here
-            }
-        });
-        BRSharedPrefs.addIsoChangedListener(this);
 
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
@@ -138,22 +133,17 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         initializeViews();
         setListeners();
 
-        toolbarLayout.removeView(walletProgressLayout);
-
         setUpBarFlipper();
 
-        BRAnimator.init(this);
-        primaryPrice.setTextSize(primaryTextSize);
-        secondaryPrice.setTextSize(secondaryTextSize);
+        primaryPrice.setTextSize(PRIMARY_TEXT_SIZE);
+        secondaryPrice.setTextSize(SECONDARY_TEXT_SIZE);
 
         if (introSetPitActivity != null) introSetPitActivity.finish();
         if (introActivity != null) introActivity.finish();
         if (reEnterPinActivity != null) reEnterPinActivity.finish();
 
-        TxManager.getInstance().init(this);
-
         if (!BRSharedPrefs.getGreetingsShown(BreadActivity.this))
-            new Handler().postDelayed(new Runnable() {
+            mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     BRAnimator.showGreetingsMessage(BreadActivity.this);
@@ -161,10 +151,20 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 }
             }, 1000);
 
-
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         updateUI();
+        bottomNav.setSelectedItemId(R.id.nav_history);
+    }
+
+    private void addObservers() {
+        BRWalletManager.getInstance().addBalanceChangedListener(this);
+        BRSharedPrefs.addIsoChangedListener(this);
+    }
+
+    private void removeObservers() {
+        BRWalletManager.getInstance().removeListener(this);
+        BRSharedPrefs.removeListener(this);
     }
 
     @Override
@@ -189,52 +189,13 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     private void setListeners() {
-        sendButton.setOnClickListener(new View.OnClickListener() {
+        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSendFragment(BreadActivity.this, null);
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                return handleNavigationItemSelected(item.getItemId());
             }
         });
 
-        receiveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showReceiveFragment(BreadActivity.this, true);
-            }
-        });
-
-        buyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showBuyTabFragment(BreadActivity.this);
-            }
-        });
-
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                //start the server for Buy Litecoin
-                BRAnimator.showMenuFragment(BreadActivity.this);
-
-            }
-        });
-        manageText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-                FragmentManage fragmentManage = new FragmentManage();
-                fragmentManage.setOnNameChanged(BreadActivity.this);
-                transaction.add(android.R.id.content, fragmentManage, FragmentManage.class.getName());
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
         primaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -247,16 +208,53 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 swap();
             }
         });
-
-        searchIcon.setOnClickListener(new View.OnClickListener() {
+        menuBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                barFlipper.setDisplayedChild(1); //search bar
-                searchBar.onShow(true);
+                if (BRAnimator.isClickAllowed()) {
+                    BRAnimator.showMenuFragment(BreadActivity.this);
+                }
             }
         });
+    }
 
+    public boolean handleNavigationItemSelected(int menuItemId) {
+        if (mSelectedBottomNavItem == menuItemId) return true;
+        mSelectedBottomNavItem = menuItemId;
+        switch (menuItemId) {
+            case R.id.nav_history:
+                ExtensionKt.replaceFragment(BreadActivity.this, new HistoryFragment(), false, R.id.fragment_container);
+                break;
+            case R.id.nav_send:
+                if (BRAnimator.isClickAllowed()) {
+                    BRAnimator.showSendFragment(BreadActivity.this, null);
+                }
+                mSelectedBottomNavItem = 0;
+                break;
+            case R.id.nav_card:
+                if (TextUtils.isEmpty(BRSharedPrefs.getLitecoinCardId(BreadActivity.this))) {
+                    showAuthModal();
+                } else {
+                    ExtensionKt.replaceFragment(BreadActivity.this, new TransferFragment(), false, R.id.fragment_container);
+                }
+                break;
+            case R.id.nav_receive:
+                if (BRAnimator.isClickAllowed()) {
+                    BRAnimator.showReceiveFragment(BreadActivity.this, true);
+                }
+                mSelectedBottomNavItem = 0;
+                break;
+            case R.id.nav_buy:
+                ExtensionKt.replaceFragment(BreadActivity.this, new BuyTabFragment(), false, R.id.fragment_container);
+                break;
+        }
+        return true;
+    }
+
+    public void showAuthModal() {
+        BottomSheetDialogFragment fragment = new AuthBottomSheetDialogFragment();
+        fragment.show(getSupportFragmentManager(), fragment.getTag());
+        mSelectedBottomNavItem = 0;
     }
 
     private void swap() {
@@ -264,10 +262,10 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         boolean b = !BRSharedPrefs.getPreferredLTC(this);
         setPriceTags(b, true);
         BRSharedPrefs.putPreferredLTC(this, b);
+        BRSharedPrefs.notifyIsoChanged("");
     }
 
     private void setPriceTags(boolean ltcPreferred, boolean animate) {
-
         ConstraintSet set = new ConstraintSet();
         set.clone(toolBarConstraintLayout);
 
@@ -285,8 +283,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             TransitionManager.beginDelayedTransition(toolBarConstraintLayout, transition);
         }
 
-        primaryPrice.setTextSize(ltcPreferred ? primaryTextSize : secondaryTextSize);
-        secondaryPrice.setTextSize(ltcPreferred ? secondaryTextSize : primaryTextSize);
+        primaryPrice.setTextSize(ltcPreferred ? PRIMARY_TEXT_SIZE : SECONDARY_TEXT_SIZE);
+        secondaryPrice.setTextSize(ltcPreferred ? SECONDARY_TEXT_SIZE : PRIMARY_TEXT_SIZE);
 
         int[] ids = {primaryPrice.getId(), secondaryPrice.getId(), equals.getId()};
         // Clear views constraints
@@ -320,7 +318,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         // Apply the changes
         set.applyTo(toolBarConstraintLayout);
 
-        new Handler().postDelayed(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 updateUI();
@@ -344,8 +342,10 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         super.onResume();
         appVisible = true;
         app = this;
-        if (PLATFORM_ON)
+        addObservers();
+        if (PLATFORM_ON) {
             APIClient.getInstance(this).updatePlatform();
+        }
 
         setupNetworking();
 
@@ -357,7 +357,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 }
             });
         }
-        new Handler().postDelayed(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 updateUI();
@@ -365,11 +365,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         }, 1000);
 
         BRWalletManager.getInstance().refreshBalance(this);
-
-        BRAnimator.showFragmentByTag(this, savedFragmentTag);
-        savedFragmentTag = null;
-        TxManager.getInstance().onResume(BreadActivity.this);
-
     }
 
     private void setupNetworking() {
@@ -379,19 +374,11 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         InternetManager.addConnectionListener(this);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
         appVisible = false;
-        saveVisibleFragment();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
+        removeObservers();
     }
 
     @Override
@@ -409,32 +396,20 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 }
             });
         }
-
     }
 
     private void initializeViews() {
-        // Always cast your custom Toolbar here, and set it as the ActionBar.
-        Toolbar toolBar = (Toolbar) findViewById(R.id.bread_bar);
-        sendButton = (LinearLayout) findViewById(R.id.send_layout);
-        receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
+        menuBut = findViewById(R.id.menuBut);
+        bottomNav = findViewById(R.id.bottomNav);
+        ltcPriceLbl = findViewById(R.id.price_change_text);
+        ltcPriceDateLbl = findViewById(R.id.priceDateLbl);
 
-        buyButton = (LinearLayout) findViewById(R.id.buy_layout);
+        primaryPrice = findViewById(R.id.primary_price);
+        secondaryPrice = findViewById(R.id.secondary_price);
+        equals = findViewById(R.id.equals);
+        toolBarConstraintLayout = findViewById(R.id.bread_toolbar);
 
-        menuButton = (LinearLayout) findViewById(R.id.menu_layout);
-        manageText = (TextView) findViewById(R.id.manage_text);
-        primaryPrice = (TextView) findViewById(R.id.primary_price);
-        secondaryPrice = (TextView) findViewById(R.id.secondary_price);
-        equals = (TextView) findViewById(R.id.equals);
-        // TextView priceChange = (TextView) findViewById(R.id.price_change_text);
-        TextView emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
-        toolBarConstraintLayout = (ConstraintLayout) findViewById(R.id.bread_toolbar);
-        walletProgressLayout = (ConstraintLayout) findViewById(R.id.loading_wallet_layout);
-
-        RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
-        toolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
-        searchIcon = (ImageButton) findViewById(R.id.search_icon);
-        barFlipper = (ViewFlipper) findViewById(R.id.tool_bar_flipper);
-        searchBar = (BRSearchBar) findViewById(R.id.search_bar);
+        barFlipper = findViewById(R.id.tool_bar_flipper);
 
         final ViewTreeObserver observer = primaryPrice.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -449,37 +424,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             }
         });
 
-    }
-
-    private void saveVisibleFragment() {
-        if (getFragmentManager().getBackStackEntryCount() == 0) {
-            return;
-        }
-        savedFragmentTag = getFragmentManager().getBackStackEntryAt(0).getName();
-    }
-
-    //returns x-pos relative to root layout
-    private float getRelativeX(View myView) {
-        if (myView.getParent() == myView.getRootView())
-            return myView.getX();
-        else
-            return myView.getX() + getRelativeX((View) myView.getParent());
-    }
-
-    //returns y-pos relative to root layout
-    private float getRelativeY(View myView) {
-        if (myView.getParent() == myView.getRootView())
-            return myView.getY();
-        else
-            return myView.getY() + getRelativeY((View) myView.getParent());
-    }
-
-    //0 crypto is left, 1 crypto is right
-    private int getSwapPosition() {
-        if (primaryPrice == null || secondaryPrice == null) {
-            return 0;
-        }
-        return getRelativeX(primaryPrice) < getRelativeX(secondaryPrice) ? 0 : 1;
+        ltcPriceLbl.setTextSize(PRIMARY_TEXT_SIZE);
     }
 
     @Override
@@ -495,38 +440,34 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
                 String iso = BRSharedPrefs.getIso(BreadActivity.this);
 
-                //current amount in satoshis
+                CurrencyEntity currency = CurrencyDataSource.getInstance(BreadActivity.this).getCurrencyByIso(iso);
+                final BigDecimal roundedPriceAmount = new BigDecimal(currency.rate).multiply(new BigDecimal(100))
+                        .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
+                final String formattedCurrency = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, roundedPriceAmount);
+
+                //current amount in litoshis
                 final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(BreadActivity.this));
 
-                //amount in BTC units
+                //amount in LTC units
                 BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(BreadActivity.this, amount);
                 final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, "LTC", btcAmount);
 
                 //amount in currency units
-                BigDecimal curAmount = BRExchange.getAmountFromSatoshis(BreadActivity.this, iso, amount);
+                final BigDecimal curAmount = BRExchange.getAmountFromSatoshis(BreadActivity.this, iso, amount);
                 final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         primaryPrice.setText(formattedBTCAmount);
                         secondaryPrice.setText(String.format("%s", formattedCurAmount));
-
+                        ltcPriceLbl.setText(formattedCurrency);
+                        SimpleDateFormat df = (SimpleDateFormat) DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+                        String pattern = df.toPattern().replaceAll("\\W?[Yy]+\\W?", " ");
+                        ltcPriceDateLbl.setText("as of " + android.text.format.DateFormat.format(pattern, new Date()));
                     }
                 });
-                TxManager.getInstance().updateTxList(BreadActivity.this);
             }
         });
-    }
-
-    @Override
-    public void onStatusUpdate() {
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                TxManager.getInstance().updateTxList(BreadActivity.this);
-            }
-        });
-
     }
 
     @Override
@@ -536,12 +477,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     @Override
     public void onTxAdded() {
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                TxManager.getInstance().updateTxList(BreadActivity.this);
-            }
-        });
         BRWalletManager.getInstance().refreshBalance(BreadActivity.this);
     }
 
@@ -569,16 +504,12 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     @Override
-    public void onNameChanged(String name) {
-//        walletName.setText(name);
-    }
-
-    @Override
     public void onConnectionChanged(boolean isConnected) {
         if (isConnected) {
             if (barFlipper != null) {
-                if (barFlipper.getDisplayedChild() == 2)
-                    barFlipper.setDisplayedChild(0);
+                if (barFlipper.getDisplayedChild() == 1) {
+                    removeNotificationBar();
+                }
             }
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
@@ -590,13 +521,24 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     }
                 }
             });
-
         } else {
-            if (barFlipper != null)
-                barFlipper.setDisplayedChild(2);
+            if (barFlipper != null) {
+                addNotificationBar();
+            }
             SyncManager.getInstance().stopSyncingProgressThread();
         }
-
     }
 
+    public void removeNotificationBar() {
+        if (barFlipper.getChildCount() == 1) return;
+        barFlipper.removeViewAt(1);
+        barFlipper.setDisplayedChild(0);
+    }
+
+    public void addNotificationBar() {
+        if (barFlipper.getChildCount() == 2) return;
+        BRNotificationBar view = new BRNotificationBar(this);
+        barFlipper.addView(view);
+        barFlipper.setDisplayedChild(1);
+    }
 }

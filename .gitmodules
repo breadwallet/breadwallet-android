@@ -4,3 +4,6 @@
 [submodule "app/src/main/jni/loafwallet-core"]
 	path = app/src/main/jni/loafwallet-core
 	url = https://github.com/litecoin-foundation/loafwallet-core.git
+[submodule "partnerapi"]
+	path = partnerapi
+	url = https://github.com/litecoin-foundation/LitewalletPartnerAPI-android.git

@@ -1,34 +1,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/background_layout"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@android:color/transparent"
-              android:filterTouchesWhenObscured="true"
-              android:paddingLeft="12dp"
-              android:paddingRight="12dp"
-              android:scrollY="0dp">
+    android:id="@+id/background_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:filterTouchesWhenObscured="true"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:scrollY="0dp">
 
     <LinearLayout
         android:id="@+id/signal_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:animateLayoutChanges="true"
         android:background="@drawable/receive_layout"
         android:clickable="true"
         android:orientation="vertical"
-        android:padding="0dp"
-        >
+        android:padding="0dp">
 
         <RelativeLayout
             android:id="@+id/title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/close_button"
@@ -37,11 +34,11 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/bread_margin"
                 android:layout_marginRight="@dimen/bread_margin"
-                android:background="@drawable/ic_close_black_24dp"
-                />
+                android:background="@drawable/ic_close_black_24dp" />
 
-            <com.breadwallet.presenter.customviews.BRText
+            <TextView
                 android:id="@+id/title"
+                style="@style/BRBoldTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -49,9 +46,7 @@
                 android:layout_margin="@dimen/bread_margin"
                 android:text="@string/TransactionDetails.title"
                 android:textColor="@color/almost_black"
-                android:textSize="@dimen/header"
-                app:customTFont="BarlowSemiCondensed-Bold.ttf"
-                />
+                android:textSize="@dimen/header" />
 
             <ImageButton
                 android:id="@+id/faq_button"
@@ -59,18 +54,17 @@
                 android:layout_height="@dimen/faq_dimen"
                 android:layout_alignBottom="@+id/title"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="@dimen/bread_margin"
                 android:layout_marginLeft="@dimen/bread_margin"
+                android:layout_marginEnd="@dimen/bread_margin"
                 android:layout_marginRight="@dimen/bread_margin"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
             <View
                 android:id="@+id/view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/title"
-                android:background="@color/separator_gray"
-                />
+                android:background="@color/separator_gray" />
 
 
         </RelativeLayout>
@@ -85,7 +79,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRBoldTextStyle"
                     android:id="@+id/date_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -94,93 +89,88 @@
                     android:text="some date"
                     android:textColor="@color/light_gray"
                     android:textIsSelectable="true"
-                    android:textSize="18sp"
-                    app:customTFont="BarlowSemiCondensed-Bold.ttf"
-                    />
+                    android:textSize="18sp" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRBoldTextStyle"
                     android:id="@+id/description_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
                     android:text="sent --- "
                     android:textColor="@color/almost_black"
                     android:textIsSelectable="true"
-                    android:textSize="30sp"
-                    app:customTFont="BarlowSemiCondensed-Bold.ttf"
-                    />
+                    android:textSize="30sp" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
                     android:id="@+id/sub_header"
+                    style="@style/BRTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:singleLine="true"
+                    android:layout_marginEnd="16dp"
                     android:ellipsize="middle"
+                    android:singleLine="true"
                     android:text=""
                     android:textColor="@color/almost_black"
                     android:textIsSelectable="false"
-                    android:textSize="16sp"
-                    app:customTFont="BarlowSemiCondensed-Medium.ttf"
-                    />
+                    android:textSize="16sp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:background="@color/separator_gray"/>
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/separator_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRBoldTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.statusHeader"
-                    android:textColor="@color/light_gray"
-                    app:customTFont="BarlowSemiCondensed-Bold.ttf"
-                    />
+                    android:textColor="@color/light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
                     android:id="@+id/confirmation_text"
+                    style="@style/BRTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:textColor="@color/almost_black"
-                    android:textIsSelectable="true"/>
+                    android:textIsSelectable="true" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
                     android:id="@+id/available_spend"
+                    style="@style/BRBoldTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:text="@string/Transaction.available"
                     android:textColor="#48F0B8"
-                    android:textIsSelectable="true"
-                    app:customTFont="BarlowSemiCondensed-Bold.ttf"/>
+                    android:textIsSelectable="true" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:background="@color/separator_gray"/>
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/separator_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRBoldTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.commentsHeader"
-                    android:textColor="@color/light_gray"
-                    app:customTFont="BarlowSemiCondensed-Bold.ttf"
-                    />
+                    android:textColor="@color/light_gray" />
 
                 <EditText
                     android:id="@+id/comment_text"
@@ -188,107 +178,106 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:textColor="@color/almost_black"
-                    />
+                    android:textColor="@color/almost_black" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:background="@color/separator_gray"/>
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/separator_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRBoldTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.amountHeader"
-                    android:textColor="@color/light_gray"
-                    app:customTFont="BarlowSemiCondensed-Bold.ttf"
-                    />
+                    android:textColor="@color/light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
                     android:id="@+id/amount_text"
+                    style="@style/BRTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:textColor="@color/almost_black"
-                    android:textIsSelectable="true"/>
+                    android:textIsSelectable="true" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:background="@color/separator_gray"/>
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/separator_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
                     android:id="@+id/to_from"
+                    style="@style/BRBoldTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/Confirmation.to"
-                    android:textColor="@color/light_gray"
-                    app:customTFont="BarlowSemiCondensed-Bold.ttf"
-                    />
+                    android:textColor="@color/light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
-
+                <TextView
                     android:id="@+id/address_text"
+                    style="@style/BRTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
                     android:textColor="@color/almost_black"
-                    android:textIsSelectable="true"/>
+                    android:textIsSelectable="true" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:background="@color/separator_gray"/>
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/separator_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/TransactionDetails.txHashHeader"
-                android:textColor="@color/light_gray"
-                />
-
-                <com.breadwallet.presenter.customviews.BRText
-                    android:id="@+id/tx_hash"
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
-                    android:textColor="@color/almost_black"/>
+                    android:layout_marginTop="16dp"
+                    android:text="@string/TransactionDetails.txHashHeader"
+                    android:textColor="@color/light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    android:id="@+id/tx_hash"
+                    style="@style/BRTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textColor="@color/almost_black" />
+
+                <TextView
                     android:id="@+id/tx_hash_link"
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/ViewOnBlockchain"
-                    android:textColor="@color/dark_blue"
                     android:clickable="true"
-                    />
+                    android:text="@string/ViewOnBlockchain"
+                    android:textColor="@color/dark_blue" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginBottom="32dp"
                     android:layout_marginTop="16dp"
-                    android:background="@color/separator_gray"/>
+                    android:layout_marginBottom="32dp"
+                    android:background="@color/separator_gray" />
 
             </LinearLayout>
 

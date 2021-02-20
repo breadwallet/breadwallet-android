@@ -41,13 +41,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import timber.log.Timber;
 
 public class CurrencyDataSource implements BRDataSourceInterface {
-    private static final String TAG = CurrencyDataSource.class.getName();
 
-    private AtomicInteger mOpenCounter = new AtomicInteger();
-
-    // Database fields
     private SQLiteDatabase database;
     private final BRSQLiteHelper dbHelper;
+
+    // Database fields
     private final String[] allColumns = {
             BRSQLiteHelper.CURRENCY_CODE,
             BRSQLiteHelper.CURRENCY_NAME,
@@ -79,25 +77,13 @@ public class CurrencyDataSource implements BRDataSourceInterface {
                 values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
                 database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-
             }
 
             database.setTransactionSuccessful();
         } catch (Exception ex) {
             Timber.e(ex);
-            //Error in between database transaction
         } finally {
             database.endTransaction();
-            closeDatabase();
-        }
-
-    }
-
-    public void deleteAllCurrencies() {
-        try {
-            database = openDatabase();
-            database.delete(BRSQLiteHelper.CURRENCY_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
-        } finally {
             closeDatabase();
         }
     }
@@ -118,7 +104,6 @@ public class CurrencyDataSource implements BRDataSourceInterface {
                 currencies.add(curEntity);
                 cursor.moveToNext();
             }
-            // make sure to close the cursor
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -126,31 +111,6 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         }
 
         return currencies;
-    }
-
-    public List<String> getAllISOs() {
-        List<String> ISOs = new ArrayList<>();
-        Cursor cursor = null;
-        try {
-            database = openDatabase();
-
-            cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                    allColumns, null, null, null, null, null);
-
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                CurrencyEntity curEntity = cursorToCurrency(cursor);
-                ISOs.add(curEntity.code);
-                cursor.moveToNext();
-            }
-            // make sure to close the cursor
-        } finally {
-            if (cursor != null)
-                cursor.close();
-            closeDatabase();
-        }
-
-        return ISOs;
     }
 
     public CurrencyEntity getCurrencyByIso(String iso) {
@@ -180,21 +140,13 @@ public class CurrencyDataSource implements BRDataSourceInterface {
 
     @Override
     public SQLiteDatabase openDatabase() {
-//        if (mOpenCounter.incrementAndGet() == 1) {
-        // Opening new database
         if (database == null || !database.isOpen())
             database = dbHelper.getWritableDatabase();
         dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
-//        }
         return database;
     }
 
     @Override
     public void closeDatabase() {
-//        if (mOpenCounter.decrementAndGet() == 0) {
-//            // Closing database
-//        database.close();
-//
-//        }
     }
 }

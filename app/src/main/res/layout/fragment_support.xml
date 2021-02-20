@@ -1,12 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/background_layout"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_gravity="bottom"
-              android:background="@color/black_trans"
-              android:filterTouchesWhenObscured="true"
-              android:isScrollContainer="false">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/background_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:background="@color/black_trans"
+    android:filterTouchesWhenObscured="true"
+    android:isScrollContainer="false">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/signal_layout"

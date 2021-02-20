@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="BRText">
-        <attr name="customTFont" format="string"/>
-    </declare-styleable>
-    <declare-styleable name="BREdit">
-        <attr name="customEFont" format="string"/>
-    </declare-styleable>
-
     <declare-styleable name="BRLinearLayoutWithCaret">
         <attr name="strokeColor" format="color"/>
         <attr name="backgroundColor" format="color"/>
@@ -16,7 +9,6 @@
     <declare-styleable name="BRButton">
         <attr name="isBreadButton" format="boolean"/>
         <attr name="buttonType" format="integer"/>
-        <attr name="customBFont" format="string"/>
     </declare-styleable>
 
     <declare-styleable name="BRKeyboard">

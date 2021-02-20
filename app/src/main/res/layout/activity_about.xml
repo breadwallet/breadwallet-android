@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_intro_set_pit"
@@ -31,7 +30,8 @@
 
     </RelativeLayout>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <TextView
+        style="@style/BRBoldTextStyle"
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,9 +40,8 @@
         android:text="@string/About.title"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/header"
-        app:customTFont="BarlowSemiCondensed-Bold.ttf"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/divider1"
@@ -57,7 +56,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/policy_text"/>
+        app:layout_constraintBottom_toTopOf="@+id/policy_text" />
 
     <View
         android:id="@+id/view4"
@@ -72,7 +71,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginEnd="16dp" />
 
     <View
         android:id="@+id/view5"
@@ -86,10 +85,10 @@
         android:layout_marginRight="16dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginLeft="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintLeft_toLeftOf="parent" />
 
-    <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="BarlowSemiCondensed-Medium.ttf"
+    <TextView
+        style="@style/BRTextStyle"
         android:id="@+id/textView22"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -97,10 +96,10 @@
         android:text="@string/About.twitter"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/view4"
-        app:layout_constraintLeft_toLeftOf="@+id/divider1"/>
+        app:layout_constraintLeft_toLeftOf="@+id/divider1" />
 
-    <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="BarlowSemiCondensed-Medium.ttf"
+    <TextView
+        style="@style/BRTextStyle"
         android:id="@+id/textView24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -109,7 +108,7 @@
         android:text="@string/About.blog"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/view5"
-        app:layout_constraintLeft_toLeftOf="@+id/divider1"/>
+        app:layout_constraintLeft_toLeftOf="@+id/divider1" />
 
     <ImageView
         android:id="@+id/twitter_share_button"
@@ -118,7 +117,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView22"
         app:layout_constraintRight_toRightOf="@+id/view4"
         app:layout_constraintTop_toTopOf="@+id/textView22"
-        android:src="@drawable/ic_share"/>
+        android:src="@drawable/ic_share" />
 
     <ImageView
         android:id="@+id/blog_share_button"
@@ -130,10 +129,10 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView24"
         app:layout_constraintRight_toRightOf="@+id/view5"
         app:layout_constraintTop_toTopOf="@+id/textView24"
-        android:src="@drawable/ic_share"/>
+        android:src="@drawable/ic_share" />
 
-    <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="BarlowSemiCondensed-Medium.ttf"
+    <TextView
+        style="@style/BRTextStyle"
         android:id="@+id/policy_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -148,9 +147,10 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.525"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/info_text"/>
+        app:layout_constraintBottom_toTopOf="@+id/info_text" />
 
-    <com.breadwallet.presenter.customviews.BRText
+    <TextView
+        style="@style/BRTextStyle"
         android:id="@+id/info_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -159,13 +159,12 @@
         android:layout_marginBottom="40dp"
         android:text="@string/About.footer"
         android:textAlignment="center"
-        app:customTFont="BarlowSemiCondensed-Medium.ttf"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="BarlowSemiCondensed-Medium.ttf"
+    <TextView
+        style="@style/BRTextStyle"
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -173,7 +172,7 @@
         android:text="@string/About.reddit"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/divider1"
-        app:layout_constraintLeft_toLeftOf="@+id/divider1"/>
+        app:layout_constraintLeft_toLeftOf="@+id/divider1" />
 
     <ImageView
         android:id="@+id/reddit_share_button"
@@ -182,6 +181,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView21"
         app:layout_constraintRight_toRightOf="@+id/divider1"
         app:layout_constraintTop_toTopOf="@+id/textView21"
-        android:src="@drawable/ic_share"/>
+        android:src="@drawable/ic_share" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

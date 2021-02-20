@@ -47,22 +47,16 @@ class BuyPartnersAdapter extends RecyclerView.Adapter<BuyPartnersAdapter.Partner
         holder.logo.setImageResource(partner.getLogo());
         holder.title.setText(partner.getTitle());
         holder.detail.setText(partner.getDetails());
-        holder.fiatOptionHScrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                int checkId = holder.fiatOptions.getCheckedRadioButtonId();
-                View option = holder.fiatOptions.findViewById(checkId);
-                holder.fiatOptionHScrollView.scrollTo((int) option.getX(), (int) option.getY());
-            }
+        holder.fiatOptionHScrollView.post(() -> {
+            int checkId = holder.fiatOptions.getCheckedRadioButtonId();
+            View option = holder.fiatOptions.findViewById(checkId);
+            holder.fiatOptionHScrollView.scrollTo((int) option.getX(), (int) option.getY());
         });
 
-        holder.buyPartnerWrapper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int currencyResId = getCurrencyResId(holder.fiatOptions.getCheckedRadioButtonId());
-                String currency = v.getContext().getString(currencyResId);
-                BRAnimator.showBuyFragment((FragmentActivity) v.getContext(), currency);
-            }
+        holder.buyPartnerWrapper.setOnClickListener(v -> {
+            int currencyResId = getCurrencyResId(holder.fiatOptions.getCheckedRadioButtonId());
+            String currency = v.getContext().getString(currencyResId);
+            BRAnimator.showBuyFragment((FragmentActivity) v.getContext(), currency);
         });
     }
 

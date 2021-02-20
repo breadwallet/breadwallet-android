@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_intro_set_pit"
@@ -9,8 +8,9 @@
     android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.SetPinActivity">
 
-    <com.breadwallet.presenter.customviews.BRText
+    <TextView
         android:id="@+id/title"
+        style="@style/BRBoldTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/bread_margin"
@@ -18,68 +18,66 @@
         android:text="@string/RecoverWallet.header"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/header"
-        app:customTFont="BarlowSemiCondensed-Bold.ttf"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageButton
         android:id="@+id/faq_button"
         android:layout_width="@dimen/faq_dimen"
         android:layout_height="@dimen/faq_dimen"
-        android:layout_marginEnd="@dimen/bread_margin"
         android:layout_marginTop="@dimen/bread_margin"
+        android:layout_marginEnd="@dimen/bread_margin"
         android:visibility="invisible"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <com.breadwallet.presenter.customviews.BRText
+    <TextView
         android:id="@+id/description"
+        style="@style/BRTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
         android:layout_marginTop="16dp"
-        android:lineSpacingMultiplier="1.3"
+        android:layout_marginEnd="32dp"
         android:text="@string/RecoverWallet.subheader"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/title"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"/>
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
-    <com.breadwallet.presenter.customviews.BRText
+    <TextView
         android:id="@+id/textView9"
+        style="@style/BRBoldTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/RecoverWallet.instruction"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"
-        app:customTFont="BarlowSemiCondensed-Bold.ttf"
         app:layout_constraintLeft_toLeftOf="@+id/description"
-        app:layout_constraintTop_toBottomOf="@+id/description"/>
-
+        app:layout_constraintTop_toBottomOf="@+id/description" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/send_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/big_button_height"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/b_blue"
         android:elevation="8dp"
         android:padding="10dp"
-        app:buttonType="1"
-        app:isBreadButton="true"
         android:text="@string/RecoverWallet.next"
         android:textColor="@color/white"
         android:textSize="18sp"
+        app:buttonType="1"
+        app:isBreadButton="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
     <GridLayout
         android:layout_width="0dp"
@@ -95,26 +93,23 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView9"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/textView9">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:weightSum="3"
-            >
+            android:weightSum="3">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
                     android:id="@+id/word1"
+                    style="@style/BREditStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="fill_horizontal"
@@ -126,18 +121,17 @@
                     android:nextFocusForward="@+id/word2"
                     android:textColor="@color/almost_black"
                     android:textColorHint="@color/extra_light_gray"
-                    android:textCursorDrawable="@null"
-                    app:customEFont="BarlowSemiCondensed-Medium.ttf"
-                    />
+                    android:textCursorDrawable="@null" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="1"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -145,11 +139,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -161,17 +154,17 @@
                     android:lines="1"
                     android:nextFocusForward="@+id/word3"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="2"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -179,11 +172,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -195,17 +187,17 @@
                     android:lines="1"
                     android:nextFocusForward="@+id/word4"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="3"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
         </LinearLayout>
@@ -213,19 +205,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:weightSum="3"
-            >
+            android:weightSum="3">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word4"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -237,17 +227,17 @@
                     android:lines="1"
                     android:nextFocusForward="@+id/word5"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="4"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -255,11 +245,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word5"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -271,17 +260,17 @@
                     android:lines="1"
                     android:nextFocusForward="@+id/word6"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="5"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -289,11 +278,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word6"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -305,17 +293,17 @@
                     android:lines="1"
                     android:nextFocusForward="@+id/word7"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="6"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
         </LinearLayout>
@@ -323,19 +311,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:weightSum="3"
-            >
+            android:weightSum="3">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word7"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -347,17 +333,17 @@
                     android:lines="1"
                     android:nextFocusForward="@+id/word8"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="7"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -365,11 +351,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word8"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -381,17 +366,17 @@
                     android:lines="1"
                     android:nextFocusForward="@+id/word9"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="8"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -399,11 +384,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word9"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -415,17 +399,17 @@
                     android:lines="1"
                     android:nextFocusForward="@+id/word10"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="9"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
         </LinearLayout>
@@ -434,8 +418,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="3"
-            >
+            android:weightSum="3">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -443,11 +426,10 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word10"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -459,17 +441,17 @@
                     android:lines="1"
                     android:nextFocusForward="@+id/word11"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="10"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -478,11 +460,10 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word11"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -494,17 +475,17 @@
                     android:lines="1"
                     android:nextFocusForward="@+id/word12"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="11"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -513,11 +494,10 @@
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
+                android:weightSum="2">
 
-                >
-
-                <com.breadwallet.presenter.customviews.BREdit
+                <EditText
+                    style="@style/BREditStyle"
                     android:id="@+id/word12"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -528,17 +508,17 @@
                     android:inputType="textVisiblePassword"
                     android:lines="1"
                     android:textColor="@color/almost_black"
-                    android:textColorHint="@color/extra_light_gray"
-                    />
+                    android:textColorHint="@color/extra_light_gray" />
 
-                <com.breadwallet.presenter.customviews.BRText
+                <TextView
+                    style="@style/BRTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1.5"
                     android:gravity="center"
                     android:text="12"
-                    android:textColor="@color/light_gray"/>
+                    android:textColor="@color/light_gray" />
             </LinearLayout>
 
         </LinearLayout>

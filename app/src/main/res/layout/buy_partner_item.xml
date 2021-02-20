@@ -29,16 +29,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
             android:id="@+id/titleLbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="10dp"
+            android:fontFamily="@font/barlowsemicondensed_bold"
             android:textColor="@color/white"
             android:textSize="16sp"
-            app:customTFont="BarlowSemiCondensed-Bold.ttf"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toStartOf="@+id/imageView6"
             app:layout_constraintHorizontal_bias="0.0"
@@ -46,16 +46,16 @@
             app:layout_constraintTop_toTopOf="@id/logo"
             tools:text="@string/BuyCenter.simplex.Title" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
             android:id="@+id/detailLbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
+            android:fontFamily="@font/barlowsemicondensed_medium"
             android:textColor="@color/white"
             android:textSize="15sp"
-            app:customTFont="BarlowSemiCondensed-Medium.ttf"
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageView6"
@@ -79,33 +79,16 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <com.breadwallet.presenter.customviews.BRText
-        android:id="@+id/BRText5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="8dp"
-        android:maxLines="1"
-        android:text="@string/choose_fiat"
-        android:textColor="@color/white"
-        android:textSize="15sp"
-        app:customTFont="BarlowSemiCondensed-Medium.ttf"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/fiat_option_h_scroll"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buyPartnerWrapper" />
-
-
     <HorizontalScrollView
         android:id="@+id/fiat_option_h_scroll"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/BRText5"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/buyPartnerWrapper"
-        app:layout_constraintWidth_max="wrap">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buyPartnerWrapper">
 
         <RadioGroup
             android:id="@+id/fiat_option"

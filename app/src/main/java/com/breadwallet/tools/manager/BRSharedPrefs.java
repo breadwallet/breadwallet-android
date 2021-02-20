@@ -44,28 +44,21 @@ import static com.breadwallet.tools.util.BRConstants.GEO_PERMISSIONS_REQUESTED;
 
 public class BRSharedPrefs {
 
-    public static List<OnIsoChangedListener> isoChangedListeners = new ArrayList<>();
+    private static final List<OnIsoChangedListener> isoChangedListeners = new ArrayList<>();
+    public static final String TERNIO_USER_ID = "ternio_user_id";
 
     public interface OnIsoChangedListener {
         void onIsoChanged(String iso);
     }
 
     public static void addIsoChangedListener(OnIsoChangedListener listener) {
-        if (isoChangedListeners == null) {
-            isoChangedListeners = new ArrayList<>();
-        }
-        if (!isoChangedListeners.contains(listener))
-            isoChangedListeners.add(listener);
+        if (isoChangedListeners.contains(listener)) return;
+        isoChangedListeners.add(listener);
     }
 
     public static void removeListener(OnIsoChangedListener listener) {
-        if (isoChangedListeners == null) {
-            isoChangedListeners = new ArrayList<>();
-        }
         isoChangedListeners.remove(listener);
-
     }
-
 
     public static String getIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
@@ -85,16 +78,18 @@ public class BRSharedPrefs {
         editor.putString(BRConstants.CURRENT_CURRENCY, code.equalsIgnoreCase(Locale.getDefault().getISO3Language()) ? null : code);
         editor.apply();
 
-        for (OnIsoChangedListener listener : isoChangedListeners) {
-            if (listener != null) listener.onIsoChanged(code);
-        }
+        notifyIsoChanged(code);
+    }
 
+    public static void notifyIsoChanged(String iso) {
+        for (OnIsoChangedListener listener : isoChangedListeners) {
+            if (listener != null) listener.onIsoChanged(iso);
+        }
     }
 
     public static boolean getPhraseWroteDown(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(BRConstants.PHRASE_WRITTEN, false);
-
     }
 
     public static void putPhraseWroteDown(Context context, boolean check) {
@@ -107,7 +102,6 @@ public class BRSharedPrefs {
     public static boolean getGreetingsShown(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("greetingsShown", false);
-
     }
 
     public static void putGreetingsShown(Context context, boolean shown) {
@@ -137,17 +131,6 @@ public class BRSharedPrefs {
     public static void putReceiveAddress(Context ctx, String tmpAddr) {
         SharedPreferences.Editor editor = ctx.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE).edit();
         editor.putString(BRConstants.RECEIVE_ADDRESS, tmpAddr);
-        editor.apply();
-    }
-
-    public static String getWalletName(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(BRConstants.WALLET_NAME, "My Loaf");
-    }
-
-    public static void putWalletName(Context ctx, String name) {
-        SharedPreferences.Editor editor = ctx.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE).edit();
-        editor.putString(BRConstants.WALLET_NAME, name);
         editor.apply();
     }
 
@@ -210,11 +193,6 @@ public class BRSharedPrefs {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.SECURE_TIME_PREFS, date);
         editor.apply();
-    }
-
-    public static long getLastSyncTime(Context activity) {
-        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getLong("lastSyncTime", 0);
     }
 
     public static void putLastSyncTime(Context activity, long time) {
@@ -306,13 +284,6 @@ public class BRSharedPrefs {
     public static boolean getFeatureEnabled(Context activity, String feature) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(feature, false);
-    }
-
-    public static void putFeatureEnabled(Context activity, boolean enabled, String feature) {
-        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(feature, enabled);
-        editor.apply();
     }
 
     public static boolean getGeoPermissionsRequested(Context activity) {
@@ -461,5 +432,20 @@ public class BRSharedPrefs {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("trustNode", trustNode);
         editor.apply();
+    }
+
+    public static void putLitecoinCardId(Context context, String id) {
+        context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE)
+                .edit().putString(TERNIO_USER_ID, id).apply();
+    }
+
+    public static String getLitecoinCardId(Context context) {
+        return context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE)
+                .getString(TERNIO_USER_ID, null);
+    }
+
+    public static void logoutFromLitecoinCard(Context context) {
+        context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE)
+                .edit().remove(TERNIO_USER_ID).apply();
     }
 }

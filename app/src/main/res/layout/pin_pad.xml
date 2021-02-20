@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:columnCount="3"
-            android:orientation="horizontal"
-            android:rowCount="4">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:columnCount="3"
+    android:orientation="horizontal"
+    android:rowCount="4">
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/num1"
         android:layout_column="0"
         android:layout_columnWeight="1"
@@ -22,10 +22,10 @@
         android:paddingBottom="8dp"
         android:text="1"
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/num2"
         android:layout_column="1"
         android:layout_columnWeight="1"
@@ -38,10 +38,10 @@
         android:paddingBottom="8dp"
         android:text="2"
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/num3"
         android:layout_column="2"
         android:layout_columnWeight="1"
@@ -54,10 +54,10 @@
         android:paddingBottom="8dp"
         android:text="3"
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/num4"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -69,10 +69,10 @@
         android:paddingBottom="8dp"
         android:text="4"
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/num5"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal"
@@ -84,10 +84,10 @@
         android:paddingBottom="8dp"
         android:text="5"
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/num6"
         android:layout_column="2"
         android:layout_gravity="fill_horizontal"
@@ -99,10 +99,10 @@
         android:paddingBottom="8dp"
         android:text="6"
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/num7"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -114,10 +114,10 @@
         android:paddingBottom="8dp"
         android:text="7"
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/num8"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal"
@@ -129,10 +129,10 @@
         android:paddingBottom="8dp"
         android:text="8"
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/num9"
         android:layout_column="2"
         android:layout_gravity="fill_horizontal"
@@ -144,10 +144,10 @@
         android:paddingBottom="8dp"
         android:text="9"
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/numDot"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -159,10 +159,10 @@
         android:paddingBottom="8dp"
         android:text="."
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <com.breadwallet.presenter.customviews.BRButton
+        style="@style/BRButtonStyle"
         android:id="@+id/num0"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal|fill_vertical"
@@ -174,8 +174,7 @@
         android:paddingBottom="8dp"
         android:text="0"
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        app:customBFont="BarlowSemiCondensed-Medium.ttf"/>
+        android:textSize="@dimen/pin_par_text_size" />
 
     <ImageButton
         android:id="@+id/numDelete"
@@ -191,7 +190,6 @@
         android:src="@drawable/ic_delete_gray"
         android:text=""
         android:textColor="@color/pin_pad_text"
-        android:textSize="@dimen/pin_par_text_size"
-        />
+        android:textSize="@dimen/pin_par_text_size" />
 
 </GridLayout>

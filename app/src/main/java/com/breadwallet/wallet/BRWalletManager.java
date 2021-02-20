@@ -92,7 +92,7 @@ import timber.log.Timber;
 
 public class BRWalletManager {
     private static BRWalletManager instance;
-    public List<OnBalanceChanged> balanceListeners;
+    public List<OnBalanceChanged> balanceListeners = new ArrayList<>();
     private boolean itInitiatingWallet;
 
     public void setBalance(final Context context, long balance) {
@@ -122,7 +122,6 @@ public class BRWalletManager {
     }
 
     private BRWalletManager() {
-        balanceListeners = new ArrayList<>();
     }
 
     public static BRWalletManager getInstance() {
@@ -586,19 +585,11 @@ public class BRWalletManager {
     }
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {
-        if (balanceListeners == null) {
-            Timber.d("addBalanceChangedListener: statusUpdateListeners is null");
-            return;
-        }
-        if (!balanceListeners.contains(listener))
-            balanceListeners.add(listener);
+        if (balanceListeners.contains(listener)) return;
+        balanceListeners.add(listener);
     }
 
     public void removeListener(OnBalanceChanged listener) {
-        if (balanceListeners == null) {
-            Timber.d("addBalanceChangedListener: statusUpdateListeners is null");
-            return;
-        }
         balanceListeners.remove(listener);
     }
 

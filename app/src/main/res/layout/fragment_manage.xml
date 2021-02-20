@@ -1,11 +1,10 @@
 <com.breadwallet.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                        xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                        android:id="@+id/layout"
-                                                        android:layout_width="match_parent"
-                                                        android:layout_height="match_parent"
-                                                        android:background="@android:color/transparent"
-                                                        android:filterTouchesWhenObscured="true"
-                                                        android:orientation="vertical">
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:filterTouchesWhenObscured="true"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/signal_layout"
@@ -16,7 +15,8 @@
         android:background="@drawable/menu_layout"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRBoldTextStyle"
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,16 +26,14 @@
             android:layout_marginTop="16dp"
             android:text="Manage Wallet"
             android:textColor="@color/almost_black"
-            android:textSize="22sp"
-            app:customTFont="BarlowSemiCondensed-Bold.ttf"
-            />
+            android:textSize="22sp" />
 
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginTop="16dp"
-            android:background="@color/separator_gray"/>
+            android:background="@color/separator_gray" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,36 +42,37 @@
             android:layout_marginTop="16dp"
             android:text="Wallet Name"
             android:textColor="@color/light_gray"
-            android:textSize="18sp"
-            />
+            android:textSize="18sp" />
 
-        <com.breadwallet.presenter.customviews.BREdit
+        <EditText
+            style="@style/BREditStyle"
             android:id="@+id/wallet_name_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="My Loaf"
             android:textColor="@color/almost_black"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <View
             android:id="@+id/view2"
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginTop="16dp"
-            android:background="@color/separator_gray"/>
+            android:background="@color/separator_gray" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="Your wallet name only appears in your account transaction history and cannot be seen by anyone you pay or receive money from."
             android:textColor="@color/gray"
-            android:textSize="16sp"
-            />
+            android:textSize="16sp" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/wallet_creation_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -82,8 +81,7 @@
             android:layout_marginTop="16dp"
             android:text="You created your wallet on ..."
             android:textColor="@color/gray"
-            android:textSize="16sp"
-            />
+            android:textSize="16sp" />
 
     </LinearLayout>
 

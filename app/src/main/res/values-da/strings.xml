@@ -496,7 +496,7 @@
   <string name="Settings.currency">Vis valuta</string>
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Tilmeld dig Early Access</string>
-  <!-- Are you enjoying bread alert message body -->
+  <!-- Are you enjoying litewallet alert message body -->
   <string name="Settings.enjoying">Nyder du Loaf?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">Importer pung</string>
@@ -568,7 +568,7 @@
   <string name="TouchIdSettings.spendingLimit">Brugsgrænse: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">Aktiver Touch ID til Loaf</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <!-- Enable fingerprint for this wallet called Litewallet -->
   <string name="TouchIdSettings.switchLabel.android">Aktiver autentificering via fingeraftryk</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
@@ -748,14 +748,44 @@
   <string name="WritePaperPhrase.previous">Forrige</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d af %2$d</string>
-    <string name="Donate.title">Tryk for at donere til Litecoin Foundation (%1$s)</string>
+  <string name="Donate.title">Tryk for at donere til Litecoin Foundation (%1$s)</string>
   <string name="Donate.title.confirmation">Bekræft donation</string>
   <string name="Confirmation.processingAndDonationTime">Behandlingstid: Disse transaktioner tager %1$s minutter at behandle.</string>
   <string name="Confirmation.donateLabel">Beløb til donation:</string>
   <string name="Donate.word">Doner</string>
   <string name="Donate.toThe">"Doner til "</string>
   <string name="Confirmation.staticAddressLabel">Adresse:</string>
-    <string name="FeeSelector.luxury">Luksus</string>
-    <string name="FeeSelector.luxuryMessage">Denne mulighed garanterer næsten accept af din transaktion, selvom du betaler en præmie.</string>
-    <string name="FeeSelector.luxuryTime">2.5 - 5+ minutter</string>
+  <string name="FeeSelector.luxury">Luksus</string>
+  <string name="FeeSelector.luxuryMessage">Denne mulighed garanterer næsten accept af din transaktion, selvom du betaler en præmie.</string>
+  <string name="FeeSelector.luxuryTime">2.5 - 5+ minutter</string>
+  <string name="BottomNavItem.History.title">HISTORIE</string>
+  <string name="BottomNavItem.Card.title">KORT</string>
+  <string name="LitecoinCard.cardBalance">Kortbalance</string>
+  <string name="LitecoinCard.logout">Log ud</string>
+  <string name="Register.Hint.mobileNumber">Mobilnummer</string>
+  <string name="Register.Hint.zipPostalCode">Postnummer</string>
+  <string name="Register.Hint.country">Land</string>
+  <string name="Register.Hint.stateProvince">Stat / provins</string>
+  <string name="Register.Hint.city">By</string>
+  <string name="Register.Hint.address">Vejnavn</string>
+  <string name="Register.Hint.confirmPassword">bekræft kodeord</string>
+  <string name="Register.Hint.lastName">efternavn</string>
+  <string name="Register.Hint.firstName">Fornavn</string>
+  <string name="Register.registerCardPhrase">Tilmeld dig Litecoin-kort</string>
+  <string name="Login.Dialog.forgotPassword.reset">Nulstille kodeord</string>
+  <string name="Login.register">Tilmeld</string>
+  <string name="Login.login">Log på</string>
+  <string name="Login.forgotPassword">Glemt kodeord?</string>
+  <string name="Login.Hint.password">Adgangskode</string>
+  <string name="Login.Dialog.forgotPasswordMessage">Besøg https://litecoin.dashboard.getblockcard.com/password/forgot for at nulstille din adgangskode.</string>
+  <string name="Login.Dialog.forgotPassword.visit">Besøg</string>
+  <string name="required">Påkrævet område</string>
+  <string name="wrong_email_format">Ugyldig emailadresse</string>
+  <string name="error_pwd_6chars_min">Adgangskoden skal indeholde mindst 6 tegn</string>
+  <string name="Register.Dialog.registeredSuccessMessage">Du er blevet registreret. Bekræft venligst ved at besøge din e-mail-indbakke og klikke på bekræftelsesknappen</string>
+  <string name="Error.unknownSystem">Ups, der skete noget galt. Prøv igen senere</string>
+  <string name="mismatch_password">Fejladgangskode</string>
+  <string name="Error.emailNotVerified">Du skal bekræfte din e-mail-adresse, før du kan logge ind.</string>
+  <string name="Error.wrong2faTokenProvided">Forkert 2FA leveret</string>
+  <string name="BuyCenter.simplex.FinancialDetails">• Få Litecoin inden for 5 minutter! \\n • Køb Litecoin via kreditkort \\n • Pas eller stats-ID</string>
 </resources>

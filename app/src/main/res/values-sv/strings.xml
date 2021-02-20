@@ -748,7 +748,7 @@
   <string name="WritePaperPhrase.previous">Föregående</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d av %2$d</string>
-    <string name="Donate.title">Tryck för att donera till Litecoin Foundation (%1$s)</string>
+  <string name="Donate.title">Tryck för att donera till Litecoin Foundation (%1$s)</string>
   <string name="Donate.title.confirmation">Bekräfta donation</string>
   <string name="Confirmation.processingAndDonationTime">Bearbetningstid: Dessa transaktioner tar %1$s minuter att behandla.</string>
   <string name="Confirmation.donateLabel">Belopp att donera:</string>
@@ -758,4 +758,34 @@
   <string name="FeeSelector.luxury">Lyx</string>
   <string name="FeeSelector.luxuryMessage">Detta alternativ garanterar praktiskt taget accept av din transaktion även om du betalar en premie.</string>
   <string name="FeeSelector.luxuryTime">2.5 - 5+ minuter</string>
+  <string name="BottomNavItem.History.title">HISTORIA</string>
+  <string name="BottomNavItem.Card.title">KORT</string>
+  <string name="LitecoinCard.cardBalance">Kortbalans</string>
+  <string name="LitecoinCard.logout">Logga ut</string>
+  <string name="Register.Hint.mobileNumber">Mobilnummer</string>
+  <string name="Register.Hint.zipPostalCode">Postnummer</string>
+  <string name="Register.Hint.country">Land</string>
+  <string name="Register.Hint.stateProvince">Stat / provins</string>
+  <string name="Register.Hint.city">Stad</string>
+  <string name="Register.Hint.address">Gatuadress</string>
+  <string name="Register.Hint.confirmPassword">Bekräfta lösenord</string>
+  <string name="Register.Hint.lastName">Efternamn</string>
+  <string name="Register.Hint.firstName">Förnamn</string>
+  <string name="Register.registerCardPhrase">Registrera dig för Litecoin-kort</string>
+  <string name="Login.Dialog.forgotPassword.reset">Återställ lösenord</string>
+  <string name="Login.register">Registrera</string>
+  <string name="Login.login">Logga in</string>
+  <string name="Login.forgotPassword">Glömt ditt lösenord?</string>
+  <string name="Login.Hint.password">Lösenord</string>
+  <string name="Login.Dialog.forgotPasswordMessage">Besök https://litecoin.dashboard.getblockcard.com/password/forgot för att återställa ditt lösenord.</string>
+  <string name="Login.Dialog.forgotPassword.visit">Besök</string>
+  <string name="required">Obligatoriskt fält</string>
+  <string name="wrong_email_format">Ogiltig e-postadress</string>
+  <string name="error_pwd_6chars_min">Lösenordet måste innehålla minst sex tecken</string>
+  <string name="Register.Dialog.registeredSuccessMessage">Du har registrerats. Bekräfta genom att besöka din e-postinkorg och klicka på bekräftelseknappen</string>
+  <string name="Error.unknownSystem">Oj, något har hänt. Vänligen försök igen senare</string>
+  <string name="mismatch_password">Fel lösenord</string>
+  <string name="Error.emailNotVerified">Du måste verifiera din e-postadress innan du kan logga in.</string>
+  <string name="Error.wrong2faTokenProvided">Fel 2FA tillhandahålls</string>
+  <string name="BuyCenter.simplex.FinancialDetails">• Skaffa Litecoin inom 5 minuter! \\n • Köp Litecoin via kreditkort \\n • Pass eller statligt ID</string>
 </resources>

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.breadwallet.di.component.DaggerAppComponent;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.manager.AnalyticsManager;
@@ -63,6 +64,9 @@ public class BreadApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        DaggerAppComponent.builder().build().inject(this);
+
         boolean enableCrashlytics = true;
         if (Utils.isEmulatorOrDebug(this)) {
 //            BRKeyStore.putFailCount(0, this);
@@ -133,7 +137,7 @@ public class BreadApp extends Application {
         void onBackgrounded();
     }
 
-    private class CrashReportingTree extends Timber.Tree {
+    private static class CrashReportingTree extends Timber.Tree {
         private static final String CRASHLYTICS_KEY_PRIORITY = "priority";
         private static final String CRASHLYTICS_KEY_TAG = "tag";
         private static final String CRASHLYTICS_KEY_MESSAGE = "message";

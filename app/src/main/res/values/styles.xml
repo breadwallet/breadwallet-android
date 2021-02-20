@@ -1,7 +1,11 @@
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <!-- Customize your theme here. -->
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:title">false</item>
         <item name="windowNoTitle">true</item>
@@ -11,6 +15,15 @@
         <item name="android:actionBarStyle">@style/BreadActionBar</item>
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize color of navigation drawer icon and back arrow -->
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="AppTheme.ProgressBarTheme">
+        <item name="colorAccent">@color/dark_blue</item>
     </style>
 
     <!-- ActionBar styles -->
@@ -25,7 +38,6 @@
     <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@color/dark_blue</item>
-
     </style>
 
     <style name="Send_ActionButStyle">
@@ -44,6 +56,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/fee_selector_text_selector</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/barlowsemicondensed_medium</item>
     </style>
 
     <style name="FeeSelectorStartStyle" parent="FeeSelectorStyle">
@@ -56,6 +69,74 @@
 
     <style name="FeeSelectorEndStyle" parent="FeeSelectorStyle">
         <item name="android:background">@drawable/fee_selector_bg_end</item>
+    </style>
+
+    <style name="BottomNavTheme" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnSurface">@color/blue_grey</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">12sp</item>
+        <item name="fontFamily">@font/barlowsemicondensed_medium</item>
+        <item name="android:fontFamily">@font/barlowsemicondensed_medium</item>
+    </style>
+
+    <style name="RegisterFieldStyle">
+        <item name="fontFamily">@font/barlowsemicondensed_semibold</item>
+        <item name="android:fontFamily">@font/barlowsemicondensed_semibold</item>
+    </style>
+
+    <!-- set the rounded drawable as background to your bottom sheet -->
+    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/auth_sheet_shape</item>
+    </style>
+
+    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="bottomSheetStyle">@style/BottomSheet</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
+
+    <style name="LoginButStyle">
+        <item name="android:layout_marginTop">30dp</item>
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:minHeight">60dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:background">@drawable/rounded_16_lite_blue</item>
+        <item name="android:fontFamily">@font/barlowsemicondensed_medium</item>
+    </style>
+
+    <style name="TransferFiatOptionStyle">
+        <item name="android:foreground">?selectableItemBackground</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/transfer_fiat_option_bg_selector</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/barlowsemicondensed_bold</item>
+        <item name="android:textColor">@color/transfer_fiat_option_text_selector</item>
+    </style>
+
+    <style name="BRTextStyle">
+        <item name="android:fontFamily">@font/barlowsemicondensed_medium</item>
+        <item name="android:lineSpacingExtra">0dp</item>
+        <item name="android:lineSpacingMultiplier">1.3</item>
+    </style>
+
+    <style name="BRBoldTextStyle" parent="BRTextStyle">
+        <item name="android:fontFamily">@font/barlowsemicondensed_bold</item>
+    </style>
+
+    <style name="BREditStyle">
+        <item name="android:fontFamily">@font/barlowsemicondensed_medium</item>
+    </style>
+
+    <style name="BRButtonStyle">
+        <item name="android:fontFamily">@font/barlowsemicondensed_medium</item>
     </style>
 
     <style name="FiatOptionButtonStyle">

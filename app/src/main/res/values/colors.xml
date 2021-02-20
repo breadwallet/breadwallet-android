@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="colorPrimary">#345d9d</color>
+    <color name="colorPrimaryDark">#00346e</color>
+    <color name="colorPrimaryLight">#688ace</color>
+    <color name="colorAccent">#345d9d</color>
+
     <item name="white" type="color">#ffffff</item>
     <item name="blue" type="color">#FF33B5E5</item>
     <item name="red" type="color">#FFFF4444</item>
@@ -70,5 +75,11 @@
     <item name="litecoin_litewallet_orange" type="color">#FE5F55</item>
     <item name="litecoin_litewallet_green" type="color">#179E27</item>
     <color name="white_30_alpha">#b3ffffff</color>
+
+    <color name="blue_grey">#7c98c7</color>
+    <color name="white_two">#f5f5f5</color>
+    <color name="jade_green">#27ae60</color>
+    <color name="very_light_pink">#bdbdbd</color>
+    <color name="very_light_pink_two">#f2f2f2</color>
 
 </resources>

@@ -26,7 +26,6 @@ import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
-import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
@@ -65,7 +64,7 @@ public class LoginActivity extends BRActivity {
     private ImageView unlockedImage;
     private TextView unlockedText;
     private TextView enterPinLabel;
-    private BRText versionText;
+    private TextView versionText;
     private LinearLayout offlineButtonsLayout;
 
     private ImageButton fingerPrint;
@@ -96,7 +95,7 @@ public class LoginActivity extends BRActivity {
         keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
         fingerPrint = (ImageButton) findViewById(R.id.fingerprint_icon);
-        versionText = (BRText) findViewById(R.id.version_text);
+        versionText = findViewById(R.id.version_text);
 
         unlockedImage = (ImageView) findViewById(R.id.unlocked_image);
         unlockedText = (TextView) findViewById(R.id.unlocked_text);

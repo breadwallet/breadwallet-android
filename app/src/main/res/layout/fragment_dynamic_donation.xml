@@ -15,7 +15,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/pin_round_corner">
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRBoldTextStyle"
             android:id="@+id/dialogTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -23,7 +24,6 @@
             android:text="@string/Donate.title.confirmation"
             android:textColor="@color/almost_black"
             android:textSize="@dimen/header"
-            app:customTFont="BarlowSemiCondensed-Bold.ttf"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -38,7 +38,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dialogTitle" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/addressLbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -46,11 +47,12 @@
             android:layout_marginTop="10dp"
             android:text="@string/Confirmation.staticAddressLabel"
             android:textSize="15sp"
-            app:customTFont="BarlowSemiCondensed-Light.ttf"
+            android:fontFamily="@font/barlowsemicondensed_light"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/separator" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/addressVal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,7 +60,6 @@
             android:layout_marginEnd="@dimen/bread_margin"
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:customTFont="BarlowSemiCondensed-Medium.ttf"
             app:layout_constrainedWidth="true"
             app:layout_constraintBaseline_toBaselineOf="@id/addressLbl"
             app:layout_constraintEnd_toEndOf="parent"
@@ -75,37 +76,39 @@
             app:layout_constraintStart_toStartOf="@+id/addressLbl"
             app:layout_constraintTop_toBottomOf="@id/addressVal" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/processingTimeLbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            app:customTFont="BarlowSemiCondensed-Light.ttf"
+            android:fontFamily="@font/barlowsemicondensed_light"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="@+id/addressVal"
             app:layout_constraintStart_toStartOf="@+id/addressLbl"
             app:layout_constraintTop_toBottomOf="@id/spinnerAddresses"
             tools:text="@string/Confirmation.processingAndDonationTime" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/amountLbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="@string/Confirmation.donateLabel"
             android:textSize="15sp"
-            app:customTFont="BarlowSemiCondensed-Light.ttf"
+            android:fontFamily="@font/barlowsemicondensed_light"
             app:layout_constraintStart_toStartOf="@+id/addressLbl"
             app:layout_constraintTop_toBottomOf="@id/processingTimeLbl" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/amountVal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:customTFont="BarlowSemiCondensed-Medium.ttf"
             app:layout_constrainedWidth="true"
             app:layout_constraintBaseline_toBaselineOf="@id/amountLbl"
             app:layout_constraintEnd_toEndOf="@+id/addressVal"
@@ -114,25 +117,26 @@
             tools:text="$0.00 (L 0.000001)" />
 
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/feeLbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="@string/Confirmation.feeLabel"
             android:textSize="15sp"
-            app:customTFont="BarlowSemiCondensed-Light.ttf"
+            android:fontFamily="@font/barlowsemicondensed_light"
             app:layout_constraintStart_toStartOf="@+id/amountLbl"
             app:layout_constraintTop_toBottomOf="@id/amountLbl" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/feeVal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:customTFont="BarlowSemiCondensed-Medium.ttf"
             app:layout_constrainedWidth="true"
             app:layout_constraintBaseline_toBaselineOf="@id/feeLbl"
             app:layout_constraintEnd_toEndOf="@+id/amountVal"
@@ -140,25 +144,26 @@
             app:layout_constraintStart_toEndOf="@id/feeLbl"
             tools:text="$0.00 (L 0.000001)" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/totalLbl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="@string/Confirmation.totalLabel"
             android:textSize="15sp"
-            app:customTFont="BarlowSemiCondensed-Light.ttf"
+            android:fontFamily="@font/barlowsemicondensed_light"
             app:layout_constraintStart_toStartOf="@+id/amountLbl"
             app:layout_constraintTop_toBottomOf="@id/feeLbl" />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <TextView
+            style="@style/BRTextStyle"
             android:id="@+id/totalVal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:customTFont="BarlowSemiCondensed-Medium.ttf"
             app:layout_constrainedWidth="true"
             app:layout_constraintBaseline_toBaselineOf="@id/totalLbl"
             app:layout_constraintEnd_toEndOf="@+id/amountVal"
@@ -167,6 +172,7 @@
             tools:text="$0.00 (L 0.000001)" />
 
         <com.breadwallet.presenter.customviews.BRButton
+            style="@style/BRButtonStyle"
             android:id="@+id/cancelBut"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -177,7 +183,7 @@
             android:text="@string/Button.cancel"
             android:textColor="@color/black"
             app:buttonType="2"
-            app:customTFont="BarlowSemiCondensed-Regular.ttf"
+            android:fontFamily="@font/barlowsemicondensed_regular"
             app:isBreadButton="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/donateBut"
@@ -187,6 +193,7 @@
             app:layout_constraintTop_toBottomOf="@+id/totalLbl" />
 
         <com.breadwallet.presenter.customviews.BRButton
+            style="@style/BRButtonStyle"
             android:id="@+id/donateBut"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -195,7 +202,7 @@
             android:text="@string/Donate.word"
             android:textColor="@color/white"
             app:buttonType="1"
-            app:customTFont="BarlowSemiCondensed-Regular.ttf"
+            android:fontFamily="@font/barlowsemicondensed_regular"
             app:isBreadButton="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -204,14 +211,14 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <TextView
+        style="@style/BRTextStyle"
         android:id="@+id/amountSliderVal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:textColor="@color/white"
         android:textSize="22sp"
-        app:customTFont="BarlowSemiCondensed-Medium.ttf"
         tools:text="$0.00 (L 0.000000)" />
 
     <LinearLayout

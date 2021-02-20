@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +17,9 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -156,7 +153,6 @@ public class SpendLimitActivity extends BRActivity {
 
         private final Context mContext;
         private final int layoutResourceId;
-        private TextView textViewItem;
 
         public LimitAdaptor(Context mContext) {
             super(mContext, R.layout.currency_list_item);
@@ -173,8 +169,7 @@ public class SpendLimitActivity extends BRActivity {
                 convertView = inflater.inflate(layoutResourceId, parent, false);
             }
             // get the TextView and then set the text (item name) and tag (item ID) values
-            textViewItem = convertView.findViewById(R.id.currency_item_text);
-            FontManager.overrideFonts(textViewItem);
+            TextView textViewItem = convertView.findViewById(R.id.currency_item_text);
             Integer item = getItem(position);
             BigDecimal curAmount = BRExchange.getAmountFromSatoshis(app, BRSharedPrefs.getIso(app), new BigDecimal(item));
             BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(app, new BigDecimal(item));

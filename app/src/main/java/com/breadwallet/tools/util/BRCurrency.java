@@ -44,18 +44,14 @@ public class BRCurrency {
 
     // amount is in currency or BTC (bits, mBTC or BTC)
     public static String getFormattedCurrencyString(Context app, String isoCurrencyCode, BigDecimal amount) {
-//        Log.e(TAG, "amount: " + amount);
-        DecimalFormat currencyFormat;
-
         // This formats currency values as the user expects to read them (default locale).
-        currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
+        DecimalFormat  currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
         // This specifies the actual currency that the value is in, and provide
         // s the currency symbol.
         DecimalFormatSymbols decimalFormatSymbols;
         Currency currency;
-        String symbol = null;
+        String symbol;
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-//        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "LTC")) {
             symbol = BRExchange.getBitcoinSymbol(app);
         } else {
@@ -65,10 +61,8 @@ public class BRCurrency {
                 currency = Currency.getInstance(Locale.getDefault());
             }
             symbol = currency.getSymbol();
-//            decimalPoints = currency.getDefaultFractionDigits();
         }
         decimalFormatSymbols.setCurrencySymbol(symbol);
-//        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_LITECOINS ? 8 : 2);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);

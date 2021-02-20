@@ -68,8 +68,8 @@ public class TxManager {
         return instance;
     }
 
-    public void init(final BreadActivity app) {
-        txList = app.findViewById(R.id.tx_list);
+    public void init(final BreadActivity app, RecyclerView recyclerView) {
+        txList = recyclerView;
         txList.setLayoutManager(new CustomLinearLayoutManager(app));
         txList.addOnItemTouchListener(new RecyclerItemClickListener(app,
                 txList, new RecyclerItemClickListener.OnItemClickListener() {
@@ -134,10 +134,9 @@ public class TxManager {
                 });
             }
         });
-
     }
 
-    public void showPrompt(Activity app, PromptManager.PromptItem item) {
+    void showPrompt(Activity app, PromptManager.PromptItem item) {
         crashIfNotMain();
         if (item == null) throw new RuntimeException("can't be null");
         BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".displayed");
@@ -147,7 +146,7 @@ public class TxManager {
         updateCard(app);
     }
 
-    public void hidePrompt(final Activity app, final PromptManager.PromptItem item) {
+    void hidePrompt(final Activity app, final PromptManager.PromptItem item) {
         crashIfNotMain();
         if (currentPrompt == PromptManager.PromptItem.SHARE_DATA) {
             BRSharedPrefs.putShareDataDismissed(app, true);
@@ -161,9 +160,7 @@ public class TxManager {
         } else {
             if (item != null)
                 BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
-
         }
-
     }
 
     private void showNextPrompt(Activity app) {
@@ -199,10 +196,9 @@ public class TxManager {
                 }
             });
         }
-
     }
 
-    public void updateCard(final Context app) {
+    private void updateCard(final Context app) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -216,14 +212,12 @@ public class TxManager {
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-//                Toast.makeText(BreadActivity.this, "on Move ", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 hidePrompt(app, null);
-                //Remove swiped item from list and notify the RecyclerView
             }
 
             @Override
@@ -237,9 +231,9 @@ public class TxManager {
     }
 
 
-    private class CustomLinearLayoutManager extends LinearLayoutManager {
+    private static class CustomLinearLayoutManager extends LinearLayoutManager {
 
-        public CustomLinearLayoutManager(Context context) {
+        CustomLinearLayoutManager(Context context) {
             super(context);
         }
 

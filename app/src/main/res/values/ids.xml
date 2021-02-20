@@ -14,7 +14,6 @@
  limitations under the License.
  -->
 <resources>
-    //The QR
-    <!-- Messages IDs -->
-    <item name="keyboard_back_button" type="id" />
+    <id name="keyboard_back_button" />
+    <id name="fragment_container" />
 </resources>

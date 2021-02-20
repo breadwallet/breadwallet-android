@@ -1,7 +1,9 @@
 package com.breadwallet.wallet;
 
 import android.content.Context;
+
 import androidx.annotation.WorkerThread;
+
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -47,12 +49,10 @@ import timber.log.Timber;
 public class BRPeerManager {
     private static BRPeerManager instance;
 
-    private static List<OnTxStatusUpdate> statusUpdateListeners;
+    private static final List<OnTxStatusUpdate> statusUpdateListeners = new ArrayList<>();
     private static OnSyncSucceeded onSyncFinished;
 
-
     private BRPeerManager() {
-        statusUpdateListeners = new ArrayList<>();
     }
 
     public static BRPeerManager getInstance() {
@@ -206,17 +206,11 @@ public class BRPeerManager {
     }
 
     public void addStatusUpdateListener(OnTxStatusUpdate listener) {
-        if (statusUpdateListeners == null) {
-            return;
-        }
-        if (!statusUpdateListeners.contains(listener))
-            statusUpdateListeners.add(listener);
+        if (statusUpdateListeners.contains(listener)) return;
+        statusUpdateListeners.add(listener);
     }
 
     public void removeListener(OnTxStatusUpdate listener) {
-        if (statusUpdateListeners == null) {
-            return;
-        }
         statusUpdateListeners.remove(listener);
     }
 
@@ -256,9 +250,9 @@ public class BRPeerManager {
 
     public native static int getCurrentBlockHeight();
 
-    public  native static int getRelayCount(byte[] hash);
+    public native static int getRelayCount(byte[] hash);
 
-    public  native boolean setFixedPeer(String node, int port);
+    public native boolean setFixedPeer(String node, int port);
 
     public native static int getEstimatedBlockHeight();
 
