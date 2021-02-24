@@ -46,6 +46,7 @@ import com.breadwallet.breadbox.BreadBoxCloseWorker
 import com.breadwallet.breadbox.CoreBreadBox
 import com.breadwallet.corecrypto.CryptoApiProvider
 import com.breadwallet.crypto.CryptoApi
+import com.breadwallet.crypto.WalletManagerMode
 import com.breadwallet.crypto.blockchaindb.BlockchainDb
 import com.breadwallet.installHooks
 import com.breadwallet.logger.logDebug
@@ -167,6 +168,17 @@ class BreadApp : Application(), KodeinAware, CameraXConfig.Provider {
                 "bitcoin-mainnet:__native__",
                 "ethereum-mainnet:__native__",
                 "ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6"
+            )
+        }
+
+        fun getDefaultWalletModes() = when {
+            BuildConfig.BITCOIN_TESTNET -> mapOf(
+                "bitcoin-testnet:__native__" to WalletManagerMode.API_ONLY,
+                "bitcoincash-testnet:__native__" to WalletManagerMode.API_ONLY
+            )
+            else -> mapOf(
+                "bitcoin-mainnet:__native__" to WalletManagerMode.API_ONLY,
+                "bitcoincash-mainnet:__native__" to WalletManagerMode.API_ONLY,
             )
         }
 

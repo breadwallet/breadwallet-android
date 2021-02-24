@@ -82,8 +82,9 @@ abstract class BaseController(
                 onCreateView(this)
             }
         } else {
-            check(viewBindingDelegates.size == 1) { "Only one ViewBinding delegate can be created" }
-            return viewBindingDelegates.single().create(inflater).root.also(::onCreateView)
+            val primaryBinding = viewBindingDelegates.first().create(inflater)
+            viewBindingDelegates.drop(1).forEach { it.create(inflater) }
+            return primaryBinding.root.also(::onCreateView)
         }
     }
 
