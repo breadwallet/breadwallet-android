@@ -222,7 +222,8 @@ class RatesFetcher(
             if (json == null) {
                 emptyMap()
             } else {
-                ids.associateWith { json.getJSONObject(it) }
+                ids.filter { json.has(it) }
+                    .associateWith { json.getJSONObject(it) }
                     .mapKeys { (key, _) ->
                         TokenUtil.tokenForCoingeckoId(key)?.symbol ?: ""
                     }
