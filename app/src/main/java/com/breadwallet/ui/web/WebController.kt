@@ -190,15 +190,7 @@ class WebController(
             ): Boolean {
                 val trimmedUrl = request.url.toString().trimEnd('/')
 
-                val onCloseUrl = mOnCloseUrl?.trim('/')
-                if (onCloseUrl != null && trimmedUrl.startsWith(onCloseUrl, true)) {
-                    router.popController(this@WebController)
-                    LinkPlugin.hasBrowser = false
-                    mOnCloseUrl = null
-                } else if (trimmedUrl.contains(CLOSE_URL)) {
-                    router.popController(this@WebController)
-                    LinkPlugin.hasBrowser = false
-                } else if (trimmedUrl.startsWith("file://")) {
+                if (trimmedUrl.startsWith("file://")) {
                     view.loadUrl(trimmedUrl)
                 } else {
                     // Simplex || Wyre links 
@@ -346,7 +338,7 @@ class WebController(
 
     private fun handleLinkMessages() = LinkBus.requests().onEach { (url, jsonRequest) ->
         withContext(Main) {
-            if (url.endsWith("/_close")) {
+            if (url.contains("/_close", true)) {
                 if (router.backstack.lastOrNull()?.controller is WebController) {
                     router.popCurrentController()
                 }
