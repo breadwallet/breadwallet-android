@@ -118,6 +118,7 @@ public class HTTPServer extends AbstractLifeCycle {
         final Context context = BreadApp.getBreadContext();
         boolean result = false;
         if (target.equalsIgnoreCase(BRConstants.CLOSE)) {
+            LinkBus.INSTANCE.sendMessage(new LinkRequestMessage(target, null));
             APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } else if (target.toLowerCase().startsWith("/_email")) {
