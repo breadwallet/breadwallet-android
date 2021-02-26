@@ -35,6 +35,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.breadwallet.R
+import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.flowbind.clicks
@@ -77,7 +78,7 @@ class ShowPaperKeyController(args: Bundle) : BaseMobiusController<M, E, F>(args)
         ?.run(OnCompleteAction::valueOf)
 
     override val layoutId = R.layout.controller_paper_key
-    override val defaultModel = M.createDefault(phrase, onComplete)
+    override val defaultModel = M.createDefault(phrase, onComplete, BRSharedPrefs.phraseWroteDown)
     override val update = ShowPaperKeyUpdate
     override val flowEffectHandler = subtypeEffectHandler<F, E> { }
 

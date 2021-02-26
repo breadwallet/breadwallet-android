@@ -55,8 +55,11 @@ import org.kodein.di.erased.bind
 import org.kodein.di.erased.instance
 import org.kodein.di.erased.singleton
 
-private const val PRIVATE_KEY = "private_key"
-private const val PASSWORD_PROTECTED = "password_protected"
+private const val PRIVATE_KEY = "ImportController.private_key"
+private const val PASSWORD_PROTECTED = "ImportController.password_protected"
+private const val RECLAIMING_GIFT = "ImportController.reclaim_gift_hash"
+private const val SCANNED = "ImportController.scanned"
+private const val GIFT = "ImportController.gift"
 
 @Suppress("TooManyFunctions")
 class ImportController(
@@ -68,11 +71,15 @@ class ImportController(
 
     constructor(
         privateKey: String,
-        isPasswordProtected: Boolean
+        isPasswordProtected: Boolean,
+        reclaimingGift: String? = null,
+        scanned: Boolean,
+        gift: Boolean,
     ) : this(
         bundleOf(
             PRIVATE_KEY to privateKey,
-            PASSWORD_PROTECTED to isPasswordProtected
+            PASSWORD_PROTECTED to isPasswordProtected,
+            RECLAIMING_GIFT to reclaimingGift
         )
     )
 
@@ -82,7 +89,9 @@ class ImportController(
     override val update = ImportUpdate
     override val defaultModel = M.createDefault(
         privateKey = argOptional(PRIVATE_KEY),
-        isPasswordProtected = arg(PASSWORD_PROTECTED, false)
+        isPasswordProtected = arg(PASSWORD_PROTECTED, false),
+        reclaimGiftHash = argOptional(RECLAIMING_GIFT),
+        scanned = arg(GIFT)
     )
 
     override val kodein by Kodein.lazy {
@@ -93,6 +102,7 @@ class ImportController(
 
     override val flowEffectHandler
         get() = createImportHandler(
+            direct.instance(),
             direct.instance(),
             direct.instance()
         )

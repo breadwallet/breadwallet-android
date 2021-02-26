@@ -28,7 +28,7 @@ import com.breadwallet.model.InAppMessage
 import com.breadwallet.tools.util.Link
 import com.breadwallet.ui.auth.AuthMode
 import com.breadwallet.ui.settings.SettingsSection
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import java.math.BigDecimal
 
 sealed class NavigationTarget : INavigationTarget {
@@ -121,10 +121,12 @@ sealed class NavigationTarget : INavigationTarget {
     object FingerprintSettings : NavigationTarget()
     object WipeWallet : NavigationTarget()
     object OnBoarding : NavigationTarget()
-    object ImportWallet : NavigationTarget()
-    data class ImportWalletWithKey(
-        val privateKey: String,
-        val isPasswordProtected: Boolean
+    data class ImportWallet(
+        val privateKey: String? = null,
+        val isPasswordProtected: Boolean = false,
+        val reclaimingGift: String? = null,
+        val scanned: Boolean = false,
+        val gift: Boolean = false,
     ) : NavigationTarget()
     object BitcoinNodeSelector : NavigationTarget()
     object EnableSegWit : NavigationTarget()

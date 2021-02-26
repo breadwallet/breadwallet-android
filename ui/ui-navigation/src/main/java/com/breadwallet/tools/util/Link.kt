@@ -26,7 +26,7 @@ package com.breadwallet.tools.util
 
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData
 import com.breadwallet.util.CurrencyCode
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import java.io.Serializable
 import java.math.BigDecimal
 
@@ -66,7 +66,9 @@ sealed class Link {
 
     data class ImportWallet(
         @Redacted val privateKey: String,
-        val passwordProtected: Boolean
+        val passwordProtected: Boolean,
+        val gift: Boolean = false,
+        val scanned: Boolean = false
     ) : Link()
 
     sealed class BreadUrl : Link() {

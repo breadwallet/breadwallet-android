@@ -27,19 +27,21 @@ package com.breadwallet.ui.showkey
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.OnCompleteAction
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 
 object ShowPaperKey {
     data class M(
         @Redacted val phrase: List<String>,
         val onComplete: OnCompleteAction?,
-        val currentWord: Int = 0
+        val currentWord: Int = 0,
+        val phraseWroteDown: Boolean = false
     ) {
         companion object {
             fun createDefault(
                 phrase: List<String>,
-                onComplete: OnCompleteAction?
-            ) = M(phrase, onComplete)
+                onComplete: OnCompleteAction?,
+                phraseWroteDown: Boolean
+            ) = M(phrase, onComplete, phraseWroteDown = phraseWroteDown)
         }
     }
 

@@ -24,6 +24,7 @@
  */
 package com.breadwallet.ui.importwallet
 
+import com.breadwallet.app.GiftTracker
 import com.breadwallet.breadbox.BreadBox
 import com.breadwallet.breadbox.hashString
 import com.breadwallet.breadbox.isBitcoin
@@ -32,6 +33,7 @@ import com.breadwallet.breadbox.toBigDecimal
 import com.breadwallet.crypto.Key
 import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManagerState
+import com.breadwallet.tools.util.EventUtils
 import drewcarlson.mobius.flow.subtypeEffectHandler
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterIsInstance
@@ -42,11 +44,15 @@ import kotlinx.coroutines.flow.take
 
 fun createImportHandler(
     breadBox: BreadBox,
-    walletImporter: WalletImporter
+    walletImporter: WalletImporter,
+    giftTracker: GiftTracker
 ) = subtypeEffectHandler<Import.F, Import.E> {
     addFunction(handleValidateKey(breadBox))
     addFunction(handleEstimateImport(breadBox, walletImporter))
-    addFunction(handleSubmitTransfer(walletImporter))
+    addFunction(handleSubmitTransfer(walletImporter, giftTracker))
+    addConsumer<Import.F.TrackEvent> { (event) ->
+        EventUtils.pushEvent(event)
+    }
 }
 
 private val filterBtcLike: (Wallet) -> Boolean = {
@@ -130,12 +136,16 @@ private fun handleEstimateImport(
 }
 
 private fun handleSubmitTransfer(
-    walletImporter: WalletImporter
+    walletImporter: WalletImporter,
+    giftTracker: GiftTracker
 ): suspend (Import.F.SubmitImport) -> Import.E = { submitTransfer ->
     val privateKey = submitTransfer.privateKey.toByteArray()
     val password = submitTransfer.password?.toByteArray()
     if (walletImporter.readyForImport(privateKey, password)) {
         walletImporter.import()?.let { transfer ->
+            submitTransfer.reclaimGiftHash?.let {
+                giftTracker.markGiftReclaimed(it)
+            }
             Import.E.Transfer.OnSuccess(
                 transferHash = transfer.hashString(),
                 currencyCode = transfer.wallet.currency.code

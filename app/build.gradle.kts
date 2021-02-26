@@ -4,25 +4,24 @@ import brd.Libs
 import brd.appetize.AppetizePlugin
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.google.firebase.appdistribution.gradle.AppDistributionExtension
-import io.sweers.redacted.gradle.RedactedPluginExtension
 
 plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("android.extensions")
     id("io.gitlab.arturbosch.detekt") version "1.0.1"
+    id("dev.zacsweers.redacted.redacted-gradle-plugin")
 }
 
 plugins.apply(AppetizePlugin::class)
-apply(plugin = "io.sweers.redacted.redacted-plugin")
 apply(from = file("../gradle/google-services.gradle"))
 apply(from = file("../gradle/copy-font-files.gradle"))
 
 val BDB_CLIENT_TOKEN: String by project
 val useGoogleServices: Boolean by ext
 
-configure<RedactedPluginExtension> {
-    replacementString = "***"
+redacted {
+    replacementString.set("***")
 }
 
 android {
@@ -125,6 +124,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        languageVersion = "1.4"
         freeCompilerArgs += listOf(
             "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-Xopt-in=kotlinx.coroutines.FlowPreview",

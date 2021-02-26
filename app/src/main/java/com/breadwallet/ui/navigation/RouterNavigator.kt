@@ -24,7 +24,6 @@
  */
 package com.breadwallet.ui.navigation
 
-import android.util.Base64
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router
@@ -416,22 +415,24 @@ class RouterNavigator(
         )
     }
 
-    override fun importWallet() {
+    override fun importWallet(effect: NavigationTarget.ImportWallet) {
+        val privateKey = effect.privateKey
+        val controller = if (privateKey.isNullOrBlank()) {
+            ImportController()
+        } else {
+            ImportController(
+                privateKey,
+                effect.isPasswordProtected,
+                effect.reclaimingGift,
+                effect.scanned,
+                effect.gift
+            )
+        }
         router.pushController(
-            ImportController().asTransaction(
+            controller.asTransaction(
                 HorizontalChangeHandler(),
                 HorizontalChangeHandler()
             )
-        )
-    }
-
-    override fun importWallet(effect: NavigationTarget.ImportWalletWithKey) {
-        router.pushController(
-            ImportController(effect.privateKey, effect.isPasswordProtected)
-                .asTransaction(
-                    HorizontalChangeHandler(),
-                    HorizontalChangeHandler()
-                )
         )
     }
 
@@ -562,7 +563,9 @@ class RouterNavigator(
             is Link.ImportWallet -> {
                 val controller = ImportController(
                     privateKey = link.privateKey,
-                    isPasswordProtected = link.passwordProtected
+                    isPasswordProtected = link.passwordProtected,
+                    scanned = false,
+                    gift = false
                 ).asTransaction()
                 router.pushWithStackIfEmpty(controller, effect.authenticated) {
                     listOf(

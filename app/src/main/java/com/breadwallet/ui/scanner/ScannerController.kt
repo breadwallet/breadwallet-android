@@ -98,7 +98,7 @@ class ScannerController(
     private fun startScanner(breadBox: BreadBox, uriParser: CryptoUriParser) {
         qrdecoderview
             .scannedText(true)
-            .mapLatest { text -> text to text.asLink(breadBox, uriParser) }
+            .mapLatest { text -> text to text.asLink(breadBox, uriParser, scanned = true) }
             .flowOn(Default)
             .transformLatest { (text, link) ->
                 if (link == null) {

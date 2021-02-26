@@ -113,7 +113,7 @@ fun createRecoveryKeyHandler(
                 when (val result = userManager.setupWithPhrase(phraseBytes)) {
                     SetupResult.Success -> {
                         logInfo("Wallet recovered.")
-                        BRSharedPrefs.putPhraseWroteDown(check = true)
+                        BRSharedPrefs.phraseWroteDown = true
                         E.OnRecoveryComplete
                     }
                     else -> {

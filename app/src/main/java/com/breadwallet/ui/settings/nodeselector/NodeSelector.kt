@@ -26,7 +26,7 @@ package com.breadwallet.ui.settings.nodeselector
 
 import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.ui.ViewEffect
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 
 object NodeSelector {
 

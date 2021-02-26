@@ -28,17 +28,29 @@ import android.app.ActivityManager
 import android.content.Context
 import android.security.keystore.UserNotAuthenticatedException
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
 import com.breadwallet.breadbox.BdbAuthInterceptor
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.breadbox.feeForToken
+import com.breadwallet.breadbox.hashString
+import com.breadwallet.breadbox.isNative
+import com.breadwallet.breadbox.toSanitizedString
+import com.breadwallet.crypto.Transfer
+import com.breadwallet.crypto.TransferDirection
+import com.breadwallet.crypto.TransferState
+import com.breadwallet.crypto.Wallet
 import com.breadwallet.crypto.WalletManagerMode
+import com.breadwallet.crypto.WalletManagerState
 import com.breadwallet.ext.throttleLatest
 import com.breadwallet.logger.Logger
 import com.breadwallet.logger.logDebug
 import com.breadwallet.model.Experiments
 import com.breadwallet.model.TokenItem
+import com.breadwallet.platform.entities.TxMetaDataEmpty
+import com.breadwallet.platform.entities.TxMetaDataValue
 import com.breadwallet.repository.ExperimentsRepository
 import com.breadwallet.repository.ExperimentsRepositoryImpl
 import com.breadwallet.tools.manager.BRClipboardManager
@@ -55,6 +67,7 @@ import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.util.errorHandler
 import com.platform.APIClient
 import com.breadwallet.platform.interfaces.AccountMetaDataProvider
+import com.breadwallet.util.isBitcoinLike
 import com.spotify.mobius.Connection
 import com.spotify.mobius.functions.Consumer
 import kotlinx.coroutines.CoroutineScope
@@ -62,6 +75,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -71,6 +85,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.io.File
+import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.logging.Level
 import kotlin.text.Charsets.UTF_8
 
@@ -79,6 +99,17 @@ private const val DETAILED_LOGGING_MESSAGE = "Detailed logging is enabled for th
 private const val CLEAR_BLOCKCHAIN_DATA_MESSAGE = "Clearing blockchain data"
 private const val TEZOS_ID = "tezos-mainnet:__native__"  // TODO: DROID-1854 remove tezos filter
 private const val OPTION_UPDATE_THROTTLE = 1000L
+private const val TRANSACTIONS_FILE_PREFIX = "BRD-transactions-"
+private const val AUTHORITY_BASE = "com.breadwallet"
+private const val HEADER =
+    "currency_code,timestamp,transaction_id,direction,from_address,to_address,amount,amount_unit,fee,fee_unit,memo\n"
+
+private val df = (DecimalFormat.getInstance(Locale.ROOT) as DecimalFormat).apply {
+    negativePrefix = ""
+    negativeSuffix = ""
+    maximumFractionDigits = 99
+}
+private val dtf = SimpleDateFormat("MMMM-d-yyy_hh-mm-ss", Locale.ROOT)
 
 class SettingsScreenHandler(
     private val output: Consumer<E>,
@@ -203,6 +234,7 @@ class SettingsScreenHandler(
                     metaDataManager.enableWallet(TEZOS_ID)
                 }
             }
+            F.GenerateTransactionsExportFile -> launch { exportTransactionsToFile() }
         }
     }
 
@@ -288,6 +320,13 @@ class SettingsScreenHandler(
                     )
                 )
             }
+            add(
+                SettingsItem(
+                    context.getString(R.string.Settings_exportTransaction),
+                    SettingsOption.EXPORT_TRANSACTIONS,
+                    R.drawable.ic_export
+                )
+            )
             if (BuildConfig.DEBUG) {
                 add(
                     SettingsItem(
@@ -488,4 +527,84 @@ class SettingsScreenHandler(
 
         output.accept(E.OnATMMapClicked(url, mapPath))
     }
+
+    private suspend fun exportTransactionsToFile() {
+        val wallets = getEnabledWallets()
+        val file = File(context.externalCacheDir, "$TRANSACTIONS_FILE_PREFIX${dtf.format(Date())}.csv")
+        file.bufferedWriter().use { out ->
+            out.write(HEADER)
+            wallets.forEach { wallet ->
+                val feeWallet = if (wallet.currency.isNative()) wallet else breadBox.wallet(wallet.unitForFee.currency.code).first()
+                wallet.transfers
+                    .filter { it.state.type == TransferState.Type.INCLUDED }
+                    .sortedBy { it.confirmation.orNull()?.confirmationTime ?: Date()}
+                    .forEach { transfer ->
+                        val memo = getMemo(transfer)
+                        out.write("${transfer.export(memo, feeWallet)}\n")
+                    }
+            }
+
+        }
+        val authority = buildString {
+            append(AUTHORITY_BASE)
+            if (!breadBox.isMainnet) append(".testnet")
+            if (BuildConfig.DEBUG) append(".debug")
+        }
+        output.accept(E.OnTransactionsExportFileGenerated(FileProvider.getUriForFile(context, authority, file)))
+    }
+
+    private fun Transfer.export(memo: String, feeWallet: Wallet): String {
+        var dir = ""
+        var src = source.orNull()?.toSanitizedString() ?: ""
+
+        var amt = BigDecimal(
+            amount.toStringAsUnit(wallet.unit, df).or("")
+        ).stripTrailingZeros().toPlainString()
+
+        var f = ""
+        var feeCode = ""
+
+        if (direction == TransferDirection.RECEIVED) {
+            dir = "received"
+        } else {
+            dir = "sent"
+            src = if (wallet.currency.code.isBitcoinLike()) "" else src
+            amt = "-$amt"
+            f = BigDecimal(
+                fee.toStringAsUnit(feeWallet.unit, df).or("")
+            ).stripTrailingZeros().toPlainString()
+            feeCode = feeWallet.unit.currency.code.toLowerCase(Locale.ROOT)
+        }
+
+        val feeToken = feeForToken()
+        val memoOrFeeToken = if (feeToken.isNotBlank()) "Fee for token transfer: $feeToken" else memo
+
+        return listOf(
+            "\"${wallet.currency.code.toLowerCase(Locale.ROOT)}\"",
+            "\"${confirmation.orNull()?.confirmationTime?.toInstant() ?: ""}\"",
+            "\"${hashString()}\"",
+            "\"$dir\"",
+            "\"$src\"",
+            "\"${target.orNull()?.toSanitizedString() ?: ""}\"",
+            amt,
+            "\"${wallet.unit.currency.code.toLowerCase(Locale.ROOT)}\"",
+            f,
+            "\"$feeCode\"",
+            "\"$memoOrFeeToken\""
+        ).joinToString(",")
+    }
+
+    private suspend fun getMemo(transfer: Transfer) =
+        when (val metadata = metaDataManager.txMetaData(transfer).first()) {
+            is TxMetaDataEmpty -> ""
+            is TxMetaDataValue -> metadata.comment ?: ""
+        }
+
+    private suspend fun getEnabledWallets() =
+        metaDataManager.enabledWallets().first()
+            .map { currencyId ->
+                breadBox.wallet(currencyId).filter {
+                        wallet -> wallet.walletManager.state.type != WalletManagerState.Type.SYNCING
+                }.first()
+            }.sortedBy { it.currency.code }
 }

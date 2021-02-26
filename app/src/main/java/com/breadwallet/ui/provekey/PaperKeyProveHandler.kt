@@ -31,7 +31,7 @@ import drewcarlson.mobius.flow.subtypeEffectHandler
 
 fun createPaperKeyProveHandler() = subtypeEffectHandler<F, E> {
     addFunction<F.StoreWroteDownPhrase> {
-        BRSharedPrefs.putPhraseWroteDown(true)
+        BRSharedPrefs.phraseWroteDown = true
         E.OnWroteDownKeySaved
     }
 }

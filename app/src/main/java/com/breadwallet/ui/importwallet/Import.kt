@@ -31,7 +31,7 @@ import com.breadwallet.ui.ViewEffect
 import com.breadwallet.ui.navigation.NavigationEffect
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.util.CurrencyCode
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import java.math.BigDecimal
 
 object Import {
@@ -45,7 +45,10 @@ object Import {
         val keyRequiresPassword: Boolean = false,
         val isKeyValid: Boolean = false,
         val loadingState: LoadingState = LoadingState.IDLE,
-        val currencyCode: CurrencyCode? = null
+        val currencyCode: CurrencyCode? = null,
+        val reclaimGiftHash: String? = null,
+        val scanned: Boolean = false,
+        val gift: Boolean = false
     ) {
         enum class LoadingState {
             IDLE, VALIDATING, ESTIMATING, SUBMITTING
@@ -65,14 +68,20 @@ object Import {
         companion object {
             fun createDefault(
                 privateKey: String? = null,
-                isPasswordProtected: Boolean = false
+                isPasswordProtected: Boolean = false,
+                reclaimGiftHash: String? = null,
+                scanned: Boolean = false,
+                gift: Boolean = false
             ): M = M(
                 privateKey = privateKey,
                 keyRequiresPassword = isPasswordProtected,
-                loadingState = if (privateKey != null) {
-                    LoadingState.VALIDATING
-                } else {
+                reclaimGiftHash = reclaimGiftHash,
+                scanned = scanned,
+                gift = gift,
+                loadingState = if (privateKey == null) {
                     LoadingState.IDLE
+                } else {
+                    LoadingState.VALIDATING
                 }
             )
         }
@@ -204,7 +213,12 @@ object Import {
         data class SubmitImport(
             @Redacted val privateKey: String,
             @Redacted val password: String?,
-            val currencyCode: CurrencyCode
+            val currencyCode: CurrencyCode,
+            val reclaimGiftHash: String?,
+        ) : F()
+
+        data class TrackEvent(
+            val eventString: String,
         ) : F()
 
         sealed class Nav(

@@ -399,10 +399,7 @@ object SendSheetHandler {
                 E.OnSendFailed
             } else {
                 wallet.walletManager.submit(newTransfer, phrase)
-
-                val hash = newTransfer.hashString()
-
-                breadBox.walletTransfer(effect.currencyCode, hash)
+                breadBox.walletTransfer(effect.currencyCode, newTransfer)
                     .mapToSendEvent()
                     .first()
             }

@@ -107,7 +107,7 @@ fun createHomeScreenHandler(
                     PromptItem.EMAIL_COLLECTION
                 }
                 brdUser.pinCodeNeedsUpgrade() -> PromptItem.UPGRADE_PIN
-                !BRSharedPrefs.getPhraseWroteDown() -> PromptItem.PAPER_KEY
+                !BRSharedPrefs.phraseWroteDown -> PromptItem.PAPER_KEY
                 AppReviewPromptManager.shouldPrompt() -> PromptItem.RATE_APP
                 (!BRSharedPrefs.unlockWithFingerprint
                     && Utils.isFingerprintAvailable(context)

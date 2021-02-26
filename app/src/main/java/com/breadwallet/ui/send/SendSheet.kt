@@ -42,7 +42,7 @@ import com.breadwallet.util.CurrencyCode
 import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isErc20
 import com.breadwallet.util.isEthereum
-import io.sweers.redacted.annotation.Redacted
+import dev.zacsweers.redacted.annotations.Redacted
 import kotlinx.android.parcel.Parcelize
 import java.math.BigDecimal
 
