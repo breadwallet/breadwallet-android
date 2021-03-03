@@ -83,7 +83,7 @@ abstract class BaseController(
             }
         } else {
             val primaryBinding = viewBindingDelegates.first().create(inflater)
-            viewBindingDelegates.drop(1).forEach { it.create(inflater) }
+            viewBindingDelegates.drop(1).forEach { it.create(inflater, primaryBinding.root) }
             return primaryBinding.root.also(::onCreateView)
         }
     }
@@ -171,7 +171,13 @@ abstract class BaseController(
     protected fun <T : ViewBinding> viewBinding(
         block: (LayoutInflater) -> T
     ): ReadOnlyProperty<BaseController, T> {
-        return ViewBindingDelegate(block).also(resettableDelegates::add)
+        return ViewBindingDelegate(block, null).also(resettableDelegates::add)
+    }
+
+    protected fun <T : ViewBinding> nestedViewBinding(
+        viewBlock: (LayoutInflater, ViewGroup?, Boolean) -> T
+    ): ReadOnlyProperty<BaseController, T> {
+        return ViewBindingDelegate(null, viewBlock).also(resettableDelegates::add)
     }
 
     enum class ResetCallback {
@@ -198,12 +204,17 @@ abstract class BaseController(
     }
 
     private inner class ViewBindingDelegate<T : ViewBinding>(
-        private val createBinding: (LayoutInflater) -> T
+        private val createBindingViaInflater: ((LayoutInflater) -> T)?,
+        private val createBindingViaView: ((LayoutInflater, ViewGroup?, Boolean) -> T)?
     ) : ResettableDelegate<T>(ResetCallback.ON_DESTROY_VIEW) {
 
-        fun create(inflater: LayoutInflater): T {
+        fun create(inflater: LayoutInflater, view: View? = null): T {
             check(value == null) { "ViewBinding has already been created." }
-            value = createBinding(inflater)
+            value = if (view == null) {
+                createBindingViaInflater?.invoke(inflater)
+            } else {
+                createBindingViaView?.invoke(inflater, view as ViewGroup, false)
+            }
             return value!!
         }
 

@@ -54,14 +54,11 @@ class BrdWalletController : WalletController("BRD") {
     // The view was expanded and ready to lock when collapsed again.
     private var mCanScroll = false
 
-    private val rewardsBinding by viewBinding(RewardsAnnouncementViewBinding::inflate)
+    private val rewardsBinding by nestedViewBinding(RewardsAnnouncementViewBinding::inflate)
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        mAppBarLayoutRoot = activity!!.layoutInflater.inflate(
-            R.layout.rewards_announcement_view,
-            null
-        ) as AppBarLayout
+        mAppBarLayoutRoot = rewardsBinding.appBar
         binding.transactionListCoordinatorLayout.addView(mAppBarLayoutRoot, 0)
         lockRewardsViewToCollapsed(mAppBarLayoutRoot!!, binding.txList)
         mAppBarLayoutRoot!!.setOnClickListener {
