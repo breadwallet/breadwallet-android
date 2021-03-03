@@ -33,8 +33,10 @@ import androidx.core.os.bundleOf
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.support.RouterPagerAdapter
+import com.bluelinelabs.conductor.viewpager.RouterPagerAdapter
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerPaperKeyBinding
+import com.breadwallet.databinding.FragmentWordItemBinding
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.BaseMobiusController
@@ -45,8 +47,6 @@ import com.breadwallet.ui.showkey.ShowPaperKey.F
 import com.breadwallet.ui.showkey.ShowPaperKey.M
 import com.breadwallet.util.DefaultOnPageChangeListener
 import drewcarlson.mobius.flow.subtypeEffectHandler
-import kotlinx.android.synthetic.main.controller_paper_key.*
-import kotlinx.android.synthetic.main.fragment_word_item.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -77,89 +77,97 @@ class ShowPaperKeyController(args: Bundle) : BaseMobiusController<M, E, F>(args)
     private val onComplete = argOptional<String>(EXTRA_ON_COMPLETE)
         ?.run(OnCompleteAction::valueOf)
 
-    override val layoutId = R.layout.controller_paper_key
     override val defaultModel = M.createDefault(phrase, onComplete, BRSharedPrefs.phraseWroteDown)
     override val update = ShowPaperKeyUpdate
     override val flowEffectHandler = subtypeEffectHandler<F, E> { }
 
+    private val binding by viewBinding(ControllerPaperKeyBinding::inflate)
+
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        return merge(
-            next_button.clicks().map { E.OnNextClicked },
-            previous_button.clicks().map { E.OnPreviousClicked },
-            close_button.clicks().map { E.OnCloseClicked },
-            callbackFlow<E> {
-                val listener = object : DefaultOnPageChangeListener() {
-                    override fun onPageSelected(position: Int) {
-                        offer(E.OnPageChanged(position))
+        return with (binding) {
+            merge(
+                nextButton.clicks().map { E.OnNextClicked },
+                previousButton.clicks().map { E.OnPreviousClicked },
+                closeButton.clicks().map { E.OnCloseClicked },
+                callbackFlow<E> {
+                    val channel = channel
+                    val listener = object : DefaultOnPageChangeListener() {
+                        override fun onPageSelected(position: Int) {
+                            channel.offer(E.OnPageChanged(position))
+                        }
+                    }
+                    wordsPager.addOnPageChangeListener(listener)
+                    awaitClose {
+                        wordsPager.removeOnPageChangeListener(listener)
                     }
                 }
-                words_pager.addOnPageChangeListener(listener)
-                awaitClose {
-                    words_pager.removeOnPageChangeListener(listener)
-                }
-            }
-        )
+            )
+        }
     }
 
     override fun M.render() {
-        ifChanged(M::phrase) {
-            words_pager.adapter = WordPagerAdapter(this@ShowPaperKeyController, phrase)
-        }
-        ifChanged(M::currentWord) {
-            words_pager.currentItem = currentWord
-            item_index.text = resources?.getString(
-                R.string.WritePaperPhrase_step,
-                currentWord + 1,
-                phrase.size
-            )
-            updateButtons(currentWord > 0)
+        with(binding) {
+            ifChanged(M::phrase) {
+                wordsPager.adapter = WordPagerAdapter(this@ShowPaperKeyController, phrase)
+            }
+            ifChanged(M::currentWord) {
+                wordsPager.currentItem = currentWord
+                itemIndex.text = resources?.getString(
+                    R.string.WritePaperPhrase_step,
+                    currentWord + 1,
+                    phrase.size
+                )
+                updateButtons(currentWord > 0)
+            }
         }
     }
 
     /** Show or hide the "Previous" button used to navigate the ViewPager. */
     private fun updateButtons(showPrevious: Boolean) {
-        val nextButtonParams = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
-
-        if (!showPrevious) {
-            buttons_layout.weightSum = BUTTONS_LAYOUT_WEIGHT_SUM_SINGLE
-
-            nextButtonParams.weight = NAVIGATION_BUTTONS_WEIGHT.toFloat()
-            nextButtonParams.gravity = Gravity.CENTER_HORIZONTAL
-            nextButtonParams.setMargins(
-                resources!!.getDimension(R.dimen.margin).toInt(),
-                0,
-                resources!!.getDimension(R.dimen.margin).toInt(),
-                0
-            )
-            next_button.layoutParams = nextButtonParams
-            next_button.height = resources!!.getDimension(R.dimen.large_button_height).toInt()
-
-            previous_button.visibility = View.GONE
-        } else {
-            buttons_layout.weightSum = BUTTONS_LAYOUT_WEIGHT_SUM_DEFAULT
-
-            nextButtonParams.weight = NAVIGATION_BUTTONS_WEIGHT.toFloat()
-            nextButtonParams.setMargins(0, 0, resources!!.getDimension(R.dimen.margin).toInt(), 0)
-            next_button.layoutParams = nextButtonParams
-            next_button.height = resources!!.getDimension(R.dimen.large_button_height).toInt()
-
-            val previousButtonParams = LinearLayout.LayoutParams(
+        with(binding) {
+            val nextButtonParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-            previousButtonParams.weight = NAVIGATION_BUTTONS_WEIGHT.toFloat()
-            previousButtonParams.setMargins(
-                resources!!.getDimension(R.dimen.margin).toInt(),
-                0,
-                0,
-                0
-            )
-            previous_button.layoutParams = previousButtonParams
-            previous_button.visibility = View.VISIBLE
-            previous_button.height = resources!!.getDimension(R.dimen.large_button_height).toInt()
+
+            if (!showPrevious) {
+                buttonsLayout.weightSum = BUTTONS_LAYOUT_WEIGHT_SUM_SINGLE
+
+                nextButtonParams.weight = NAVIGATION_BUTTONS_WEIGHT.toFloat()
+                nextButtonParams.gravity = Gravity.CENTER_HORIZONTAL
+                nextButtonParams.setMargins(
+                    resources!!.getDimension(R.dimen.margin).toInt(),
+                    0,
+                    resources!!.getDimension(R.dimen.margin).toInt(),
+                    0
+                )
+                nextButton.layoutParams = nextButtonParams
+                nextButton.height = resources!!.getDimension(R.dimen.large_button_height).toInt()
+
+                previousButton.visibility = View.GONE
+            } else {
+                buttonsLayout.weightSum = BUTTONS_LAYOUT_WEIGHT_SUM_DEFAULT
+
+                nextButtonParams.weight = NAVIGATION_BUTTONS_WEIGHT.toFloat()
+                nextButtonParams.setMargins(0, 0, resources!!.getDimension(R.dimen.margin).toInt(), 0)
+                nextButton.layoutParams = nextButtonParams
+                nextButton.height = resources!!.getDimension(R.dimen.large_button_height).toInt()
+
+                val previousButtonParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                previousButtonParams.weight = NAVIGATION_BUTTONS_WEIGHT.toFloat()
+                previousButtonParams.setMargins(
+                    resources!!.getDimension(R.dimen.margin).toInt(),
+                    0,
+                    0,
+                    0
+                )
+                previousButton.layoutParams = previousButtonParams
+                previousButton.visibility = View.VISIBLE
+                previousButton.height = resources!!.getDimension(R.dimen.large_button_height).toInt()
+            }
         }
     }
 }
@@ -184,9 +192,10 @@ class WordController(args: Bundle? = null) : BaseController(args) {
         bundleOf(EXT_WORD to word)
     )
 
-    override val layoutId = R.layout.fragment_word_item
+    private val binding by viewBinding(FragmentWordItemBinding::inflate)
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        word_button.text = arg(EXT_WORD)
+        binding.wordButton.text = arg(EXT_WORD)
     }
 }

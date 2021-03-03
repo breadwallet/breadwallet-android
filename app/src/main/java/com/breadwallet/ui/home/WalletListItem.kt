@@ -5,12 +5,14 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
-import com.breadwallet.ui.formatFiatForUi
+import com.breadwallet.databinding.WalletListItemBinding
 import com.breadwallet.legacy.presenter.customviews.ShimmerLayout
+import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.TokenUtil
 import com.breadwallet.util.isBrd
@@ -18,8 +20,6 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.drag.IDraggable
 import com.mikepenz.fastadapter.items.ModelAbstractItem
 import com.squareup.picasso.Picasso
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.wallet_list_item.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
@@ -45,21 +45,20 @@ class WalletListItem(
     override fun getViewHolder(v: View) = ViewHolder(v)
 
     class ViewHolder(
-        override val containerView: View
-    ) : FastAdapter.ViewHolder<WalletListItem>(containerView),
-        LayoutContainer {
+        v: View
+    ) : FastAdapter.ViewHolder<WalletListItem>(v) {
 
         private val boundScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
         override fun bindView(item: WalletListItem, payloads: List<Any>) {
             val wallet = item.model
-            val context = containerView.context
+            val context = itemView.context
             val currencyCode = wallet.currencyCode
 
             if (currencyCode.isBrd() && !BRSharedPrefs.getRewardsAnimationShown()) {
-                (containerView as ShimmerLayout).startShimmerAnimation()
+                (itemView as ShimmerLayout).startShimmerAnimation()
             } else {
-                (containerView as ShimmerLayout).stopShimmerAnimation()
+                (itemView as ShimmerLayout).stopShimmerAnimation()
             }
 
             // Format numeric data
@@ -68,59 +67,61 @@ class WalletListItem(
             val fiatBalance = wallet.fiatBalance.formatFiatForUi(preferredFiatIso)
             val cryptoBalance = wallet.balance.formatCryptoForUi(currencyCode, MAX_CRYPTO_DIGITS)
 
-            if (wallet.fiatPricePerUnit == BigDecimal.ZERO) {
-                wallet_balance_fiat.visibility = View.INVISIBLE
-                wallet_trade_price.visibility = View.INVISIBLE
-            } else {
-                wallet_balance_fiat.visibility = View.VISIBLE
-                wallet_trade_price.visibility = View.VISIBLE
-            }
-
-            val isSyncing = wallet.isSyncing
-            val isLoading = wallet.state == Wallet.State.LOADING
-            // Set wallet fields
-            wallet_name.text = wallet.currencyName
-            wallet_trade_price.text = exchangeRate
-            wallet_balance_fiat.text = fiatBalance
-            wallet_balance_fiat.setTextColor(
-                context.getColor(
-                    when {
-                        isSyncing -> R.color.wallet_balance_fiat_syncing
-                        else -> R.color.wallet_balance_fiat
-                    }
-                )
-            )
-            wallet_balance_currency.text = cryptoBalance
-            wallet_balance_currency.isGone = isSyncing || isLoading
-            sync_progress.isVisible = isSyncing || isLoading
-            syncing_label.isVisible = isSyncing || isLoading
-            if (isSyncing) {
-                val syncProgress = wallet.syncProgress
-                var labelText = context.getString(R.string.SyncingView_syncing)
-                if (syncProgress > 0) {
-                    labelText += " ${NumberFormat.getPercentInstance()
-                        .format(syncProgress.toDouble())}"
+            with(WalletListItemBinding.bind(itemView)) {
+                if (wallet.fiatPricePerUnit == BigDecimal.ZERO) {
+                    walletBalanceFiat.visibility = View.INVISIBLE
+                    walletTradePrice.visibility = View.INVISIBLE
+                } else {
+                    walletBalanceFiat.visibility = View.VISIBLE
+                    walletTradePrice.visibility = View.VISIBLE
                 }
-                syncing_label.text = labelText
-            } else if (isLoading) {
-                syncing_label.setText(R.string.Account_loadingMessage)
+
+                val isSyncing = wallet.isSyncing
+                val isLoading = wallet.state == Wallet.State.LOADING
+                // Set wallet fields
+                walletName.text = wallet.currencyName
+                walletTradePrice.text = exchangeRate
+                walletBalanceFiat.text = fiatBalance
+                walletBalanceFiat.setTextColor(
+                    context.getColor(
+                        when {
+                            isSyncing -> R.color.wallet_balance_fiat_syncing
+                            else -> R.color.wallet_balance_fiat
+                        }
+                    )
+                )
+                walletBalanceCurrency.text = cryptoBalance
+                walletBalanceCurrency.isGone = isSyncing || isLoading
+                syncProgress.isVisible = isSyncing || isLoading
+                syncingLabel.isVisible = isSyncing || isLoading
+                if (isSyncing) {
+                    val syncProgress = wallet.syncProgress
+                    var labelText = context.getString(R.string.SyncingView_syncing)
+                    if (syncProgress > 0) {
+                        labelText += " ${NumberFormat.getPercentInstance()
+                            .format(syncProgress.toDouble())}"
+                    }
+                    syncingLabel.text = labelText
+                } else if (isLoading) {
+                    syncingLabel.setText(R.string.Account_loadingMessage)
+                }
+
+                val priceChange2 = wallet.priceChange
+                priceChange.visibility = if (priceChange2 != null) View.VISIBLE else View.INVISIBLE
+                divider.visibility = if (priceChange2 != null) View.VISIBLE else View.INVISIBLE
+                if (priceChange2 != null) {
+                    priceChange.text = priceChange2.getPercentageChange()
+                }
+
+                if (itemView.tag == wallet.currencyCode) {
+                    return
+                }
+
+                loadTokenIcon(this, currencyCode)
+                setBackground(this, wallet, context)
+
+                item.tag = wallet.currencyCode
             }
-
-            val priceChange = wallet.priceChange
-            price_change.visibility = if (priceChange != null) View.VISIBLE else View.INVISIBLE
-            divider.visibility = if (priceChange != null) View.VISIBLE else View.INVISIBLE
-            if (priceChange != null) {
-                price_change.text = priceChange.getPercentageChange()
-            }
-
-            if (itemView.tag == wallet.currencyCode) {
-                return
-            }
-
-            loadTokenIcon(currencyCode)
-            setBackground(wallet, context)
-
-            item.tag = wallet.currencyCode
         }
 
         override fun unbindView(item: WalletListItem) {
@@ -128,7 +129,7 @@ class WalletListItem(
             boundScope.coroutineContext.cancelChildren()
         }
 
-        private fun loadTokenIcon(currencyCode: String) {
+        private fun loadTokenIcon(binding: WalletListItemBinding, currencyCode: String) {
             boundScope.launch {
                 // Get icon for currency
                 val tokenIconPath = Default {
@@ -136,22 +137,24 @@ class WalletListItem(
                 }
                 ensureActive()
 
-                if (tokenIconPath.isNullOrBlank()) {
-                    icon_letter.visibility = View.VISIBLE
-                    currency_icon_white.visibility = View.GONE
-                    icon_letter.text = currencyCode.take(1).toUpperCase(Locale.ROOT)
-                } else {
-                    val iconFile = File(tokenIconPath)
-                    Picasso.get().load(iconFile).into(currency_icon_white)
-                    icon_letter.visibility = View.GONE
-                    currency_icon_white.visibility = View.VISIBLE
+                with(binding) {
+                    if (tokenIconPath.isNullOrBlank()) {
+                        iconLetter.visibility = View.VISIBLE
+                        currencyIconWhite.visibility = View.GONE
+                        iconLetter.text = currencyCode.take(1).toUpperCase(Locale.ROOT)
+                    } else {
+                        val iconFile = File(tokenIconPath)
+                        Picasso.get().load(iconFile).into(currencyIconWhite)
+                        iconLetter.visibility = View.GONE
+                        currencyIconWhite.visibility = View.VISIBLE
+                    }
                 }
             }
         }
 
-        private fun setBackground(wallet: Wallet, context: Context) {
-            val drawable = context.resources
-                .getDrawable(R.drawable.crypto_card_shape, null)
+        private fun setBackground(binding: WalletListItemBinding, wallet: Wallet, context: Context) {
+            val drawable = ContextCompat
+                .getDrawable(context, R.drawable.crypto_card_shape)!!
                 .mutate()
             if (wallet.isSupported) {
                 // Create gradient if 2 colors exist.
@@ -159,8 +162,8 @@ class WalletListItem(
                 val endColor = Color.parseColor(wallet.endColor ?: return)
                 (drawable as GradientDrawable).colors = intArrayOf(startColor, endColor)
                 drawable.orientation = GradientDrawable.Orientation.LEFT_RIGHT
-                wallet_card.background = drawable
-                setWalletItemColors(R.dimen.token_background_no_alpha)
+                binding.walletCard.background = drawable
+                setWalletItemColors(binding, R.dimen.token_background_no_alpha)
             } else {
                 // To ensure that the unsupported wallet card has the same shape as
                 // the supported wallet card, we reuse the drawable.
@@ -168,20 +171,22 @@ class WalletListItem(
                     context.getColor(R.color.wallet_delisted_token_background),
                     context.getColor(R.color.wallet_delisted_token_background)
                 )
-                wallet_card.background = drawable
-                setWalletItemColors(R.dimen.token_background_with_alpha)
+                binding.walletCard.background = drawable
+                setWalletItemColors(binding, R.dimen.token_background_with_alpha)
             }
         }
 
-        private fun setWalletItemColors(dimenRes: Int) {
+        private fun setWalletItemColors(binding: WalletListItemBinding, dimenRes: Int) {
             val typedValue = TypedValue()
-            containerView.context.resources.getValue(dimenRes, typedValue, true)
+            itemView.context.resources.getValue(dimenRes, typedValue, true)
             val alpha = typedValue.float
-            currency_icon_white.alpha = alpha
-            wallet_name.alpha = alpha
-            wallet_trade_price.alpha = alpha
-            wallet_balance_fiat.alpha = alpha
-            wallet_balance_currency.alpha = alpha
+            with(binding) {
+                currencyIconWhite.alpha = alpha
+                walletName.alpha = alpha
+                walletTradePrice.alpha = alpha
+                walletBalanceFiat.alpha = alpha
+                walletBalanceCurrency.alpha = alpha
+            }
         }
     }
 }

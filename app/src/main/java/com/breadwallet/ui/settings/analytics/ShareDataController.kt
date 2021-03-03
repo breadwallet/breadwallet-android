@@ -26,23 +26,22 @@ package com.breadwallet.ui.settings.analytics
 
 import android.os.Bundle
 import android.view.View
-import com.breadwallet.R
+import com.breadwallet.databinding.ControllerShareDataBinding
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.ui.BaseController
-import kotlinx.android.synthetic.main.controller_share_data.*
 
 class ShareDataController(args: Bundle? = null) : BaseController(args) {
 
-    override val layoutId = R.layout.controller_share_data
+    private val binding by viewBinding(ControllerShareDataBinding::inflate)
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        toggleButton.isChecked = BRSharedPrefs.getShareData()
-        toggleButton.setOnCheckedChangeListener { _, isChecked ->
+        binding.toggleButton.isChecked = BRSharedPrefs.getShareData()
+        binding.toggleButton.setOnCheckedChangeListener { _, isChecked ->
             BRSharedPrefs.putShareData(isChecked)
         }
 
-        back_button.setOnClickListener {
+        binding.backButton.setOnClickListener {
             router.popCurrentController()
         }
     }

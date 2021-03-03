@@ -26,14 +26,13 @@ package com.breadwallet.ui.settings.segwit
 
 import android.os.Bundle
 import androidx.core.view.isVisible
-import com.breadwallet.R
+import com.breadwallet.databinding.ControllerEnableSegwitBinding
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.flowbind.clicks
 import com.breadwallet.ui.settings.segwit.EnableSegWit.E
 import com.breadwallet.ui.settings.segwit.EnableSegWit.F
 import com.breadwallet.ui.settings.segwit.EnableSegWit.M
 import drewcarlson.mobius.flow.FlowTransformer
-import kotlinx.android.synthetic.main.controller_enable_segwit.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -44,8 +43,6 @@ class EnableSegWitController(
     args: Bundle? = null
 ) : BaseMobiusController<M, E, F>(args) {
 
-    override val layoutId = R.layout.controller_enable_segwit
-
     override val defaultModel = M()
     override val update = EnableSegWitUpdate
     override val flowEffectHandler: FlowTransformer<F, E>
@@ -54,22 +51,28 @@ class EnableSegWitController(
             direct.instance()
         )
 
+    private val binding by viewBinding(ControllerEnableSegwitBinding::inflate)
+
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        return merge(
-            enable_button.clicks().map { E.OnEnableClick },
-            back_button.clicks().map { E.OnBackClicked },
-            continue_button.clicks().map { E.OnContinueClicked },
-            cancel_button.clicks().map { E.OnCancelClicked },
-            done_button.clicks().map { E.OnDoneClicked }
-        )
+        return with(binding) {
+            merge(
+                enableButton.clicks().map { E.OnEnableClick },
+                backButton.clicks().map { E.OnBackClicked },
+                continueButton.clicks().map { E.OnContinueClicked },
+                cancelButton.clicks().map { E.OnCancelClicked },
+                doneButton.clicks().map { E.OnDoneClicked }
+            )
+        }
     }
 
     override fun M.render() {
-        ifChanged(M::state) {
-            confirm_choice_layout.isVisible = state == M.State.CONFIRMATION
-            enable_button.isVisible = state == M.State.ENABLE
-            done_button.isVisible = state == M.State.DONE
-            confirmation_layout.isVisible = state == M.State.DONE
+        with(binding) {
+            ifChanged(M::state) {
+                confirmChoiceLayout.isVisible = state == M.State.CONFIRMATION
+                enableButton.isVisible = state == M.State.ENABLE
+                doneButton.isVisible = state == M.State.DONE
+                confirmationLayout.isVisible = state == M.State.DONE
+            }
         }
     }
 }

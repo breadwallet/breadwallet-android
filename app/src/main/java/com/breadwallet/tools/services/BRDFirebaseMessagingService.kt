@@ -259,7 +259,7 @@ class BRDFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun getMixpanelDeepLink(messageData: Map<String, String>): String? =
         if (messageData.containsKey(MP_NOTIFICATION_BRD_EXTRAS)) {
-            val json = JSONObject(messageData[MP_NOTIFICATION_BRD_EXTRAS])
+            val json = JSONObject(messageData[MP_NOTIFICATION_BRD_EXTRAS]!!)
             json.getStringOrNull(MP_NOTIFICATION_URL)
         } else {
             null

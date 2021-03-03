@@ -28,8 +28,6 @@ import com.breadwallet.platform.entities.GiftMetaData
 import dev.zacsweers.redacted.annotations.Redacted
 import java.math.BigDecimal
 
-private const val TRUNCATED_ADDRESS_CHARS = 7
-
 data class WalletTransaction(
     @Redacted val txHash: String,
     val amount: BigDecimal,
@@ -52,18 +50,4 @@ data class WalletTransaction(
     val isStaking: Boolean = false
 ) {
     val isFeeForToken: Boolean = feeToken.isNotBlank()
-
-    val truncatedToAddress: String
-        get() = if (toAddress == "unknown") {
-            toAddress
-        } else {
-            "${toAddress.take(TRUNCATED_ADDRESS_CHARS)}...${toAddress.takeLast(TRUNCATED_ADDRESS_CHARS)}"
-        }
-
-    val truncatedFromAddress: String
-        get() = if (fromAddress == "unknown") {
-            fromAddress
-        } else {
-            "${fromAddress.take(TRUNCATED_ADDRESS_CHARS)}...${fromAddress.takeLast(TRUNCATED_ADDRESS_CHARS)}"
-        }
 }

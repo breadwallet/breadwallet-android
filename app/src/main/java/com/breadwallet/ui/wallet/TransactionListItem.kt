@@ -4,9 +4,11 @@ import android.graphics.Paint
 import android.os.Build
 import android.text.format.DateUtils
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.breadbox.formatCryptoForUi
+import com.breadwallet.databinding.TxItemBinding
 import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.BRDateUtil
@@ -14,8 +16,6 @@ import com.breadwallet.tools.util.Utils
 import com.breadwallet.util.isBitcoinLike
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.ModelAbstractItem
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.tx_item.*
 
 private const val DP_120 = 120
 private const val PROGRESS_FULL = 100
@@ -34,28 +34,38 @@ class TransactionListItem(
     override fun getViewHolder(v: View) = ViewHolder(v)
 
     inner class ViewHolder(
-        override val containerView: View
-    ) : FastAdapter.ViewHolder<TransactionListItem>(containerView),
-        LayoutContainer {
+        v: View
+    ) : FastAdapter.ViewHolder<TransactionListItem>(v) {
+
+        var binding: TxItemBinding? = null
 
         override fun bindView(item: TransactionListItem, payloads: List<Any>) {
-            setTexts(item.model, item.isCryptoPreferred)
+            binding = TxItemBinding.bind(itemView)
+            setTexts(binding!!, item.model, item.isCryptoPreferred)
         }
 
         override fun unbindView(item: TransactionListItem) {
-            tx_amount.text = null
-            tx_date.text = null
-            tx_description.text = null
+            with(binding ?: return) {
+                txAmount.text = null
+                txDate.text = null
+                txDescriptionValue.text = null
+                txDescriptionLabel.text = null
+            }
+            binding = null
         }
 
         @Suppress("LongMethod", "ComplexMethod")
-        private fun setTexts(transaction: WalletTransaction, isCryptoPreferred: Boolean) {
-            val context = containerView.context
+        private fun setTexts(
+            binding: TxItemBinding,
+            transaction: WalletTransaction,
+            isCryptoPreferred: Boolean
+        ) {
+            val context = itemView.context
             val commentString = transaction.memo
 
             val received = transaction.isReceived
 
-            imageTransferDirection.setBackgroundResource(
+            binding.imageTransferDirection.setBackgroundResource(
                 when {
                     transaction.progress < PROGRESS_FULL ->
                         R.drawable.transfer_in_progress
@@ -70,7 +80,7 @@ class TransactionListItem(
                 }
             )
 
-            tx_amount.setTextColor(
+            binding.txAmount.setTextColor(
                 context.getColor(
                     when {
                         received -> R.color.transaction_amount_received_color
@@ -93,41 +103,68 @@ class TransactionListItem(
                 else -> amount.formatFiatForUi(preferredCurrencyCode)
             }
 
-            tx_amount.text = formattedAmount
+            binding.txAmount.text = formattedAmount
 
-            tx_description.text = when {
-                !transaction.gift?.recipientName.isNullOrBlank() ->
-                    context.getString(R.string.Transaction_toRecipient, transaction.gift?.recipientName)
-                transaction.isStaking -> context.getString(R.string.Transaction_stakingTo, transaction.truncatedToAddress)
-                commentString == null -> ""
-                commentString.isNotEmpty() -> commentString
-                transaction.isFeeForToken ->
-                    context.getString(R.string.Transaction_tokenTransfer, transaction.feeToken)
+           when {
+                !transaction.gift?.recipientName.isNullOrBlank() -> {
+                    binding.txDescriptionLabel.text =
+                        context.getString(R.string.Transaction_toRecipient, "")
+                    binding.txDescriptionValue.text = transaction.gift?.recipientName
+                }
+                transaction.isStaking -> {
+                    binding.txDescriptionLabel.text =
+                        context.getString(R.string.Transaction_stakingTo, "")
+                    binding.txDescriptionValue.text = transaction.toAddress
+                }
+                commentString == null -> {
+                    binding.txDescriptionLabel.text = ""
+                    binding.txDescriptionValue.text = ""
+                }
+                commentString.isNotEmpty() -> {
+                    binding.txDescriptionLabel.text = ""
+                    binding.txDescriptionValue.text = commentString
+                }
+                transaction.isFeeForToken -> {
+                    binding.txDescriptionLabel.text =
+                        context.getString(R.string.Transaction_tokenTransfer, transaction.feeToken)
+                    binding.txDescriptionValue.text = commentString
+                }
                 received -> {
-                    val (res, address) = if (transaction.isComplete) {
+                    if (transaction.isComplete) {
                         if (transaction.currencyCode.isBitcoinLike()) {
-                            R.string.TransactionDetails_receivedVia to transaction.truncatedToAddress
+                            binding.txDescriptionLabel.text =
+                                context.getString(R.string.TransactionDetails_receivedVia, "")
+                            binding.txDescriptionValue.text = transaction.toAddress
                         } else {
-                            R.string.TransactionDetails_receivedFrom to transaction.truncatedFromAddress
+                            binding.txDescriptionLabel.text =
+                                context.getString(R.string.TransactionDetails_receivedFrom, "")
+                            binding.txDescriptionValue.text = transaction.fromAddress
                         }
                     } else {
                         if (transaction.currencyCode.isBitcoinLike()) {
-                            R.string.TransactionDetails_receivingVia to transaction.truncatedToAddress
+                            binding.txDescriptionLabel.text =
+                                context.getString(R.string.TransactionDetails_receivingVia, "")
+                            binding.txDescriptionValue.text = transaction.toAddress
                         } else {
-                            R.string.TransactionDetails_receivingFrom to transaction.truncatedFromAddress
+                            binding.txDescriptionLabel.text =
+                                context.getString(R.string.TransactionDetails_receivingFrom, "")
+                            binding.txDescriptionValue.text = transaction.fromAddress
                         }
                     }
-                    context.getString(res, address)
                 }
                 else -> if (transaction.isComplete) {
-                    context.getString(R.string.Transaction_sentTo, transaction.truncatedToAddress)
+                    binding.txDescriptionLabel.text =
+                        context.getString(R.string.Transaction_sentTo, "")
+                    binding.txDescriptionValue.text = transaction.toAddress
                 } else {
-                    context.getString(R.string.Transaction_sendingTo, transaction.truncatedToAddress)
+                    binding.txDescriptionLabel.text =
+                        context.getString(R.string.Transaction_sendingTo, "")
+                    binding.txDescriptionValue.text = transaction.toAddress
                 }
             }
 
             val timeStamp = transaction.timeStamp
-            tx_date.text = when {
+            binding.txDate.text = when {
                 timeStamp == 0L || transaction.isPending -> buildString {
                     append(transaction.confirmations)
                     append('/')
@@ -148,40 +185,48 @@ class TransactionListItem(
         }
 
         private fun showTransactionProgress(progress: Int) {
-            val context = containerView.context
-            tx_date.isVisible = true
-            tx_amount.isVisible = true
-            imageTransferDirection.isVisible = true
+            val context = itemView.context
+            with(binding!!) {
+                txDate.isVisible = true
+                txAmount.isVisible = true
+                imageTransferDirection.isVisible = true
 
-            val textColor = context.getColor(R.color.total_assets_usd_color)
-            tx_date.setTextColor(textColor)
-            tx_amount.paintFlags = 0 // clear strike-through
+                val textColor = context.getColor(R.color.total_assets_usd_color)
+                txDate.setTextColor(textColor)
+                txAmount.paintFlags = 0 // clear strike-through
 
-            if (progress < PROGRESS_FULL) {
-                if (imageTransferDirection.progressDrawable == null) {
-                    imageTransferDirection.progressDrawable = context.getDrawable(R.drawable.transfer_progress_drawable)
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    imageTransferDirection.setProgress(progress, true)
+                if (progress < PROGRESS_FULL) {
+                    if (imageTransferDirection.progressDrawable == null) {
+                        imageTransferDirection.progressDrawable =
+                            ContextCompat.getDrawable(
+                                context,
+                                R.drawable.transfer_progress_drawable
+                            )
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        imageTransferDirection.setProgress(progress, true)
+                    } else {
+                        imageTransferDirection.progress = progress
+                    }
+                    txDescriptionValue.maxWidth = Utils.getPixelsFromDps(context, DP_120)
                 } else {
-                    imageTransferDirection.progress = progress
+                    imageTransferDirection.progressDrawable = null
+                    imageTransferDirection.progress = 0
                 }
-                tx_description.maxWidth = Utils.getPixelsFromDps(context, DP_120)
-            } else {
-                imageTransferDirection.progressDrawable = null
-                imageTransferDirection.progress = 0
             }
         }
 
         private fun showTransactionFailed() {
-            val context = containerView.context
-            imageTransferDirection.progressDrawable = null
+            val context = itemView.context
+            with(binding!!) {
+                imageTransferDirection.progressDrawable = null
 
-            val errorColor = context.getColor(R.color.ui_error)
-            tx_date.setText(R.string.Transaction_failed)
-            tx_date.setTextColor(errorColor)
-            tx_amount.setTextColor(errorColor)
-            tx_amount.paintFlags = tx_amount.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                val errorColor = context.getColor(R.color.ui_error)
+                txDate.setText(R.string.Transaction_failed)
+                txDate.setTextColor(errorColor)
+                txAmount.setTextColor(errorColor)
+                txAmount.paintFlags = txAmount.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            }
         }
     }
 }

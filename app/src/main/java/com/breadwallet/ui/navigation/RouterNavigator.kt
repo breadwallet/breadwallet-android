@@ -163,7 +163,7 @@ class RouterNavigator(
                 VerticalChangeHandler()
             )
 
-        when (router.backstack.lastOrNull()?.controller()) {
+        when (router.backstack.lastOrNull()?.controller) {
             is HomeController -> router.pushController(webTransaction)
             else -> {
                 router.setBackstack(
@@ -324,7 +324,7 @@ class RouterNavigator(
 
     override fun qRScanner() {
         val controller = ScannerController()
-        controller.targetController = router.backstack.lastOrNull()?.controller()
+        controller.targetController = router.backstack.lastOrNull()?.controller
         router.pushController(
             RouterTransaction.with(controller)
                 .pushChangeHandler(FadeChangeHandler())
@@ -533,7 +533,7 @@ class RouterNavigator(
     }
 
     private fun processDeepLink(effect: NavigationTarget.DeepLink, link: Link) {
-        val isTopLogin = router.backstack.lastOrNull()?.controller() is LoginController
+        val isTopLogin = router.backstack.lastOrNull()?.controller is LoginController
         if (isTopLogin && effect.authenticated) {
             router.popCurrentController()
         }
@@ -654,7 +654,7 @@ class RouterNavigator(
     private inline fun <reified T : Controller> pushSingleInstance(
         crossinline controller: () -> T
     ) {
-        if (router.backstack.none { it.controller() is T }) {
+        if (router.backstack.none { it.controller is T }) {
             router.pushController(RouterTransaction.with(controller()))
         }
     }

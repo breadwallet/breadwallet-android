@@ -38,8 +38,9 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
-import com.breadwallet.ui.formatFiatForUi
+import com.breadwallet.databinding.ControllerSendSheetBinding
 import com.breadwallet.effecthandler.metadata.MetaDataEffectHandler
+import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.legacy.presenter.customviews.BRKeyboard
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.animation.SlideDetector
@@ -63,8 +64,6 @@ import com.breadwallet.ui.send.SendSheet.F
 import com.breadwallet.ui.send.SendSheet.M
 import com.breadwallet.util.isErc20
 import com.breadwallet.util.isEthereum
-import com.spotify.mobius.Connectable
-import kotlinx.android.synthetic.main.controller_send_sheet.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -118,7 +117,6 @@ class SendSheetController(args: Bundle? = null) :
     private val currencyCode = arg<String>(CURRENCY_CODE)
     private val cryptoRequestLink = argOptional<Link.CryptoRequestUrl>(CRYPTO_REQUEST_LINK)
 
-    override val layoutId = R.layout.controller_send_sheet
     override val init = SendSheetInit
     override val update = SendSheetUpdate
     override val defaultModel: M
@@ -136,29 +134,33 @@ class SendSheetController(args: Bundle? = null) :
             userManager = direct.instance(),
             apiClient = direct.instance(),
             ratesRepository = direct.instance(),
-            metaDataEffectHandler = Connectable {
+            metaDataEffectHandler = {
                 MetaDataEffectHandler(it, direct.instance(), direct.instance())
             },
             addressServiceLocator = direct.instance()
         )
 
+    private val binding by viewBinding(ControllerSendSheetBinding::inflate)
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
 
-        keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button)
-        keyboard.setBRKeyboardColor(R.color.white)
-        keyboard.setDeleteImage(R.drawable.ic_delete_black)
+        with(binding) {
+            keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button)
+            keyboard.setBRKeyboardColor(R.color.white)
+            keyboard.setDeleteImage(R.drawable.ic_delete_black)
 
-        showKeyboard(false)
+            showKeyboard(false)
 
-        textInputAmount.showSoftInputOnFocus = false
+            textInputAmount.showSoftInputOnFocus = false
 
-        layoutSheetBody.layoutTransition = UiUtils.getDefaultTransition()
-        layoutSheetBody.setOnTouchListener(SlideDetector(router, layoutSheetBody))
+            layoutSheetBody.layoutTransition = UiUtils.getDefaultTransition()
+            layoutSheetBody.setOnTouchListener(SlideDetector(router, layoutSheetBody))
+        }
     }
 
     override fun onDestroyView(view: View) {
-        layoutSheetBody.setOnTouchListener(null)
+        binding.layoutSheetBody.setOnTouchListener(null)
         super.onDestroyView(view)
     }
 
@@ -168,48 +170,50 @@ class SendSheetController(args: Bundle? = null) :
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        return merge(
-            keyboard.bindInput(),
-            textInputMemo.bindFocusChanged(),
-            textInputMemo.bindActionComplete(E.OnSendClicked),
-            textInputMemo.clicks().map { E.OnAmountEditDismissed },
-            textInputMemo.textChanges().map { E.OnMemoChanged(it) },
-            textInputAddress.focusChanges().map { hasFocus ->
-                if (hasFocus) {
-                    E.OnAmountEditDismissed
-                } else {
-                    Utils.hideKeyboard(activity)
-                    E.OnTargetStringEntered
-                }
-            },
-            textInputAddress.clicks().map { E.OnAmountEditDismissed },
-            textInputAddress.textChanges().map { E.OnTargetStringChanged(it) },
-            textInputDestinationTag.textChanges().map {
-                E.TransferFieldUpdate.Value(TransferField.DESTINATION_TAG, it)
-            },
-            textInputHederaMemo.textChanges().map {
-                E.TransferFieldUpdate.Value(TransferField.HEDERA_MEMO, it)
-            },
-            buttonFaq.clicks().map { E.OnFaqClicked },
-            buttonScan.clicks().map { E.OnScanClicked },
-            buttonSend.clicks().map { E.OnSendClicked },
-            buttonClose.clicks().map { E.OnCloseClicked },
-            buttonPaste.clicks().map { E.OnPasteClicked },
-            layoutSendSheet.clicks().map { E.OnCloseClicked },
-            textInputAmount.clicks().map { E.OnAmountEditClicked },
-            textInputAmount.focusChanges().map { hasFocus ->
-                if (hasFocus) {
-                    E.OnAmountEditClicked
-                } else {
-                    E.OnAmountEditDismissed
-                }
-            },
-            buttonCurrencySelect.clicks().map { E.OnToggleCurrencyClicked },
-            buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.REGULAR) },
-            buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.ECONOMY) },
-            buttonPriority.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.PRIORITY) },
-            labelBalanceValue.clicks().map { E.OnSendMaxClicked }
-        )
+        return with(binding) {
+            merge(
+                keyboard.bindInput(),
+                textInputMemo.bindFocusChanged(),
+                textInputMemo.bindActionComplete(E.OnSendClicked),
+                textInputMemo.clicks().map { E.OnAmountEditDismissed },
+                textInputMemo.textChanges().map { E.OnMemoChanged(it) },
+                textInputAddress.focusChanges().map { hasFocus ->
+                    if (hasFocus) {
+                        E.OnAmountEditDismissed
+                    } else {
+                        Utils.hideKeyboard(activity)
+                        E.OnTargetStringEntered
+                    }
+                },
+                textInputAddress.clicks().map { E.OnAmountEditDismissed },
+                textInputAddress.textChanges().map { E.OnTargetStringChanged(it) },
+                textInputDestinationTag.textChanges().map {
+                    E.TransferFieldUpdate.Value(TransferField.DESTINATION_TAG, it)
+                },
+                textInputHederaMemo.textChanges().map {
+                    E.TransferFieldUpdate.Value(TransferField.HEDERA_MEMO, it)
+                },
+                buttonFaq.clicks().map { E.OnFaqClicked },
+                buttonScan.clicks().map { E.OnScanClicked },
+                buttonSend.clicks().map { E.OnSendClicked },
+                buttonClose.clicks().map { E.OnCloseClicked },
+                buttonPaste.clicks().map { E.OnPasteClicked },
+                layoutSendSheet.clicks().map { E.OnCloseClicked },
+                textInputAmount.clicks().map { E.OnAmountEditClicked },
+                textInputAmount.focusChanges().map { hasFocus ->
+                    if (hasFocus) {
+                        E.OnAmountEditClicked
+                    } else {
+                        E.OnAmountEditDismissed
+                    }
+                },
+                buttonCurrencySelect.clicks().map { E.OnToggleCurrencyClicked },
+                buttonRegular.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.REGULAR) },
+                buttonEconomy.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.ECONOMY) },
+                buttonPriority.clicks().map { E.OnTransferSpeedChanged(TransferSpeedInput.PRIORITY) },
+                labelBalanceValue.clicks().map { E.OnSendMaxClicked }
+            )
+        }
     }
 
     private fun EditText.bindActionComplete(output: E) =
@@ -257,252 +261,254 @@ class SendSheetController(args: Bundle? = null) :
     override fun M.render() {
         val res = checkNotNull(resources)
 
-        ifChanged(M::addressType, M::isResolvingAddress) {
-            addressProgressBar.isVisible = isResolvingAddress
-            if (addressType is AddressType.Resolvable) {
-                inputLayoutAddress.hint = res.getString(
-                    if (addressType is AddressType.Resolvable.PayId) R.string.Send_payId_toLabel else R.string.Send_fio_toLabel
-                )
-                inputLayoutAddress.helperText = if (isResolvingAddress) null else {
-                    val first = targetAddress.take(RESOLVED_ADDRESS_CHARS)
-                    val last = targetAddress.takeLast(RESOLVED_ADDRESS_CHARS)
-                    "$first...$last"
-                }
-            } else {
-                inputLayoutAddress.helperText = null
-                inputLayoutAddress.hint = res.getString(R.string.Send_toLabel)
-            }
-        }
-
-        ifChanged(M::targetInputError) {
-            inputLayoutAddress.isErrorEnabled = targetInputError != null
-            inputLayoutAddress.error = when (targetInputError) {
-                is M.InputError.Empty ->
-                    res.getString(R.string.Send_noAddress)
-                is M.InputError.Invalid ->
-                    res.getString(R.string.Send_invalidAddressMessage, currencyCode.toUpperCase())
-                is M.InputError.ClipboardInvalid ->
-                    res.getString(
-                        R.string.Send_invalidAddressOnPasteboard,
-                        currencyCode.toUpperCase()
+        with(binding) {
+            ifChanged(M::addressType, M::isResolvingAddress) {
+                addressProgressBar.isVisible = isResolvingAddress
+                if (addressType is AddressType.Resolvable) {
+                    inputLayoutAddress.hint = res.getString(
+                        if (addressType is AddressType.Resolvable.PayId) R.string.Send_payId_toLabel else R.string.Send_fio_toLabel
                     )
-                is M.InputError.ClipboardEmpty ->
-                    res.getString(R.string.Send_emptyPasteboard)
-                is M.InputError.PayIdInvalid -> res.getString(R.string.Send_payId_invalid)
-                is M.InputError.PayIdNoAddress -> res.getString(
-                    R.string.Send_payId_noAddress,
-                    currencyCode.toUpperCase(Locale.ROOT)
-                )
-                is M.InputError.PayIdRetrievalError -> res.getString(R.string.Send_payId_retrievalError)
-                is M.InputError.FioInvalid -> res.getString(R.string.Send_fio_invalid)
-                is M.InputError.FioNoAddress -> res.getString(
-                    R.string.Send_fio_noAddress,
-                    currencyCode.toUpperCase(Locale.ROOT)
-                )
-                is M.InputError.FioRetrievalError -> res.getString(R.string.Send_fio_retrievalError)
-
-                else -> null
-            }
-        }
-
-        ifChanged(M::amountInputError) {
-            inputLayoutAmount.isErrorEnabled = amountInputError != null
-            inputLayoutAmount.error = when (amountInputError) {
-                is M.InputError.Empty ->
-                    res.getString(R.string.Send_noAmount)
-                is M.InputError.BalanceTooLow ->
-                    res.getString(R.string.Send_insufficientFunds)
-                is M.InputError.FailedToEstimateFee ->
-                    res.getString(R.string.Send_noFeesError)
-                else -> null
-            }
-        }
-
-        ifChanged(
-            M::currencyCode,
-            M::fiatCode,
-            M::isAmountCrypto
-        ) {
-            val sendTitle = res.getString(R.string.Send_title)
-            val upperCaseCurrencyCode = currencyCode.toUpperCase(Locale.getDefault())
-            labelTitle.text = "%s %s".format(sendTitle, upperCaseCurrencyCode)
-            buttonCurrencySelect.text = when {
-                isAmountCrypto -> upperCaseCurrencyCode
-                else -> {
-                    val currency = java.util.Currency.getInstance(fiatCode)
-                    "$fiatCode (${currency.symbol})".toUpperCase(Locale.getDefault())
-                }
-            }
-        }
-
-        ifChanged(M::isAmountEditVisible, ::showKeyboard)
-
-        ifChanged(
-            M::rawAmount,
-            M::isAmountCrypto,
-            M::fiatCode
-        ) {
-            val formattedAmount = if (isAmountCrypto || rawAmount.isBlank()) {
-                rawAmount
-            } else {
-                rawAmount.formatFiatForInputUi(fiatCode)
-            }
-            textInputAmount.setText(formattedAmount)
-        }
-
-        ifChanged(
-            M::networkFee,
-            M::fiatNetworkFee,
-            M::feeCurrencyCode,
-            M::isAmountCrypto
-        ) {
-            labelNetworkFee.isVisible = networkFee != BigDecimal.ZERO
-            labelNetworkFee.text = res.getString(
-                R.string.Send_fee,
-                when {
-                    isAmountCrypto ->
-                        networkFee.formatCryptoForUi(feeCurrencyCode, MAX_DIGITS)
-                    else -> fiatNetworkFee.formatFiatForUi(fiatCode)
-                }
-            )
-        }
-
-        ifChanged(
-            M::balance,
-            M::fiatBalance,
-            M::isAmountCrypto,
-            M::isSendingMax
-        ) {
-            labelBalanceValue.text = when {
-                isAmountCrypto -> balance.formatCryptoForUi(currencyCode)
-                else -> fiatBalance.formatFiatForUi(fiatCode)
-            }
-            if (isSendingMax) {
-                labelBalanceValue.paintFlags = 0
-                labelBalanceValue.setTextColor(res.getColor(R.color.light_gray, activity!!.theme))
-                labelBalance.setText(R.string.Send_sendingMax)
-            } else {
-                labelBalance.setText(R.string.Send_balanceString)
-                labelBalanceValue.setTextColor(res.getColor(R.color.blue_button_text, activity!!.theme))
-                labelBalanceValue.paintFlags = labelBalanceValue.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-            }
-        }
-
-        ifChanged(M::targetString) {
-            if (textInputAddress.text.toString() != targetString) {
-                textInputAddress.setText(targetString, TextView.BufferType.EDITABLE)
-            }
-        }
-
-        ifChanged(M::memo) {
-            if (textInputMemo.text.toString() != memo) {
-                textInputMemo.setText(memo, TextView.BufferType.EDITABLE)
-            }
-        }
-
-        ifChanged(
-            M::showFeeSelect,
-            M::transferSpeed
-        ) {
-            layoutFeeOption.isVisible = showFeeSelect
-            setFeeOption(transferSpeed)
-        }
-
-        ifChanged(M::showFeeSelect) {
-            layoutFeeOption.isVisible = showFeeSelect
-        }
-
-        ifChanged(M::isConfirmingTx) {
-            val isConfirmVisible =
-                router.backstack.lastOrNull()?.controller() is ConfirmTxController
-            if (isConfirmingTx && !isConfirmVisible) {
-                val controller = ConfirmTxController(
-                    currencyCode,
-                    fiatCode,
-                    feeCurrencyCode,
-                    targetAddress,
-                    transferSpeed,
-                    amount,
-                    fiatAmount,
-                    fiatTotalCost,
-                    fiatNetworkFee,
-                    transferFields
-                )
-                controller.targetController = this@SendSheetController
-                router.pushController(RouterTransaction.with(controller))
-            }
-        }
-
-        ifChanged(M::isAuthenticating) {
-            val isAuthVisible =
-                router.backstack.lastOrNull()?.controller() is AuthenticationController
-            if (isAuthenticating && !isAuthVisible) {
-                val authenticationMode = if (isFingerprintAuthEnable) {
-                    AuthMode.USER_PREFERRED
+                    inputLayoutAddress.helperText = if (isResolvingAddress) null else {
+                        val first = targetAddress.take(RESOLVED_ADDRESS_CHARS)
+                        val last = targetAddress.takeLast(RESOLVED_ADDRESS_CHARS)
+                        "$first...$last"
+                    }
                 } else {
-                    AuthMode.PIN_REQUIRED
+                    inputLayoutAddress.helperText = null
+                    inputLayoutAddress.hint = res.getString(R.string.Send_toLabel)
                 }
-                val controller = AuthenticationController(
-                    mode = authenticationMode,
-                    title = res.getString(R.string.VerifyPin_touchIdMessage),
-                    message = res.getString(R.string.VerifyPin_authorize)
-                )
-                controller.targetController = this@SendSheetController
-                router.pushController(RouterTransaction.with(controller))
             }
-        }
 
-        ifChanged(M::isBitpayPayment) {
-            textInputAddress.isEnabled = !isBitpayPayment
-            textInputAmount.isEnabled = !isBitpayPayment
-            buttonScan.isVisible = !isBitpayPayment
-            buttonPaste.isVisible = !isBitpayPayment
-        }
+            ifChanged(M::targetInputError) {
+                inputLayoutAddress.isErrorEnabled = targetInputError != null
+                inputLayoutAddress.error = when (targetInputError) {
+                    is M.InputError.Empty ->
+                        res.getString(R.string.Send_noAddress)
+                    is M.InputError.Invalid ->
+                        res.getString(R.string.Send_invalidAddressMessage, currencyCode.toUpperCase())
+                    is M.InputError.ClipboardInvalid ->
+                        res.getString(
+                            R.string.Send_invalidAddressOnPasteboard,
+                            currencyCode.toUpperCase()
+                        )
+                    is M.InputError.ClipboardEmpty ->
+                        res.getString(R.string.Send_emptyPasteboard)
+                    is M.InputError.PayIdInvalid -> res.getString(R.string.Send_payId_invalid)
+                    is M.InputError.PayIdNoAddress -> res.getString(
+                        R.string.Send_payId_noAddress,
+                        currencyCode.toUpperCase(Locale.ROOT)
+                    )
+                    is M.InputError.PayIdRetrievalError -> res.getString(R.string.Send_payId_retrievalError)
+                    is M.InputError.FioInvalid -> res.getString(R.string.Send_fio_invalid)
+                    is M.InputError.FioNoAddress -> res.getString(
+                        R.string.Send_fio_noAddress,
+                        currencyCode.toUpperCase(Locale.ROOT)
+                    )
+                    is M.InputError.FioRetrievalError -> res.getString(R.string.Send_fio_retrievalError)
 
-        ifChanged(M::isFetchingPayment, M::isSendingTransaction) {
-            loadingView.isVisible = isFetchingPayment || isSendingTransaction
-        }
+                    else -> null
+                }
+            }
 
-        ifChanged(M::destinationTag) {
-            if (destinationTag != null) {
-                groupDestinationTag.isVisible = true
-                inputLayoutDestinationTag.error = if (destinationTag.invalid) {
-                    res.getString(R.string.Send_destinationTag_required_error)
-                } else null
-                inputLayoutDestinationTag.hint = res.getString(
+            ifChanged(M::amountInputError) {
+                inputLayoutAmount.isErrorEnabled = amountInputError != null
+                inputLayoutAmount.error = when (amountInputError) {
+                    is M.InputError.Empty ->
+                        res.getString(R.string.Send_noAmount)
+                    is M.InputError.BalanceTooLow ->
+                        res.getString(R.string.Send_insufficientFunds)
+                    is M.InputError.FailedToEstimateFee ->
+                        res.getString(R.string.Send_noFeesError)
+                    else -> null
+                }
+            }
+
+            ifChanged(
+                M::currencyCode,
+                M::fiatCode,
+                M::isAmountCrypto
+            ) {
+                val sendTitle = res.getString(R.string.Send_title)
+                val upperCaseCurrencyCode = currencyCode.toUpperCase(Locale.getDefault())
+                labelTitle.text = "%s %s".format(sendTitle, upperCaseCurrencyCode)
+                buttonCurrencySelect.text = when {
+                    isAmountCrypto -> upperCaseCurrencyCode
+                    else -> {
+                        val currency = java.util.Currency.getInstance(fiatCode)
+                        "$fiatCode (${currency.symbol})".toUpperCase(Locale.getDefault())
+                    }
+                }
+            }
+
+            ifChanged(M::isAmountEditVisible, ::showKeyboard)
+
+            ifChanged(
+                M::rawAmount,
+                M::isAmountCrypto,
+                M::fiatCode
+            ) {
+                val formattedAmount = if (isAmountCrypto || rawAmount.isBlank()) {
+                    rawAmount
+                } else {
+                    rawAmount.formatFiatForInputUi(fiatCode)
+                }
+                textInputAmount.setText(formattedAmount)
+            }
+
+            ifChanged(
+                M::networkFee,
+                M::fiatNetworkFee,
+                M::feeCurrencyCode,
+                M::isAmountCrypto
+            ) {
+                labelNetworkFee.isVisible = networkFee != BigDecimal.ZERO
+                labelNetworkFee.text = res.getString(
+                    R.string.Send_fee,
                     when {
-                        destinationTag.required ->
-                            R.string.Send_destinationTag_required
-                        else -> R.string.Send_destinationTag_optional
+                        isAmountCrypto ->
+                            networkFee.formatCryptoForUi(feeCurrencyCode, MAX_DIGITS)
+                        else -> fiatNetworkFee.formatFiatForUi(fiatCode)
                     }
                 )
-
-                if (destinationTag.value.isNullOrBlank() &&
-                    !textInputDestinationTag.text.isNullOrBlank() ||
-                    (!destinationTag.value.isNullOrBlank() &&
-                        textInputDestinationTag.text.isNullOrBlank()) || isDestinationTagFromResolvedAddress
-                ) {
-                    textInputDestinationTag.setText(currentModel.destinationTag?.value)
-                }
-
-                textInputDestinationTag.isEnabled = !isDestinationTagFromResolvedAddress
             }
-        }
 
-        ifChanged(M::hederaMemo) {
-            if (hederaMemo != null) {
-                groupHederaMemo.isVisible = true
-                if (!hederaMemo.value.isNullOrBlank() &&
-                    textInputHederaMemo.text.isNullOrBlank()
-                ) {
-                    textInputHederaMemo.setText(currentModel.hederaMemo?.value)
+            ifChanged(
+                M::balance,
+                M::fiatBalance,
+                M::isAmountCrypto,
+                M::isSendingMax
+            ) {
+                labelBalanceValue.text = when {
+                    isAmountCrypto -> balance.formatCryptoForUi(currencyCode)
+                    else -> fiatBalance.formatFiatForUi(fiatCode)
+                }
+                if (isSendingMax) {
+                    labelBalanceValue.paintFlags = 0
+                    labelBalanceValue.setTextColor(res.getColor(R.color.light_gray, activity!!.theme))
+                    labelBalance.setText(R.string.Send_sendingMax)
+                } else {
+                    labelBalance.setText(R.string.Send_balanceString)
+                    labelBalanceValue.setTextColor(res.getColor(R.color.blue_button_text, activity!!.theme))
+                    labelBalanceValue.paintFlags = labelBalanceValue.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+                }
+            }
+
+            ifChanged(M::targetString) {
+                if (textInputAddress.text.toString() != targetString) {
+                    textInputAddress.setText(targetString, TextView.BufferType.EDITABLE)
+                }
+            }
+
+            ifChanged(M::memo) {
+                if (textInputMemo.text.toString() != memo) {
+                    textInputMemo.setText(memo, TextView.BufferType.EDITABLE)
+                }
+            }
+
+            ifChanged(
+                M::showFeeSelect,
+                M::transferSpeed
+            ) {
+                layoutFeeOption.isVisible = showFeeSelect
+                setFeeOption(transferSpeed)
+            }
+
+            ifChanged(M::showFeeSelect) {
+                layoutFeeOption.isVisible = showFeeSelect
+            }
+
+            ifChanged(M::isConfirmingTx) {
+                val isConfirmVisible =
+                    router.backstack.lastOrNull()?.controller is ConfirmTxController
+                if (isConfirmingTx && !isConfirmVisible) {
+                    val controller = ConfirmTxController(
+                        currencyCode,
+                        fiatCode,
+                        feeCurrencyCode,
+                        targetAddress,
+                        transferSpeed,
+                        amount,
+                        fiatAmount,
+                        fiatTotalCost,
+                        fiatNetworkFee,
+                        transferFields
+                    )
+                    controller.targetController = this@SendSheetController
+                    router.pushController(RouterTransaction.with(controller))
+                }
+            }
+
+            ifChanged(M::isAuthenticating) {
+                val isAuthVisible =
+                    router.backstack.lastOrNull()?.controller is AuthenticationController
+                if (isAuthenticating && !isAuthVisible) {
+                    val authenticationMode = if (isFingerprintAuthEnable) {
+                        AuthMode.USER_PREFERRED
+                    } else {
+                        AuthMode.PIN_REQUIRED
+                    }
+                    val controller = AuthenticationController(
+                        mode = authenticationMode,
+                        title = res.getString(R.string.VerifyPin_touchIdMessage),
+                        message = res.getString(R.string.VerifyPin_authorize)
+                    )
+                    controller.targetController = this@SendSheetController
+                    router.pushController(RouterTransaction.with(controller))
+                }
+            }
+
+            ifChanged(M::isBitpayPayment) {
+                textInputAddress.isEnabled = !isBitpayPayment
+                textInputAmount.isEnabled = !isBitpayPayment
+                buttonScan.isVisible = !isBitpayPayment
+                buttonPaste.isVisible = !isBitpayPayment
+            }
+
+            ifChanged(M::isFetchingPayment, M::isSendingTransaction) {
+                loadingView.root.isVisible = isFetchingPayment || isSendingTransaction
+            }
+
+            ifChanged(M::destinationTag) {
+                if (destinationTag != null) {
+                    groupDestinationTag.isVisible = true
+                    inputLayoutDestinationTag.error = if (destinationTag.invalid) {
+                        res.getString(R.string.Send_destinationTag_required_error)
+                    } else null
+                    inputLayoutDestinationTag.hint = res.getString(
+                        when {
+                            destinationTag.required ->
+                                R.string.Send_destinationTag_required
+                            else -> R.string.Send_destinationTag_optional
+                        }
+                    )
+
+                    if (destinationTag.value.isNullOrBlank() &&
+                        !textInputDestinationTag.text.isNullOrBlank() ||
+                        (!destinationTag.value.isNullOrBlank() &&
+                            textInputDestinationTag.text.isNullOrBlank()) || isDestinationTagFromResolvedAddress
+                    ) {
+                        textInputDestinationTag.setText(currentModel.destinationTag?.value)
+                    }
+
+                    textInputDestinationTag.isEnabled = !isDestinationTagFromResolvedAddress
+                }
+            }
+
+            ifChanged(M::hederaMemo) {
+                if (hederaMemo != null) {
+                    groupHederaMemo.isVisible = true
+                    if (!hederaMemo.value.isNullOrBlank() &&
+                        textInputHederaMemo.text.isNullOrBlank()
+                    ) {
+                        textInputHederaMemo.setText(currentModel.hederaMemo?.value)
+                    }
                 }
             }
         }
     }
 
     private fun showKeyboard(show: Boolean) {
-        groupAmountSection.isVisible = show
+        binding.groupAmountSection.isVisible = show
         if (show) {
             Utils.hideKeyboard(activity)
         }
@@ -547,56 +553,56 @@ class SendSheetController(args: Bundle? = null) :
     private fun setFeeOption(feeOption: TransferSpeed) {
         val context = applicationContext!!
         // TODO: Redo using a toggle button and a selector
-        when (feeOption) {
-            is TransferSpeed.Regular -> {
-                buttonRegular.setTextColor(context.getColor(R.color.white))
-                buttonRegular.background = context.getDrawable(R.drawable.b_blue_square)
-                buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
-                buttonEconomy.background = context.getDrawable(R.drawable.b_half_left_blue_stroke)
-                buttonPriority.setTextColor(context.getColor(R.color.dark_blue))
-                buttonPriority.background =
-                    context.getDrawable(R.drawable.b_half_right_blue_stroke)
-                labelFeeDescription.text = when {
-                    feeOption.currencyCode.run {
-                        isEthereum() || isErc20()
-                    } -> ethFeeEstimateString(context, feeOption.targetTime)
-                    else -> context.getString(R.string.FeeSelector_estimatedDeliver)
-                        .format(context.getString(R.string.FeeSelector_regularTime))
+        with(binding) {
+            when (feeOption) {
+                is TransferSpeed.Regular -> {
+                    buttonRegular.setTextColor(context.getColor(R.color.white))
+                    buttonRegular.setBackgroundResource(R.drawable.b_blue_square)
+                    buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
+                    buttonEconomy.setBackgroundResource(R.drawable.b_half_left_blue_stroke)
+                    buttonPriority.setTextColor(context.getColor(R.color.dark_blue))
+                    buttonPriority.setBackgroundResource(R.drawable.b_half_right_blue_stroke)
+                    labelFeeDescription.text = when {
+                        feeOption.currencyCode.run {
+                            isEthereum() || isErc20()
+                        } -> ethFeeEstimateString(context, feeOption.targetTime)
+                        else -> context.getString(R.string.FeeSelector_estimatedDeliver)
+                            .format(context.getString(R.string.FeeSelector_regularTime))
+                    }
+                    labelFeeWarning.visibility = View.GONE
                 }
-                labelFeeWarning.visibility = View.GONE
-            }
-            is TransferSpeed.Economy -> {
-                buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
-                buttonRegular.background = context.getDrawable(R.drawable.b_blue_square_stroke)
-                buttonEconomy.setTextColor(context.getColor(R.color.white))
-                buttonEconomy.background = context.getDrawable(R.drawable.b_half_left_blue)
-                buttonPriority.setTextColor(context.getColor(R.color.dark_blue))
-                buttonPriority.background =
-                    context.getDrawable(R.drawable.b_half_right_blue_stroke)
-                labelFeeDescription.text = when {
-                    feeOption.currencyCode.run {
-                        isEthereum() || isErc20()
-                    } -> ethFeeEstimateString(context, feeOption.targetTime)
-                    else -> context.getString(R.string.FeeSelector_estimatedDeliver)
-                        .format(context.getString(R.string.FeeSelector_economyTime))
+                is TransferSpeed.Economy -> {
+                    buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
+                    buttonRegular.setBackgroundResource(R.drawable.b_blue_square_stroke)
+                    buttonEconomy.setTextColor(context.getColor(R.color.white))
+                    buttonEconomy.setBackgroundResource(R.drawable.b_half_left_blue)
+                    buttonPriority.setTextColor(context.getColor(R.color.dark_blue))
+                    buttonPriority.setBackgroundResource(R.drawable.b_half_right_blue_stroke)
+                    labelFeeDescription.text = when {
+                        feeOption.currencyCode.run {
+                            isEthereum() || isErc20()
+                        } -> ethFeeEstimateString(context, feeOption.targetTime)
+                        else -> context.getString(R.string.FeeSelector_estimatedDeliver)
+                            .format(context.getString(R.string.FeeSelector_economyTime))
+                    }
+                    labelFeeWarning.visibility = View.VISIBLE
                 }
-                labelFeeWarning.visibility = View.VISIBLE
-            }
-            is TransferSpeed.Priority -> {
-                buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
-                buttonRegular.background = context.getDrawable(R.drawable.b_blue_square_stroke)
-                buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
-                buttonEconomy.background = context.getDrawable(R.drawable.b_half_left_blue_stroke)
-                buttonPriority.setTextColor(context.getColor(R.color.white))
-                buttonPriority.background = context.getDrawable(R.drawable.b_half_right_blue)
-                labelFeeDescription.text = when {
-                    feeOption.currencyCode.run {
-                        isEthereum() || isErc20()
-                    } -> ethFeeEstimateString(context, feeOption.targetTime)
-                    else -> context.getString(R.string.FeeSelector_estimatedDeliver)
-                        .format(context.getString(R.string.FeeSelector_priorityTime))
+                is TransferSpeed.Priority -> {
+                    buttonRegular.setTextColor(context.getColor(R.color.dark_blue))
+                    buttonRegular.setBackgroundResource(R.drawable.b_blue_square_stroke)
+                    buttonEconomy.setTextColor(context.getColor(R.color.dark_blue))
+                    buttonEconomy.setBackgroundResource(R.drawable.b_half_left_blue_stroke)
+                    buttonPriority.setTextColor(context.getColor(R.color.white))
+                    buttonPriority.setBackgroundResource(R.drawable.b_half_right_blue)
+                    labelFeeDescription.text = when {
+                        feeOption.currencyCode.run {
+                            isEthereum() || isErc20()
+                        } -> ethFeeEstimateString(context, feeOption.targetTime)
+                        else -> context.getString(R.string.FeeSelector_estimatedDeliver)
+                            .format(context.getString(R.string.FeeSelector_priorityTime))
+                    }
+                    labelFeeWarning.visibility = View.GONE
                 }
-                labelFeeWarning.visibility = View.GONE
             }
         }
     }

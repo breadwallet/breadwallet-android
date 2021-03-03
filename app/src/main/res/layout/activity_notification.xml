@@ -46,7 +46,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelApproxFiat" />
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/textView4"
@@ -70,8 +70,8 @@
         android:layout_marginTop="0dp"
         android:background="@drawable/bread_toggle"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/labelApproxFiat"
+        app:layout_constraintBottom_toBottomOf="@+id/textView4"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/labelApproxFiat" />
+        app:layout_constraintTop_toTopOf="@+id/textView4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

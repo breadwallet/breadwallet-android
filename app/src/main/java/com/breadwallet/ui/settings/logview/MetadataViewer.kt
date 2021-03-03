@@ -89,7 +89,7 @@ class MetadataViewer(args: Bundle? = null) : BaseController(args) {
         NON_TX, ALL_TX, GIFT_TX
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedViewState: Bundle?): View {
         return LinearLayout(container.context).apply {
             isClickable = true
             orientation = LinearLayout.VERTICAL

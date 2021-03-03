@@ -29,11 +29,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.breadwallet.R
-import com.breadwallet.legacy.presenter.customviews.BaseTextView
-import kotlinx.android.synthetic.main.currency_list_item.view.*
+import com.breadwallet.databinding.CurrencyListItemBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
@@ -92,7 +92,8 @@ class FiatCurrencyAdapter(
     }
 
     class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val label: BaseTextView = view.currency_item_text
-        val check: ImageView = view.currency_checkmark
+        val binding = CurrencyListItemBinding.bind(view)
+        val label: TextView = binding.currencyItemText
+        val check: ImageView = binding.currencyCheckmark
     }
 }

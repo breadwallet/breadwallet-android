@@ -47,7 +47,6 @@ import com.spotify.mobius.functions.Consumer
 import drewcarlson.mobius.flow.DispatcherWorkRunner
 import drewcarlson.mobius.flow.FlowTransformer
 import drewcarlson.mobius.flow.asConnectable
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart.ATOMIC
 import kotlinx.coroutines.Dispatchers
@@ -79,7 +78,6 @@ private const val MAX_QUEUED_VIEW_EFFECTS = 100
 abstract class BaseMobiusController<M, E, F>(
     args: Bundle? = null
 ) : BaseController(args),
-    LayoutContainer,
     EventSource<E> {
 
     override val kodein by Kodein.lazy {

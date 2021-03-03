@@ -35,6 +35,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerNodeSelectorBinding
 import com.breadwallet.mobius.CompositeEffectHandler
 import com.breadwallet.tools.util.TrustedNode
 import com.breadwallet.tools.util.Utils
@@ -45,7 +46,6 @@ import com.breadwallet.ui.settings.nodeselector.NodeSelector.E
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.F
 import com.breadwallet.ui.settings.nodeselector.NodeSelector.M
 import com.spotify.mobius.Connectable
-import kotlinx.android.synthetic.main.controller_node_selector.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -63,7 +63,6 @@ private const val RESTORE_DIALOG_TITLE_DELAY = 1_000L
 
 class NodeSelectorController : BaseMobiusController<M, E, F>() {
 
-    override val layoutId = R.layout.controller_node_selector
     override val defaultModel = M.createDefault()
     override val update = NodeSelectorUpdate
     override val init = NodeSelectorInit
@@ -73,35 +72,39 @@ class NodeSelectorController : BaseMobiusController<M, E, F>() {
             NodeSelectorHandler(output, direct.instance())
         })
 
+    private val binding by viewBinding(ControllerNodeSelectorBinding::inflate)
+
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
         return merge(
-            button_switch.clicks().map { E.OnSwitchButtonClicked }
+            binding.buttonSwitch.clicks().map { E.OnSwitchButtonClicked }
         )
     }
 
     override fun M.render() {
         val res = checkNotNull(resources)
-        ifChanged(M::mode) {
-            button_switch.text = when (mode) {
-                NodeSelector.Mode.AUTOMATIC -> res.getString(R.string.NodeSelector_manualButton)
-                NodeSelector.Mode.MANUAL -> res.getString(R.string.NodeSelector_automaticButton)
-                else -> ""
+        with(binding) {
+            ifChanged(M::mode) {
+                buttonSwitch.text = when (mode) {
+                    NodeSelector.Mode.AUTOMATIC -> res.getString(R.string.NodeSelector_manualButton)
+                    NodeSelector.Mode.MANUAL -> res.getString(R.string.NodeSelector_automaticButton)
+                    else -> ""
+                }
             }
-        }
 
-        ifChanged(M::currentNode) {
-            node_text.text = if (currentNode.isNotBlank()) {
-                currentNode
-            } else {
-                res.getString(R.string.NodeSelector_automatic)
+            ifChanged(M::currentNode) {
+                nodeText.text = if (currentNode.isNotBlank()) {
+                    currentNode
+                } else {
+                    res.getString(R.string.NodeSelector_automatic)
+                }
             }
-        }
 
-        ifChanged(M::connected) {
-            node_status.text = if (connected) {
-                res.getString(R.string.NodeSelector_connected)
-            } else {
-                res.getString(R.string.NodeSelector_notConnected)
+            ifChanged(M::connected) {
+                nodeStatus.text = if (connected) {
+                    res.getString(R.string.NodeSelector_connected)
+                } else {
+                    res.getString(R.string.NodeSelector_notConnected)
+                }
             }
         }
     }

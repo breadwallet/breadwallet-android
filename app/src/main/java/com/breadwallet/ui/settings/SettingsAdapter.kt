@@ -27,20 +27,16 @@ package com.breadwallet.ui.settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.breadwallet.R
-import com.breadwallet.legacy.presenter.customviews.BaseTextView
-import kotlinx.android.synthetic.main.settings_list_item.view.*
+import com.breadwallet.databinding.SettingsListItemBinding
 
 class SettingsAdapter(
     private val items: List<SettingsItem>,
     private val onClick: (SettingsOption) -> Unit
-) :
-    RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder>() {
+) : RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): SettingsViewHolder {
         val inflater = LayoutInflater.from(viewGroup.context)
@@ -56,18 +52,17 @@ class SettingsAdapter(
     override fun getItemCount() = items.size
 
     class SettingsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val title: BaseTextView get() = itemView.item_title
-        private val icon: ImageButton get() = itemView.setting_icon
-        private val addon: TextView get() = itemView.item_addon
-        private val subHeader: TextView get() = itemView.item_sub_header
+        private val binding = SettingsListItemBinding.bind(view)
 
         fun bindView(item: SettingsItem) {
-            title.text = item.title
-            icon.isVisible = item.iconResId != null
-            item.iconResId?.let { icon.setBackgroundResource(it) }
-            addon.text = item.addOn
-            subHeader.isGone = item.subHeader.isBlank()
-            subHeader.text = item.subHeader
+            binding.itemTitle.text = item.title
+            item.iconResId?.let {
+                binding.settingIcon.isVisible = true
+                binding.settingIcon.setBackgroundResource(it)
+            }
+            binding.itemAddon.text = item.addOn
+            binding.itemSubHeader.isGone = item.subHeader.isBlank()
+            binding.itemSubHeader.text = item.subHeader
         }
     }
 }

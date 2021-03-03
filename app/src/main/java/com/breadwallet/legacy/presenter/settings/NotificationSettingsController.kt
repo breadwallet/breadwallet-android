@@ -32,14 +32,13 @@ import android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS
 import android.provider.Settings.EXTRA_APP_PACKAGE
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerNotificationSettingsBinding
 import com.breadwallet.logger.logDebug
 import com.breadwallet.repository.NotificationsState
 import com.breadwallet.tools.mvvm.Status
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.BaseController
-import kotlinx.android.synthetic.main.controller_notification_settings.*
 
 /**
  * Activity to turn on and off push notifications.
@@ -48,7 +47,7 @@ class NotificationSettingsController : BaseController() {
 
     private val viewModel by lazy { NotificationSettingsViewModel() }
 
-    override val layoutId = R.layout.controller_notification_settings
+    private val binding by viewBinding(ControllerNotificationSettingsBinding::inflate)
 
     init {
         EventUtils.pushEvent(EventUtils.EVENT_PUSH_NOTIFICATIONS_OPEN_APP_SETTINGS)
@@ -56,7 +55,7 @@ class NotificationSettingsController : BaseController() {
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        back_button.setOnClickListener {
+        binding.backButton.setOnClickListener {
             router.popCurrentController()
         }
         setListeners()
@@ -66,33 +65,36 @@ class NotificationSettingsController : BaseController() {
         super.onAttach(view)
         val owner = (activity as AppCompatActivity)
         viewModel.refreshState()
-        viewModel.notificationsEnable.observe(owner, Observer { state ->
-            when (state) {
-                NotificationsState.APP_ENABLED -> {
-                    toggle_button.isChecked = true
-                    toggle_button.isEnabled = true
-                    open_settings_btn.post { open_settings_btn.visibility = View.INVISIBLE }
-                    current_settings_description.setText(R.string.PushNotifications_enabledBody)
-                }
-                NotificationsState.APP_DISABLED -> {
-                    toggle_button.isChecked = false
-                    toggle_button.isEnabled = true
-                    open_settings_btn.post { open_settings_btn.visibility = View.INVISIBLE }
-                    current_settings_description.setText(R.string.PushNotifications_disabledBody)
-                }
-                NotificationsState.SYSTEM_DISABLED -> {
-                    toggle_button.isChecked = false
-                    toggle_button.isEnabled = false
-                    open_settings_btn.post { open_settings_btn.visibility = View.VISIBLE }
-                    current_settings_description.setText(R.string.PushNotifications_enableInstructions)
+        with(binding) {
+            viewModel.notificationsEnable.observe(owner) { state ->
+                when (state) {
+                    NotificationsState.APP_ENABLED -> {
+                        toggleButton.isChecked = true
+                        toggleButton.isEnabled = true
+                        openSettingsBtn.post { openSettingsBtn.visibility = View.INVISIBLE }
+                        currentSettingsDescription.setText(R.string.PushNotifications_enabledBody)
+                    }
+                    NotificationsState.APP_DISABLED -> {
+                        toggleButton.isChecked = false
+                        toggleButton.isEnabled = true
+                        openSettingsBtn.post { openSettingsBtn.visibility = View.INVISIBLE }
+                        currentSettingsDescription.setText(R.string.PushNotifications_disabledBody)
+                    }
+                    NotificationsState.SYSTEM_DISABLED -> {
+                        toggleButton.isChecked = false
+                        toggleButton.isEnabled = false
+                        openSettingsBtn.post { openSettingsBtn.visibility = View.VISIBLE }
+                        currentSettingsDescription.setText(R.string.PushNotifications_enableInstructions)
+                    }
+                    null -> Unit
                 }
             }
-        })
+        }
     }
 
     private fun setListeners() {
         // setup compound button
-        toggle_button.setOnCheckedChangeListener { _, isChecked ->
+        binding.toggleButton.setOnCheckedChangeListener { _, isChecked ->
             val event = if (isChecked) {
                 EventUtils.EVENT_PUSH_NOTIFICATIONS_SETTING_TOGGLE_ON
             } else {
@@ -103,7 +105,7 @@ class NotificationSettingsController : BaseController() {
         }
 
         // setup android settings button
-        open_settings_btn.setOnClickListener {
+        binding.openSettingsBtn.setOnClickListener {
             openAppSettings()
         }
     }
@@ -129,22 +131,22 @@ class NotificationSettingsController : BaseController() {
     private fun updateNotifications(notificationsEnabled: Boolean) {
         val owner = (activity as AppCompatActivity)
         viewModel.togglePushNotifications(notificationsEnabled)
-            .observe(owner, Observer { resource ->
+            .observe(owner) { resource ->
                 when (resource?.status) {
                     Status.LOADING -> {
-                        progress_layout.visibility = View.VISIBLE
+                        binding.progressLayout.root.visibility = View.VISIBLE
                         logDebug("Updating notification settings")
                     }
                     Status.ERROR -> {
-                        progress_layout.visibility = View.GONE
+                        binding.progressLayout.root.visibility = View.GONE
                         logDebug("Failed to update notifications settings")
                         toastLong(R.string.PushNotifications_updateFailed)
                     }
                     Status.SUCCESS -> {
-                        progress_layout.visibility = View.GONE
+                        binding.progressLayout.root.visibility = View.GONE
                         logDebug("Settings updated")
                     }
                 }
-            })
+            }
     }
 }

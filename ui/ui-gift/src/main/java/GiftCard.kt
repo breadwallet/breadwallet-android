@@ -30,6 +30,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toBitmap
 import kotlinx.coroutines.Dispatchers.Default
@@ -68,8 +70,8 @@ internal object GiftCard {
         fiatPricePerUnit: String,
     ) {
         canvas.drawColor(Color.parseColor("#141233"))
-        val font = context.resources.getFont(R.font.mobile_font_book)
-        val boldFont = context.resources.getFont(R.font.mobile_font_bold)
+        val font = ResourcesCompat.getFont(context, R.font.mobile_font_book)
+        val boldFont = ResourcesCompat.getFont(context, R.font.mobile_font_bold)
         val halfWidth = canvas.width / 2f
         val cardMargin = 18f
 
@@ -106,7 +108,7 @@ internal object GiftCard {
 
         // Logo (do not update nextY)
         drawNext(nextY, 0f, cardMargin) { y, _ ->
-            val logo = context.getDrawable(R.drawable.brd_logo_gradient)!!
+            val logo = ContextCompat.getDrawable(context, R.drawable.brd_logo_gradient)!!
             canvas.drawBitmap(logo.toBitmap(240, 80), cardMargin, y, paint())
         }
 
@@ -132,14 +134,14 @@ internal object GiftCard {
         // Bitcoin card
         nextY = drawNext(nextY, 160f, cardMargin) { y, height ->
             val cardWidth = canvas.width - (cardMargin * 2).toInt()
-            val cardBitmap = context.getDrawable(R.drawable.crypto_card_shape)!!.run {
+            val cardBitmap = ContextCompat.getDrawable(context, R.drawable.crypto_card_shape)!!.run {
                 setTint(Color.parseColor("#F29500"))
                 toBitmap(cardWidth, height.toInt())
             }
             canvas.drawBitmap(cardBitmap, cardMargin, y, paint())
 
             val cardHalfY = y + (height / 2)
-            val btcBitmap = context.getDrawable(R.drawable.ic_btc_transparent)!!
+            val btcBitmap = ContextCompat.getDrawable(context, R.drawable.ic_btc_transparent)!!
                 .toBitmap(90, 90)
             val btcLogoY = cardHalfY - (btcBitmap.height / 2)
             canvas.drawBitmap(btcBitmap, cardMargin * 2f, btcLogoY, paint())
@@ -208,7 +210,7 @@ internal object GiftCard {
         // Footer 2
         val msg2 = context.getString(R.string.ShareGift_footerMessage2)
         nextY += cardMargin
-        nextY = msg2.split("\n").fold(nextY) { accY, s ->
+        msg2.split("\n").fold(nextY) { accY, s ->
             drawNextText(s, accY, 22f, 6f, {
                 textAlign = Paint.Align.CENTER
                 color = Color.WHITE

@@ -31,7 +31,7 @@ import org.gradle.kotlin.dsl.project
 class UIModulePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val uiModule = UIModuleExtension(project)
-        project.plugins.apply("dev.zacsweers.redacted.redacted-gradle-plugin")
+        project.plugins.apply("dev.zacsweers.redacted")
         project.extensions.add(UIModuleExtension::class.java, "UIModule", uiModule)
         project.configureAndroidLibrary(uiModule.basePackage) {
             val uiCommonProject = project(":ui:ui-common")
@@ -47,7 +47,7 @@ class UIModulePlugin : Plugin<Project> {
             add("implementation", Libs.Mobius.Coroutines)
             add("implementation", Libs.Mobius.Android)
             add("implementation", Libs.Conductor.Core)
-            add("implementation", Libs.Conductor.Support)
+            add("implementation", Libs.Conductor.ViewPager)
             add("implementation", Libs.Kodein.CoreErasedJvm)
             add("implementation", Libs.Kodein.FrameworkAndroidX)
             add("compileOnly", Libs.Redacted.Annotation)

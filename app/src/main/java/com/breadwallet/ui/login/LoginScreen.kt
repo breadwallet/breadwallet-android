@@ -76,12 +76,7 @@ object LoginScreen {
         object GoToHome : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.Home
         }
-        object ShowFingerprintController : F(), NavigationEffect {
-            override val navigationTarget = NavigationTarget.Authentication(
-                mode = AuthMode.BIOMETRIC_REQUIRED,
-                titleResId = R.string.UnlockScreen_touchIdTitle_android
-            )
-        }
+        object ShowFingerprintController : F(), ViewEffect
         object GoToDisableScreen : F(), NavigationEffect {
             override val navigationTarget = NavigationTarget.DisabledScreen
         }

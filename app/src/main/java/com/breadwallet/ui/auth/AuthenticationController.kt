@@ -24,22 +24,20 @@
  */
 package com.breadwallet.ui.auth
 
-import android.hardware.fingerprint.FingerprintManager
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.getSystemService
+import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.R
-import com.breadwallet.app.BreadApp
+import com.breadwallet.databinding.ControllerPinBinding
 import com.breadwallet.legacy.presenter.customviews.PinLayout
-import com.breadwallet.tools.security.FingerprintUiHelper
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
-import kotlinx.android.synthetic.main.controller_pin.*
-import kotlinx.android.synthetic.main.fingerprint_dialog_container.*
 
 class AuthenticationController(
     args: Bundle
@@ -81,36 +79,60 @@ class AuthenticationController(
         overridePushHandler(DialogChangeHandler())
     }
 
-    private val mode by lazy {
-        val context = BreadApp.getBreadContext().applicationContext
-        val fingerprintManager = context.getSystemService<FingerprintManager>()
-        if (fingerprintManager == null) {
-            AuthMode.PIN_REQUIRED
-        } else {
-            AuthMode.valueOf(arg(KEY_MODE))
-        }
+    private val bindingPin by viewBinding(ControllerPinBinding::inflate)
+    private val biometricPrompt by resetOnViewDestroy {
+        BiometricPrompt(
+            activity as AppCompatActivity,
+            ContextCompat.getMainExecutor(activity),
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    findListener<Listener>()?.onAuthenticationSuccess()
+                    router.popCurrentController()
+                }
+
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    if (mode == AuthMode.USER_PREFERRED) {
+                        replaceWithPinAuthentication()
+                    } else {
+                        if (errorCode == BiometricPrompt.ERROR_CANCELED) {
+                            findListener<Listener>()?.onAuthenticationCancelled()
+                        } else {
+                            findListener<Listener>()?.onAuthenticationFailed()
+                        }
+                        router.popCurrentController()
+                    }
+                }
+
+                // Ignored: only handle final events from onAuthenticationError
+                override fun onAuthenticationFailed() = Unit
+            }
+        )
     }
 
-    override val layoutId: Int =
-        when (mode) {
-            AuthMode.USER_PREFERRED -> R.layout.controller_fingerprint
-            AuthMode.PIN_REQUIRED -> R.layout.controller_pin
-            AuthMode.BIOMETRIC_REQUIRED -> R.layout.controller_fingerprint
+    private val mode by lazy {
+        val biometricManager = BiometricManager.from(applicationContext!!)
+        val hasBiometrics =
+            biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
+        if (hasBiometrics == BiometricManager.BIOMETRIC_SUCCESS) {
+            AuthMode.valueOf(arg(KEY_MODE))
+        } else {
+            AuthMode.PIN_REQUIRED
         }
-
-    private var fingerprintUiHelper: FingerprintUiHelper? = null
+    }
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
 
         when (mode) {
             AuthMode.BIOMETRIC_REQUIRED, AuthMode.USER_PREFERRED -> {
-                showFingerprint()
+                bindingPin.root.isVisible = false
             }
             AuthMode.PIN_REQUIRED -> {
-                title.text = argOptional(KEY_TITLE)
-                message.text = argOptional(KEY_MESSAGE)
-                brkeyboard.setDeleteImage(R.drawable.ic_delete_black)
+                with(bindingPin) {
+                    title.text = argOptional(KEY_TITLE)
+                    message.text = argOptional(KEY_MESSAGE)
+                    brkeyboard.setDeleteImage(R.drawable.ic_delete_black)
+                }
             }
         }
     }
@@ -119,56 +141,38 @@ class AuthenticationController(
         super.onAttach(view)
         when (mode) {
             AuthMode.PIN_REQUIRED -> {
-                pin_digits.setup(brkeyboard, object : PinLayout.PinLayoutListener {
-                    override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
-                        if (isPinCorrect) {
-                            findListener<Listener>()?.onAuthenticationSuccess()
+                bindingPin.pinDigits.setup(
+                    bindingPin.brkeyboard,
+                    object : PinLayout.PinLayoutListener {
+                        override fun onPinInserted(pin: String?, isPinCorrect: Boolean) {
+                            if (isPinCorrect) {
+                                findListener<Listener>()?.onAuthenticationSuccess()
+                                router.popCurrentController()
+                            }
+                        }
+
+                        override fun onPinLocked() {
+                            findListener<Listener>()?.onAuthenticationFailed()
                             router.popCurrentController()
                         }
-                    }
-
-                    override fun onPinLocked() {
-                        findListener<Listener>()?.onAuthenticationFailed()
-                        router.popCurrentController()
-                    }
-                })
+                    })
             }
             AuthMode.BIOMETRIC_REQUIRED, AuthMode.USER_PREFERRED -> {
-                val fingerprintManager = activity!!.getSystemService<FingerprintManager>()
-                val fingerprintUiHelperBuilder =
-                    FingerprintUiHelper.FingerprintUiHelperBuilder(fingerprintManager)
-                val callback = object : FingerprintUiHelper.Callback {
-                    override fun onAuthenticated() {
-                        findListener<Listener>()?.onAuthenticationSuccess()
-                        router.popCurrentController()
-                    }
-
-                    override fun onError() {
-                        findListener<Listener>()?.onAuthenticationFailed()
-                        router.popCurrentController()
-                    }
-                }
-
-                fingerprintUiHelper = fingerprintUiHelperBuilder.build(
-                    fingerprint_icon as ImageView,
-                    fingerprint_status as TextView,
-                    callback,
-                    activity!!
+                val resources = checkNotNull(resources)
+                biometricPrompt.authenticate(
+                    BiometricPrompt.PromptInfo.Builder()
+                        .setTitle(resources.getString(R.string.UnlockScreen_touchIdTitle_android))
+                        .setNegativeButtonText(resources.getString(R.string.Prompts_TouchId_usePin_android))
+                        .build()
                 )
-                fingerprintUiHelper?.startListening(null)
             }
         }
     }
 
     override fun onDetach(view: View) {
         super.onDetach(view)
-        when (mode) {
-            AuthMode.PIN_REQUIRED -> {
-                pin_digits.cleanUp()
-            }
-            AuthMode.BIOMETRIC_REQUIRED, AuthMode.USER_PREFERRED -> {
-                fingerprintUiHelper?.stopListening()
-            }
+        if (mode == AuthMode.PIN_REQUIRED) {
+            bindingPin.pinDigits.cleanUp()
         }
     }
 
@@ -177,27 +181,13 @@ class AuthenticationController(
         return super.handleBack()
     }
 
-    private fun showFingerprint() {
-        fingerprint_title.text = argOptional(KEY_TITLE)
-        cancel_button.setText(R.string.Button_cancel)
-        cancel_button.setOnClickListener {
-            findListener<Listener>()?.onAuthenticationCancelled()
-            router.popCurrentController()
-        }
-        second_dialog_button.setText(R.string.Prompts_TouchId_usePin_android)
-        second_dialog_button.setOnClickListener {
-            if (mode == AuthMode.USER_PREFERRED) {
-                val pinAuthenticationController = AuthenticationController(
-                    mode = AuthMode.PIN_REQUIRED,
-                    title = arg(KEY_TITLE),
-                    message = arg(KEY_MESSAGE)
-                )
-                pinAuthenticationController.targetController = targetController
-                router.popCurrentController()
-                router.pushController(RouterTransaction.with(pinAuthenticationController))
-            } else {
-                router.popCurrentController()
-            }
-        }
+    private fun replaceWithPinAuthentication() {
+        val pinAuthenticationController = AuthenticationController(
+            mode = AuthMode.PIN_REQUIRED,
+            title = arg(KEY_TITLE),
+            message = arg(KEY_MESSAGE)
+        )
+        pinAuthenticationController.targetController = targetController
+        router.replaceTopController(RouterTransaction.with(pinAuthenticationController))
     }
 }

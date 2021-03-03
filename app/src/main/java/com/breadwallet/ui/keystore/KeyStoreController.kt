@@ -37,6 +37,7 @@ import androidx.core.content.getSystemService
 import com.bluelinelabs.conductor.RouterTransaction
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerKeystoreBinding
 import com.breadwallet.logger.logDebug
 import com.breadwallet.logger.logError
 import com.breadwallet.tools.security.BrdUserManager
@@ -63,7 +64,8 @@ class KeyStoreController(
 
     private val brdUser by instance<BrdUserManager>()
 
-    override val layoutId: Int = R.layout.controller_keystore
+    @Suppress("unused")
+    private val binding by viewBinding(ControllerKeystoreBinding::inflate)
 
     override fun onAttach(view: View) {
         super.onAttach(view)
@@ -109,7 +111,7 @@ class KeyStoreController(
     }
 
     private fun showKeyStoreDialog(state: KeyStoreInvalid) {
-        val topController = router.backstack.lastOrNull()?.controller()
+        val topController = router.backstack.lastOrNull()?.controller
         val currentDialog = (topController as? AlertDialogController)?.dialogId
         val res = checkNotNull(resources)
         val controller = when (state) {
@@ -187,7 +189,6 @@ class KeyStoreController(
 
     private fun contactSupport() {
         val activity = checkNotNull(activity)
-        val res = activity.resources
         try {
             ShareCompat.IntentBuilder.from(activity)
                 .setType("message/rfc822")

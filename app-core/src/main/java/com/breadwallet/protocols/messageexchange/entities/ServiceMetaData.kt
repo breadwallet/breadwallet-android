@@ -25,7 +25,7 @@
 package com.breadwallet.protocols.messageexchange.entities
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.HashMap
 
 @Parcelize

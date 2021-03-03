@@ -24,12 +24,13 @@
  */
 package com.breadwallet.ui.migrate
 
+import android.content.Context
 import android.os.Bundle
 import android.security.keystore.UserNotAuthenticatedException
 import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
-import com.breadwallet.R
 import com.breadwallet.app.BreadApp
+import com.breadwallet.databinding.ControllerLoginBinding
 import com.breadwallet.tools.security.BrdUserManager
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.keystore.KeyStoreController
@@ -47,7 +48,8 @@ class MigrateController(
     args: Bundle? = null
 ) : BaseController(args) {
 
-    override val layoutId: Int = R.layout.controller_login
+    @Suppress("unused")
+    private val binding by viewBinding(ControllerLoginBinding::inflate)
 
     private val userManager: BrdUserManager by instance()
 
@@ -55,11 +57,12 @@ class MigrateController(
 
     override fun onAttach(view: View) {
         super.onAttach(view)
+        val context = applicationContext!!
         BreadApp.applicationScope.launch(Main) {
             mutex.withLock<Unit> {
                 if (userManager.isMigrationRequired()) {
                     try {
-                        migrateAccount()
+                        migrateAccount(context)
                     } catch (e: UserNotAuthenticatedException) {
                         waitUntilAttached()
                         activity?.finish()
@@ -80,11 +83,11 @@ class MigrateController(
         router.replaceTopController(RouterTransaction.with(target))
     }
 
-    private suspend fun migrateAccount() {
+    private suspend fun migrateAccount(context: Context) {
         if (userManager.migrateKeystoreData()) {
-            val context = (BreadApp.getBreadContext().applicationContext as BreadApp)
+            val breadApp = (context as BreadApp)
             // The one case where we need to invoke this outside of BreadApp, need to set the migrate flag
-            context.startWithInitializedWallet(direct.instance(), true)
+            breadApp.startWithInitializedWallet(direct.instance(), true)
 
             waitUntilAttached()
             router.replaceTopController(RouterTransaction.with(LoginController()))
