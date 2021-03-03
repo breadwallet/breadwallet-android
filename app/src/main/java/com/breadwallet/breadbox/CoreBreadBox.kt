@@ -350,7 +350,10 @@ internal class CoreBreadBox(
         }
         return transferUpdatedChannelMap
             .asFlow()
-            .filter { targetTransfer(it) }
+            .filter { updatedTransfer ->
+                updatedTransfer.wallet.currency.code.equals(currencyCode, true) &&
+                    targetTransfer(updatedTransfer)
+            }
             .onStart {
                 emit(
                     system?.wallets
