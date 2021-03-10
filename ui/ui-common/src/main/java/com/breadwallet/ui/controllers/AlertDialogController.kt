@@ -31,8 +31,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
-import com.breadwallet.ui.uicommon.R
-import kotlinx.android.synthetic.main.controller_alert_dialog.*
+import com.breadwallet.ui.uicommon.databinding.ControllerAlertDialogBinding
 
 /** */
 class AlertDialogController(
@@ -104,65 +103,67 @@ class AlertDialogController(
         overridePopHandler(DialogChangeHandler())
     }
 
-    override val layoutId = R.layout.controller_alert_dialog
+    private val binding by viewBinding(ControllerAlertDialogBinding::inflate)
 
     val dialogId = arg<String>(KEY_DIALOG_ID)
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
         val dismissible = arg<Boolean>(KEY_DISMISSIBLE)
-        layoutBackground.setOnClickListener {
-            if (dismissible) {
-                findListener<Listener>()?.onDismissed(
+        with(binding) {
+            layoutBackground.setOnClickListener {
+                if (dismissible) {
+                    findListener<Listener>()?.onDismissed(
+                        dialogId,
+                        this@AlertDialogController,
+                        DialogInputResult(textInput.text.toString())
+                    )
+                    router.popCurrentController()
+                }
+            }
+            posButton.setOnClickListener {
+                findListener<Listener>()?.onPositiveClicked(
                     dialogId,
-                    this,
+                    this@AlertDialogController,
                     DialogInputResult(textInput.text.toString())
                 )
-                router.popCurrentController()
+                if (dismissible) {
+                    router.popCurrentController()
+                }
             }
-        }
-        pos_button.setOnClickListener {
-            findListener<Listener>()?.onPositiveClicked(
-                dialogId,
-                this,
-                DialogInputResult(textInput.text.toString())
-            )
-            if (dismissible) {
-                router.popCurrentController()
+            negButton.setOnClickListener {
+                findListener<Listener>()?.onNegativeClicked(
+                    dialogId,
+                    this@AlertDialogController,
+                    DialogInputResult(textInput.text.toString())
+                )
+                if (dismissible) {
+                    router.popCurrentController()
+                }
             }
-        }
-        neg_button.setOnClickListener {
-            findListener<Listener>()?.onNegativeClicked(
-                dialogId,
-                this,
-                DialogInputResult(textInput.text.toString())
-            )
-            if (dismissible) {
-                router.popCurrentController()
+            helpIcon.setOnClickListener {
+                findListener<Listener>()?.onHelpClicked(dialogId, this@AlertDialogController)
             }
+
+            helpIcon.isVisible = arg(KEY_SHOW_HELP)
+            dialogText.text = arg(KEY_MESSAGE)
+
+            val title = argOptional<String>(KEY_TITLE)
+            dialogTitle.isGone = title.isNullOrBlank()
+            dialogTitle.text = title
+
+            val positiveText = argOptional<String>(KEY_POSITIVE_TEXT)
+            posButton.isGone = positiveText.isNullOrBlank()
+            posButton.text = positiveText
+
+            val negativeText = argOptional<String>(KEY_NEGATIVE_TEXT)
+            negButton.isGone = negativeText.isNullOrBlank()
+            negButton.text = negativeText
+
+            val textInputPlaceholder = argOptional<String>(KEY_TEXT_INPUT_PLACEHOLDER)
+            textInput.isGone = textInputPlaceholder.isNullOrBlank()
+            textInput.hint = textInputPlaceholder
         }
-        help_icon.setOnClickListener {
-            findListener<Listener>()?.onHelpClicked(dialogId, this)
-        }
-
-        help_icon.isVisible = arg(KEY_SHOW_HELP)
-        dialog_text.text = arg(KEY_MESSAGE)
-
-        val title = argOptional<String>(KEY_TITLE)
-        dialog_title.isGone = title.isNullOrBlank()
-        dialog_title.text = title
-
-        val positiveText = argOptional<String>(KEY_POSITIVE_TEXT)
-        pos_button.isGone = positiveText.isNullOrBlank()
-        pos_button.text = positiveText
-
-        val negativeText = argOptional<String>(KEY_NEGATIVE_TEXT)
-        neg_button.isGone = negativeText.isNullOrBlank()
-        neg_button.text = negativeText
-
-        val textInputPlaceholder = argOptional<String>(KEY_TEXT_INPUT_PLACEHOLDER)
-        textInput.isGone = textInputPlaceholder.isNullOrBlank()
-        textInput.hint = textInputPlaceholder
     }
 
     override fun handleBack(): Boolean {
@@ -170,7 +171,7 @@ class AlertDialogController(
             findListener<Listener>()?.onDismissed(
                 arg(KEY_DIALOG_ID),
                 this,
-                DialogInputResult(textInput.text.toString())
+                DialogInputResult(binding.textInput.text.toString())
             )
             super.handleBack()
         } else true

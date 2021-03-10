@@ -24,7 +24,7 @@
  */
 package com.breadwallet.protocols.messageexchange.entities
 
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class LinkMetaData(

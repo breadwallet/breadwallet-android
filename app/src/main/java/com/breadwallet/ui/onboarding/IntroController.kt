@@ -35,7 +35,7 @@ import androidx.core.net.toUri
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
-import com.breadwallet.tools.animation.UiUtils
+import com.breadwallet.databinding.ControllerIntroBinding
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.tools.util.TokenUtil
@@ -43,7 +43,6 @@ import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.navigation.NavigationTarget
 import com.breadwallet.ui.navigation.asSupportUrl
 import com.breadwallet.ui.web.WebController
-import kotlinx.android.synthetic.main.controller_intro.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -64,34 +63,31 @@ private const val ICONS_TO_SHOW = 20
  */
 class IntroController : BaseController() {
 
-    override val layoutId: Int = R.layout.controller_intro
+    private val binding by viewBinding(ControllerIntroBinding::inflate)
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        button_new_wallet.setOnClickListener {
-            EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_GET_STARTED)
-            router.pushController(
-                RouterTransaction.with(OnBoardingController())
-                    .popChangeHandler(HorizontalChangeHandler())
-                    .pushChangeHandler(HorizontalChangeHandler())
-            )
-        }
-        button_recover_wallet.setOnClickListener {
-            EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_RESTORE_WALLET)
-            router.pushController(
-                RouterTransaction.with(IntroRecoveryController())
-                    .popChangeHandler(HorizontalChangeHandler())
-                    .pushChangeHandler(HorizontalChangeHandler())
-            )
-        }
-        faq_button.setOnClickListener {
-            if (!UiUtils.isClickAllowed()) return@setOnClickListener
-            val url = NavigationTarget.SupportPage(BRConstants.FAQ_START_VIEW).asSupportUrl()
-            router.pushController(
-                RouterTransaction.with(
-                    WebController(url)
+        with(binding) {
+            buttonNewWallet.setOnClickListener {
+                EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_GET_STARTED)
+                router.pushController(
+                    RouterTransaction.with(OnBoardingController())
+                        .popChangeHandler(HorizontalChangeHandler())
+                        .pushChangeHandler(HorizontalChangeHandler())
                 )
-            )
+            }
+            buttonRecoverWallet.setOnClickListener {
+                EventUtils.pushEvent(EventUtils.EVENT_LANDING_PAGE_RESTORE_WALLET)
+                router.pushController(
+                    RouterTransaction.with(IntroRecoveryController())
+                        .popChangeHandler(HorizontalChangeHandler())
+                        .pushChangeHandler(HorizontalChangeHandler())
+                )
+            }
+            faqButton.setOnClickListener {
+                val url = NavigationTarget.SupportPage(BRConstants.FAQ_START_VIEW).asSupportUrl()
+                router.pushController(RouterTransaction.with(WebController(url)))
+            }
         }
     }
 
@@ -119,61 +115,63 @@ class IntroController : BaseController() {
         val context = router.activity
         val icons = mutableListOf<View>()
 
-        for (path in iconsPath) {
-            val icon = ImageView(context).apply {
-                layoutParams = ViewGroup.LayoutParams(100, 100)
-                id = View.generateViewId()
-                setImageURI(path.toUri())
-                alpha = 0.6f
-                visibility = View.INVISIBLE
+        with(binding) {
+            for (path in iconsPath) {
+                val icon = ImageView(context).apply {
+                    layoutParams = ViewGroup.LayoutParams(100, 100)
+                    id = View.generateViewId()
+                    setImageURI(path.toUri())
+                    alpha = 0.6f
+                    visibility = View.INVISIBLE
+                }
+                icons.add(icon)
+                introLayout.addView(icon)
             }
-            icons.add(icon)
-            intro_layout.addView(icon)
-        }
 
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(intro_layout)
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(introLayout)
 
-        // Add constraints for the initial position
-        for (icon in icons) {
-            constraintSet.connect(
-                icon.id,
-                ConstraintSet.RIGHT,
-                intro_layout.id,
-                ConstraintSet.RIGHT,
-                16
-            )
-            constraintSet.connect(
-                icon.id,
-                ConstraintSet.LEFT,
-                intro_layout.id,
-                ConstraintSet.LEFT,
-                16
-            )
-            constraintSet.connect(
-                icon.id,
-                ConstraintSet.TOP,
-                logo_view.id,
-                ConstraintSet.TOP,
-                16
-            )
-            constraintSet.connect(
-                icon.id,
-                ConstraintSet.BOTTOM,
-                logo_view.id,
-                ConstraintSet.BOTTOM,
-                16
-            )
-        }
-        constraintSet.applyTo(intro_layout)
+            // Add constraints for the initial position
+            for (icon in icons) {
+                constraintSet.connect(
+                    icon.id,
+                    ConstraintSet.RIGHT,
+                    introLayout.id,
+                    ConstraintSet.RIGHT,
+                    16
+                )
+                constraintSet.connect(
+                    icon.id,
+                    ConstraintSet.LEFT,
+                    introLayout.id,
+                    ConstraintSet.LEFT,
+                    16
+                )
+                constraintSet.connect(
+                    icon.id,
+                    ConstraintSet.TOP,
+                    logoView.id,
+                    ConstraintSet.TOP,
+                    16
+                )
+                constraintSet.connect(
+                    icon.id,
+                    ConstraintSet.BOTTOM,
+                    logoView.id,
+                    ConstraintSet.BOTTOM,
+                    16
+                )
+            }
+            constraintSet.applyTo(introLayout)
 
-        val length = icons.size - 1
-        for (i in 0..length) {
-            animateIcon(icons[i])
-        }
-        viewAttachScope.launch(Main) {
-            delay(ANIMATION_MAX_DELAY)
-            loadViewsAndAnimate(iconsPath)
+            val length = icons.size - 1
+            for (i in 0..length) {
+                animateIcon(icons[i])
+            }
+            viewAttachScope.launch(Main) {
+                delay(ANIMATION_MAX_DELAY)
+                loadViewsAndAnimate(iconsPath)
+            }
         }
     }
 
@@ -195,7 +193,7 @@ class IntroController : BaseController() {
                 addListener(object : Animator.AnimatorListener {
                     override fun onAnimationEnd(animation: Animator?) {
                         if (isAttached) {
-                            intro_layout.removeView(icon)
+                            binding.introLayout.removeView(icon)
                         }
                     }
 

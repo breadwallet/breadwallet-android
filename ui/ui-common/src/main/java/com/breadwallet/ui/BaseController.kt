@@ -33,8 +33,6 @@ import android.widget.Toast
 import androidx.viewbinding.ViewBinding
 import com.bluelinelabs.conductor.Controller
 import com.breadwallet.util.errorHandler
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -44,14 +42,10 @@ import org.kodein.di.android.closestKodein
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-/**
- * A simple controller that automatically inflates the
- * [layoutId] and implements [LayoutContainer].
- */
 @Suppress("TooManyFunctions")
 abstract class BaseController(
     args: Bundle? = null
-) : Controller(args), KodeinAware, LayoutContainer {
+) : Controller(args), KodeinAware {
 
     protected val controllerScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Default + errorHandler("controllerScope")
@@ -72,9 +66,6 @@ abstract class BaseController(
 
     private val resettableDelegates = mutableListOf<ResettableDelegate<*>>()
 
-    final override var containerView: View? = null
-        private set
-
     /** The layout id to be used for inflating this controller's view. */
     open val layoutId: Int = -1
 
@@ -82,18 +73,18 @@ abstract class BaseController(
     open fun onCreateView(view: View) {
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedViewState: Bundle?): View {
         val viewBindingDelegates = resettableDelegates.filterIsInstance<ViewBindingDelegate<ViewBinding>>()
 
         return if (viewBindingDelegates.isEmpty()) {
             check(layoutId > 0) { "Must set layoutId or override onCreateView." }
             inflater.inflate(layoutId, container, false).apply {
-                containerView = this
                 onCreateView(this)
             }
         } else {
-            check(viewBindingDelegates.size == 1) { "Only one ViewBinding delegate can be created" }
-            return viewBindingDelegates.single().create(inflater).root.also(::onCreateView)
+            val primaryBinding = viewBindingDelegates.first().create(inflater)
+            viewBindingDelegates.drop(1).forEach { it.create(inflater, primaryBinding.root) }
+            return primaryBinding.root.also(::onCreateView)
         }
     }
 
@@ -101,8 +92,6 @@ abstract class BaseController(
         resetDelegatesFor(ResetCallback.ON_DESTROY_VIEW)
         viewCreatedScope.coroutineContext.cancelChildren()
         super.onDestroyView(view)
-        clearFindViewByIdCache()
-        containerView = null
     }
 
     override fun onDetach(view: View) {
@@ -147,7 +136,7 @@ abstract class BaseController(
     inline fun <reified T> findListener(): T? =
         (targetController as? T)
             ?: (parentController as? T)
-            ?: (router.backstack.dropLast(1).lastOrNull()?.controller() as? T)
+            ?: (router.backstack.dropLast(1).lastOrNull()?.controller as? T)
 
     private fun resetDelegatesFor(callback: ResetCallback) {
         resettableDelegates.forEach { delegate ->
@@ -157,18 +146,38 @@ abstract class BaseController(
         }
     }
 
+    protected fun <T> resetOnDetach(block: () -> T): ReadOnlyProperty<BaseController, T> {
+        return ResettableDelegate(ResetCallback.ON_DETACH, block)
+    }
+
+    protected fun <T> resetOnViewDestroy(block: () -> T): ReadOnlyProperty<BaseController, T> {
+        return ResettableDelegate(ResetCallback.ON_DESTROY_VIEW, block)
+    }
+
+    protected fun <T> resetOnDestroy(block: () -> T): ReadOnlyProperty<BaseController, T> {
+        return ResettableDelegate(ResetCallback.ON_DESTROY, block)
+    }
+
     /**
      * Produce a [ViewBinding] [T] during [onCreateView] and use the
      * [ViewBinding.getRoot] as the [Controller.getView].
      *
      * The binding will be released in [onDestroyView].
      *
-     * *NOTE:* The binding only exists between [onCreateView] and [onDestroyView]
+     * *NOTE:* The binding only exists between [onCreateView] and [onDestroyView].
+     * Multiple bindings can be created, but only the first defined binding is
+     * used as the Controller's view.
      */
     protected fun <T : ViewBinding> viewBinding(
         block: (LayoutInflater) -> T
     ): ReadOnlyProperty<BaseController, T> {
-        return ViewBindingDelegate(block).also(resettableDelegates::add)
+        return ViewBindingDelegate(block, null).also(resettableDelegates::add)
+    }
+
+    protected fun <T : ViewBinding> nestedViewBinding(
+        viewBlock: (LayoutInflater, ViewGroup?, Boolean) -> T
+    ): ReadOnlyProperty<BaseController, T> {
+        return ViewBindingDelegate(null, viewBlock).also(resettableDelegates::add)
     }
 
     enum class ResetCallback {
@@ -195,12 +204,17 @@ abstract class BaseController(
     }
 
     private inner class ViewBindingDelegate<T : ViewBinding>(
-        private val createBinding: (LayoutInflater) -> T
+        private val createBindingViaInflater: ((LayoutInflater) -> T)?,
+        private val createBindingViaView: ((LayoutInflater, ViewGroup?, Boolean) -> T)?
     ) : ResettableDelegate<T>(ResetCallback.ON_DESTROY_VIEW) {
 
-        fun create(inflater: LayoutInflater): T {
+        fun create(inflater: LayoutInflater, view: View? = null): T {
             check(value == null) { "ViewBinding has already been created." }
-            value = createBinding(inflater)
+            value = if (view == null) {
+                createBindingViaInflater?.invoke(inflater)
+            } else {
+                createBindingViaView?.invoke(inflater, view as ViewGroup, false)
+            }
             return value!!
         }
 

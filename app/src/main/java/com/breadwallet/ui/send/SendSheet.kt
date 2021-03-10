@@ -43,7 +43,7 @@ import com.breadwallet.util.isBitcoin
 import com.breadwallet.util.isErc20
 import com.breadwallet.util.isEthereum
 import dev.zacsweers.redacted.annotations.Redacted
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 
 @Parcelize

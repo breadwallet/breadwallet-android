@@ -42,9 +42,6 @@ internal fun Project.configureAndroidLibrary(
     plugins.apply("com.android.library")
     plugins.apply("kotlin-android")
 
-    // TODO: Remove when android view extensions usage is removed
-    plugins.apply("kotlin-android-extensions")
-
     extensions.getByType<LibraryExtension>().apply {
         compileSdkVersion(BrdRelease.ANDROID_COMPILE_SDK)
         buildToolsVersion(BrdRelease.ANDROID_BUILD_TOOLS)

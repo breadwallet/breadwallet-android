@@ -78,7 +78,8 @@ class MetaDataManager(
 
     override fun create(accountCreationDate: Date) {
         val walletInfoJson = WalletInfoData(
-            creationDate = accountCreationDate.time
+            creationDate = accountCreationDate.time,
+            connectionModes = BreadApp.getDefaultWalletModes()
         ).toJSON()
 
         storeProvider.put(KEY_WALLET_INFO, walletInfoJson)

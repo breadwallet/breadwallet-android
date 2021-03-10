@@ -34,13 +34,12 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.VerticalChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
+import com.breadwallet.databinding.RewardsAnnouncementViewBinding
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.util.EventUtils
 import com.breadwallet.ui.web.WebController
 import com.google.android.material.appbar.AppBarLayout
 import com.platform.HTTPServer
-import kotlinx.android.synthetic.main.controller_wallet.*
-import kotlinx.android.synthetic.main.rewards_announcement_view.*
 import java.io.File
 
 /**
@@ -55,14 +54,13 @@ class BrdWalletController : WalletController("BRD") {
     // The view was expanded and ready to lock when collapsed again.
     private var mCanScroll = false
 
+    private val rewardsBinding by nestedViewBinding(RewardsAnnouncementViewBinding::inflate)
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        mAppBarLayoutRoot = activity!!.layoutInflater.inflate(
-            R.layout.rewards_announcement_view,
-            null
-        ) as AppBarLayout
-        transaction_list_coordinator_layout.addView(mAppBarLayoutRoot, 0)
-        lockRewardsViewToCollapsed(mAppBarLayoutRoot!!, tx_list)
+        mAppBarLayoutRoot = rewardsBinding.appBar
+        binding.transactionListCoordinatorLayout.addView(mAppBarLayoutRoot, 0)
+        lockRewardsViewToCollapsed(mAppBarLayoutRoot!!, binding.txList)
         mAppBarLayoutRoot!!.setOnClickListener {
             //Collapse without animation before showing the rewards webview.
             EventUtils.pushEvent(EventUtils.EVENT_REWARDS_BANNER)
@@ -94,22 +92,22 @@ class BrdWalletController : WalletController("BRD") {
                         val expandedAlpha = distance.toFloat() / mTotalDistance.toFloat() / 2
                         // The alpha to use for the collapsed layout (the opposite of expanded alpha).
                         val collapsedAlpha = 1f - expandedAlpha
-                        expanded_rewards_layout.alpha = expandedAlpha / 2
-                        collapsed_rewards_toolbar.alpha = collapsedAlpha
+                        rewardsBinding.expandedRewardsLayout.alpha = expandedAlpha / 2
+                        rewardsBinding.collapsedRewardsToolbar.alpha = collapsedAlpha
                     }
                     if (distance == 0 && mCanScroll) {
                         // Fully collapsed.
-                        collapsed_rewards_toolbar.alpha = 1f
-                        expanded_rewards_layout.alpha = 0f
+                        rewardsBinding.collapsedRewardsToolbar.alpha = 1f
+                        rewardsBinding.expandedRewardsLayout.alpha = 0f
                     }
                 }
             }
             mAppBarLayoutRoot!!.addOnOffsetChangedListener(offsetChangedListener)
 
             // Prepares and plays the confetti brd video.
-            confetti_video_view.setVideoURI(CONFETTI_VIDEO_URI)
-            confetti_video_view.start()
-            confetti_video_view.setOnPreparedListener { mediaPlayer ->
+            rewardsBinding.confettiVideoView.setVideoURI(CONFETTI_VIDEO_URI)
+            rewardsBinding.confettiVideoView.start()
+            rewardsBinding.confettiVideoView.setOnPreparedListener { mediaPlayer ->
                 mediaPlayer.setOnInfoListener { _, what, _ ->
                     when (what) {
                         MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START -> {

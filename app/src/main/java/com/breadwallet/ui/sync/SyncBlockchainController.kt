@@ -26,7 +26,7 @@ package com.breadwallet.ui.sync
 
 import android.os.Bundle
 import androidx.core.os.bundleOf
-import com.breadwallet.R
+import com.breadwallet.databinding.ControllerSyncBlockchainBinding
 import com.breadwallet.ui.BaseMobiusController
 import com.breadwallet.ui.controllers.AlertDialogController
 import com.breadwallet.ui.flowbind.clicks
@@ -34,7 +34,6 @@ import com.breadwallet.ui.sync.SyncBlockchain.E
 import com.breadwallet.ui.sync.SyncBlockchain.F
 import com.breadwallet.ui.sync.SyncBlockchain.M
 import com.breadwallet.util.CurrencyCode
-import kotlinx.android.synthetic.main.controller_sync_blockchain.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -54,19 +53,21 @@ class SyncBlockchainController(
         )
     )
 
-    override val layoutId = R.layout.controller_sync_blockchain
-
     override val defaultModel = M(arg(CURRENCY_CODE))
     override val update = SyncBlockchainUpdate
 
     override val flowEffectHandler
         get() = createSyncBlockchainHandler(direct.instance())
 
+    private val binding by viewBinding(ControllerSyncBlockchainBinding::inflate)
+
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        return merge(
-            faq_button.clicks().map { E.OnFaqClicked },
-            button_scan.clicks().map { E.OnSyncClicked }
-        )
+        return with(binding) {
+            merge(
+                faqButton.clicks().map { E.OnFaqClicked },
+                buttonScan.clicks().map { E.OnSyncClicked }
+            )
+        }
     }
 
     override fun onPositiveClicked(

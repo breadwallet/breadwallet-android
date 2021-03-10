@@ -1,12 +1,35 @@
+/**
+ * BreadWallet
+ *
+ * Created by Drew Carlson <drew.carlson@breadwallet.com> on 3/25/20.
+ * Copyright (c) 2020 breadwallet LLC
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package com.breadwallet.ui.home
 
 import android.view.View
 import com.breadwallet.R
+import com.breadwallet.databinding.AddWalletsItemBinding
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.drag.IDraggable
 import com.mikepenz.fastadapter.items.AbstractItem
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.add_wallets_item.*
 
 class AddWalletItem : AbstractItem<AddWalletItem.ViewHolder>(), IDraggable {
 
@@ -19,13 +42,14 @@ class AddWalletItem : AbstractItem<AddWalletItem.ViewHolder>(), IDraggable {
     override fun getViewHolder(v: View) = ViewHolder(v)
 
     class ViewHolder(
-        override val containerView: View
-    ) : FastAdapter.ViewHolder<AddWalletItem>(containerView),
-        LayoutContainer{
+        v: View
+    ) : FastAdapter.ViewHolder<AddWalletItem>(v) {
 
         init {
-            val res = containerView.resources
-            add_wallets.text = "+ ${res.getString(R.string.TokenList_addTitle)}"
+            val res = v.resources
+            AddWalletsItemBinding.bind(v)
+                .addWallets
+                .text = "+ ${res.getString(R.string.TokenList_addTitle)}"
         }
 
         override fun bindView(

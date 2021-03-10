@@ -29,8 +29,8 @@
         android:textColor="@color/total_assets_usd_color"
         android:textSize="16sp"
         android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/tx_description"
-        app:layout_constraintEnd_toEndOf="@+id/tx_description"
+        app:layout_constraintBottom_toTopOf="@+id/txDescriptionLabel"
+        app:layout_constraintEnd_toEndOf="@+id/txDescriptionLabel"
         app:layout_constraintStart_toEndOf="@id/imageTransferDirection"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -38,11 +38,10 @@
         tools:text="Dec 2, 2020"/>
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
-        android:id="@+id/tx_description"
-        android:layout_width="0dp"
+        android:id="@+id/txDescriptionLabel"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
@@ -51,10 +50,38 @@
         app:layout_constraintStart_toEndOf="@id/imageTransferDirection"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tx_date"
+        app:layout_constraintEnd_toStartOf="@+id/descriptionSpacer"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        tools:text="sent to"/>
+
+    <Space
+        android:id="@+id/descriptionSpacer"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/txDescriptionLabel"
+        app:layout_constraintBottom_toBottomOf="@+id/txDescriptionLabel"
+        app:layout_constraintTop_toBottomOf="@+id/tx_date"
+        app:layout_constraintEnd_toStartOf="@+id/txDescriptionValue"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed" />
+
+    <com.breadwallet.legacy.presenter.customviews.BaseTextView
+        android:id="@+id/txDescriptionValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        android:textColor="@color/settings_chevron_right"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/descriptionSpacer"
+        app:layout_constraintBottom_toBottomOf="@+id/txDescriptionLabel"
+        app:layout_constraintTop_toTopOf="@+id/txDescriptionLabel"
         app:layout_constraintEnd_toStartOf="@+id/tx_amount"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintHorizontal_chainStyle="packed"
-        tools:text="sent to f94c57...74cd8"/>
+        tools:text="f94c57...74cd8"/>
 
     <com.breadwallet.legacy.presenter.customviews.BaseTextView
         android:id="@+id/tx_amount"

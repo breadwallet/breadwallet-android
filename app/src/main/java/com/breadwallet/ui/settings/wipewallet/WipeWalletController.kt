@@ -27,25 +27,24 @@ package com.breadwallet.ui.settings.wipewallet
 import android.view.View
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
-import com.breadwallet.R
+import com.breadwallet.databinding.ControllerWipeWalletBinding
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.recovery.RecoveryKey
 import com.breadwallet.ui.recovery.RecoveryKeyController
-import kotlinx.android.synthetic.main.controller_wipe_wallet.*
 
 class WipeWalletController : BaseController() {
 
-    override val layoutId = R.layout.controller_wipe_wallet
+    private val binding by viewBinding(ControllerWipeWalletBinding::inflate)
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        continue_btn.setOnClickListener {
+        binding.continueBtn.setOnClickListener {
             router.pushController(
                 RouterTransaction.with(RecoveryKeyController(RecoveryKey.Mode.WIPE))
                     .pushChangeHandler(HorizontalChangeHandler())
                     .popChangeHandler(HorizontalChangeHandler())
             )
         }
-        close_btn.setOnClickListener { router.popCurrentController() }
+        binding.closeBtn.setOnClickListener { router.popCurrentController() }
     }
 }

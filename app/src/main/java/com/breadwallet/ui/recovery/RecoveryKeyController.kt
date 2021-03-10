@@ -40,7 +40,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.app.BreadApp
-import com.breadwallet.legacy.presenter.customviews.BRDialogView
+import com.breadwallet.databinding.ControllerRecoveryKeyBinding
 import com.breadwallet.legacy.presenter.customviews.BREdit
 import com.breadwallet.tools.animation.BRDialog
 import com.breadwallet.tools.animation.SpringAnimator
@@ -56,7 +56,6 @@ import com.breadwallet.util.DefaultTextWatcher
 import com.spotify.mobius.disposables.Disposable
 import com.spotify.mobius.functions.Consumer
 import drewcarlson.mobius.flow.FlowTransformer
-import kotlinx.android.synthetic.main.controller_recovery_key.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -80,8 +79,6 @@ class RecoveryKeyController(
     private var launchPhrase: String? = null
     private val mode = arg("mode", RecoveryKey.Mode.RECOVER.name)
 
-    override val layoutId: Int = R.layout.controller_recovery_key
-
     override val defaultModel
         get() = M.createWithOptionalPhrase(
             mode = RecoveryKey.Mode.valueOf(mode),
@@ -95,13 +92,17 @@ class RecoveryKeyController(
             direct.instance()
         )
 
+    private val binding by viewBinding(ControllerRecoveryKeyBinding::inflate)
+
     private val wordInputs: List<BREdit>
-        get() = listOf(
-            word1, word2, word3,
-            word4, word5, word6,
-            word7, word8, word9,
-            word10, word11, word12
-        )
+        get() = with(binding) {
+            listOf(
+                word1, word2, word3,
+                word4, word5, word6,
+                word7, word8, word9,
+                word10, word11, word12
+            )
+        }
 
     private val inputTextColorValue = TypedValue()
     private var errorTextColor: Int = -1
@@ -124,13 +125,13 @@ class RecoveryKeyController(
                 resources.getString(R.string.Alert_customKeyboard_android),
                 resources.getString(R.string.Button_ok),
                 resources.getString(R.string.JailbreakWarnings_close),
-                BRDialogView.BROnClickListener { brDialogView ->
+                { brDialogView ->
                     val imeManager =
                         applicationContext!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imeManager.showInputMethodPicker()
                     brDialogView.dismissWithAnimation()
                 },
-                BRDialogView.BROnClickListener { brDialogView -> brDialogView.dismissWithAnimation() },
+                { brDialogView -> brDialogView.dismissWithAnimation() },
                 null,
                 0
             )
@@ -139,27 +140,29 @@ class RecoveryKeyController(
 
     override fun bindView(output: Consumer<E>): Disposable {
         val resources = resources!!
-        when (currentModel.mode) {
-            RecoveryKey.Mode.WIPE -> {
-                title.text = resources.getString(R.string.RecoveryKeyFlow_enterRecoveryKey)
-                description.text = resources.getString(R.string.WipeWallet_instruction)
+        with(binding) {
+            when (currentModel.mode) {
+                RecoveryKey.Mode.WIPE -> {
+                    title.text = resources.getString(R.string.RecoveryKeyFlow_enterRecoveryKey)
+                    description.text = resources.getString(R.string.WipeWallet_instruction)
+                }
+                RecoveryKey.Mode.RESET_PIN -> {
+                    title.text = resources.getString(R.string.RecoverWallet_header_reset_pin)
+                    description.text =
+                        resources.getString(R.string.RecoverWallet_subheader_reset_pin)
+                }
+                RecoveryKey.Mode.RECOVER -> Unit
             }
-            RecoveryKey.Mode.RESET_PIN -> {
-                title.text = resources.getString(R.string.RecoverWallet_header_reset_pin)
-                description.text =
-                    resources.getString(R.string.RecoverWallet_subheader_reset_pin)
-            }
-            RecoveryKey.Mode.RECOVER -> Unit
-        }
 
-        faq_button.setOnClickListener {
-            output.accept(E.OnFaqClicked)
-        }
-        send_button.setOnClickListener {
-            output.accept(E.OnNextClicked)
-        }
-        buttonContactSupport.setOnClickListener {
-            output.accept(E.OnContactSupportClicked)
+            faqButton.setOnClickListener {
+                output.accept(E.OnFaqClicked)
+            }
+            sendButton.setOnClickListener {
+                output.accept(E.OnNextClicked)
+            }
+            buttonContactSupport.setOnClickListener {
+                output.accept(E.OnContactSupportClicked)
+            }
         }
 
         // Bind paste event
@@ -215,11 +218,11 @@ class RecoveryKeyController(
     override fun M.render() {
         ifChanged(M::isLoading) {
             // TODO: Show loading msg
-            loading_view.isVisible = it
+            binding.loadingView.root.isVisible = it
         }
 
         ifChanged(M::showContactSupport) {
-            buttonContactSupport.isVisible = it
+            binding.buttonContactSupport.isVisible = it
         }
 
         ifChanged(M::errors) { errors ->

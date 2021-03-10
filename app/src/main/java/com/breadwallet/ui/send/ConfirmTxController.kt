@@ -32,11 +32,11 @@ import androidx.core.view.isVisible
 import com.breadwallet.R
 import com.breadwallet.breadbox.TransferSpeed
 import com.breadwallet.breadbox.formatCryptoForUi
+import com.breadwallet.databinding.ControllerConfirmTxDetailsBinding
 import com.breadwallet.ui.formatFiatForUi
 import com.breadwallet.tools.util.eth
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.changehandlers.DialogChangeHandler
-import kotlinx.android.synthetic.main.controller_confirm_tx_details.*
 import java.math.BigDecimal
 
 private const val KEY_CURRENCY_CODE = "currency_code"
@@ -108,19 +108,23 @@ class ConfirmTxController(
         overridePopHandler(DialogChangeHandler())
     }
 
+    private val binding by viewBinding(ControllerConfirmTxDetailsBinding::inflate)
+
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        ok_btn.setOnClickListener {
-            router.popCurrentController()
-            findListener<Listener>()?.onPositiveClicked(this)
+        with(binding) {
+            okBtn.setOnClickListener {
+                router.popCurrentController()
+                findListener<Listener>()?.onPositiveClicked(this@ConfirmTxController)
+            }
+            val cancelTxListener = View.OnClickListener {
+                router.popCurrentController()
+                findListener<Listener>()?.onNegativeClicked(this@ConfirmTxController)
+            }
+            cancelBtn.setOnClickListener(cancelTxListener)
+            closeBtn.setOnClickListener(cancelTxListener)
+            layoutBackground.setOnClickListener(cancelTxListener)
         }
-        val cancelTxListener = View.OnClickListener {
-            router.popCurrentController()
-            findListener<Listener>()?.onNegativeClicked(this)
-        }
-        cancel_btn.setOnClickListener(cancelTxListener)
-        close_btn.setOnClickListener(cancelTxListener)
-        layoutBackground.setOnClickListener(cancelTxListener)
     }
 
     override fun onAttach(view: View) {
@@ -136,47 +140,49 @@ class ConfirmTxController(
     private fun ConfirmTxModel.render() {
         val res = checkNotNull(resources)
         val fiatAmountString = fiatAmount.formatFiatForUi(fiatCode)
-        send_value.text = "%s (%s)".format(amount.formatCryptoForUi(currencyCode), fiatAmountString)
-        to_address.text = targetAddress
-        amount_value.text = fiatAmountString
+        with (binding) {
+            sendValue.text = "%s (%s)".format(amount.formatCryptoForUi(currencyCode), fiatAmountString)
+            toAddress.text = targetAddress
+            amountValue.text = fiatAmountString
 
-        val isErc20 = !currencyCode.equals(eth, true) && feeCode.equals(eth, true)
+            val isErc20 = !currencyCode.equals(eth, true) && feeCode.equals(eth, true)
 
-        val processingTime = res.getString(
-            when {
-                isErc20 -> R.string.FeeSelector_ethTime
-                else -> when (transferSpeed) {
-                    is TransferSpeed.Economy -> R.string.FeeSelector_economyTime
-                    is TransferSpeed.Regular -> R.string.FeeSelector_regularTime
-                    is TransferSpeed.Priority -> R.string.FeeSelector_priorityTime
-                }
-            }
-        )
-        processing_time_label.text =
-            res.getString(R.string.Confirmation_processingTime, processingTime)
-
-        network_fee_label.setText(R.string.Confirmation_feeLabel)
-        total_cost_label.isGone = isErc20
-        total_cost_value.isGone = isErc20
-        total_cost_value.text = fiatTotalCost.formatFiatForUi(fiatCode)
-        network_fee_value.text = fiatNetworkFee.formatFiatForUi(fiatCode)
-
-        transferFields.forEach { field ->
-            when (field.key) {
-                TransferField.DESTINATION_TAG -> {
-                    groupDestinationTag.isVisible = true
-                    if (field.value.isNullOrEmpty()) {
-                        destination_tag_value.setText(R.string.Confirmation_destinationTag_EmptyHint)
-                    } else {
-                        destination_tag_value.text = field.value
+            val processingTime = res.getString(
+                when {
+                    isErc20 -> R.string.FeeSelector_ethTime
+                    else -> when (transferSpeed) {
+                        is TransferSpeed.Economy -> R.string.FeeSelector_economyTime
+                        is TransferSpeed.Regular -> R.string.FeeSelector_regularTime
+                        is TransferSpeed.Priority -> R.string.FeeSelector_priorityTime
                     }
                 }
-                TransferField.HEDERA_MEMO -> {
-                    groupHederaMemo.isVisible = true
-                    if (field.value.isNullOrEmpty()) {
-                        hedera_memo_value.setText(R.string.Confirmation_destinationTag_EmptyHint)
-                    } else {
-                        hedera_memo_value.text = field.value
+            )
+            processingTimeLabel.text =
+                res.getString(R.string.Confirmation_processingTime, processingTime)
+
+            networkFeeLabel.setText(R.string.Confirmation_feeLabel)
+            totalCostLabel.isGone = isErc20
+            totalCostValue.isGone = isErc20
+            totalCostValue.text = fiatTotalCost.formatFiatForUi(fiatCode)
+            networkFeeValue.text = fiatNetworkFee.formatFiatForUi(fiatCode)
+
+            transferFields.forEach { field ->
+                when (field.key) {
+                    TransferField.DESTINATION_TAG -> {
+                        groupDestinationTag.isVisible = true
+                        if (field.value.isNullOrEmpty()) {
+                            destinationTagValue.setText(R.string.Confirmation_destinationTag_EmptyHint)
+                        } else {
+                            destinationTagValue.text = field.value
+                        }
+                    }
+                    TransferField.HEDERA_MEMO -> {
+                        groupHederaMemo.isVisible = true
+                        if (field.value.isNullOrEmpty()) {
+                            hederaMemoValue.setText(R.string.Confirmation_destinationTag_EmptyHint)
+                        } else {
+                            hederaMemoValue.text = field.value
+                        }
                     }
                 }
             }

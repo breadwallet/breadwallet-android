@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.breadwallet.R
+import com.breadwallet.databinding.ControllerSettingsBinding
 import com.breadwallet.tools.util.Link
 import com.breadwallet.tools.util.ServerBundlesHelper
 import com.breadwallet.ui.BaseMobiusController
@@ -50,7 +51,6 @@ import com.breadwallet.ui.settings.SettingsScreen.F
 import com.breadwallet.ui.settings.SettingsScreen.M
 import com.platform.APIClient
 import com.spotify.mobius.Connectable
-import kotlinx.android.synthetic.main.controller_settings.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.dropWhile
@@ -87,7 +87,7 @@ class SettingsController(
         }
     }
 
-    override val layoutId = R.layout.controller_settings
+    override val init = SettingsInit
     override val defaultModel = M.createDefault(section)
     override val update = SettingsUpdate
     override val effectHandler = Connectable<F, E> { output ->
@@ -103,12 +103,12 @@ class SettingsController(
         )
     }
 
-    override val init = SettingsInit
+    private val binding by viewBinding(ControllerSettingsBinding::inflate)
 
     override fun onCreateView(view: View) {
         super.onCreateView(view)
-        settings_list.layoutManager = LinearLayoutManager(activity!!)
-        settings_list.addItemDecoration(
+        binding.settingsList.layoutManager = LinearLayoutManager(activity!!)
+        binding.settingsList.addItemDecoration(
             DividerItemDecoration(
                 activity!!,
                 DividerItemDecoration.VERTICAL
@@ -117,40 +117,44 @@ class SettingsController(
     }
 
     override fun bindView(modelFlow: Flow<M>): Flow<E> {
-        return merge(
-            close_button.clicks().map { E.OnCloseClicked },
-            back_button.clicks().map { E.OnBackClicked },
-            title.clicks()
-                .dropWhile { currentModel.section != SettingsSection.HOME }
-                .drop(HIDDEN_MENU_CLICKS)
-                .map { E.ShowHiddenOptions }
-        )
+        return with(binding) {
+            merge(
+                closeButton.clicks().map { E.OnCloseClicked },
+                backButton.clicks().map { E.OnBackClicked },
+                title.clicks()
+                    .dropWhile { currentModel.section != SettingsSection.HOME }
+                    .drop(HIDDEN_MENU_CLICKS)
+                    .map { E.ShowHiddenOptions }
+            )
+        }
     }
 
     override fun M.render() {
         val act = activity!!
-        ifChanged(M::section) {
-            title.text = when (section) {
-                SettingsSection.HOME -> act.getString(R.string.Settings_title)
-                SettingsSection.PREFERENCES -> act.getString(R.string.Settings_preferences)
-                SettingsSection.HIDDEN,
-                SettingsSection.DEVELOPER_OPTION -> "Developer Options"
-                SettingsSection.SECURITY -> act.getString(R.string.MenuButton_security)
-                SettingsSection.BTC_SETTINGS -> "Bitcoin ${act.getString(R.string.Settings_title)}"
-                SettingsSection.BCH_SETTINGS -> "Bitcoin Cash ${act.getString(R.string.Settings_title)}"
+        with(binding) {
+            ifChanged(M::section) {
+                title.text = when (section) {
+                    SettingsSection.HOME -> act.getString(R.string.Settings_title)
+                    SettingsSection.PREFERENCES -> act.getString(R.string.Settings_preferences)
+                    SettingsSection.HIDDEN,
+                    SettingsSection.DEVELOPER_OPTION -> "Developer Options"
+                    SettingsSection.SECURITY -> act.getString(R.string.MenuButton_security)
+                    SettingsSection.BTC_SETTINGS -> "Bitcoin ${act.getString(R.string.Settings_title)}"
+                    SettingsSection.BCH_SETTINGS -> "Bitcoin Cash ${act.getString(R.string.Settings_title)}"
+                }
+                val isHome = section == SettingsSection.HOME
+                closeButton.isVisible = isHome
+                backButton.isVisible = !isHome
             }
-            val isHome = section == SettingsSection.HOME
-            close_button.isVisible = isHome
-            back_button.isVisible = !isHome
-        }
-        ifChanged(M::items) {
-            val adapter = SettingsAdapter(items) { option ->
-                eventConsumer.accept(E.OnOptionClicked(option))
+            ifChanged(M::items) {
+                val adapter = SettingsAdapter(items) { option ->
+                    eventConsumer.accept(E.OnOptionClicked(option))
+                }
+                settingsList.adapter = adapter
             }
-            settings_list.adapter = adapter
-        }
-        ifChanged(M::isLoading) {
-            loading_view.visibility = if(isLoading) View.VISIBLE else View.GONE
+            ifChanged(M::isLoading) {
+                loadingView.root.visibility = if(isLoading) View.VISIBLE else View.GONE
+            }
         }
     }
 
@@ -183,7 +187,7 @@ class SettingsController(
         controller: AlertDialogController,
         result: AlertDialogController.DialogInputResult
     ) {
-       eventConsumer.accept(E.OnExportTransactionsConfirmed)
+        eventConsumer.accept(E.OnExportTransactionsConfirmed)
     }
 
     /** Developer options dialogs */

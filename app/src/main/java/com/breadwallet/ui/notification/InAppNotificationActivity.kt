@@ -28,8 +28,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.breadwallet.R
 import com.breadwallet.breadbox.BreadBox
+import com.breadwallet.databinding.ActivityInAppNotificationBinding
 import com.breadwallet.ext.viewModel
 import com.breadwallet.legacy.presenter.activities.util.BRActivity
 import com.breadwallet.model.InAppMessage
@@ -37,7 +37,6 @@ import com.breadwallet.tools.util.asLink
 import com.breadwallet.ui.MainActivity
 import com.breadwallet.util.CryptoUriParser
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_in_app_notification.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -77,12 +76,13 @@ class InAppNotificationActivity : BRActivity(), KodeinAware {
             finish()
             return
         }
-        setContentView(R.layout.activity_in_app_notification)
+        val binding = ActivityInAppNotificationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        close_button.setOnClickListener {
+        binding.closeButton.setOnClickListener {
             onBackPressed()
         }
-        notification_btn.setOnClickListener {
+        binding.notificationBtn.setOnClickListener {
             viewModel.markAsRead(true)
             val actionUrl = viewModel.notification.actionButtonUrl
             if (!actionUrl.isNullOrEmpty()) {
@@ -102,10 +102,10 @@ class InAppNotificationActivity : BRActivity(), KodeinAware {
             }
         }
 
-        notification_title.text = viewModel.notification.title
-        notification_body.text = viewModel.notification.body
-        notification_btn.text = viewModel.notification.actionButtonText
-        Picasso.get().load(viewModel.notification.imageUrl).into(notification_image)
+        binding.notificationTitle.text = viewModel.notification.title
+        binding.notificationBody.text = viewModel.notification.body
+        binding.notificationBtn.text = viewModel.notification.actionButtonText
+        Picasso.get().load(viewModel.notification.imageUrl).into(binding.notificationImage)
 
         viewModel.markAsShown()
     }

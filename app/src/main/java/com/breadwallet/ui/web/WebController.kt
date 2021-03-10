@@ -54,6 +54,7 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.breadwallet.BuildConfig
 import com.breadwallet.R
+import com.breadwallet.databinding.FragmentSupportBinding
 import com.breadwallet.logger.logError
 import com.breadwallet.logger.logInfo
 import com.breadwallet.tools.manager.BRSharedPrefs
@@ -61,7 +62,6 @@ import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.ui.BaseController
 import com.breadwallet.ui.browser.BrdNativeJs
 import com.breadwallet.ui.platform.PlatformConfirmTransactionController
-import com.platform.HTTPServer
 import com.platform.LinkBus
 import com.platform.LinkResultMessage
 import com.platform.PlatformTransactionBus
@@ -76,7 +76,6 @@ import com.platform.jsbridge.SupportJs
 import com.platform.jsbridge.WalletJs
 import com.platform.middlewares.plugins.LinkPlugin
 import com.platform.util.getStringOrNull
-import kotlinx.android.synthetic.main.fragment_support.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
@@ -132,7 +131,7 @@ class WebController(
         registerForActivityResult(BRConstants.REQUEST_IMAGE_RC)
     }
 
-    override val layoutId = R.layout.fragment_support
+    private val binding by viewBinding(FragmentSupportBinding::inflate)
 
     private var mOnCloseUrl: String? = null
     private lateinit var nativePromiseFactory: NativePromiseFactory
@@ -178,35 +177,20 @@ class WebController(
 
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
 
-        HTTPServer.setOnCloseListener {
-            if (router.backstack.lastOrNull()?.controller() is WebController) {
-                router.popCurrentController()
-            }
-            HTTPServer.setOnCloseListener(null)
-        }
-
-        web_view.settings.apply {
+        binding.webView.settings.apply {
             domStorageEnabled = true
             javaScriptEnabled = true
             mediaPlaybackRequiresUserGesture = false
         }
 
-        web_view.webViewClient = object : WebViewClient() {
+        binding.webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(
                 view: WebView,
                 request: WebResourceRequest
             ): Boolean {
                 val trimmedUrl = request.url.toString().trimEnd('/')
 
-                val onCloseUrl = mOnCloseUrl?.trim('/')
-                if (onCloseUrl != null && trimmedUrl.startsWith(onCloseUrl, true)) {
-                    router.popController(this@WebController)
-                    LinkPlugin.hasBrowser = false
-                    mOnCloseUrl = null
-                } else if (trimmedUrl.contains(CLOSE_URL)) {
-                    router.popController(this@WebController)
-                    LinkPlugin.hasBrowser = false
-                } else if (trimmedUrl.startsWith("file://")) {
+                if (trimmedUrl.startsWith("file://")) {
                     view.loadUrl(trimmedUrl)
                 } else {
                     // Simplex || Wyre links 
@@ -216,18 +200,18 @@ class WebController(
             }
         }
 
-        web_view.webChromeClient = BRWebChromeClient()
+        binding.webView.webChromeClient = BRWebChromeClient()
     }
 
     override fun onAttach(view: View) {
         super.onAttach(view)
         if (!::nativePromiseFactory.isInitialized) {
             val url: String = arg(ARG_URL)
-            nativePromiseFactory = NativePromiseFactory(web_view)
+            nativePromiseFactory = NativePromiseFactory(binding.webView)
             val isPlatformUrl =
                 url.startsWith("http://127.0.0.1:" + BRSharedPrefs.getHttpServerPort())
             if ((isPlatformUrl || url.startsWith("file:///"))) {
-                web_view.setBackgroundResource(R.color.platform_webview_bg)
+                binding.webView.setBackgroundResource(R.color.platform_webview_bg)
                 val locationManager = applicationContext!!.getSystemService<LocationManager>()
                 val brdApiJs = BrdApiJs(nativePromiseFactory, direct.instance())
                 val cameraJs = CameraJs(nativePromiseFactory, imageRequestFlow)
@@ -265,12 +249,12 @@ class WebController(
                     NativeApisJs.with(walletJs, linkJs, supportJs)
                 }
 
-                nativeApis.attachToWebView(web_view)
-                web_view.addJavascriptInterface(BrdNativeJs, BrdNativeJs.JS_NAME)
+                nativeApis.attachToWebView(binding.webView)
+                binding.webView.addJavascriptInterface(BrdNativeJs, BrdNativeJs.JS_NAME)
             }
             val jsonRequest: String? = argOptional(ARG_JSON_REQUEST)
             if (jsonRequest.isNullOrEmpty()) {
-                web_view.loadUrl(url)
+                binding.webView.loadUrl(url)
                 handlePlatformMessages().launchIn(viewCreatedScope)
             } else {
                 try {
@@ -290,14 +274,16 @@ class WebController(
         val request = JSONObject(jsonRequest)
         val url = request.getString(BRConstants.URL)
 
-        if (url != null && url.contains(BRConstants.CHECKOUT)) {
-            // TODO: attachKeyboardListeners?
-            toolbar.isVisible = true
-            toolbar_bottom.isVisible = true
+        with(binding) {
+            if (url != null && url.contains(BRConstants.CHECKOUT)) {
+                // TODO: attachKeyboardListeners?
+                toolbar.isVisible = true
+                toolbarBottom.isVisible = true
 
-            webview_back_arrow.setOnClickListener { handleBack() }
-            webview_forward_arrow.setOnClickListener { if (web_view.canGoForward()) web_view.goForward() }
-            reload.setOnClickListener { handleJsonRequest(jsonRequest) }
+                webviewBackArrow.setOnClickListener { handleBack() }
+                webviewForwardArrow.setOnClickListener { if (webView.canGoForward()) webView.goForward() }
+                reload.setOnClickListener { handleJsonRequest(jsonRequest) }
+            }
         }
 
         val method = request.getString(BRConstants.METHOD)
@@ -317,19 +303,19 @@ class WebController(
         when (method.toUpperCase(Locale.ROOT)) {
             "GET" -> {
                 if (httpHeaders.isNotEmpty()) {
-                    web_view.loadUrl(url, httpHeaders)
+                    binding.webView.loadUrl(url, httpHeaders)
                 } else {
-                    web_view.loadUrl(url)
+                    binding.webView.loadUrl(url)
                 }
             }
-            "POST" -> web_view.postUrl(url, body?.toByteArray())
-            else -> IllegalStateException("Unexpected method: $method")
+            "POST" -> binding.webView.postUrl(url, body?.toByteArray())
+            else -> error("Unexpected method: $method")
         }
     }
 
     override fun handleBack() = when {
-        web_view?.canGoBack() == true -> {
-            web_view.goBack()
+        binding.webView.canGoBack() -> {
+            binding.webView.goBack()
             true
         }
         else -> {
@@ -340,7 +326,6 @@ class WebController(
 
     override fun onDestroyView(view: View) {
         super.onDestroyView(view)
-        HTTPServer.setOnCloseListener(null)
         nativePromiseFactory.dispose()
     }
 
@@ -351,10 +336,16 @@ class WebController(
         }
     }
 
-    private fun handleLinkMessages() = LinkBus.requests().onEach {
+    private fun handleLinkMessages() = LinkBus.requests().onEach { (url, jsonRequest) ->
         withContext(Main) {
-            val transaction = RouterTransaction.with(WebController(it.url, it.jsonRequest))
-            router.pushController(transaction)
+            if (url.contains("/_close", true)) {
+                if (router.backstack.lastOrNull()?.controller is WebController) {
+                    router.popCurrentController()
+                }
+            } else {
+                val transaction = RouterTransaction.with(WebController(url, jsonRequest))
+                router.pushController(transaction)
+            }
         }
     }
 
