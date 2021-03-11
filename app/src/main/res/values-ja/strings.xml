@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">設定</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">サポート:       litewallet@litecoinfoundation.net</string>
+  <string name="MenuButton.support">顧客サポート</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">新規ウォレットを作成</string>
   <!-- Menu modal title -->
@@ -789,4 +789,5 @@
   <string name="Error.wrong2faTokenProvided">間違った2FAが提供されました</string>
   <string name="BuyCenter.simplex.Title">シンプレックス</string>
   <string name="BuyCenter.simplex.FinancialDetails">•5分でLitecoinを入手！\\n •クレジットカードでLitecoinを購入 \\n•パスポートまたは州ID</string>
+  <string name="ManageWallet.balance">残高</string>
 </resources>

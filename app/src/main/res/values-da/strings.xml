@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">Indstillinger</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">Support:       litewallet@litecoinfoundation.net</string>
+  <string name="MenuButton.support">Kunde support</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">Opret ny pung</string>
   <!-- Menu modal title -->
@@ -788,4 +788,5 @@
   <string name="Error.emailNotVerified">Du skal bekræfte din e-mail-adresse, før du kan logge ind.</string>
   <string name="Error.wrong2faTokenProvided">Forkert 2FA leveret</string>
   <string name="BuyCenter.simplex.FinancialDetails">• Få Litecoin inden for 5 minutter! \\n • Køb Litecoin via kreditkort \\n • Pas eller stats-ID</string>
+  <string name="ManageWallet.balance">Balance</string>
 </resources>

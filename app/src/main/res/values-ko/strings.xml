@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">설정</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">고객지원:      litewallet@litecoinfoundation.net</string>
+  <string name="MenuButton.support">고객 지원</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">새 지갑 만들기</string>
   <!-- Menu modal title -->
@@ -789,4 +789,5 @@
   <string name="Error.wrong2faTokenProvided">잘못된 2FA 제공</string>
   <string name="BuyCenter.simplex.Title">심플 렉스</string>
   <string name="BuyCenter.simplex.FinancialDetails">5 분 안에 Litecoin을 받으십시오! \\n • 신용 카드를 통해 Litecoin을 구매하십시오 \\n • 여권 또는 주 ID</string>
+  <string name="ManageWallet.balance">밸런스</string>
 </resources>

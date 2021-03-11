@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">Instellingen</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">Ondersteuning:      litewallet@litecoinfoundation.net</string>
+  <string name="MenuButton.support">Klantenservice</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">Nieuwe Portemonnee Creëren</string>
   <!-- Menu modal title -->
@@ -788,4 +788,5 @@
   <string name="Error.emailNotVerified">U moet uw e-mailadres verifiëren voordat u kunt inloggen.</string>
   <string name="Error.wrong2faTokenProvided">Verkeerde 2FA opgegeven</string>
   <string name="BuyCenter.simplex.FinancialDetails">• Krijg Litecoin in 5 minuten! \\n • Koop Litecoin via creditcard \\n • Paspoort of staat ID</string>
+  <string name="ManageWallet.balance">Saldo</string>
 </resources>

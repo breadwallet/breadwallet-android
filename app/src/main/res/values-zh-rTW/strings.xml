@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">設定</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">支援:      litewallet@litecoinfoundation.net</string>
+  <string name="MenuButton.support">客戶支持</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">建立新的電子錢包</string>
   <!-- Menu modal title -->
@@ -788,4 +788,5 @@
   <string name="Error.emailNotVerified">您需要先驗證電子郵件地址，然後才能登錄。</string>
   <string name="Error.wrong2faTokenProvided">提供了錯誤的2FA</string>
   <string name="BuyCenter.simplex.FinancialDetails">•5分鐘內獲得Litecoin！\\n •通過信用卡購買Litecoin \\n •護照或州ID</string>
+  <string name="ManageWallet.balance">平衡</string>
 </resources>

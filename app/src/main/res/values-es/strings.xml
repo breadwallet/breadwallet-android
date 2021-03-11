@@ -243,7 +243,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">Ajustes</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">Ayuda técnica:       litewallet@litecoinfoundation.net</string>
+  <string name="MenuButton.support">Atención al cliente</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">Crear nueva cartera</string>
   <!-- Menu modal title -->
@@ -788,4 +788,5 @@
   <string name="Error.emailNotVerified">Debe verificar su dirección de correo electrónico antes de poder iniciar sesión.</string>
   <string name="Error.wrong2faTokenProvided">2FA incorrecto proporcionado</string>
   <string name="BuyCenter.simplex.FinancialDetails">• ¡Obtenga Litecoin en 5 minutos! \\n • Compre Litecoin con tarjeta de crédito \\n • Pasaporte o identificación del estado</string>
+  <string name="ManageWallet.balance">Saldo</string>
 </resources>

@@ -8,8 +8,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import androidx.fragment.app.FragmentActivity;
 
-import androidx.fragment.app.FragmentActivity;
-
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;

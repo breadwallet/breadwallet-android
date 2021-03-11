@@ -4,13 +4,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.breadwallet.R;
@@ -28,6 +29,7 @@ import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
+import com.breadwallet.tools.util.BRConstants;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
 
@@ -66,7 +68,6 @@ public class FragmentMenu extends Fragment {
     public RelativeLayout background;
     public List<BRMenuItem> itemList;
     public ConstraintLayout signalLayout;
-    private ImageButton close;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -75,73 +76,60 @@ public class FragmentMenu extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
         background = rootView.findViewById(R.id.layout);
         signalLayout = rootView.findViewById(R.id.signal_layout);
-        background.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                getActivity().onBackPressed();
-            }
+        background.setOnClickListener(v -> {
+            if (!BRAnimator.isClickAllowed()) return;
+            getActivity().onBackPressed();
         });
-
-        close = rootView.findViewById(R.id.close_button);
 
         itemList = new ArrayList<>();
         boolean buyBitcoinEnabled = APIClient.getInstance(getActivity()).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
-        if (buyBitcoinEnabled)
-            itemList.add(new BRMenuItem(getString(R.string.MenuButton_buy), R.drawable.buy_bitcoin, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), WebViewActivity.class);
-                    intent.putExtra(WebViewActivity.URL_EXTRA, HTTPServer.URL_BUY);
-                    Activity app = getActivity();
-                    app.startActivity(intent);
-                    app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-
-                }
+        if (buyBitcoinEnabled) {
+            itemList.add(new BRMenuItem(getString(R.string.MenuButton_buy), R.drawable.buy_bitcoin, v -> {
+                Intent intent = new Intent(getActivity(), WebViewActivity.class);
+                intent.putExtra(WebViewActivity.URL_EXTRA, HTTPServer.URL_BUY);
+                launchActivity(intent);
             }));
-        itemList.add(new BRMenuItem(getString(R.string.MenuButton_security), R.drawable.ic_shield, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Activity app = getActivity();
-                Intent intent = new Intent(app, SecurityCenterActivity.class);
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-            }
-        }));
-        //TODO: Refactor with new FAQ / Support design using on-board FAQ data
-        itemList.add(new BRMenuItem(getString(R.string.MenuButton_support), R.drawable.faq_question_white, null) {
-        });
-        itemList.add(new BRMenuItem(getString(R.string.MenuButton_settings), R.drawable.ic_settings, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SettingsActivity.class);
-                Activity app = getActivity();
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-            }
-        }));
-        itemList.add(new BRMenuItem(getString(R.string.MenuButton_lock), R.drawable.ic_lock, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Activity from = getActivity();
-                from.getFragmentManager().popBackStack();
-                BRAnimator.startBreadActivity(from, true);
-            }
+        }
+
+        itemList.add(new BRMenuItem(getString(R.string.MenuButton_security), R.drawable.ic_shield, v -> {
+            Intent intent = new Intent(getActivity(), SecurityCenterActivity.class);
+            launchActivity(intent);
         }));
 
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Activity app = getActivity();
-                app.getFragmentManager().popBackStack();
-            }
+        itemList.add(new BRMenuItem(getString(R.string.MenuButton_support), R.drawable.faq_question_black, v -> {
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(getContext(), Uri.parse(BRConstants.CUSTOMER_SUPPORT_LINK));
+        }));
+
+        itemList.add(new BRMenuItem(getString(R.string.MenuButton_settings), R.drawable.ic_settings, v -> {
+            Intent intent = new Intent(getActivity(), SettingsActivity.class);
+            launchActivity(intent);
+        }));
+
+        itemList.add(new BRMenuItem(getString(R.string.MenuButton_lock), R.drawable.ic_lock, v -> {
+            final Activity from = getActivity();
+            from.getFragmentManager().popBackStack();
+            BRAnimator.startBreadActivity(from, true);
+        }));
+
+        rootView.findViewById(R.id.close_button).setOnClickListener(v -> {
+            Activity app = getActivity();
+            app.getFragmentManager().popBackStack();
         });
+
         mTitle = rootView.findViewById(R.id.title);
         mListView = rootView.findViewById(R.id.menu_listview);
         mListView.setAdapter(new MenuListAdapter(getContext(), R.layout.menu_list_item, itemList));
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
         return rootView;
+    }
+
+    private void launchActivity(Intent intent) {
+        Activity app = getActivity();
+        app.startActivity(intent);
+        app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
     }
 
     @Override
@@ -161,9 +149,9 @@ public class FragmentMenu extends Fragment {
         });
     }
 
-    public class MenuListAdapter extends ArrayAdapter<BRMenuItem> {
+    public static class MenuListAdapter extends ArrayAdapter<BRMenuItem> {
 
-        private LayoutInflater mInflater;
+        private final LayoutInflater mInflater;
 
         public MenuListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<BRMenuItem> items) {
             super(context, resource, items);
@@ -191,13 +179,10 @@ public class FragmentMenu extends Fragment {
     public void onStop() {
         super.onStop();
         BRAnimator.animateBackgroundDim(background, true);
-        BRAnimator.animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
-            @Override
-            public void onAnimationEnd() {
-                if (getActivity() != null)
-                    getActivity().getFragmentManager().popBackStack();
+        BRAnimator.animateSignalSlide(signalLayout, true, () -> {
+            if (getActivity() != null) {
+                getActivity().getFragmentManager().popBackStack();
             }
         });
-
     }
 }

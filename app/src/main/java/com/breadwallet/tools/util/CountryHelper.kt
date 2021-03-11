@@ -14,4 +14,6 @@ object CountryHelper {
             Country(displayCountry, it)
         }
     }.sortedWith(compareBy { it.name }).toList()
+
+    val usaCountry = Country("United States", "US")
 }

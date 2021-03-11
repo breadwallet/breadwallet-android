@@ -40,8 +40,12 @@ class RegisterFragment : BaseFragment<RegisterPresenter>(), RegisterView {
         }
         countryField.editText?.keyListener = null
         countryField.editText?.run {
-            val country = CountryHelper.countries.find { it.name == "United States" }
-            setText(country?.name)
+            // FIXME: on some devices CountryHelper.countries.find { it.name == "" } returns a NULL country.
+            //  Don't yet know the real cause but since we only handle USA, let's just hardcode it for now.
+            //  So it's a temporary fix.
+            val country = CountryHelper.countries.find { it.name == CountryHelper.usaCountry.name }
+                    ?: CountryHelper.usaCountry
+            setText(country.name)
             tag = country
         }
 

@@ -107,6 +107,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private ImageButton menuBut;
     private TextView ltcPriceLbl;
     private TextView ltcPriceDateLbl;
+    private TextView balanceTxtV;
 
     public static boolean appVisible = false;
     public ViewFlipper barFlipper;
@@ -131,6 +132,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
         initializeViews();
+        setPriceTags(BRSharedPrefs.getPreferredLTC(BreadActivity.this), false);
         setListeners();
 
         setUpBarFlipper();
@@ -403,6 +405,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         bottomNav = findViewById(R.id.bottomNav);
         ltcPriceLbl = findViewById(R.id.price_change_text);
         ltcPriceDateLbl = findViewById(R.id.priceDateLbl);
+        balanceTxtV = findViewById(R.id.balanceTxtV);
 
         primaryPrice = findViewById(R.id.primary_price);
         secondaryPrice = findViewById(R.id.secondary_price);
@@ -425,6 +428,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         });
 
         ltcPriceLbl.setTextSize(PRIMARY_TEXT_SIZE);
+        balanceTxtV.append(":");
     }
 
     @Override
@@ -440,10 +444,17 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
                 String iso = BRSharedPrefs.getIso(BreadActivity.this);
 
+                String formattedCurrency = null;
                 CurrencyEntity currency = CurrencyDataSource.getInstance(BreadActivity.this).getCurrencyByIso(iso);
-                final BigDecimal roundedPriceAmount = new BigDecimal(currency.rate).multiply(new BigDecimal(100))
-                        .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
-                final String formattedCurrency = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, roundedPriceAmount);
+                if (currency != null) {
+                    final BigDecimal roundedPriceAmount = new BigDecimal(currency.rate).multiply(new BigDecimal(100))
+                            .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
+                    formattedCurrency = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, roundedPriceAmount);
+                } else {
+                    Timber.w("The currency related to %s is NULL", iso);
+                }
+
+                final String ltcPrice = formattedCurrency;
 
                 //current amount in litoshis
                 final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(BreadActivity.this));
@@ -460,10 +471,12 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     public void run() {
                         primaryPrice.setText(formattedBTCAmount);
                         secondaryPrice.setText(String.format("%s", formattedCurAmount));
-                        ltcPriceLbl.setText(formattedCurrency);
-                        SimpleDateFormat df = (SimpleDateFormat) DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-                        String pattern = df.toPattern().replaceAll("\\W?[Yy]+\\W?", " ");
-                        ltcPriceDateLbl.setText("as of " + android.text.format.DateFormat.format(pattern, new Date()));
+                        if (ltcPrice != null) {
+                            ltcPriceLbl.setText(ltcPrice);
+                            SimpleDateFormat df = (SimpleDateFormat) DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+                            String pattern = df.toPattern().replaceAll("\\W?[Yy]+\\W?", " ");
+                            ltcPriceDateLbl.setText("as of " + android.text.format.DateFormat.format(pattern, new Date()));
+                        }
                     }
                 });
             }

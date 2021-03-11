@@ -241,7 +241,7 @@
   <!-- Menu button title -->
   <string name="MenuButton.settings">Settings</string>
   <!-- Menu button title -->
-  <string name="MenuButton.support">Support:      litewallet@litecoinfoundation.net</string>
+  <string name="MenuButton.support">Customer support</string>
   <!-- button label -->
   <string name="MenuViewController.createButton">Create New Wallet</string>
   <!-- Menu modal title -->
@@ -816,6 +816,9 @@
   <string name="Error.unknownSystem">Oops something wrong happened. Please try again later</string>
   <string name="Error.emailNotVerified">You need to verify your email address before you can login.</string>
   <string name="Error.wrong2faTokenProvided">Wrong 2FA provided</string>
+
+  /* Balance */
+  <string name="ManageWallet.balance">Balance</string>
 
 
 </resources>
