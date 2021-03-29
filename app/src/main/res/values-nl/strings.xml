@@ -789,4 +789,8 @@
   <string name="Error.wrong2faTokenProvided">Verkeerde 2FA opgegeven</string>
   <string name="BuyCenter.simplex.FinancialDetails">• Krijg Litecoin in 5 minuten! \\n • Koop Litecoin via creditcard \\n • Paspoort of staat ID</string>
   <string name="ManageWallet.balance">Saldo</string>
+  <string name="LitecoinCard.Disclaimer.bullets">- Nieuwe registratie\\n- Inloggen (bestaand account)\\n- Geen saldo weergegeven\\n- Geen overdracht\\n- Alleen in de VS.</string>
+  <string name="LitecoinCard.Disclaimer.description">Litecoin Card heeft momenteel beperkte functionaliteit in Litewallet.</string>
+  <string name="LitecoinCard.Disclaimer.referral">Bezoek litecoin.getblockcard.com voor volledige toegang</string>
+  <string name="LitecoinCard.Disclaimer.title">Litecoin Card Beta</string>
 </resources>

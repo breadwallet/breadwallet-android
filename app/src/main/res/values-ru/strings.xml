@@ -789,4 +789,8 @@
   <string name="Error.wrong2faTokenProvided">Предоставлен неверный 2FA</string>
   <string name="BuyCenter.simplex.FinancialDetails">• Получить Litecoin за 5 минут! \\n • Купить Litecoin с помощью кредитной карты \\n • Паспорт или удостоверение личности штата</string>
   <string name="ManageWallet.balance">Баланс</string>
+  <string name="LitecoinCard.Disclaimer.bullets">- Новая регистрация\\n- Авторизация (существующая учетная запись)\\n- Баланс не отображается\\n- Без передачи\\n- Только США</string>
+  <string name="LitecoinCard.Disclaimer.description">Litecoin Card в настоящее время имеет ограниченную функциональность в Litewallet.</string>
+  <string name="LitecoinCard.Disclaimer.referral">Посетите litecoin.getblockcard.com для полного доступа</string>
+  <string name="LitecoinCard.Disclaimer.title">Бета-версия карты Litecoin</string>
 </resources>

@@ -56,6 +56,8 @@ class LoginFragment : BaseFragment<LoginPresenter>(), LoginView {
         }
         forgetPwdBut.setOnClickListener { handleForgotPassword() }
         bindProgressButton(loginBut)
+
+        view.post { showDisclaimer() }
     }
 
     private fun handleForgotPassword() {
@@ -68,6 +70,13 @@ class LoginFragment : BaseFragment<LoginPresenter>(), LoginView {
                     android.R.string.cancel,
                     null
                 )
+                .show()
+    }
+
+    private fun showDisclaimer() {
+        AlertDialog.Builder(requireContext())
+                .setView(R.layout.card_disclaimer_content)
+                .setPositiveButton(R.string.Button_ok, null)
                 .show()
     }
 
@@ -105,7 +114,7 @@ class LoginFragment : BaseFragment<LoginPresenter>(), LoginView {
     }
 
     override fun hideProgress() {
-        loginBut.hideProgress( R.string.Login_login)
+        loginBut.hideProgress(R.string.Login_login)
         loginBut.isEnabled = true
     }
 

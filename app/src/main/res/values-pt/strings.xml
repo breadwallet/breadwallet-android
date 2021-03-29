@@ -789,4 +789,8 @@
   <string name="Error.wrong2faTokenProvided">2FA errado fornecido</string>
   <string name="BuyCenter.simplex.FinancialDetails">• Obtenha Litecoin em 5 minutos! \\n • Compre Litecoin via cartão de crédito \\n • Passaporte ou ID do estado</string>
   <string name="ManageWallet.balance">Saldo</string>
+  <string name="LitecoinCard.Disclaimer.bullets">- Novo registro\\n- Entrar em uma conta existente)\\n- Nenhum saldo mostrado\\n- Sem transferência\\n- Apenas estados unidos</string>
+  <string name="LitecoinCard.Disclaimer.description">O cartão Litecoin atualmente tem funcionalidade limitada no Litewallet.</string>
+  <string name="LitecoinCard.Disclaimer.referral">Visite litecoin.getblockcard.com para acesso total</string>
+  <string name="LitecoinCard.Disclaimer.title">Litecoin Card Beta</string>
 </resources>

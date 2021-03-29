@@ -817,8 +817,17 @@
   <string name="Error.emailNotVerified">You need to verify your email address before you can login.</string>
   <string name="Error.wrong2faTokenProvided">Wrong 2FA provided</string>
 
-  /* Balance */
+  <!-- Balance -->
   <string name="ManageWallet.balance">Balance</string>
+
+  <!-- Features and limitations -->
+  <string name="LitecoinCard.Disclaimer.bullets">"- New Registration\n- Login (existing account)\n- No balance shown\n- No transfer\n- US Only"</string>
+  <!-- Description of the status -->
+  <string name="LitecoinCard.Disclaimer.description">"Litecoin Card currently has limited functionality in Litewallet."</string>
+  <!-- Referral to the website -->
+  <string name="LitecoinCard.Disclaimer.referral">"Visit litecoin.getblockcard.com for full access"</string>
+  <!-- Beta Testing Litecoin Card -->
+  <string name="LitecoinCard.Disclaimer.title">"Litecoin Card Beta"</string>
 
 
 </resources>

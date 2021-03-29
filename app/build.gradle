@@ -46,8 +46,8 @@ android {
         applicationId = 'com.loafwallet'
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 636
-        versionName "v2.1.0"
+        versionCode 637
+        versionName "v2.1.1"
         multiDexEnabled true
 
         buildConfigField "String", "INFURA_KEY", "\"set the infura key here\""

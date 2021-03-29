@@ -789,4 +789,8 @@
   <string name="Error.wrong2faTokenProvided">提供了錯誤的2FA</string>
   <string name="BuyCenter.simplex.FinancialDetails">•5分鐘內獲得Litecoin！\\n •通過信用卡購買Litecoin \\n •護照或州ID</string>
   <string name="ManageWallet.balance">平衡</string>
+  <string name="LitecoinCard.Disclaimer.bullets">-新註冊\\n-登錄（現有帳戶）\\n-沒有餘額顯示\\n-沒有轉移\\n-僅限美國</string>
+  <string name="LitecoinCard.Disclaimer.description">Litecoin卡當前在Litewallet中具有有限的功能。</string>
+  <string name="LitecoinCard.Disclaimer.referral">訪問litecoin.getblockcard.com以獲取完全訪問權限</string>
+  <string name="LitecoinCard.Disclaimer.title">Litecoin卡測試版</string>
 </resources>

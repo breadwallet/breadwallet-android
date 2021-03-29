@@ -790,4 +790,8 @@
   <string name="BuyCenter.simplex.Title">심플 렉스</string>
   <string name="BuyCenter.simplex.FinancialDetails">5 분 안에 Litecoin을 받으십시오! \\n • 신용 카드를 통해 Litecoin을 구매하십시오 \\n • 여권 또는 주 ID</string>
   <string name="ManageWallet.balance">밸런스</string>
+  <string name="LitecoinCard.Disclaimer.bullets">-신규 등록\\n-로그인 (기존 계정)\\n-잔액이 표시되지 않음\\n-환승 불가\\n-미국 만</string>
+  <string name="LitecoinCard.Disclaimer.description">라이트 코인 카드는 현재 라이트 월렛에서 제한된 기능을 가지고 있습니다.</string>
+  <string name="LitecoinCard.Disclaimer.referral">전체 액세스를 위해 litecoin.getblockcard.com을 방문하십시오.</string>
+  <string name="LitecoinCard.Disclaimer.title">라이트 코인 카드 베타</string>
 </resources>
