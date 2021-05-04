@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.entities;
 
+import com.breadwallet.presenter.fragments.FragmentBuy;
+
 /**
  * Movo
  * Created by sadia on 2020-January-27
@@ -9,11 +11,13 @@ public class Partner {
     private int logo;
     private int title;
     private int details;
+    private FragmentBuy.Partner code;
 
-    public Partner(int logo, int title, int details) {
+    public Partner(int logo, int title, int details, FragmentBuy.Partner code) {
         this.logo = logo;
         this.title = title;
         this.details = details;
+        this.code = code;
     }
 
     public int getLogo() {
@@ -38,5 +42,9 @@ public class Partner {
 
     public void setDetails(int details) {
         this.details = details;
+    }
+
+    public FragmentBuy.Partner getCode() {
+        return code;
     }
 }

@@ -46,6 +46,8 @@ public class BRSharedPrefs {
 
     private static final List<OnIsoChangedListener> isoChangedListeners = new ArrayList<>();
     public static final String TERNIO_USER_ID = "ternio_user_id";
+    public static final String SEND_TRANSACTION_COUNT = "send_transaction_count";
+    public static final String IN_APP_REVIEW_DONE = "in_app_review_done";
 
     public interface OnIsoChangedListener {
         void onIsoChanged(String iso);
@@ -447,5 +449,26 @@ public class BRSharedPrefs {
     public static void logoutFromLitecoinCard(Context context) {
         context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE)
                 .edit().remove(TERNIO_USER_ID).apply();
+    }
+
+    public static void incrementSendTransactionCount(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        int currentTransactions = prefs.getInt(SEND_TRANSACTION_COUNT, 0);
+        prefs.edit().putInt(SEND_TRANSACTION_COUNT, currentTransactions + 1).apply();
+    }
+
+    public static int getSendTransactionCount(Context context) {
+        return context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE)
+                .getInt(SEND_TRANSACTION_COUNT, 0);
+    }
+
+    public static boolean isInAppReviewDone(Context context) {
+        return context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE)
+                .getBoolean(IN_APP_REVIEW_DONE, false);
+    }
+
+    public static void inAppReviewDone(Context context) {
+        context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE)
+                .edit().putBoolean(IN_APP_REVIEW_DONE, true).apply();
     }
 }

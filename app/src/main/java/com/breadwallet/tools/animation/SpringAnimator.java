@@ -1,16 +1,10 @@
 package com.breadwallet.tools.animation;
 
 import android.app.Activity;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.breadwallet.R;
 
@@ -40,7 +34,6 @@ import com.breadwallet.R;
  */
 
 public class SpringAnimator {
-    private static final String TAG = SpringAnimator.class.getName();
 
     public static void showExpandCameraGuide(final View view) {
         if (view != null) {
@@ -53,7 +46,6 @@ public class SpringAnimator {
             view.setVisibility(View.VISIBLE);
             view.startAnimation(trans);
         }
-
     }
 
     /**
@@ -68,30 +60,6 @@ public class SpringAnimator {
         view.startAnimation(trans);
 
     }
-    /**
-     * Shows the springy animation on views
-     */
-    public static void shortSpringView(final View view) {
-        if (view == null) return;
-        ScaleAnimation trans = new ScaleAnimation(0.9f, 1f, 0.9f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        trans.setDuration(200);
-        trans.setInterpolator(new DecelerateOvershootInterpolator(1.3f, 1.4f));
-        view.setVisibility(View.VISIBLE);
-        view.startAnimation(trans);
-
-    }
-
-    /**
-     * Shows the springy bubble animation on views
-     */
-    public static void showBubbleAnimation(final View view) {
-        if (view == null) return;
-        ScaleAnimation trans = new ScaleAnimation(0.75f, 1f, 0.75f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        trans.setDuration(300);
-        trans.setInterpolator(new DecelerateOvershootInterpolator(1.0f, 1.85f));
-        view.setVisibility(View.VISIBLE);
-        view.startAnimation(trans);
-    }
 
     public static void failShakeAnimation(Activity context, View view) {
         if (view == null) return;
@@ -99,12 +67,4 @@ public class SpringAnimator {
         view.setVisibility(View.VISIBLE);
         view.startAnimation(shake);
     }
-
-    public static void donationFailShakeAnimation(Activity context, TextView view) {
-        if (view == null) return;
-        Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
-        view.setVisibility(View.VISIBLE);
-        view.startAnimation(shake);
-    }
-
 }

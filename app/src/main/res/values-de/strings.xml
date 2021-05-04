@@ -787,10 +787,11 @@
   <string name="Error.unknownSystem">Ups, etwas ist nicht passiert. Bitte versuchen Sie es später noch einmal</string>
   <string name="Error.emailNotVerified">Sie müssen Ihre E-Mail-Adresse überprüfen, bevor Sie sich anmelden können.</string>
   <string name="Error.wrong2faTokenProvided">Falsche 2FA zur Verfügung gestellt</string>
-  <string name="BuyCenter.simplex.FinancialDetails">• Holen Sie sich Litecoin in 5 Minuten!\\n• Kaufen Sie Litecoin per Kreditkarte\\n• Reisepass oder Staatsausweis.</string>
+  <string name="BuyCenter.simplex.FinancialDetails">"• Holen Sie sich Litecoin in 5 Minuten!\n• Kaufen Sie Litecoin per Kreditkarte\n• Reisepass oder Staatsausweis."</string>
   <string name="ManageWallet.balance">Kontostand</string>
-  <string name="LitecoinCard.Disclaimer.bullets">- Neue Registrierung\\n- In vorhandenen Account (einloggen)\\n- Kein Saldo angezeigt\\n- Keine Übertragung\\n- Nur USA</string>
+  <string name="LitecoinCard.Disclaimer.bullets">"- Neue Registrierung\n- In vorhandenen Account (einloggen)\n- Kein Saldo angezeigt\n- Keine Übertragung\n- Nur USA"</string>
   <string name="LitecoinCard.Disclaimer.description">Die Litecoin Card verfügt derzeit über eingeschränkte Funktionen in Litewallet.</string>
   <string name="LitecoinCard.Disclaimer.referral">Besuchen Sie litecoin.getblockcard.com für den vollständigen Zugriff</string>
   <string name="LitecoinCard.Disclaimer.title">Litecoin Card Beta</string>
+  <string name="BuyCenter.moonpay.FinancialDetails">"• Kaufen Sie LTC mit vielen Fiat-Paaren.\n• Bezahlen Sie mit mehreren Methoden.\n• Globaler Zahlungsanbieter"</string>
 </resources>

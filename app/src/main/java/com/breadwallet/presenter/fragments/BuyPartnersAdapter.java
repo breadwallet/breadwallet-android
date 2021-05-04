@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +12,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.browser.customtabs.CustomTabColorSchemeParams;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.Partner;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
 
 import java.util.List;
 
@@ -43,7 +47,7 @@ class BuyPartnersAdapter extends RecyclerView.Adapter<BuyPartnersAdapter.Partner
 
     @Override
     public void onBindViewHolder(@NonNull final PartnerViewHolder holder, int position) {
-        Partner partner = partners.get(position);
+        final Partner partner = partners.get(position);
         holder.logo.setImageResource(partner.getLogo());
         holder.title.setText(partner.getTitle());
         holder.detail.setText(partner.getDetails());
@@ -55,8 +59,18 @@ class BuyPartnersAdapter extends RecyclerView.Adapter<BuyPartnersAdapter.Partner
 
         holder.buyPartnerWrapper.setOnClickListener(v -> {
             int currencyResId = getCurrencyResId(holder.fiatOptions.getCheckedRadioButtonId());
-            String currency = v.getContext().getString(currencyResId);
-            BRAnimator.showBuyFragment((FragmentActivity) v.getContext(), currency);
+            final Context context = v.getContext();
+            String currency = context.getString(currencyResId);
+            if (partner.getCode() == FragmentBuy.Partner.MOONPAY) {
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder()
+                        .setDefaultColorSchemeParams(new CustomTabColorSchemeParams.Builder().setToolbarColor(context.getColor(R.color.litecoin_litewallet_blue)).build())
+                        .setUrlBarHidingEnabled(true);
+                CustomTabsIntent customTabsIntent = builder.build();
+                String buyUrl = FragmentBuy.url(context, partner.getCode(), currency);
+                customTabsIntent.launchUrl(context, Uri.parse(buyUrl));
+            } else {
+                BRAnimator.showBuyFragment((FragmentActivity) context, currency, partner.getCode());
+            }
         });
     }
 

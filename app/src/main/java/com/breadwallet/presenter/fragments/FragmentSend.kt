@@ -339,7 +339,7 @@ class FragmentSend : Fragment() {
             )
         }
 
-        send.setOnClickListener(View.OnClickListener { //not allowed now
+        send.setOnClickListener(View.OnClickListener {
             if (!BRAnimator.isClickAllowed()) {
                 return@OnClickListener
             }
@@ -367,9 +367,10 @@ class FragmentSend : Fragment() {
             if (allFilled) {
                 BRSender.getInstance().sendTransaction(context, PaymentItem(arrayOf(address), null, satoshiAmount.toLong(), null, false, comment))
                 AnalyticsManager.logCustomEvent(BRConstants._20191105_DSL)
+                BRSharedPrefs.incrementSendTransactionCount(context)
             }
         })
-        donate.setOnClickListener(View.OnClickListener { //not allowed now
+        donate.setOnClickListener(View.OnClickListener {
             if (!BRAnimator.isClickAllowed()) {
                 return@OnClickListener
             }

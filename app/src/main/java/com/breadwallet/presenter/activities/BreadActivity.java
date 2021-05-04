@@ -10,8 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -28,6 +26,7 @@ import androidx.transition.TransitionManager;
 import androidx.transition.TransitionSet;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.entities.CurrencyEntity;
@@ -53,6 +52,10 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.tasks.Task;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
@@ -61,11 +64,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import timber.log.Timber;
-
-import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
-import static com.breadwallet.presenter.activities.SetPinActivity.introSetPitActivity;
-import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
-import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
  * BreadWallet
@@ -140,23 +138,51 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         primaryPrice.setTextSize(PRIMARY_TEXT_SIZE);
         secondaryPrice.setTextSize(SECONDARY_TEXT_SIZE);
 
-        if (introSetPitActivity != null) introSetPitActivity.finish();
-        if (introActivity != null) introActivity.finish();
-        if (reEnterPinActivity != null) reEnterPinActivity.finish();
+        finishActivities(SetPinActivity.introSetPitActivity, IntroActivity.introActivity, ReEnterPinActivity.reEnterPinActivity);
 
-        if (!BRSharedPrefs.getGreetingsShown(BreadActivity.this))
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    BRAnimator.showGreetingsMessage(BreadActivity.this);
-                    BRSharedPrefs.putGreetingsShown(BreadActivity.this, true);
-                }
+        if (!BRSharedPrefs.getGreetingsShown(BreadActivity.this)) {
+            mHandler.postDelayed(() -> {
+                BRAnimator.showGreetingsMessage(BreadActivity.this);
+                BRSharedPrefs.putGreetingsShown(BreadActivity.this, true);
             }, 1000);
+        }
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         updateUI();
         bottomNav.setSelectedItemId(R.id.nav_history);
+
+        showInAppReviewDialogIfNeeded();
+    }
+
+    private void finishActivities(BRActivity... activities) {
+        for (BRActivity activity : activities) {
+            if (activity != null) activity.finish();
+        }
+    }
+
+    private void showInAppReviewDialogIfNeeded() {
+        if (!BRSharedPrefs.isInAppReviewDone(this) && BRSharedPrefs.getSendTransactionCount(this) > 4) {
+            ReviewManager manager = ReviewManagerFactory.create(this);
+            Task<ReviewInfo> request = manager.requestReviewFlow();
+            request.addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    ReviewInfo reviewInfo = task.getResult();
+                    Task<Void> flow = manager.launchReviewFlow(BreadActivity.this, reviewInfo);
+                    flow.addOnCompleteListener(task1 -> {
+                        // The flow has finished. The API does not indicate whether the user
+                        // reviewed or not, or even whether the review dialog was shown. Thus, no
+                        // matter the result, we continue our app flow.
+                        Timber.i("In-app LaunchReviewFlow completed successful (%s)", task1.isSuccessful());
+                        if (task1.isSuccessful()) {
+                            BRSharedPrefs.inAppReviewDone(BreadActivity.this);
+                        }
+                    });
+                } else {
+                    Timber.e(task.getException(), "In-app request review flow failed");
+                }
+            });
+        }
     }
 
     private void addObservers() {
@@ -191,31 +217,13 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     private void setListeners() {
-        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                return handleNavigationItemSelected(item.getItemId());
-            }
-        });
+        bottomNav.setOnNavigationItemSelectedListener(item -> handleNavigationItemSelected(item.getItemId()));
 
-        primaryPrice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                swap();
-            }
-        });
-        secondaryPrice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                swap();
-            }
-        });
-        menuBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (BRAnimator.isClickAllowed()) {
-                    BRAnimator.showMenuFragment(BreadActivity.this);
-                }
+        primaryPrice.setOnClickListener(v -> swap());
+        secondaryPrice.setOnClickListener(v -> swap());
+        menuBut.setOnClickListener(v -> {
+            if (BRAnimator.isClickAllowed()) {
+                BRAnimator.showMenuFragment(BreadActivity.this);
             }
         });
     }
@@ -320,12 +328,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         // Apply the changes
         set.applyTo(toolBarConstraintLayout);
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                updateUI();
-            }
-        }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGING));
+        mHandler.postDelayed(() -> updateUI(), toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGING));
     }
 
     private void setUpBarFlipper() {
@@ -345,26 +348,16 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         appVisible = true;
         app = this;
         addObservers();
-        if (PLATFORM_ON) {
+        if (BRConstants.PLATFORM_ON) {
             APIClient.getInstance(this).updatePlatform();
         }
 
         setupNetworking();
 
         if (!BRWalletManager.getInstance().isCreated()) {
-            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    BRWalletManager.getInstance().initWallet(BreadActivity.this);
-                }
-            });
+            BRExecutor.getInstance().forBackgroundTasks().execute(() -> BRWalletManager.getInstance().initWallet(BreadActivity.this));
         }
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                updateUI();
-            }
-        }, 1000);
+        mHandler.postDelayed(() -> updateUI(), 1000);
 
         BRWalletManager.getInstance().refreshBalance(this);
     }
@@ -390,13 +383,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         unregisterReceiver(mConnectionReceiver);
 
         //sync the kv stores
-        if (PLATFORM_ON) {
-            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    APIClient.getInstance(BreadActivity.this).syncKvStore();
-                }
-            });
+        if (BRConstants.PLATFORM_ON) {
+            BRExecutor.getInstance().forBackgroundTasks().execute(() -> APIClient.getInstance(BreadActivity.this).syncKvStore());
         }
     }
 
@@ -437,49 +425,43 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     public void updateUI() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
-                //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
-                String iso = BRSharedPrefs.getIso(BreadActivity.this);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+            Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
+            //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
+            String iso = BRSharedPrefs.getIso(BreadActivity.this);
 
-                String formattedCurrency = null;
-                CurrencyEntity currency = CurrencyDataSource.getInstance(BreadActivity.this).getCurrencyByIso(iso);
-                if (currency != null) {
-                    final BigDecimal roundedPriceAmount = new BigDecimal(currency.rate).multiply(new BigDecimal(100))
-                            .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
-                    formattedCurrency = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, roundedPriceAmount);
-                } else {
-                    Timber.w("The currency related to %s is NULL", iso);
-                }
-
-                final String ltcPrice = formattedCurrency;
-
-                //current amount in litoshis
-                final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(BreadActivity.this));
-
-                //amount in LTC units
-                BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(BreadActivity.this, amount);
-                final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, "LTC", btcAmount);
-
-                //amount in currency units
-                final BigDecimal curAmount = BRExchange.getAmountFromSatoshis(BreadActivity.this, iso, amount);
-                final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        primaryPrice.setText(formattedBTCAmount);
-                        secondaryPrice.setText(String.format("%s", formattedCurAmount));
-                        if (ltcPrice != null) {
-                            ltcPriceLbl.setText(ltcPrice);
-                            SimpleDateFormat df = (SimpleDateFormat) DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-                            String pattern = df.toPattern().replaceAll("\\W?[Yy]+\\W?", " ");
-                            ltcPriceDateLbl.setText("as of " + android.text.format.DateFormat.format(pattern, new Date()));
-                        }
-                    }
-                });
+            String formattedCurrency = null;
+            CurrencyEntity currency = CurrencyDataSource.getInstance(BreadActivity.this).getCurrencyByIso(iso);
+            if (currency != null) {
+                final BigDecimal roundedPriceAmount = new BigDecimal(currency.rate).multiply(new BigDecimal(100))
+                        .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
+                formattedCurrency = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, roundedPriceAmount);
+            } else {
+                Timber.w("The currency related to %s is NULL", iso);
             }
+
+            final String ltcPrice = formattedCurrency;
+
+            //current amount in litoshis
+            final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(BreadActivity.this));
+
+            //amount in LTC units
+            BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(BreadActivity.this, amount);
+            final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, "LTC", btcAmount);
+
+            //amount in currency units
+            final BigDecimal curAmount = BRExchange.getAmountFromSatoshis(BreadActivity.this, iso, amount);
+            final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
+            runOnUiThread(() -> {
+                primaryPrice.setText(formattedBTCAmount);
+                secondaryPrice.setText(String.format("%s", formattedCurAmount));
+                if (ltcPrice != null) {
+                    ltcPriceLbl.setText(ltcPrice);
+                    SimpleDateFormat df = (SimpleDateFormat) DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+                    String pattern = df.toPattern().replaceAll("\\W?[Yy]+\\W?", " ");
+                    ltcPriceDateLbl.setText("as of " + android.text.format.DateFormat.format(pattern, new Date()));
+                }
+            });
         });
     }
 
@@ -524,14 +506,11 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     removeNotificationBar();
                 }
             }
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(BreadActivity.this));
-                    Timber.d("Sync Progress: %s", progress);
-                    if (progress < 1 && progress > 0) {
-                        SyncManager.getInstance().startSyncingProgressThread();
-                    }
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(() -> {
+                final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(BreadActivity.this));
+                Timber.d("Sync Progress: %s", progress);
+                if (progress < 1 && progress > 0) {
+                    SyncManager.getInstance().startSyncingProgressThread();
                 }
             });
         } else {

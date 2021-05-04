@@ -293,7 +293,7 @@ public class BRAnimator {
 
     }
 
-    public static void showBuyFragment(FragmentActivity app, String currency) {
+    public static void showBuyFragment(FragmentActivity app, String currency, FragmentBuy.Partner partner) {
         if (app == null) {
             Timber.i("showBuyFragment: app is null");
             return;
@@ -301,7 +301,7 @@ public class BRAnimator {
         app.getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, FragmentBuy.newInstance(currency), FragmentBuy.class.getName())
+                .add(android.R.id.content, FragmentBuy.newInstance(currency, partner), FragmentBuy.class.getName())
                 .addToBackStack(FragmentBuy.class.getName())
                 .commit();
     }

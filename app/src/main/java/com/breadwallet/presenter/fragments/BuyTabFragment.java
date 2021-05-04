@@ -51,7 +51,8 @@ public class BuyTabFragment extends Fragment {
 
     private List<Partner> getPartners() {
         List<Partner> partners = new ArrayList<>();
-        partners.add(new Partner(R.drawable.simplex_logo, R.string.BuyCenter_simplex_Title, R.string.BuyCenter_simplex_FinancialDetails));
+        partners.add(new Partner(R.drawable.ic_moonpay_logo, R.string.BuyCenter_moonpay_Title, R.string.BuyCenter_moonpay_FinancialDetails, FragmentBuy.Partner.MOONPAY));
+        partners.add(new Partner(R.drawable.simplex_logo, R.string.BuyCenter_simplex_Title, R.string.BuyCenter_simplex_FinancialDetails, FragmentBuy.Partner.SIMPLEX));
         return partners;
     }
 }

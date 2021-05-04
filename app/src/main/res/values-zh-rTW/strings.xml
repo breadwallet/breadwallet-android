@@ -787,10 +787,11 @@
   <string name="mismatch_password">密碼不匹配</string>
   <string name="Error.emailNotVerified">您需要先驗證電子郵件地址，然後才能登錄。</string>
   <string name="Error.wrong2faTokenProvided">提供了錯誤的2FA</string>
-  <string name="BuyCenter.simplex.FinancialDetails">•5分鐘內獲得Litecoin！\\n •通過信用卡購買Litecoin \\n •護照或州ID</string>
+  <string name="BuyCenter.simplex.FinancialDetails">"•5分鐘內獲得Litecoin！\n •通過信用卡購買Litecoin \n •護照或州ID"</string>
   <string name="ManageWallet.balance">平衡</string>
-  <string name="LitecoinCard.Disclaimer.bullets">-新註冊\\n-登錄（現有帳戶）\\n-沒有餘額顯示\\n-沒有轉移\\n-僅限美國</string>
+  <string name="LitecoinCard.Disclaimer.bullets">"-新註冊\n-登錄（現有帳戶）\n-沒有餘額顯示\n-沒有轉移\n-僅限美國"</string>
   <string name="LitecoinCard.Disclaimer.description">Litecoin卡當前在Litewallet中具有有限的功能。</string>
   <string name="LitecoinCard.Disclaimer.referral">訪問litecoin.getblockcard.com以獲取完全訪問權限</string>
   <string name="LitecoinCard.Disclaimer.title">Litecoin卡測試版</string>
+  <string name="BuyCenter.moonpay.FinancialDetails">"•購買具有許多法定貨幣對的LTC\n•以多種方式支付\n•全球支付提供商"</string>
 </resources>

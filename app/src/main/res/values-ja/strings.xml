@@ -788,10 +788,11 @@
   <string name="Error.emailNotVerified">ログインする前に、メールアドレスを確認する必要があります。</string>
   <string name="Error.wrong2faTokenProvided">間違った2FAが提供されました</string>
   <string name="BuyCenter.simplex.Title">シンプレックス</string>
-  <string name="BuyCenter.simplex.FinancialDetails">•5分でLitecoinを入手！\\n •クレジットカードでLitecoinを購入 \\n•パスポートまたは州ID</string>
+  <string name="BuyCenter.simplex.FinancialDetails">"•5分でLitecoinを入手！\n •クレジットカードでLitecoinを購入 \n•パスポートまたは州ID"</string>
   <string name="ManageWallet.balance">残高</string>
-  <string name="LitecoinCard.Disclaimer.bullets">-新規登録\\n-ログイン（既存のアカウント）\\n-残高は表示されていません\\n-転送なし\\n-米国のみ</string>
+  <string name="LitecoinCard.Disclaimer.bullets">"-新規登録\n-ログイン（既存のアカウント）\n-残高は表示されていません\n-転送なし\n-米国のみ"</string>
   <string name="LitecoinCard.Disclaimer.description">ライトコインカードは現在、ライトウォレットの機能が制限されています。</string>
   <string name="LitecoinCard.Disclaimer.referral">フルアクセスについては、litecoin.getblockcard.comにアクセスしてください</string>
   <string name="LitecoinCard.Disclaimer.title">ライトコインカードベータ</string>
+  <string name="BuyCenter.moonpay.FinancialDetails">"•多くの法定紙幣ペアでLTCを購入する\n•複数の方法で支払う\n•グローバル決済プロバイダー"</string>
 </resources>

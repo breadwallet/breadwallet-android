@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -68,13 +69,15 @@ public class FragmentBuy extends Fragment {
     private WebView webView;
     private String onCloseUrl;
     private static final String URL_BUY_LTC = BuildConfig.DEBUG ? "https://api-stage.lite-wallet.org" : "https://api-prod.lite-wallet.org";
-    static final String CURRENCY_KEY = "currency_code_key";
+    private static final String CURRENCY_KEY = "currency_code_key";
+    private static final String PARTNER_KEY = "partner_key";
     private ValueCallback<Uri> uploadMessage;
     private ValueCallback<Uri[]> uploadMessageAboveL;
 
-    public static Fragment newInstance(String currency) {
+    public static Fragment newInstance(String currency, Partner partner) {
         Bundle bundle = new Bundle();
         bundle.putString(CURRENCY_KEY, currency);
+        bundle.putSerializable(PARTNER_KEY, partner);
         Fragment fragment = new FragmentBuy();
         fragment.setArguments(bundle);
         return fragment;
@@ -83,7 +86,7 @@ public class FragmentBuy extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 if (webView.canGoBack()) {
@@ -113,19 +116,22 @@ public class FragmentBuy extends Fragment {
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
-        String walletAddress = BRSharedPrefs.getReceiveAddress(getContext());
-        String currency = getArguments().getString(CURRENCY_KEY);
-        Long timestamp = new Date().getTime();
-        String uuid = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        String buyUrl = url(walletAddress, currency, timestamp, uuid);
+        String currency = getArguments().getString(CURRENCY_KEY);
+        Partner partner = (Partner) getArguments().getSerializable(PARTNER_KEY);
+
+        String buyUrl = url(getContext(), partner, currency);
         Timber.d("URL %s", buyUrl);
         webView.loadUrl(buyUrl);
         return rootView;
     }
 
-    private String url(Object... args) {
-        return String.format(URL_BUY_LTC + "?address=%s&code=%s&idate=%s&uid=%s", args);
+    public static String url(Context context, Partner partner, String currency) {
+        String walletAddress = BRSharedPrefs.getReceiveAddress(context);
+        Long timestamp = new Date().getTime();
+        String uuid = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String prefix = partner == Partner.MOONPAY ? "/moonpay/buy" : "";
+        return String.format(URL_BUY_LTC + prefix + "?address=%s&code=%s&idate=%s&uid=%s", walletAddress, currency, timestamp, uuid);
     }
 
     private void closePayment() {
@@ -246,5 +252,9 @@ public class FragmentBuy extends Fragment {
     public void onPause() {
         super.onPause();
         Utils.hideKeyboard(getActivity());
+    }
+
+    public enum Partner {
+        SIMPLEX, MOONPAY
     }
 }
