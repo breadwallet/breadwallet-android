@@ -289,7 +289,9 @@
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Turn device passcode on</string>
   <!-- Instruction how to enable device encryption -->
-  <string name="Prompts.NoScreenLock.body.android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" &gt; \"Security\" &gt; \"Screen lock\" and enable to continue.</string>
+  <string name="Prompts.NoScreenLock.body.android">A device screen lock is needed to safeguard your wallet. Go to \"Pengaturan\" &gt; \"
+Keamanan\" &gt; \"
+Pengunci layar\" and enable to continue.</string>
   <!-- Device encryption prompt title -->
   <string name="Prompts.NoScreenLock.title.android">Screen lock disabled</string>
   <!-- Warning about paper key. -->

@@ -1,0 +1,797 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <!-- App name -->
+  <string name="About.appName.android">Loaf</string>
+  <!-- About screen blog label -->
+  <string name="About.blog">Situs web</string>
+  <!-- About screen footer -->
+  <string name="About.footer">Dibuat oleh Tim Litewallet dari Litecoin Foundation\n%1$s</string>
+  <!-- Privay Policy button label -->
+  <string name="About.privacy">Kebijakan pribadi</string>
+  <!-- About screen reddit label -->
+  <string name="About.reddit">Reddit</string>
+  <!-- Terms of Use button label -->
+  <string name="About.terms">Syarat Penggunaan</string>
+  <!-- About screen title -->
+  <string name="About.title">Tentang</string>
+  <!-- About screen twitter label -->
+  <string name="About.twitter">Twitter</string>
+  <!-- Close modal button accessibility label -->
+  <string name="AccessibilityLabels.close">Menutup</string>
+  <!-- Support center accessibiliy label -->
+  <string name="AccessibilityLabels.faq">Pusat layanan</string>
+  <!-- Loading Wallet Message -->
+  <string name="Account.loadingMessage">Memuat Dompet</string>
+  <!-- Default wallet name -->
+  <string name="AccountHeader.defaultWalletName">Saya Loaf</string>
+  <!-- Equals symbol -->
+  <string name="AccountHeader.equals">=</string>
+  <!-- Manage wallet button title -->
+  <string name="AccountHeader.manageButtonName">MENGELOLA</string>
+  <!-- Third party keyboard warning -->
+  <string name="Alert.customKeyboard.android">Sepertinya Anda menggunakan papan ketik pihak ketiga, yang dapat merekam apa yang Anda ketik dan mencuri Kunci Kertas Anda. Silakan beralih ke keyboard Android default untuk perlindungan ekstra.</string>
+  <!-- Error alert title -->
+  <string name="Alert.error">Kesalahan</string>
+  <!-- Keystore error -->
+  <string name="Alert.keystore.generic.android">Ada masalah dengan keystore OS Android Anda, harap hubungi litewallet@litecoinfoundation.net</string>
+  <!-- KeyStore error, keys are invalidated -->
+  <string name="Alert.keystore.invalidated.android">Data terenkripsi Litewallet Anda baru-baru ini tidak valid karena layar kunci Android Anda dinonaktifkan.</string>
+  <!-- Keystore error title -->
+  <string name="Alert.keystore.title.android">Kesalahan Android KeyStore</string>
+  <!-- No internet alert message -->
+  <string name="Alert.noInternet">Tidak ada koneksi internet yang ditemukan. Periksa koneksi Anda dan coba lagi.</string>
+  <!-- Warning alert title -->
+  <string name="Alert.warning">Peringatan</string>
+  <!-- 'the addresses were copied'' Alert title -->
+  <string name="Alerts.copiedAddressesHeader">Alamat Disalin</string>
+  <!-- Addresses Copied Alert sub header -->
+  <string name="Alerts.copiedAddressesSubheader">Semua alamat dompet berhasil disalin.</string>
+  <!-- Alert Header Label (the paper key was set) -->
+  <string name="Alerts.paperKeySet">Set Kunci Kertas</string>
+  <!-- Alert Subheader label (playfully positive) -->
+  <string name="Alerts.paperKeySetSubheader">Hebat!</string>
+  <!-- Alert Header label (the PIN was set) -->
+  <string name="Alerts.pinSet">Set PIN</string>
+  <!-- Send failure alert header label (the send failed to happen) -->
+  <string name="Alerts.sendFailure">Pengiriman gagal</string>
+  <!-- Send success alert header label (confirmation that the send happened) -->
+  <string name="Alerts.sendSuccess">Kirim Konfirmasi</string>
+  <!-- Send success alert subheader label (e.g. the money was sent) -->
+  <string name="Alerts.sendSuccessSubheader">Uang Dikirim!</string>
+  <!-- Fingerprint was recognized by the scanner -->
+  <string name="Alerts.touchIdSucceeded.android">Sidik jari dikenali</string>
+  <!-- JSON Serialization error message -->
+  <string name="ApiClient.jsonError">Kesalahan Serialisasi JSON</string>
+  <!-- Wallet not ready error message -->
+  <string name="ApiClient.notReady">Dompet belum siap</string>
+  <!-- API Token error message -->
+  <string name="ApiClient.tokenError">Tidak dapat mengambil token API</string>
+  <!-- Send BCH view body. -->
+  <string name="BCH.body">
+Masukkan alamat BCH tujuan di bawah ini. Semua BCH di dompet Anda pada saat percabangan (%1$s) akan dikirim.</string>
+  <!-- Confirm sending <$5.00> to <address>? -->
+  <string name="BCH.confirmationMessage">Konfirmasikan pengiriman %1$s untuk %2$s</string>
+  <!-- Confirmation alert title -->
+  <string name="BCH.confirmationTitle">Konfirmasi</string>
+  <!-- Generic bch erorr message -->
+  <string name="BCH.genericError">Akun Anda tidak mengandung BCH, atau Anda menerima BCH setelah percabangan.</string>
+  <!-- Transaction ID copied message -->
+  <string name="BCH.hashCopiedMessage">ID Transaksi disalin</string>
+  <!-- No address error message -->
+  <string name="BCH.noAddressError">Harap masukkan alamat</string>
+  <!-- Attempted to scan unsupported qr code error message. -->
+  <string name="BCH.paymentProtocolError">Permintaan Protokol Pembayaran tidak didukung untuk transaksi BCH</string>
+  <!-- BCH successfully sent alert message -->
+  <string name="BCH.successMessage">BCH berhasil dikirim.</string>
+  <!-- Widthdraw BCH view title -->
+  <string name="BCH.title">Tarik BCH</string>
+  <!-- Tx Hash button header -->
+  <string name="BCH.txHashHeader">ID Transaksi BCH</string>
+  <!-- Approve button label -->
+  <string name="BitID.approve">Menyetujui</string>
+  <!-- <sitename> is requesting authentication using your bitcoin wallet -->
+  <string name="BitID.authenticationRequest">%1$s meminta otentikasi menggunakan dompet Litecoin Anda</string>
+  <!-- Deny button label -->
+  <string name="BitID.deny">Menyangkal</string>
+  <!-- BitID error alert title -->
+  <string name="BitID.error">Kesalahan otentikasi</string>
+  <!-- BitID error alert messaage (The payment service you are trying to use isn't working. Please contact them, as you may need to try again) -->
+  <string name="BitID.errorMessage">Silakan periksa dengan layanan. Anda mungkin perlu mencoba lagi.</string>
+  <!-- BitID success alert title -->
+  <string name="BitID.success">Berhasil Diotentikasi</string>
+  <!-- BitID Authentication Request alert view title -->
+  <string name="BitID.title">Permintaan Otentikasi BitID</string>
+  <!-- Cancel button label -->
+  <string name="Button.cancel">Membatalkan</string>
+  <!-- Ignore button label -->
+  <string name="Button.ignore">Mengabaikan</string>
+  <!-- menu button -->
+  <string name="Button.menu">Tidak bisa</string>
+  <!-- No button -->
+  <string name="Button.no">Tidak</string>
+  <!-- OK button label -->
+  <string name="Button.ok">baik</string>
+  <!-- receive button -->
+  <string name="Button.receive">menerima</string>
+  <!-- send button -->
+  <string name="Button.send">kirim</string>
+  <!-- Settings button label -->
+  <string name="Button.settings">Pengaturan</string>
+  <!-- Settings button label -->
+  <string name="Button.submit">Kirimkan</string>
+  <!-- Yes button -->
+  <string name="Button.yes">Iya</string>
+  <!-- Camera plugin instruction -->
+  <string name="CameraPlugin.centerInstruction">Pusatkan ID Anda di dalam kotak</string>
+  <!-- Amount to Send: ($1.00) -->
+  <string name="Confirmation.amountLabel">Jumlah yang akan dikirim:</string>
+  <!-- Network Fee: ($1.00) -->
+  <string name="Confirmation.feeLabel">Biaya Jaringan:</string>
+  <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
+  <string name="Confirmation.processingTime">Waktu pemrosesan: Transaksi ini diperkirakan selesai dalam %1$s.</string>
+  <!-- Label for "send" button on final confirmation screen -->
+  <string name="Confirmation.send">Kirim</string>
+  <!-- Confirmation Screen title -->
+  <string name="Confirmation.title">Konfirmasi</string>
+  <!-- To: (address) -->
+  <string name="Confirmation.to">Untuk</string>
+  <!-- Total Cost: ($5.00) -->
+  <string name="Confirmation.totalLabel">Total biaya:</string>
+  <!-- Confirm paper phrase view label. -->
+  <string name="ConfirmPaperPhrase.label">Untuk memastikan semuanya ditulis dengan benar, masukkan kata-kata berikut dari kunci kertas Anda.</string>
+  <!-- Word label eg. Word #1, Word #2 -->
+  <string name="ConfirmPaperPhrase.word">Kata #%1$s</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Unit Tampilan Litecoin</string>
+  <!-- Exchange rate label -->
+  <string name="DefaultCurrency.rateLabel">Kurs</string>
+  <!-- Email unavailable alert title -->
+  <string name="ErrorMessages.emailUnavailableMessage">Perangkat ini tidak dikonfigurasi untuk mengirim email dengan aplikasi email iOS.</string>
+  <!-- Email unavailable alert title -->
+  <string name="ErrorMessages.emailUnavailableTitle">Email Tidak Tersedia</string>
+  <!-- Messaging unavailable alert title -->
+  <string name="ErrorMessages.messagingUnavailableMessage">Litewallet tidak dapat diautentikasi karena ada bug di versi Android Anda. [Harap ketuk di sini untuk informasi lebih lanjut.]</string>
+  <!-- Messaging unavailable alert title -->
+  <string name="ErrorMessages.messagingUnavailableTitle">Perangkat ini tidak dikonfigurasi untuk mengirim pesan.</string>
+  <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+  <string name="ErrorMessages.touchIdFailed.android">Perpesanan Tidak Tersedia</string>
+  <!-- Economy fee -->
+  <string name="FeeSelector.economy">Sidik jari tidak dikenali. Silahkan coba lagi.</string>
+  <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
+  <string name="FeeSelector.economyTime">Ekonomi</string>
+  <!-- Warning message for economy fee -->
+  <string name="FeeSelector.economyWarning">10+ menit</string>
+  <!-- E.g. Estimated delivery: 10-60 minutes -->
+  <string name="FeeSelector.estimatedDeliver">Opsi ini tidak disarankan untuk transaksi yang sensitif terhadap waktu.</string>
+  <!-- Regular fee -->
+  <string name="FeeSelector.regular">Estimasi Pengiriman: %1$s</string>
+  <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
+  <string name="FeeSelector.regularTime">Reguler</string>
+  <!-- Fee Selector title -->
+  <string name="FeeSelector.title">2.5 - 5+ menit</string>
+  <!-- Checking private key balance progress view text -->
+  <string name="Import.checking">Kecepatan Proses</string>
+  <!-- Sweep private key confirmation message -->
+  <string name="Import.confirm">Memeriksa saldo kunci pribadi...</string>
+  <!-- Duplicate key error message -->
+  <string name="Import.Error.duplicate">Kirim %1$s dari kunci pribadi ini ke dompet Anda? Jaringan Litecoin akan menerima biaya sebesar %2$s.</string>
+  <!-- empty private key error message -->
+  <string name="Import.Error.empty">Kunci pribadi ini kosong.</string>
+  <!-- High fees error message -->
+  <string name="Import.Error.highFees">Biaya transaksi akan lebih mahal daripada dana yang tersedia di kunci pribadi ini.</string>
+  <!-- Not a valid private key error message -->
+  <string name="Import.Error.notValid">Bukan kunci pribadi yang valid</string>
+  <!-- Import signing error message -->
+  <string name="Import.Error.signing">Terjadi kesalahan saat menandatangani transaksi</string>
+  <!-- Import button label -->
+  <string name="Import.importButton">Impor</string>
+  <!-- Importing wallet progress view label -->
+  <string name="Import.importing">Mengimpor Dompet</string>
+  <!-- Caption for graphics -->
+  <string name="Import.leftCaption">Dompet untuk diimpor</string>
+  <!-- Import wallet intro screen message -->
+  <string name="Import.message">Mengimpor dompet mentransfer semua uang dari dompet Anda yang lain ke Litewallet Anda menggunakan satu transaksi.</string>
+  <!-- Enter password alert view title -->
+  <string name="Import.password">This private key is password protected.</string>
+  <!-- password textfield placeholder -->
+  <string name="Import.passwordPlaceholder">kata sandi</string>
+  <!-- Caption for graphics -->
+  <string name="Import.rightCaption">Litewallet Anda</string>
+  <!-- Scan Private key button label -->
+  <string name="Import.scan">Pindai Kunci Pribadi</string>
+  <!-- Import wallet success alert title -->
+  <string name="Import.success">Keberhasilan</string>
+  <!-- Successfully imported wallet message body -->
+  <string name="Import.SuccessBody">Dompet berhasil diimpor.</string>
+  <!-- Import Wallet screen title -->
+  <string name="Import.title">Impor Dompet</string>
+  <!-- Unlocking Private key activity view message. -->
+  <string name="Import.unlockingActivity">Membuka Kunci</string>
+  <!-- Import wallet intro warning message -->
+  <string name="Import.warning">Mengimpor dompet tidak termasuk riwayat transaksi atau detail lainnya.</string>
+  <!-- Wrong password alert message -->
+  <string name="Import.wrongPassword">Kata sandi salah, silakan coba lagi.</string>
+  <!-- Close app button -->
+  <string name="JailbreakWarnings.close">Menutup</string>
+  <!-- Ignore jailbreak warning button -->
+  <string name="JailbreakWarnings.ignore">Mengabaikan</string>
+  <!-- Jailbreak warning message -->
+  <string name="JailbreakWarnings.messageWithBalance">KEAMANAN PERANGKAT DIPERHATIKAN\n Aplikasi \'jailbreak\' apa pun dapat mengakses data rantai kunci dan mencuri Litecoin Anda! Segera bersihkan dompet ini dan pulihkan di perangkat yang aman.</string>
+  <!-- Jailbreak warning message -->
+  <string name="JailbreakWarnings.messageWithoutBalance">KEAMANAN PERANGKAT DIPERHATIKAN\n Aplikasi \'jailbreak\' apa pun dapat mengakses data rantai kunci dan mencuri Litecoin Anda. Harap gunakan Litewallet hanya pada perangkat yang tidak di-jailbreak.</string>
+  <!-- Jailbreak warning title -->
+  <string name="JailbreakWarnings.title">PERINGATAN</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">Membatalkan</string>
+  <!-- Location services disabled error -->
+  <string name="LocationPlugin.disabled">Layanan lokasi dinonaktifkan.</string>
+  <!-- No permissions for location services -->
+  <string name="LocationPlugin.notAuthorized">Litewallet tidak memiliki izin untuk mengakses layanan lokasi.</string>
+  <!-- Wallet creation date prefix -->
+  <string name="ManageWallet.creationDatePrefix">Anda membuat dompet Anda di %1$s</string>
+  <!-- Manage wallet description text -->
+  <string name="ManageWallet.description">Nama dompet Anda hanya muncul di riwayat transaksi akun Anda dan tidak dapat dilihat oleh orang lain.</string>
+  <!-- Change Wallet name textfield label -->
+  <string name="ManageWallet.textFieldLabel">Nama Dompet</string>
+  <!-- Manage wallet modal title -->
+  <string name="ManageWallet.title">Kelola Dompet</string>
+  <!-- Buy bitcoin title -->
+  <string name="MenuButton.buy">Membeli</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.lock">Dompet Kunci</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.security">Pusat Keamanan</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.settings">Pengaturan</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.support">Dukungan pelanggan</string>
+  <!-- button label -->
+  <string name="MenuViewController.createButton">Buat Dompet Baru</string>
+  <!-- Menu modal title -->
+  <string name="MenuViewController.modalTitle">Tidak bisa</string>
+  <!-- button label -->
+  <string name="MenuViewController.recoverButton">Pulihkan Dompet</string>
+  <!-- Switch to automatic mode button label -->
+  <string name="NodeSelector.automaticButton">Beralih ke Mode Otomatis</string>
+  <!-- Node is connected label -->
+  <string name="NodeSelector.connected">Terhubung</string>
+  <!-- Enter node ip address view body -->
+  <string name="NodeSelector.enterBody">Masukkan alamat IP Node dan port (opsional)</string>
+  <!-- Enter Node ip address view title -->
+  <string name="NodeSelector.enterTitle">Masukkan Node</string>
+  <!-- Switch to manual mode button label -->
+  <string name="NodeSelector.manualButton">Beralih ke Mode Manual</string>
+  <!-- Node address label -->
+  <string name="NodeSelector.nodeLabel">Node Utama Saat Ini</string>
+  <!-- Node is not connected label -->
+  <string name="NodeSelector.notConnected">Tidak terhubung</string>
+  <!-- Node status label -->
+  <string name="NodeSelector.statusLabel">Status Koneksi Node</string>
+  <!-- Node Selector view title -->
+  <string name="NodeSelector.title">Litecoin Node</string>
+  <!-- Bad Payment request alert title -->
+  <string name="PaymentProtocol.Errors.badPaymentRequest">Permintaan Pembayaran Buruk</string>
+  <!-- Error opening payment protocol file message -->
+  <string name="PaymentProtocol.Errors.corruptedDocument">Dokumen tidak didukung atau rusak</string>
+  <!-- Missing certificate payment protocol error message -->
+  <string name="PaymentProtocol.Errors.missingCertificate">sertifikat hilang</string>
+  <!-- Request expired payment protocol error message -->
+  <string name="PaymentProtocol.Errors.requestExpired">permintaan sudah tidak berlaku</string>
+  <!-- Payment too small alert title -->
+  <string name="PaymentProtocol.Errors.smallOutputError">Tidak dapat melakukan pembayaran</string>
+  <!-- Amount too small error message -->
+  <string name="PaymentProtocol.Errors.smallPayment">Pembayaran Litecoin tidak boleh kurang dari %1$s.</string>
+  <!-- Output too small error message. -->
+  <string name="PaymentProtocol.Errors.smallTransaction">Output transaksi Litecoin tidak boleh kurang dari %1$s.</string>
+  <!-- Unsupported signature type payment protocol error message -->
+  <string name="PaymentProtocol.Errors.unsupportedSignatureType">jenis tanda tangan tidak didukung</string>
+  <!-- Untrusted certificate payment protocol error message -->
+  <string name="PaymentProtocol.Errors.untrustedCertificate">sertifikat tidak tepercaya</string>
+  <!-- No passcode set warning body -->
+  <string name="Prompts.NoPasscode.body">Kode sandi perangkat diperlukan untuk mengamankan dompet Anda. Buka pengaturan dan aktifkan kode sandi.</string>
+  <!-- No Passcode set warning title -->
+  <string name="Prompts.NoPasscode.title">Aktifkan kode sandi perangkat</string>
+  <!-- Instruction how to enable device encryption -->
+  <string name="Prompts.NoScreenLock.body.android">Kunci layar perangkat diperlukan untuk melindungi dompet Anda. Pergi ke \"Pengaturan\" > \"Keamanan\" &gt; \"Pengunci layar\"  dan memungkinkan untuk melanjutkan.</string>
+  <!-- Device encryption prompt title -->
+  <string name="Prompts.NoScreenLock.title.android">Kunci layar dinonaktifkan</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">Kunci Kertas Anda harus disimpan jika Anda kehilangan atau mengganti telepon Anda. Ketuk di sini untuk melanjutkan.</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">Tindakan Diperlukan</string>
+  <!-- Transaction rejected prompt body -->
+  <string name="Prompts.RecommendRescan.body">Dompet Anda mungkin tidak sinkron. Ini seringkali dapat diperbaiki dengan memindai ulang blockchain.</string>
+  <!-- Transaction rejected prompt title -->
+  <string name="Prompts.RecommendRescan.title">Transaksi Ditolak</string>
+  <!-- Share data prompt body -->
+  <string name="Prompts.ShareData.body">Bantu tingkatkan Litewallet dengan membagikan data anonim Anda kepada kami</string>
+  <!-- Share data prompt title -->
+  <string name="Prompts.ShareData.title">Bagikan Data Anonim</string>
+  <!-- Enable touch ID prompt body -->
+  <string name="Prompts.TouchId.body">Ketuk di sini untuk mengaktifkan Touch ID</string>
+  <!-- Enable Fingerprint prompt body -->
+  <string name="Prompts.TouchId.body.android">Ketuk di sini untuk mengaktifkan otentikasi sidik jari</string>
+  <!-- Enable touch ID prompt title -->
+  <string name="Prompts.TouchId.title">Aktifkan Touch ID</string>
+  <!-- Enable Fingerprint prompt title -->
+  <string name="Prompts.TouchId.title.android">Aktifkan Otentikasi Sidik Jari</string>
+  <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
+  <string name="Prompts.TouchId.usePin.android">PIN</string>
+  <!-- Upgrade PIN prompt body. -->
+  <string name="Prompts.UpgradePin.body">Litewallet has upgraded to using a 6-digit PIN. Tap here to upgrade. Litewallet telah ditingkatkan untuk menggunakan PIN 6 digit. Ketuk di sini untuk meningkatkan.</string>
+  <!-- Upgrade PIN prompt title. -->
+  <string name="Prompts.UpgradePin.title">Tingkatkan PIN</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">Hidupkan notifikasi untuk menerima pesan khusus dari Litewallet di masa mendatang.</string>
+  <!-- Push notifications toggle switch label -->
+  <string name="PushNotifications.label">Pemberitahuan Push</string>
+  <!-- Push notifications are off label -->
+  <string name="PushNotifications.off">Mati</string>
+  <!-- Push notifications are on label -->
+  <string name="PushNotifications.on">Di</string>
+  <!-- Push notifications settings view title label -->
+  <string name="PushNotifications.title">Notifikasi</string>
+  <!-- Address copied message. -->
+  <string name="Receive.copied">Disalin ke papan klip.</string>
+  <!-- Share via email button label -->
+  <string name="Receive.emailButton">E-mail</string>
+  <!-- Request button label -->
+  <string name="Receive.request">Minta Jumlah</string>
+  <!-- Share button label -->
+  <string name="Receive.share">Bagikan</string>
+  <!-- Share via text message (SMS) -->
+  <string name="Receive.textButton">SMS</string>
+  <!-- Receive modal title -->
+  <string name="Receive.title">Menerima</string>
+  <!-- Done button text -->
+  <string name="RecoverWallet.done">Selesai</string>
+  <!-- Recover wallet header -->
+  <string name="RecoverWallet.header">Pulihkan Dompet</string>
+  <!-- Reset PIN with paper key: header -->
+  <string name="RecoverWallet.header_reset_pin">Setel ulang PIN</string>
+  <!-- Enter paper key instruction -->
+  <string name="RecoverWallet.instruction">Masukkan Kunci Kertas</string>
+  <!-- Recover wallet intro -->
+  <string name="RecoverWallet.intro">Pulihkan Litewallet Anda dengan kunci kertas Anda.</string>
+  <!-- Invalid paper key message -->
+  <string name="RecoverWallet.invalid">Kunci kertas yang Anda masukkan tidak valid. Harap periksa kembali setiap kata dan coba lagi.</string>
+  <!-- Previous button accessibility label -->
+  <string name="RecoverWallet.leftArrow">Panah Kiri</string>
+  <!-- Next button label -->
+  <string name="RecoverWallet.next">Lanjut</string>
+  <!-- Reset PIN with paper key: more information button. -->
+  <string name="RecoverWallet.reset_pin_more_info">Ketuk di sini untuk informasi lebih lanjut.</string>
+  <!-- Next button accessibility label -->
+  <string name="RecoverWallet.rightArrow">Panah kanan</string>
+  <!-- Recover wallet sub-header -->
+  <string name="RecoverWallet.subheader">Masukkan kunci kertas untuk dompet yang ingin Anda pulihkan.</string>
+  <!-- Reset PIN with paper key: sub-header -->
+  <string name="RecoverWallet.subheader_reset_pin">Untuk mengatur ulang PIN Anda, masukkan kata-kata dari kunci kertas Anda ke dalam kotak di bawah ini.</string>
+  <!-- No amount entered error message. -->
+  <string name="RequestAnAmount.noAmount">Harap masukkan jumlah terlebih dahulu.</string>
+  <!-- Request a specific amount of bitcoin -->
+  <string name="RequestAnAmount.title">Minta Jumlah</string>
+  <!-- Alert action button label -->
+  <string name="ReScan.alertAction">Sinkronisasi</string>
+  <!-- Alert message body -->
+  <string name="ReScan.alertMessage">Anda tidak akan dapat mengirim uang saat menyinkronkan.</string>
+  <!-- Alert message title -->
+  <string name="ReScan.alertTitle">Sinkronkan dengan Blockchain?</string>
+  <!-- extimated time -->
+  <string name="ReScan.body1">20-45 menit</string>
+  <!-- Syncing explanation -->
+  <string name="ReScan.body2">Jika transaksi ditampilkan sebagai selesai di jaringan Litecoin tetapi tidak di Litewallet Anda.</string>
+  <!-- Syncing explanation -->
+  <string name="ReScan.body3">Anda berulang kali mendapatkan kesalahan yang mengatakan transaksi Anda ditolak.</string>
+  <!-- Start Sync button label -->
+  <string name="ReScan.buttonTitle">Mulai Sinkronisasi</string>
+  <!-- Sync blockchain view footer -->
+  <string name="ReScan.footer">Anda tidak akan dapat mengirim uang saat menyinkronkan dengan blockchain.</string>
+  <!-- Sync Blockchain view header -->
+  <string name="ReScan.header">Sinkronkan Blockchain</string>
+  <!-- Subheader label -->
+  <string name="ReScan.subheader1">Perkiraan waktu</string>
+  <!-- Subheader label -->
+  <string name="ReScan.subheader2">Kapan Menyinkronkan?</string>
+  <!-- Scan bitcoin address camera flash toggle -->
+  <string name="Scanner.flashButtonLabel">Flash Kamera</string>
+  <!-- Complete filter label -->
+  <string name="Search.complete">lengkap</string>
+  <!-- Pending filter label -->
+  <string name="Search.pending">tertunda</string>
+  <!-- Received filter label -->
+  <string name="Search.received">diterima</string>
+  <!-- Sent filter label -->
+  <string name="Search.sent">terkirim</string>
+  <!-- Security Center Info -->
+  <string name="SecurityCenter.info">Aktifkan semua fitur keamanan untuk perlindungan maksimal.</string>
+  <!-- Paper Key button description -->
+  <string name="SecurityCenter.paperKeyDescription">Satu-satunya cara untuk mengakses Litecoin Anda jika Anda kehilangan atau meningkatkan ponsel Anda.</string>
+  <!-- Paper Key button title -->
+  <string name="SecurityCenter.paperKeyTitle">Kunci Kertas</string>
+  <!-- PIN button description -->
+  <string name="SecurityCenter.pinDescription">Melindungi Litewallet Anda dari pengguna yang tidak sah.</string>
+  <!-- PIN button title -->
+  <string name="SecurityCenter.pinTitle">PIN 6-Digit</string>
+  <!-- Security Center Title -->
+  <string name="SecurityCenter.title">Pusat Keamanan</string>
+  <!-- Touch ID button description -->
+  <string name="SecurityCenter.touchIdDescription">Buka kunci Litewallet Anda dengan mudah dan kirim uang hingga batas yang ditentukan.</string>
+  <!-- Touch ID button title -->
+  <string name="SecurityCenter.touchIdTitle">Touch ID</string>
+  <!-- Security center fingerprint authentication button -->
+  <string name="SecurityCenter.touchIdTitle.android">Otentikasi Sidik Jari</string>
+  <!-- Send money amount label -->
+  <string name="Send.amountLabel">Jumlah</string>
+  <!-- Balance: $4.00 -->
+  <string name="Send.balance">Keseimbangan: %1$s</string>
+  <!-- Instructions how to allow the camera access for the app -->
+  <string name="Send.cameraUnavailabeMessage.android">Izinkan akses kamera di \"Pengaturan\" > \"Aplikasi\" > \"Litewallet\" > \"Izin\"</string>
+  <!-- Permission required to access camera -->
+  <string name="Send.cameraUnavailabeTitle.android">Litewallet tidak diizinkan untuk mengakses kamera</string>
+  <!-- Camera not allowed message -->
+  <string name="Send.cameraunavailableMessage">Buka Pengaturan untuk mengizinkan akses kamera.</string>
+  <!-- Camera not allowed alert title -->
+  <string name="Send.cameraUnavailableTitle">Litewallet tidak diizinkan untuk mengakses kamera</string>
+  <!-- Warning when sending to self. -->
+  <string name="Send.containsAddress">Tujuannya adalah alamat Anda sendiri. Anda tidak dapat mengirim ke diri Anda sendiri.</string>
+  <!-- Could not create transaction alert title -->
+  <string name="Send.creatTransactionError">Tidak dapat membuat transaksi.</string>
+  <!-- Description for sending money label -->
+  <string name="Send.descriptionLabel">Memo</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">Papan tempel kosong</string>
+  <!-- Network Fee: $0.01 -->
+  <string name="Send.fee">Biaya Jaringan: %1$s</string>
+  <!-- Payee identity not certified alert title. -->
+  <string name="Send.identityNotCertified">Identitas penerima pembayaran tidak bersertifikat.</string>
+  <!-- Invalid address alert message -->
+  <string name="Send.invalidAddressMessage">Alamat tujuan bukan alamat Litecoin yang valid.</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">Papan tulis tidak berisi alamat Litecoin yang valid.</string>
+  <!-- Invalid address alert title -->
+  <string name="Send.invalidAddressTitle">Alamat tidak valid</string>
+  <!-- Is rescanning error message -->
+  <string name="Send.isRescanning">Pengiriman dinonaktifkan selama pemindaian ulang penuh.</string>
+  <!-- We are loading the request (now) -->
+  <string name="Send.loadingRequest">Memuat Permintaan</string>
+  <!-- Empty address alert message -->
+  <string name="Send.noAddress">Harap masukkan alamat penerima.</string>
+  <!-- Emtpy amount alert message -->
+  <string name="Send.noAmount">Harap masukkan jumlah yang akan dikirim.</string>
+  <!-- Paste button label -->
+  <string name="Send.pasteLabel">Tempel</string>
+  <!-- Could not publish transaction alert title -->
+  <string name="Send.publishTransactionError">Tidak dapat mempublikasikan transaksi.</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">Tidak dapat memuat permintaan pembayaran</string>
+  <!-- Scan button label -->
+  <string name="Send.scanLabel">Pindai</string>
+  <!-- Send button label (the action, "press here to send") -->
+  <string name="Send.sendLabel">Kirim</string>
+  <!-- Send screen title (as in "this is the screen for sending money") -->
+  <string name="Send.title">Kirim</string>
+  <!-- Send money to label -->
+  <string name="Send.toLabel">Masukkan alamat Litecoin</string>
+
+  <!-- Enter to match domain name to LTC Address -->
+  <string name="Send.UnstoppableDomains.placeholder">Masukkan domain .crypto atau .zil</string>
+  <!-- Or -->
+  <string name="Send.or">Atau</string>
+  <!-- Lookup -->
+  <string name="Send.UnstoppableDomains.lookup">Lookup</string>
+  <!-- Your address was resolved! -->
+  <string name="Send.UnstoppableDomains.domainResolved">Alamat Anda telah diselesaikan!</string>
+
+  <!-- Adress already used alert message - first part -->
+  <string name="Send.UsedAddress.firstLine">Alamat Litecoin hanya ditujukan untuk penggunaan tunggal.</string>
+  <!-- Adress already used alert message - second part -->
+  <string name="Send.UsedAddress.secondLIne">Penggunaan ulang mengurangi privasi Anda dan penerima dan dapat mengakibatkan kerugian jika penerima tidak mengontrol alamat secara langsung.</string>
+  <!-- Adress already used alert title -->
+  <string name="Send.UsedAddress.title">Alamat Sudah Digunakan</string>
+  <!-- About label -->
+  <string name="Settings.about">Tentang</string>
+  <!-- Advanced Settings title -->
+  <string name="Settings.advancedTitle">Pengaturan lanjutan</string>
+  <!-- i.e. the currency which will be displayed -->
+  <string name="Settings.currency">Tampilan Mata Uang</string>
+  <!-- Join Early access label -->
+  <string name="Settings.earlyAccess">Bergabunglah dengan Akses Awal</string>
+  <!-- Are you enjoying litewallet alert message body -->
+  <string name="Settings.enjoying">Apakah Anda menikmati Litewallet?</string>
+  <!-- Import wallet label -->
+  <string name="Settings.importTitle">Impor Dompet</string>
+  <!-- Manage settings section header -->
+  <string name="Settings.manage">Mengelola</string>
+  <!-- Notifications label -->
+  <string name="Settings.notifications">Notifikasi</string>
+  <!-- Leave review button label -->
+  <string name="Settings.review">Tinggalkan kami Review</string>
+  <!-- Share anonymous data label -->
+  <string name="Settings.shareData">Bagikan Data Anonim</string>
+  <!-- Sync blockchain label -->
+  <string name="Settings.sync">Sinkronkan Blockchain</string>
+  <!-- Settings title -->
+  <string name="Settings.title">Pengaturan</string>
+  <!-- Touch ID spending limit label -->
+  <string name="Settings.touchIdLimit">Sentuh Batas Pengeluaran ID</string>
+  <!-- The fingerprint spending limit -->
+  <string name="Settings.touchIdLimit.android">Batas Pengeluaran Otentikasi Sidik Jari</string>
+  <!-- Wallet Settings section header -->
+  <string name="Settings.wallet">Dompet</string>
+  <!-- Start or recover another wallet menu label. -->
+  <string name="Settings.wipe">Mulai / Pulihkan Dompet Lain</string>
+  <!-- Share data view body -->
+  <string name="ShareData.body">Bantu tingkatkan Litewallet dengan membagikan data anonim Anda kepada kami. Ini tidak termasuk informasi keuangan apa pun. Kami menghormati privasi finansial Anda.</string>
+  <!-- Share data header -->
+  <string name="ShareData.header">Bagikan Data?</string>
+  <!-- Share data switch label. -->
+  <string name="ShareData.toggleLabel">Bagikan Data Anonim?</string>
+  <!-- button label -->
+  <string name="StartPaperPhrase.againButtonTitle">Tuliskan Kunci Kertas Lagi</string>
+  <!-- Paper key explanation text. -->
+  <string name="StartPaperPhrase.body">Kunci kertas Anda adalah satu-satunya cara untuk memulihkan Litewallet jika ponsel Anda hilang, dicuri, rusak, atau ditingkatkan.\n\nKami akan menampilkan daftar kata untuk ditulis di selembar kertas dan tetap aman.</string>
+  <!-- button label -->
+  <string name="StartPaperPhrase.buttonTitle">Tuliskan Kunci Kertas</string>
+  <!-- Argument is date -->
+  <string name="StartPaperPhrase.date">Anda terakhir kali menuliskan kunci kertas Anda pada %1$s</string>
+  <!-- Start view message -->
+  <string name="StartViewController.message">Cara paling aman dan teraman untuk menggunakan Litecoin.</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">Menghubungkan</string>
+  <!-- Syncing view header text -->
+  <string name="SyncingView.header">Menyinkronkan</string>
+  <!-- Retry button label -->
+  <string name="SyncingView.retry">Mencoba kembali</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">Menyinkronkan</string>
+  <!-- 6 d (6 days) -->
+  <string name="TimeSince.days">%1$s d</string>
+  <!-- 6 h (6 hours) -->
+  <string name="TimeSince.hours">%1$s h</string>
+  <!-- 6 m (6 minutes) -->
+  <string name="TimeSince.minutes">>%1$s m</string>
+  <!-- 6 s (6 seconds) -->
+  <string name="TimeSince.seconds">%1$s s</string>
+  <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
+  <string name="TouchIdSettings.customizeText">Anda dapat menyesuaikan batas pengeluaran Touch ID Anda dari %1$s.</string>
+  <!-- Fingerprint enabling description body -->
+  <string name="TouchIdSettings.customizeText.android">Anda dapat menyesuaikan Batas Pengeluaran Otentikasi Sidik Jari Anda dari layar Batas Pengeluaran Otorisasi Sidik Jari</string>
+  <!-- Instruction for the fingerprint setup -->
+  <string name="TouchIdSettings.disabledWarning.body.android">Anda belum mengaktifkan autentikasi sidik jari di perangkat ini. Buka Pengaturan -> Keamanan untuk mengatur otentikasi sidik jari.</string>
+  <!-- Fingerprint Is Not Setup -->
+  <string name="TouchIdSettings.disabledWarning.title.android">Otentikasi Sidik Jari Tidak Diaktifkan</string>
+  <!-- Touch Id screen label -->
+  <string name="TouchIdSettings.label">Gunakan sidik jari Anda untuk membuka kunci Litewallet dan mengirim uang hingga batas yang ditentukan.</string>
+  <!-- Link Text (see TouchIdSettings.customizeText) -->
+  <string name="TouchIdSettings.linkText">Sentuh Layar Batas Pengeluaran ID</string>
+  <!-- Spending Limit: b100,000 ($100) -->
+  <string name="TouchIdSettings.spendingLimit">Batas pengeluaran: %1$s (%2$s)</string>
+  <!-- Touch id switch label. -->
+  <string name="TouchIdSettings.switchLabel">Aktifkan Touch ID untuk Litewallet</string>
+  <!-- Enable fingerprint for this wallet called Litewallet -->
+  <string name="TouchIdSettings.switchLabel.android">Aktifkan Otentikasi Sidik Jari</string>
+  <!-- Touch ID settings view title -->
+  <string name="TouchIdSettings.title">Touch ID</string>
+  <!-- Fingerprint authentication label -->
+  <string name="TouchIdSettings.title.android">Otentikasi Sidik Jari</string>
+  <!-- Touch ID unavailable alert message -->
+  <string name="TouchIdSettings.unavailableAlertMessage">Anda belum menyiapkan Touch ID di perangkat ini. Buka Pengaturan->Touch ID dan Kode sandi untuk menyiapkannya sekarang.</string>
+  <!-- Touch ID unavailable alert title -->
+  <string name="TouchIdSettings.unavailableAlertTitle">Touch ID Tidak Diatur</string>
+  <!-- Always require passcode option -->
+  <string name="TouchIdSpendingLimit">Selalu minta kode sandi</string>
+  <!-- Touch ID spending limit screen body -->
+  <string name="TouchIdSpendingLimit.body">Anda akan diminta untuk memasukkan PIN 6 digit Anda untuk mengirim transaksi apa pun yang melebihi batas pengeluaran Anda, dan setiap 48 jam sejak terakhir kali Anda memasukkan PIN 6 digit Anda.</string>
+  <!-- Touch Id spending limit screen title -->
+  <string name="TouchIdSpendingLimit.title">Touch ID Batas Pengeluaran</string>
+  <!-- name of spending limit when using fingerprint authorization -->
+  <string name="TouchIdSpendingLimit.title.android">Batas Pembelanjaan Otorisasi Sidik Jari</string>
+  <!-- Availability status text -->
+  <string name="Transaction.available">Tersedia untuk Dibelanjakan</string>
+  <!-- Transaction complete label -->
+  <string name="Transaction.complete">Lengkap</string>
+  <!-- eg. Ending balance: $50.00 -->
+  <string name="Transaction.ending">Saldo akhir: %1$s</string>
+  <!-- Exchange rate on date header -->
+  <string name="Transaction.exchangeOnDayReceived">Nilai tukar saat diterima:</string>
+  <!-- Exchange rate on date header -->
+  <string name="Transaction.exchangeOnDaySent">Nilai tukar saat dikirim:</string>
+  <!-- (b600 fee) -->
+  <string name="Transaction.fee">(%1$s biaya)</string>
+  <!-- Invalid transaction -->
+  <string name="Transaction.invalid">TIDAK VALID</string>
+  <!-- Timestamp label for event that just happened -->
+  <string name="Transaction.justNow">baru saja</string>
+  <!-- Receive status text: 'In progress: 20%' -->
+  <string name="Transaction.receivedStatus">Sedang berlangsung: %1$s</string>
+  <!-- Send status text: 'In progress: 20%' -->
+  <string name="Transaction.sendingStatus">Sedang berlangsung: %1$s</string>
+  <!-- eg. Starting balance: $50.00 -->
+  <string name="Transaction.starting">Saldo awal: %1$s</string>
+  <!-- Waiting to be confirmed string -->
+  <string name="Transaction.waiting">Menunggu untuk dikonfirmasi. Beberapa pedagang memerlukan konfirmasi untuk menyelesaikan transaksi. Perkiraan waktu: 1-2 jam.</string>
+  <!-- e.g. I received money from an account. -->
+  <string name="TransactionDetails.account">akun</string>
+  <!-- Amount section header -->
+  <string name="TransactionDetails.amountHeader">Jumlah</string>
+  <!-- Block height label -->
+  <string name="TransactionDetails.blockHeightLabel">Dikonfirmasi di Blokir</string>
+  <!-- Memo section header -->
+  <string name="TransactionDetails.commentsHeader">Memo</string>
+  <!-- Empty transaction list message. -->
+  <string name="TransactionDetails.emptyMessage">Transaksi Anda akan muncul di sini.</string>
+  <!-- "Received [$5] at [which of my addresses]" => This is the "at [which of my addresses]" part. -->
+  <string name="TransactionDetails.from">di %1$s</string>
+  <!-- More button title -->
+  <string name="TransactionDetails.more">Lebih...</string>
+  <!-- Moved $5.00 (as in "I moved $5 to another location") -->
+  <string name="TransactionDetails.moved">Terharu %1$s</string>
+  <!-- Moved $5.00 -->
+  <string name="TransactionDetails.movedAmountDescription">Terharu <b>%1$s</b></string>
+  <!-- eg. Confirmed in Block: Not Confirmed -->
+  <string name="TransactionDetails.notConfirmedBlockHeightLabel">Tidak Dikonfirmasi</string>
+  <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
+  <string name="TransactionDetails.received">Diterima %1$s</string>
+  <!-- Received $5.00 -->
+  <string name="TransactionDetails.receivedAmountDescription">Diterima <b>%1$s</b></string>
+  <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
+  <string name="TransactionDetails.sent">Terkirim %1$s</string>
+  <!-- Sent $5.00 -->
+  <string name="TransactionDetails.sentAmountDescription">Terkirim <b>%1$s</b></string>
+  <!-- Status section header -->
+  <string name="TransactionDetails.statusHeader">Status</string>
+  <!-- Transaction Details Title -->
+  <string name="TransactionDetails.title">Detil transaksi</string>
+  <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
+  <string name="TransactionDetails.to">untuk %1$s</string>
+  <!-- Transaction ID header -->
+  <string name="TransactionDetails.txHashHeader">ID Transaksi Litecoin</string>
+  <!-- (this transaction was) Received at this address: -->
+  <string name="TransactionDirection.address">Diterima di Alamat ini</string>
+  <!-- (this transaction was) Sent to this address: -->
+  <string name="TransactionDirection.to">Dikirim ke Alamat ini</string>
+  <!-- Disabled until date -->
+  <string name="UnlockScreen.disabled">Dinonaktifkan sampai: %1$s</string>
+  <!-- My Address button title -->
+  <string name="UnlockScreen.myAddress">Alamat saya</string>
+  <!-- Reset PIN with Paper Key button label. -->
+  <string name="UnlockScreen.resetPin">Setel ulang PIN</string>
+  <!-- Scan button title -->
+  <string name="UnlockScreen.scan">Pindai</string>
+  <!-- Unlock Screen sub-header -->
+  <string name="UnlockScreen.subheader">Masukkan PIN</string>
+  <!-- Instruction to touch the sensor for fingerprint authentication -->
+  <string name="UnlockScreen.touchIdInstructions.android">Sensor Sentuh</string>
+  <!-- TouchID prompt text -->
+  <string name="UnlockScreen.touchIdPrompt">Buka kunci Litewallet Anda.</string>
+  <!-- Device authentication body -->
+  <string name="UnlockScreen.touchIdPrompt.android">Harap buka kunci perangkat Android Anda untuk melanjutkan.</string>
+  <!-- Unlock with TouchID accessibility label -->
+  <string name="UnlockScreen.touchIdText">Buka kunci dengan TouchID</string>
+  <!-- Device authentication title -->
+  <string name="UnlockScreen.touchIdTitle.android">Otentikasi diperlukan</string>
+  <!-- Wallet unlocked message -->
+  <string name="UnlockScreen.unlocked">Dompet Tidak Terkunci</string>
+  <!-- Update PIN caption text -->
+  <string name="UpdatePin.caption">Ingat PIN ini. Jika Anda lupa, Anda tidak akan bisa mengakses Litecoin Anda.</string>
+  <!-- PIN creation info. -->
+  <string name="UpdatePin.createInstruction">PIN Anda akan digunakan untuk membuka kunci Litewallet Anda dan mengirim uang.</string>
+  <!-- Update PIN title -->
+  <string name="UpdatePin.createTitle">Setel PIN</string>
+  <!-- Update PIN title -->
+  <string name="UpdatePin.createTitleConfirm">Masukkan kembali PIN</string>
+  <!-- Enter current PIN instruction -->
+  <string name="UpdatePin.enterCurrent">Masukkan PIN Anda saat ini.</string>
+  <!-- Enter new PIN instruction -->
+  <string name="UpdatePin.enterNew">Masukkan PIN baru Anda.</string>
+  <!-- Re-Enter new PIN instruction -->
+  <string name="UpdatePin.reEnterNew">Masukkan kembali PIN baru Anda.</string>
+  <!-- Update PIN failure error message. -->
+  <string name="UpdatePin.setPinError">Maaf, tidak dapat memperbarui PIN.</string>
+  <!-- Update PIN failure alert view title -->
+  <string name="UpdatePin.setPinErrorTitle">Perbarui PIN Kesalahan</string>
+  <!-- Update PIN title -->
+  <string name="UpdatePin.updateTitle">Perbarui PIN</string>
+  <!-- Authorize to copy wallet addresses alert message -->
+  <string name="URLHandling.addressaddressListAlertMessage">Salin alamat dompet ke clipboard?</string>
+  <!-- Authorize to copy wallet address PIN view prompt. -->
+  <string name="URLHandling.addressList">Izinkan untuk menyalin alamat dompet ke clipboard</string>
+  <!-- Authorize to copy wallet address alert title -->
+  <string name="URLHandling.addressListAlertTitle">Salin Alamat Dompet</string>
+  <!-- Copy wallet addresses alert button label -->
+  <string name="URLHandling.copy">Salinan</string>
+  <!-- Verify PIN for transaction view body -->
+  <string name="VerifyPin.authorize">Harap masukkan PIN Anda untuk mengotorisasi transaksi ini.</string>
+  <!-- Verify PIN view body -->
+  <string name="VerifyPin.continueBody">Silakan masukkan PIN Anda untuk melanjutkan.</string>
+  <!-- Verify PIN view title -->
+  <string name="VerifyPin.title">PIN Diperlukan</string>
+  <!-- Authorize transaction with touch id message -->
+  <string name="VerifyPin.touchIdMessage">Otorisasi transaksi ini</string>
+  <!-- 'No wallet' warning for watch app -->
+  <string name="Watch.noWalletWarning">Buka aplikasi iPhone Litewallet untuk mengatur dompet Anda.</string>
+  <!-- Dismiss button label -->
+  <string name="Webview.dismiss">Memberhentikan</string>
+  <!-- Webview loading error message -->
+  <string name="Webview.errorMessage">Terjadi kesalahan saat memuat konten. Silakan coba lagi.</string>
+  <!-- Updating webview message -->
+  <string name="Webview.updating">Memperbarui...</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Litewallet baru saja diperbarui! \nJika Anda butuh bantuan, cari (?) di kanan atas kebanyakan layar.</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">Selamat datang di Litewallet!</string>
+  <!-- Wipe wallet alert message -->
+  <string name="WipeWallet.alertMessage">Apakah Anda yakin ingin menghapus dompet ini?</string>
+  <!-- Wipe wallet alert title -->
+  <string name="WipeWallet.alertTitle">Hapus Dompet?</string>
+  <!-- Failed wipe wallet alert message -->
+  <string name="WipeWallet.failedMessage">Gagal menghapus dompet.</string>
+  <!-- Failed wipe wallet alert title -->
+  <string name="WipeWallet.failedTitle">Gagal</string>
+  <!-- Enter phrase to wipe wallet instruction. -->
+  <string name="WipeWallet.instruction">Untuk memulai dompet baru atau mengembalikan dompet yang ada, Anda harus terlebih dahulu menghapus dompet yang saat ini terpasang. Untuk melanjutkan, masukkan Kunci Kertas dompet saat ini.</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">Memulai atau memulihkan dompet lain memungkinkan Anda mengakses dan mengelola Litewallet yang berbeda di perangkat ini.</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWarning">Dompet Anda saat ini akan dihapus dari perangkat ini. Jika Anda ingin memulihkannya di masa mendatang, Anda harus memasukkan Kunci Kertas Anda.</string>
+  <!-- Wipe wallet navigation item title. -->
+  <string name="WipeWallet.title">Mulai atau Pulihkan Dompet Lain</string>
+  <!-- Wipe wallet button title -->
+  <string name="WipeWallet.wipe">Menghapus</string>
+  <!-- Wiping activity message -->
+  <string name="WipeWallet.wiping">Menyeka...</string>
+  <!-- Paper key instructions. -->
+  <string name="WritePaperPhrase.instruction">Tuliskan setiap kata secara berurutan dan simpan di tempat yang aman.</string>
+  <!-- button label -->
+  <string name="WritePaperPhrase.next">Lanjut</string>
+  <!-- button label -->
+  <string name="WritePaperPhrase.previous">Sebelumnya</string>
+  <!-- 1 of 3 -->
+  <string name="WritePaperPhrase.step">%1$d dari %2$d</string>
+  <string name="Donate.title">Donasikan ke Litecoin Foundation (%1$s)</string>
+  <string name="Donate.title.confirmation">Konfirmasi Donasi</string>
+  <string name="Confirmation.processingAndDonationTime">Waktu pemrosesan: Proses transaksi ini akan memakan waktu %1$s menit.</string>
+  <string name="Confirmation.donateLabel">Jumlah Donasi:</string>
+  <string name="Donate.word">Menyumbangkan</string>
+  <string name="Donate.toThe">Donasikan ke </string>
+  <string name="Confirmation.staticAddressLabel">Alamat:</string>
+  <string name="FeeSelector.luxury">Kemewahan</string>
+  <string name="FeeSelector.luxuryMessage">Opsi ini secara virtual menjamin penerimaan transaksi Anda meskipun Anda membayar premi.</string>
+  <string name="FeeSelector.luxuryTime">2.5 - 5+ menit</string>
+  <string name="BottomNavItem.History.title">Sejarah</string>
+  <string name="BottomNavItem.Card.title">Kartu</string>
+  <string name="LitecoinCard.cardBalance">Saldo Kartu</string>
+  <string name="LitecoinCard.logout">Keluar</string>
+  <string name="Register.Hint.mobileNumber">Nomor handphone</string>
+  <string name="Register.Hint.zipPostalCode">Kode / Pos</string>
+  <string name="Register.Hint.country">Negara</string>
+  <string name="Register.Hint.stateProvince">Negara Bagian / Provinsi</string>
+  <string name="Register.Hint.city">Kota</string>
+  <string name="Register.Hint.address">Alamat</string>
+  <string name="Register.Hint.confirmPassword">Setujui password</string>
+  <string name="Register.Hint.lastName">nama keluarga</string>
+  <string name="Register.Hint.firstName">Nama depan</string>
+  <string name="Register.registerCardPhrase">Daftar untuk Kartu Litecoin</string>
+  <string name="Login.Dialog.forgotPassword.reset">Setel ulang kata sandi</string>
+  <string name="Login.register">Daftar</string>
+  <string name="Login.login">Gabung</string>
+  <string name="Login.forgotPassword">Tidak ingat kata sandi?</string>
+  <string name="Login.Hint.password">Kata sandi</string>
+  <string name="Login.Dialog.forgotPasswordMessage">Kunjungi https://litecoin.dashboard.getblockcard.com/password/forgot untuk mengatur ulang kata sandi Anda</string>
+  <string name="Login.Dialog.forgotPassword.visit">Mengunjungi</string>
+  <string name="required">kolom yang harus diisi</string>
+  <string name="wrong_email_format">Alamat email salah</string>
+  <string name="error_pwd_6chars_min">Kata sandi minimal harus terdiri dari 6 karakter</string>
+  <string name="Register.Dialog.registeredSuccessMessage">Anda telah terdaftar. Harap konfirmasi dengan mengunjungi kotak masuk email Anda dan mengklik tombol konfirmasi</string>
+  <string name="Error.unknownSystem">Ups terjadi sesuatu yang salah. Silakan coba lagi nanti</string>
+  <string name="mismatch_password">Kata sandi tidak cocok</string>
+  <string name="Error.emailNotVerified">Anda perlu memverifikasi alamat email Anda sebelum Anda dapat masuk.</string>
+  <string name="Error.wrong2faTokenProvided">2FA yang diberikan salah</string>
+  <string name="BuyCenter.simplex.FinancialDetails">• Dapatkan Litecoin dalam 5 menit!\n• Beli Litecoin melalui kartu kredit\n• Paspor atau KTP</string>
+  <string name="ManageWallet.balance">Saldo Kartu</string>
+  <string name="LitecoinCard.Disclaimer.bullets">- Pendaftaran Baru\n- Masuk (akun yang ada)\n- Tidak ada saldo yang ditampilkan\n- Tidak ada transfer\n- Khusus AS</string>
+  <string name="LitecoinCard.Disclaimer.description">Kartu Litecoin saat ini memiliki fungsi terbatas di Litewallet.</string>
+  <string name="LitecoinCard.Disclaimer.referral">Kunjungi litecoin.getblockcard.com untuk akses penuh</string>
+  <string name="LitecoinCard.Disclaimer.title">Kartu Litecoin Beta</string>
+</resources>
