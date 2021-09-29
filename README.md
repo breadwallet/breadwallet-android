@@ -1,3 +1,5 @@
+# This repository is unmaintained, BRD Android has moved to [https://github.com/breadwallet/brd-mobile](https://github.com/breadwallet/brd-mobile)
+
 [![Bread](/images/top-logo.png)](https://play.google.com/store/apps/details?id=com.breadwallet)
 
 BRD is the best way to get started with bitcoin. Our simple, streamlined design is easy for beginners, yet powerful enough for experienced users.
